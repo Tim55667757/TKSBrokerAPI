@@ -56,8 +56,7 @@ def EnableLogger(logFile, parentHandler=UniLogger, useFormat=formatter):
     """
     Adding new file logger with rotation.
     """
-    # logHandler = logging.FileHandler(logFile)
-    maxSizeBytes = 50 * 1024 * 1024  # 5Mb log rotate by default
+    maxSizeBytes = 5 * 1024 * 1024  # 5Mb log rotate by default
     logHandler = logging.handlers.RotatingFileHandler(logFile, encoding="UTF-8", maxBytes=maxSizeBytes, backupCount=4)
     logHandler.level = logging.DEBUG  # set up DEBUG verbosity level by default for file logging
     logHandler.addFilter(LevelFilter(logging.DEBUG))
@@ -94,7 +93,7 @@ streamHandler.setFormatter(formatter)  # set formatter for STDOUT UniLogger
 streamHandler.level = logging.INFO  # set up INFO verbosity level by default for STDOUT UniLogger
 UniLogger.addHandler(streamHandler)  # adding STDOUT UniLogger handler to Parent UniLogger
 
-# fileLogHandler = EnableLogger(logFile="log.txt", parentHandler=UniLogger, useFormat=formatter)  # add logging to file, uncomment if need
+fileLogHandler = EnableLogger(logFile="TKSBrokerAPI.log", parentHandler=UniLogger, useFormat=formatter)  # add logging to file
 
 sepWide = "-" * 120  # long-long log separator
 sepLong = "-" * 80  # long log separator
