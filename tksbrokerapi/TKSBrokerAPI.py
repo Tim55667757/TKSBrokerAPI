@@ -2,8 +2,8 @@
 # Author: Timur Gilmullin
 
 
-# Module: Co-routines to work with some methods of Tinkoff Open API v2 using REST protocol.
-# View history, orders and market information. Also you can set some orders and commands. See readme.md for examples.
+# Module TKSBrokerAPI is a Python API to work with some methods of Tinkoff Open API v2 using REST protocol.
+# It can view history, orders and market information. Also you can set some orders and commands. See README.md for examples.
 # If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
 # Tinkoff Open API v2 Documentation: https://tinkoff.github.io/investAPI/
 # Swagger-ui for REST API: https://tinkoff.github.io/investAPI/swagger-ui/
