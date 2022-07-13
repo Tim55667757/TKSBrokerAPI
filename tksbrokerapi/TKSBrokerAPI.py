@@ -119,26 +119,13 @@ class TinkoffBrokerServer:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
             uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable 'accountId'")
 
-        # you can use some aliases instead official tickers:
-        self.aliases = {
-            "USD": "USD000UTSTOM", "usd": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
-            "EUR": "EUR_RUB__TOM", "eur": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
-            "GBP": "GBPRUB_TOM", "gbp": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
-            "CHF": "CHFRUB_TOM", "chf": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
-            "CNY": "CNYRUB_TOM", "cny": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
-            "HKD": "HKDRUB_TOM", "hkd": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
-            "TRY": "TRYRUB_TOM", "try": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
-        }
+        self.aliases = TKS_TICKER_ALIASES  # some aliases instead official tickers
         self.aliasesKeys = self.aliases.keys()  # re-calc only first time at class init
+        self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
         self.ticker = ""  # string with ticker, e.g. "GOOGL". Use alias for "USD000UTSTOM" simple as "USD", "EUR_RUB__TOM" as "EUR".
         self.figi = ""  # string with FIGI, e.g. for "GOOGL" ticker FIGI is "BBG009S39JX6"
         self.depth = 1  # Depth of Market (DOM) can be 1 to 20
-
-        # some of tickers or FIGIs raise exception when it sends to server, that is why we exclude there:
-        self.exclude = [
-            "ISSUANCEBRUS",
-        ]
 
         self.server = r"https://invest-public-api.tinkoff.ru/rest"  # Tinkoff REST API server for real trade operations
         uLogger.debug("Server is used for API requests: {}".format(self.server))

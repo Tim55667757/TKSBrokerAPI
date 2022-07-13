@@ -9,6 +9,22 @@
 # Type of instrument for some trade methods, it must be only one of this supported types:
 TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 
+# Some aliases instead official tickers for using in CLI:
+TKS_TICKER_ALIASES = {
+    "USD": "USD000UTSTOM", "usd": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM", "eur": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
+    "GBP": "GBPRUB_TOM", "gbp": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
+    "CHF": "CHFRUB_TOM", "chf": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
+    "CNY": "CNYRUB_TOM", "cny": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    "HKD": "HKDRUB_TOM", "hkd": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "TRY": "TRYRUB_TOM", "try": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+}
+
+# some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
+TKS_TICKERS_OR_FIGI_EXCLUDED = [
+    # "ISSUANCEBRUS",  # now available
+]
+
 # How many minutes in interval and maximum count of candles in one history block returns by Tinkoff API in one request.
 # See more: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
 TKS_TIMEFRAMES = {
