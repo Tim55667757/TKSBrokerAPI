@@ -13,6 +13,7 @@
 
 ##### Новая функциональность
 
+* Лицензия изменена с MIT на [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 * **Важно!** Восстановлена функциональность большей части методов, входящих в TKSBrokerAPI v1.0, кроме открытия сетки ордеров и скачивания исторических данных (будут добавлены в следующих релизах). Теперь все методы работают с новым Open API: https://tinkoff.github.io/investAPI/swagger-ui/
 * **Важно!** модуль TKSBrokerAPI вынесен в опенсорс, дальнейшая разработка продолжается только там: https://github.com/Tim55667757/TKSBrokerAPI (анонсы и релиз-ноты — там же).
 * **Важно!** Версия Tinkoff Invest API, поддерживаемая библиотекой TKSBrokerAPI, теперь v2 и без обратной совместимости.
@@ -43,6 +44,7 @@
 * Из метода `Overview()` вынесены в отдельные методы `RequestPortfolio()`, `RequestPositions()`, `RequestPendingOrders` и `RequestStopOrders()` — операции по запросу портфеля, открытых позиций и ордеров пользователя. 
 * При помощи метода `CloseOrders()` теперь можно закрывать и биржевые отложенные (pending) ордера, и стоп-ордера. Достаточно указать ID или список ID.
 * Добавлено отображение разницы в % между предыдущей и текущей ценой закрытия инструмента во все таблицы, где это востребовано.
+* [In progress] [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) `--open-trade` and `--open-order` keys were replaced with `--trade` and `--order` keys, because it's too long.
 
 ##### Баг-фиксы
 

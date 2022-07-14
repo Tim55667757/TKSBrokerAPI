@@ -1,13 +1,47 @@
 # -*- coding: utf-8 -*-
 # Author: Timur Gilmullin
 
+"""
+Module contains a lot of constants from enums sections of Tinkoff Open API documentation.
 
-# Module contains a lot of constants from enums sections of Tinkoff Open API documentation.
-# See: https://tinkoff.github.io/investAPI/swagger-ui/
+About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
+
+Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui/
+"""
+
+# Copyright (c) 2022 Gilmillin Timur Mansurovich
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 # Type of instrument for some trade methods, it must be only one of this supported types:
 TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
+
+# Some aliases instead official tickers for using in CLI:
+TKS_TICKER_ALIASES = {
+    "USD": "USD000UTSTOM", "usd": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM", "eur": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
+    "GBP": "GBPRUB_TOM", "gbp": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
+    "CHF": "CHFRUB_TOM", "chf": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
+    "CNY": "CNYRUB_TOM", "cny": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    "HKD": "HKDRUB_TOM", "hkd": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "TRY": "TRYRUB_TOM", "try": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+}
+
+# some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
+TKS_TICKERS_OR_FIGI_EXCLUDED = [
+    # "ISSUANCEBRUS",  # now available
+]
 
 # How many minutes in interval and maximum count of candles in one history block returns by Tinkoff API in one request.
 # See more: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
