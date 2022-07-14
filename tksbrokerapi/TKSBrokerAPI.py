@@ -355,11 +355,10 @@ class TinkoffBrokerServer:
         """
         return self._IUpdater(**kwargs)
 
-    def Listing(self, showDebug: bool = False) -> dict:
+    def Listing(self) -> dict:
         """
         Gets JSON with all broker instruments: stocks, currencies, bonds and etfs.
 
-        :param showDebug: if True then print more debug information.
         :return: Dictionary with all broker instruments: currencies, stocks, bonds, futures and etfs.
         """
         uLogger.debug("Requesting all available instruments from broker for current user token. Wait, please...")
