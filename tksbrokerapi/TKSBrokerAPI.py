@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
 # Author: Timur Gilmullin
 
+"""
+Module TKSBrokerAPI is a Python API to work with some methods of Tinkoff Open API using REST protocol.
+It can view history, orders and market information. Also you can set some orders and commands. See README.md for examples.
+If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
+About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
+Tinkoff Invest API documentaion: https://tinkoff.github.io/investAPI/swagger-ui/
+"""
 
-# Module TKSBrokerAPI is a Python API to work with some methods of Tinkoff Open API v2 using REST protocol.
-# It can view history, orders and market information. Also you can set some orders and commands. See README.md for examples.
-# If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
-# Tinkoff Open API v2 Documentation: https://tinkoff.github.io/investAPI/
-# Swagger-ui for REST API: https://tinkoff.github.io/investAPI/swagger-ui/
+# Copyright (c) 2022 Gilmillin Timur Mansurovich
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 import sys
