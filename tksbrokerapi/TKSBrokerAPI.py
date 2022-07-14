@@ -200,7 +200,7 @@ class TinkoffBrokerServer:
         :param debug: if True then print more debug information.
         :return: response JSON (dictionary) from broker.
         """
-        if reqType not in ["GET", "POST"]:
+        if reqType not in ("GET", "POST"):
             raise Exception("You can define request type: 'GET' or 'POST'!")
 
         if debug:
@@ -2103,7 +2103,7 @@ class TinkoffBrokerServer:
         :param expDate: string "Undefined" by default or local date in future, it is a string with format: "%Y-%m-%d %H:%M:%S".
         :return: JSON with response from broker server.
         """
-        if operation is None or not operation or operation not in ["Buy", "Sell"]:
+        if operation is None or not operation or operation not in ("Buy", "Sell"):
             raise Exception("You must define operation type only one of them: `Buy` or `Sell`!")
 
         if lots is None or lots < 1:
@@ -2299,10 +2299,10 @@ class TinkoffBrokerServer:
                         A limit order has no expiration date, it lasts until the end of the trading day.
         :return: JSON with response from broker server.
         """
-        if operation is None or not operation or operation not in ["Buy", "Sell"]:
+        if operation is None or not operation or operation not in ("Buy", "Sell"):
             raise Exception("You must define operation type only one of them: `Buy` or `Sell`!")
 
-        if orderType is None or not orderType or orderType not in ["Limit", "Stop"]:
+        if orderType is None or not orderType or orderType not in ("Limit", "Stop"):
             raise Exception("You must define order type only one of them: `Limit` or `Stop`!")
 
         if lots is None or lots < 1:
@@ -2314,7 +2314,7 @@ class TinkoffBrokerServer:
         if limitPrice is None or limitPrice <= 0:
             limitPrice = targetPrice
 
-        if stopType is None or not stopType or stopType not in ["SL", "TP", "Limit"]:
+        if stopType is None or not stopType or stopType not in ("SL", "TP", "Limit"):
             stopType = "Limit"
 
         if expDate is None or not expDate:
@@ -2625,7 +2625,7 @@ class TinkoffBrokerServer:
         pass
         # uLogger.debug("Input parameters: {}".format(inputParameters))
         #
-        # if operation is None or not operation or operation not in ["Buy", "Sell"]:
+        # if operation is None or not operation or operation not in ("Buy", "Sell"):
         #     raise Exception("You must define operation type: 'Buy' or 'Sell'!")
         #
         # if "l" in inputParameters.keys():
