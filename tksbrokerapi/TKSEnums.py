@@ -3,8 +3,10 @@
 
 """
 Module contains a lot of constants from enums sections of Tinkoff Open API documentation.
+
 About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
-Tinkoff Invest API documentaion: https://tinkoff.github.io/investAPI/swagger-ui/
+
+Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui/
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
