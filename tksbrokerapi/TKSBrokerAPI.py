@@ -3,7 +3,7 @@
 
 """
 Module TKSBrokerAPI is a Python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also you can set some orders and commands. See README.md for examples.
+It can view history, orders and market information. Also you can set some orders and commands. See `README.md` for examples.
 
 If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
 
@@ -70,9 +70,9 @@ def NanoToFloat(units: str, nano: int) -> float:
 
     Examples:
 
-    NanoToFloat(units="2", nano=500000000) -> 2.5
+    `NanoToFloat(units="2", nano=500000000) -> 2.5`
 
-    NanoToFloat(units="0", nano=50000000) -> 0.05
+    `NanoToFloat(units="0", nano=50000000) -> 0.05`
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
@@ -87,9 +87,9 @@ def FloatToNano(number: float) -> dict:
 
     Examples:
 
-    FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}
+    `FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}`
 
-    FloatToNano(number=0.05) -> {"units":"0", "nano": 50000000}
+    `FloatToNano(number=0.05) -> {"units":"0", "nano": 50000000}`
 
     :param number: float number
     :return: nano-type view of number: {"units": "string", "nano": integer}
@@ -103,13 +103,16 @@ def FloatToNano(number: float) -> dict:
 class TinkoffBrokerServer:
     """
     This class implements methods to work with Tinkoff broker server.
+
     Examples to work with API: https://tinkoff.github.io/investAPI/swagger-ui/
+
+    Where is `token`: https://tinkoff.github.io/investAPI/token/
     """
     def __init__(self, token: str, instrumentsList: dict = None, accountId: str = None) -> None:
         """
         Main class init.
 
-        :param token: Bearer token for Tinkoff Invest API: https://tinkoff.github.io/investAPI/token/
+        :param token: Bearer token for Tinkoff Invest API.
         :param instrumentsList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
         """
@@ -397,7 +400,7 @@ class TinkoffBrokerServer:
         """
         Show information about instrument defined by json in markdown format.
 
-        :param iJSON: json data of instrument, e.g. in code: iJSON = self.instrumentsList["Shares"][self.ticker]
+        :param iJSON: json data of instrument, e.g. in code `iJSON = self.instrumentsList["Shares"][self.ticker]`
         :param printInfo: if True then also printing information about instrument and its current price.
         :return: markdown formatted text with information about instrument.
         """
@@ -993,7 +996,7 @@ class TinkoffBrokerServer:
     def RequestPositions(self) -> dict:
         """
         Requesting current open positions in currencies and instruments.
-        REST API for it: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPositions
+        REST API for open positions: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPositions
 
         :return: dictionary with open positions by instruments.
         """
@@ -2090,6 +2093,7 @@ class TinkoffBrokerServer:
 
         return history
 
+    # TODO: replace method name as `Trade` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
     def OpenTrade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
         Create market order and make deal at the current price. Returns JSON data with response.
@@ -2100,7 +2104,8 @@ class TinkoffBrokerServer:
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, target price for stop-order with "TP" type. It used as take profit parameter `targetPrice` in `self.OpenOrder()`.
         :param sl: float > 0, target price for stop-order with "SL" type. It used as stop loss parameter `targetPrice` in `self.OpenOrder()`.
-        :param expDate: string "Undefined" by default or local date in future, it is a string with format: "%Y-%m-%d %H:%M:%S".
+        :param expDate: string "Undefined" by default or local date in future,
+                        it is a string with format `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
         if operation is None or not operation or operation not in ("Buy", "Sell"):
@@ -2167,7 +2172,8 @@ class TinkoffBrokerServer:
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
         :param sl: float > 0, stop loss price of stop-order.
-        :param expDate: string with format: "%Y-%m-%d %H:%M:%S", it's a local date in future.
+        :param expDate: it's a local date in future.
+                        String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
         return self.OpenTrade(operation="Buy", lots=lots, tp=tp, sl=sl, expDate=expDate)
@@ -2181,7 +2187,8 @@ class TinkoffBrokerServer:
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
         :param sl: float > 0, stop loss price of stop-order.
-        :param expDate: string with format: "%Y-%m-%d %H:%M:%S", it's a local date in future.
+        :param expDate: it's a local date in future.
+                        String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
         return self.OpenTrade(operation="Sell", lots=lots, tp=tp, sl=sl, expDate=expDate)
@@ -2271,6 +2278,7 @@ class TinkoffBrokerServer:
             else:
                 uLogger.info("Instrument tickers with type [{}] not found, nothing to close.".format(iType))
 
+    # TODO: replace method name as `Order` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
     def OpenOrder(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
         If orderType is "Limit" then create pending limit-order below current price if operation is "Buy" and above
@@ -2291,10 +2299,11 @@ class TinkoffBrokerServer:
         :param targetPrice: target price > 0. This is open trade price for limit order.
         :param limitPrice: limit price >= 0. This parameter only makes sense for stop-order. If limitPrice = 0, then it set as targetPrice.
                            Broker will creates limit-order with price equal to limitPrice, when current price goes to target price of stop-order.
-        :param stopType: string "Limit" by default. This parameter only makes sense for stop-order. There are 3 stop-order types:
-                         ["SL", "TP", "Limit"] for "Stop loss", "Take profit" and "Stop limit" types accordingly.
+        :param stopType: string "Limit" by default. This parameter only makes sense for stop-order. There are 3 stop-order types
+                         "SL", "TP", "Limit" for "Stop loss", "Take profit" and "Stop limit" types accordingly.
                          Stop loss order always executed by market price.
-        :param expDate: string "Undefined" by default or local date in future, it is a string with format: "%Y-%m-%d %H:%M:%S".
+        :param expDate: string "Undefined" by default or local date in future.
+                        String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server. This parameter only makes sense for stop-order.
                         A limit order has no expiration date, it lasts until the end of the trading day.
         :return: JSON with response from broker server.
@@ -2455,9 +2464,10 @@ class TinkoffBrokerServer:
         :param targetPrice: target price > 0. This is trigger price for buy stop-order.
         :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
                            with price equal to limitPrice, when current price goes to target price of buy stop-order.
-        :param stopType: string "Limit" by default. There are 3 stop-order types: ["SL", "TP", "Limit"]
+        :param stopType: string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
                          for "Stop loss", "Take profit" and "Stop limit" types accordingly.
-        :param expDate: string "Undefined" by default or local date in future, it is a string with format: "%Y-%m-%d %H:%M:%S".
+        :param expDate: string "Undefined" by default or local date in future.
+                        String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
         """
@@ -2487,9 +2497,10 @@ class TinkoffBrokerServer:
         :param targetPrice: target price > 0. This is trigger price for sell stop-order.
         :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
                            with price equal to limitPrice, when current price goes to target price of sell stop-order.
-        :param stopType: string "Limit" by default. There are 3 stop-order types: ["SL", "TP", "Limit"]
+        :param stopType: string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
                          for "Stop loss", "Take profit" and "Stop limit" types accordingly.
-        :param expDate: string "Undefined" by default or local date in future, it is a string with format: "%Y-%m-%d %H:%M:%S".
+        :param expDate: string "Undefined" by default or local date in future.
+                        String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
         """
@@ -2583,8 +2594,11 @@ class TinkoffBrokerServer:
 
     def CloseAll(self, *args) -> None:
         """
-        Close all available (not blocked) opened trades and orders. Also you can select one or more keywords case insensitive:
+        Close all available (not blocked) opened trades and orders.
+
+        Also you can select one or more keywords case insensitive:
         "orders", "shares", "bonds", "etfs" and "futures" from TKS_INSTRUMENTS enum to specify trades type.
+
         Currency positions you must closes manually using buy or sell operations, CloseTrades() or CloseAllTrades() methods.
         """
         overview = self.Overview(showStatistics=False)  # get all open trades info
@@ -2614,12 +2628,12 @@ class TinkoffBrokerServer:
         Parse input dictionary of strings with order parameters and return dictionary with parameters to open all orders.
 
         :param operation: string "Buy" or "Sell".
-        :param inputParameters: this is dict of strings that looks like this:
-               {"lots": "L_int,...", "prices": "P_float,..."}
+        :param inputParameters: this is dict of strings that looks like this
+               `{"lots": "L_int,...", "prices": "P_float,..."}` where
                "lots" key: one or more lot values (integer numbers) to open with every limit-order
                "prices" key: one or more prices to open limit-orders
                Counts of values in lots and prices lists must be equals!
-        :return: list of dictionaries with all lots and prices to open orders: [{"lot": lots_1, "price": price_1}, {...}, ...]
+        :return: list of dictionaries with all lots and prices to open orders that looks like this `[{"lot": lots_1, "price": price_1}, {...}, ...]`
         """
         # TODO: update order grid work with api v2
         pass
