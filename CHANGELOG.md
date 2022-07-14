@@ -13,6 +13,7 @@
 
 ##### New features
 
+* License changed from MIT to [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 * **Important!** The functionality of most of the methods included in TKSBrokerAPI v1.0 has been restored, except for opening a grid of orders and downloading historical data (to be added in future releases). Now all methods work with the new Open API: https://tinkoff.github.io/investAPI/swagger-ui/
 * **Important!** The TKSBrokerAPI module has been made as open-source project, further development continues there: https://github.com/Tim55667757/TKSBrokerAPI
 * **Important!** The Tinkoff Invest API version supported by the TKSBrokerAPI library is now v2 and not backwards compatible.
