@@ -45,6 +45,8 @@
 * При помощи метода `CloseOrders()` теперь можно закрывать и биржевые отложенные (pending) ордера, и стоп-ордера. Достаточно указать ID или список ID.
 * Добавлено отображение разницы в % между предыдущей и текущей ценой закрытия инструмента во все таблицы, где это востребовано.
 * [In progress] [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) `--open-trade` and `--open-order` keys were replaced with `--trade` and `--order` keys, because it's too long.
+* Статический метод `GetDatesAsString()` вынесен за пределы класса `TinkoffBrokerServer()`.
+* Переменная `instrumentsList` для простоты переименована в `iList`.
 
 ##### Баг-фиксы
 

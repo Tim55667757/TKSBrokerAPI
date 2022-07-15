@@ -45,6 +45,8 @@
 * Using the `CloseOrders()` method, it is now possible to close both exchange pending and stop orders. It is enough to specify an ID or a list of IDs.
 * Added display of the difference in % between the previous and current closing price of the instrument in all tables where it is required.
 * [In progress] [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) `--open-trade` and `--open-order` keys were replaced with `--trade` and `--order` keys, because it's too long.
+* Static method `GetDatesAsString()` moved outside from class `TinkoffBrokerServer()`.
+* Variable `instrumentsList` renamed as `iList`.
 
 ##### Bug fixes
 
