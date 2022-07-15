@@ -14,14 +14,14 @@
 ##### New features
 
 * License changed from MIT to [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0).
-* **Important!** The functionality of most of the methods included in TKSBrokerAPI v1.0 has been restored, except for opening a grid of orders and downloading historical data (to be added in future releases). Now all methods work with the new Open API: https://tinkoff.github.io/investAPI/swagger-ui/
-* **Important!** The TKSBrokerAPI module has been made as open-source project, further development continues there: https://github.com/Tim55667757/TKSBrokerAPI
-* **Important!** The Tinkoff Invest API version supported by the TKSBrokerAPI library is now v2 and not backwards compatible.
+* **Important!** The functionality of most of the methods included in `TKSBrokerAPI` v1.0 has been restored, except for opening a grid of orders and downloading historical data (to be added in future releases). Now all methods work with the new Open API: https://tinkoff.github.io/investAPI/swagger-ui/
+* **Important!** The `TKSBrokerAPI` module has been made as open-source project, further development continues there: https://github.com/Tim55667757/TKSBrokerAPI
+* **Important!** The Tinkoff Invest API version supported by the `TKSBrokerAPI` library is now v2 and not backwards compatible.
 * **Important!** All internal time variables were converted to ISO UTC format with `Z` (Zulu time) at the end of the string. Example: `1961-04-12T06:07:00.123456Z`. Local time is no longer used. This is to avoid confusion with the Tinkoff Invest API time, which uses UTC Z-notation.
 * [In progress] [#3](https://github.com/Tim55667757/TKSBrokerAPI/issues/3) The basic CI-process for the release cycle has been implemented: the step of unit tests and launching the package build. CD-process for the release cycle has been implemented: dev builds for feature branches, release builds from release branches or master branch, which are then published to PyPI.
 * [In progress] [#4](https://github.com/Tim55667757/TKSBrokerAPI/issues/4) Added simple unit tests and stubs for some methods.
-* [In progress] [#1](https://github.com/Tim55667757/TKSBrokerAPI/issues/1) Added main documentation sections to `README.md` and examples of working with the TKSBrokerAPI in CLI.
-* [In progress] [#2](https://github.com/Tim55667757/TKSBrokerAPI/issues/2) Added `pdoc` documentation automatic build step for TKSBrokerAPI module methods.
+* [In progress] [#1](https://github.com/Tim55667757/TKSBrokerAPI/issues/1) Added main documentation sections to `README.md` and examples of working with the `TKSBrokerAPI` in CLI.
+* [#2](https://github.com/Tim55667757/TKSBrokerAPI/issues/2) Added `pdoc` documentation automatic build step `PDocBuilder` for `TKSBrokerAPI` module methods.
 * Added an analytics section to the `Overview()` method. The distribution of instruments by asset classes, companies, sectors and currencies is shown.
 * Shown extended information on the instrument for the `--info` key, depending on the type of instrument (currency, stock, bond, fund or futures).
 * Added keys `--close-order`, `--close-orders`, `--close-trade` and `--close-trades`. With their help, you can cancel one or more orders by ID or close deals on instruments, knowing their tickers.
@@ -75,6 +75,6 @@ First prototype [TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI) - py
 * close all orders and positions at once or only a certain type: stocks, bonds, funds;
 * create a report on operations for the specified period.
 
-Then, from about the middle to the end of 2021, Tinkoff developers actively changed their REST protocol. The TKSBrokerAPI module has become broken. But during the spring-summer of 2022, we managed to restore and even expand most of its functions, rewrite the code to work with the new Tinkoff Open API REST protocol, put the library into open source, and set up the release cycle.
+Then, from about the middle to the end of 2021, Tinkoff developers actively changed their REST protocol. The `TKSBrokerAPI` module has become broken. But during the spring-summer of 2022, we managed to restore and even expand most of its functions, rewrite the code to work with the new Tinkoff Open API REST protocol, put the library into open source, and set up the release cycle.
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
