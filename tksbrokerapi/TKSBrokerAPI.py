@@ -2,10 +2,13 @@
 # Author: Timur Gilmullin
 
 """
-Module TKSBrokerAPI is a Python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also you can set some orders and commands. See `README.md` for examples.
+**TKSBrokerAPI** is a Python API to work with some methods of Tinkoff Open API using REST protocol.
+It can view history, orders and market information. Also you can set some orders and commands.
 
 If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
+**See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+
+**Used constants are in the TKSEnums module**: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 
 About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
 
@@ -66,9 +69,7 @@ NANO = 0.000000001  # SI-constant nano = 10^-9
 
 def NanoToFloat(units: str, nano: int) -> float:
     """
-    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view.
-
-    Examples:
+    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view. Examples:
 
     `NanoToFloat(units="2", nano=500000000) -> 2.5`
 
@@ -83,21 +84,85 @@ def NanoToFloat(units: str, nano: int) -> float:
 
 def FloatToNano(number: float) -> dict:
     """
-    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters: {"units": "string", "nano": integer}.
-
-    Examples:
+    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
 
     `FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}`
 
     `FloatToNano(number=0.05) -> {"units":"0", "nano": 50000000}`
 
     :param number: float number
-    :return: nano-type view of number: {"units": "string", "nano": integer}
+    :return: nano-type view of number: `{"units": "string", "nano": integer}`
     """
     splitByPoint = str(number).split(".")
     frac = int("{:<09n}".format(int(splitByPoint[1]) if len(splitByPoint) > 1 else 0)[:9])
     frac = -frac if number < 0 else frac
     return {"units": str(int(number)), "nano": frac}
+
+
+def GetDatesAsString(start: str = None, end: str = None) -> tuple:
+    """
+    If `start=None`, `end=None` then return dates from yesterday to current time.
+    If `start=some_date_1`, `end=None` then return dates from `some_date_1` to current time.
+    If `start=some_date_1`, `end=some_date_2` then return dates from `some_date_1` to `some_date_2`.
+    Start day may be negative integer numbers: `-1`, `-2`, `-3` - how many days ago.
+
+    Also, you can use keywords for start if `dateEnd=None`:
+    `today` (from 00:00:00 to current time),
+    `yesterday` (-1 day from 00:00:00 to 23:59:59),
+    `week` (-7 day from 00:00:00 to current date and time),
+    `month` (-30 day from 00:00:00 to current date and time),
+    `year` (-365 day from 00:00:00 to current date and time),
+
+    User dates format must be like: `%Y-%m-%d`, e.g. `2020-02-03` (3 Feb, 2020).
+
+    :return: tuple with 2 strings `(start, end)` dates in UTC ISO time format `%Y-%m-%dT%H:%M:%SZ` for OpenAPI.
+             Example: `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`
+    """
+    uLogger.debug("Input start day is [{}] (UTC), end day is [{}] (UTC)".format(start, end))
+    now = datetime.now(tzutc())
+
+    # showing statistics between start of the current day and current time:
+    if start is None or start.lower() == "today":
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        e = now
+
+    # from start of the last day to the end of the last day:
+    elif start.lower() == "yesterday":
+        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1))
+        e = (now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1))
+
+    # week (-7 day from 00:00:00 to current date and time):
+    elif start.lower() == "week":
+        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7))
+        e = now
+
+    # month (-30 day from 00:00:00 to current date and time):
+    elif start.lower() == "month":
+        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30))
+        e = now
+
+    # year (-365 day from 00:00:00 to current date and time):
+    elif start.lower() == "year":
+        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365))
+        e = now
+
+    # showing statistics from -N days ago to current date and time:
+    elif start.startswith('-') and start[1:].isdigit():
+        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start))))
+        e = now
+
+    # showing statistics between start day at 00:00:00 and the end day at 23:59:59:
+    else:
+        s = datetime.strptime(start, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
+        e = datetime.strptime(end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else now
+
+    # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
+    s = s.strftime("%Y-%m-%dT%H:%M:%SZ")
+    e = e.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    uLogger.debug("Tinkoff Open API uses this start day (converted to UTC ISO format, with Z): [{}], and the end day: [{}]".format(s, e))
+
+    return s, e
 
 
 class TinkoffBrokerServer:
@@ -108,12 +173,12 @@ class TinkoffBrokerServer:
 
     Where is `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, instrumentsList: dict = None, accountId: str = None) -> None:
+    def __init__(self, token: str, iList: dict = None, accountId: str = None) -> None:
         """
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API.
-        :param instrumentsList: dictionary of dictionaries with instrument's data.
+        :param iList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
         """
         if token is None or not token:
@@ -140,32 +205,66 @@ class TinkoffBrokerServer:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
             uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable 'accountId'")
 
-        self.aliases = TKS_TICKER_ALIASES  # some aliases instead official tickers
+        self.aliases = TKS_TICKER_ALIASES
+        """Some aliases instead official tickers. See `TKSEnums.TKS_TICKER_ALIASES`"""
+
         self.aliasesKeys = self.aliases.keys()  # re-calc only first time at class init
         self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
-        self.ticker = ""  # string with ticker, e.g. "GOOGL". Use alias for "USD000UTSTOM" simple as "USD", "EUR_RUB__TOM" as "EUR".
-        self.figi = ""  # string with FIGI, e.g. for "GOOGL" ticker FIGI is "BBG009S39JX6"
-        self.depth = 1  # Depth of Market (DOM) can be 1 to 20
+        self.ticker = ""
+        """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`."""
 
-        self.server = r"https://invest-public-api.tinkoff.ru/rest"  # Tinkoff REST API server for real trade operations
-        uLogger.debug("Server is used for API requests: {}".format(self.server))
+        self.figi = ""
+        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`"""
 
-        self.timeout = 15  # all server operations timeout in seconds
+        self.depth = 1
+        """Depth of Market (DOM) can be >= 1. Default: 1. It used with `--price` key to showing DOM with current prices for givens ticker or FIGI."""
+
+        self.server = r"https://invest-public-api.tinkoff.ru/rest"
+        """Tinkoff REST API server for real trade operations. Default: https://invest-public-api.tinkoff.ru/rest
+
+        See: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
+        """
+
+        uLogger.debug("Broker API server: {}".format(self.server))
+
+        self.timeout = 15
+        """Server operations timeout in seconds. Default: 15"""
+
         self.headers = {"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {}".format(self.token)}
+        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {token}"}`"""
+
         self.body = None
+        """Request body which send to broker server. Default: `None`"""
 
-        self.historyLength = 24  # how many candles returns for candles history, e.g. If interval=60 and length=24 it means: "give me last 24 hours". Must be >=1
-        self.historyInterval = "60"  # interval string for Tinkoff API, available values are 1, 2, 3, 5, 10, 15, 30, hour, day, week, month
+        self.historyLength = 24
+        """How many candles returns if candles history request. For example, if `historyInterval="hour"` and `historyLength=24` it means: "give me last 24 hours". Must be >=1. Default: 24"""
 
-        self.instrumentsList = instrumentsList if instrumentsList is not None else self.Listing()  # dictionary with stocks, currencies, bonds and etfs
-        self.pricesList = {}  # you can request all current prices with self.ShowAllPrices() method. WARNING! This is too long operation!
+        self.historyInterval = "hour"
+        """Interval string for Tinkoff API (see: `TKSEnums.TKS_TIMEFRAMES`). Available values are `"1min"`, `"2min"`, `"3min"`, `"5min"`, `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`"""
 
-        self.instrumentsFile = "instruments.md"  # file for printing full broker instruments list
-        self.pricesFile = "prices.md"  # file for printing prices of given instruments
-        self.overviewFile = "overview.md"  # file for printing current portfolio: opened trades and pending orders
-        self.reportFile = "report.md"  # file for printing history of deals and trade statistics
-        self.historyFile = None  # Full path to .csv output file with history candles. Default is None, mean that returns only pandas dataframe.
+        self.iList = iList if iList is not None else self.Listing()
+        """Dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server.
+        At first time, when class init, `Listing()` method auto-update this variable.
+        For future use, you can save this variable and substitute it in the `iList` to avoid permanent downloads from the server.
+        """
+
+        self.pricesList = {}  # You can request all current prices with `ShowAllPrices()` method. WARNING! This is too long operation!
+
+        self.instrumentsFile = "instruments.md"
+        """Filename where full broker's instruments list will be saved. Default: `"instruments.md"`"""
+
+        self.pricesFile = "prices.md"
+        """Filename where prices of selected instruments will be saved. Default: `"prices.md"`"""
+
+        self.overviewFile = "overview.md"
+        """Filename where current portfolio, open trades and orders will be saved. Default: `"overview.md"`"""
+
+        self.reportFile = "report.md"
+        """Filename where history of deals and trade statistics will be saved. Default: `"report.md"`"""
+
+        self.historyFile = None
+        """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
 
     @staticmethod
     def _ParseJSON(rawData="{}", debug: bool = False) -> dict:
@@ -173,7 +272,7 @@ class TinkoffBrokerServer:
         Parse JSON from response string.
 
         :param rawData is a string with JSON-formatted text.
-        :param debug: if True then print more debug information.
+        :param debug: if `True` then print more debug information.
         :return: JSON (dictionary), parsed from server response string.
         """
         if debug:
@@ -200,7 +299,7 @@ class TinkoffBrokerServer:
         :param reqType: send "GET" or "POST" request. "GET" by default.
         :param retry: how many times retry after first request if an error occurred.
         :param pause: sleep time in seconds between retries.
-        :param debug: if True then print more debug information.
+        :param debug: if `True` then print more debug information.
         :return: response JSON (dictionary) from broker.
         """
         if reqType not in ("GET", "POST"):
@@ -261,72 +360,6 @@ class TinkoffBrokerServer:
 
         return responseJSON
 
-    @staticmethod
-    def _GetDatesAsString(start: str = None, end: str = None) -> tuple:
-        """
-        If start=None, end=None then return dates from yesterday to current time.
-        If start=some_date_1, end=None then return dates from some_date_1 to current time.
-        If start=some_date_1, end=some_date_2 then return dates from some_date_1 to some_date_2.
-        Start day may be negative integer numbers: -1, -2, -3 - how many days ago.
-
-        Also, you can use keywords for start if dateEnd=None:
-        today (from 00:00:00 to current time),
-        yesterday (-1 day from 00:00:00 to 23:59:59),
-        week (-7 day from 00:00:00 to current date and time),
-        month (-30 day from 00:00:00 to current date and time),
-        year (-365 day from 00:00:00 to current date and time),
-
-        User dates format must be like: "%Y-%m-%d", e.g. 2020-02-03 (3 Feb, 2020).
-
-        :return: tuple with 2 strings: (start, end) dates in UTC ISO time format for OpenAPI: "%Y-%m-%dT%H:%M:%SZ".
-                 Example: ("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")
-        """
-        uLogger.debug("Input start day is [{}] (UTC), end day is [{}] (UTC)".format(start, end))
-        now = datetime.now(tzutc())
-
-        # showing statistics between start of the current day and current time:
-        if start is None or start.lower() == "today":
-            s = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            e = now
-
-        # from start of the last day to the end of the last day:
-        elif start.lower() == "yesterday":
-            s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1))
-            e = (now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1))
-
-        # week (-7 day from 00:00:00 to current date and time):
-        elif start.lower() == "week":
-            s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7))
-            e = now
-
-        # month (-30 day from 00:00:00 to current date and time):
-        elif start.lower() == "month":
-            s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30))
-            e = now
-
-        # year (-365 day from 00:00:00 to current date and time):
-        elif start.lower() == "year":
-            s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365))
-            e = now
-
-        # showing statistics from -N days ago to current date and time:
-        elif start.startswith('-') and start[1:].isdigit():
-            s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start))))
-            e = now
-
-        # showing statistics between start day at 00:00:00 and the end day at 23:59:59:
-        else:
-            s = datetime.strptime(start, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
-            e = datetime.strptime(end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else now
-
-        # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
-        s = s.strftime("%Y-%m-%dT%H:%M:%SZ")
-        e = e.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-        uLogger.debug("Tinkoff Open API uses this start day (converted to UTC ISO format, with Z): [{}], and the end day: [{}]".format(s, e))
-
-        return s, e
-
     def _IUpdater(self, iType: str) -> tuple:
         """
         Request instrument by type from server. See available API methods for instruments:
@@ -360,9 +393,9 @@ class TinkoffBrokerServer:
 
     def Listing(self) -> dict:
         """
-        Gets JSON with all broker instruments: stocks, currencies, bonds and etfs.
+        Gets JSON with raw data about stocks, currencies, bonds, etfs and futures from broker server.
 
-        :return: Dictionary with all broker instruments: currencies, stocks, bonds, futures and etfs.
+        :return: Dictionary with all available broker instruments: currencies, stocks, bonds, etfs and futures.
         """
         uLogger.debug("Requesting all available instruments from broker for current user token. Wait, please...")
         uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
@@ -398,11 +431,11 @@ class TinkoffBrokerServer:
     @staticmethod
     def MDInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
-        Show information about instrument defined by json in markdown format.
+        Show information about instrument defined by json in Markdown format.
 
-        :param iJSON: json data of instrument, e.g. in code `iJSON = self.instrumentsList["Shares"][self.ticker]`
-        :param printInfo: if True then also printing information about instrument and its current price.
-        :return: markdown formatted text with information about instrument.
+        :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
+        :param printInfo: if `True` then also printing information about instrument and its current price.
+        :return: text in Markdown format with information about instrument.
         """
         infoText = ""
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
@@ -570,11 +603,11 @@ class TinkoffBrokerServer:
     def SearchByTicker(self, requestPrice: bool = False, showInfo: bool = False, debug: bool = False) -> dict:
         """
         Search and return raw broker's information about instrument by it's ticker.
-        self.ticker must be define! If debug=True then print all debug messages.
+        `ticker` must be define! If debug=True then print all debug messages.
 
-        :param requestPrice: if False then do not request current price of instrument (because this is long operation).
-        :param showInfo: if False then do not run MDInfo() method and do not print info to the console.
-        :param debug: if True then print all debug console messages.
+        :param requestPrice: if `False` then do not request current price of instrument (because this is long operation).
+        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
         tickerJSON = {}
@@ -585,31 +618,31 @@ class TinkoffBrokerServer:
             uLogger.warning("self.ticker variable is not be empty!")
 
         else:
-            if not self.instrumentsList:
-                self.instrumentsList = self.Listing()
+            if not self.iList:
+                self.iList = self.Listing()
 
-            if self.ticker in self.instrumentsList["Shares"].keys():
-                tickerJSON = self.instrumentsList["Shares"][self.ticker]
+            if self.ticker in self.iList["Shares"].keys():
+                tickerJSON = self.iList["Shares"][self.ticker]
                 if debug:
                     uLogger.debug("Ticker [{}] found in stocks list".format(self.ticker))
 
-            elif self.ticker in self.instrumentsList["Currencies"].keys():
-                tickerJSON = self.instrumentsList["Currencies"][self.ticker]
+            elif self.ticker in self.iList["Currencies"].keys():
+                tickerJSON = self.iList["Currencies"][self.ticker]
                 if debug:
                     uLogger.debug("Ticker [{}] found in currencies list".format(self.ticker))
 
-            elif self.ticker in self.instrumentsList["Bonds"].keys():
-                tickerJSON = self.instrumentsList["Bonds"][self.ticker]
+            elif self.ticker in self.iList["Bonds"].keys():
+                tickerJSON = self.iList["Bonds"][self.ticker]
                 if debug:
                     uLogger.debug("Ticker [{}] found in bonds list".format(self.ticker))
 
-            elif self.ticker in self.instrumentsList["Etfs"].keys():
-                tickerJSON = self.instrumentsList["Etfs"][self.ticker]
+            elif self.ticker in self.iList["Etfs"].keys():
+                tickerJSON = self.iList["Etfs"][self.ticker]
                 if debug:
                     uLogger.debug("Ticker [{}] found in etfs list".format(self.ticker))
 
-            elif self.ticker in self.instrumentsList["Futures"].keys():
-                tickerJSON = self.instrumentsList["Futures"][self.ticker]
+            elif self.ticker in self.iList["Futures"].keys():
+                tickerJSON = self.iList["Futures"][self.ticker]
                 if debug:
                     uLogger.debug("Ticker [{}] found in futures list".format(self.ticker))
 
@@ -637,11 +670,11 @@ class TinkoffBrokerServer:
     def SearchByFIGI(self, requestPrice: bool = False, showInfo: bool = False, debug: bool = False) -> dict:
         """
         Search and return raw broker's information about instrument by it's FIGI.
-        self.figi must be define! If debug=True then print all debug messages.
+        `figi` must be define! If debug=True then print all debug messages.
 
-        :param requestPrice: if False then do not request current price of instrument (it's long operation).
-        :param showInfo: if False then do not run MDInfo() method and do not print info to the console.
-        :param debug: if True then print all debug console messages.
+        :param requestPrice: if `False` then do not request current price of instrument (it's long operation).
+        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
         figiJSON = {}
@@ -652,12 +685,12 @@ class TinkoffBrokerServer:
             uLogger.warning("self.figi variable is not be empty!")
 
         else:
-            if not self.instrumentsList:
-                self.instrumentsList = self.Listing()
+            if not self.iList:
+                self.iList = self.Listing()
 
-            for item in self.instrumentsList["Shares"].keys():
-                if self.figi == self.instrumentsList["Shares"][item]["figi"]:
-                    figiJSON = self.instrumentsList["Shares"][item]
+            for item in self.iList["Shares"].keys():
+                if self.figi == self.iList["Shares"][item]["figi"]:
+                    figiJSON = self.iList["Shares"][item]
 
                     if debug:
                         uLogger.debug("FIGI [{}] found in stocks list".format(self.figi))
@@ -665,9 +698,9 @@ class TinkoffBrokerServer:
                     break
 
             if not figiJSON:
-                for item in self.instrumentsList["Currencies"].keys():
-                    if self.figi == self.instrumentsList["Currencies"][item]["figi"]:
-                        figiJSON = self.instrumentsList["Currencies"][item]
+                for item in self.iList["Currencies"].keys():
+                    if self.figi == self.iList["Currencies"][item]["figi"]:
+                        figiJSON = self.iList["Currencies"][item]
 
                         if debug:
                             uLogger.debug("FIGI [{}] found in currencies list".format(self.figi))
@@ -675,9 +708,9 @@ class TinkoffBrokerServer:
                         break
 
             if not figiJSON:
-                for item in self.instrumentsList["Bonds"].keys():
-                    if self.figi == self.instrumentsList["Bonds"][item]["figi"]:
-                        figiJSON = self.instrumentsList["Bonds"][item]
+                for item in self.iList["Bonds"].keys():
+                    if self.figi == self.iList["Bonds"][item]["figi"]:
+                        figiJSON = self.iList["Bonds"][item]
 
                         if debug:
                             uLogger.debug("FIGI [{}] found in bonds list".format(self.figi))
@@ -685,9 +718,9 @@ class TinkoffBrokerServer:
                         break
 
             if not figiJSON:
-                for item in self.instrumentsList["Etfs"].keys():
-                    if self.figi == self.instrumentsList["Etfs"][item]["figi"]:
-                        figiJSON = self.instrumentsList["Etfs"][item]
+                for item in self.iList["Etfs"].keys():
+                    if self.figi == self.iList["Etfs"][item]["figi"]:
+                        figiJSON = self.iList["Etfs"][item]
 
                         if debug:
                             uLogger.debug("FIGI [{}] found in etfs list".format(self.figi))
@@ -695,9 +728,9 @@ class TinkoffBrokerServer:
                         break
 
             if not figiJSON:
-                for item in self.instrumentsList["Futures"].keys():
-                    if self.figi == self.instrumentsList["Futures"][item]["figi"]:
-                        figiJSON = self.instrumentsList["Futures"][item]
+                for item in self.iList["Futures"].keys():
+                    if self.figi == self.iList["Futures"][item]["figi"]:
+                        figiJSON = self.iList["Futures"][item]
 
                         if debug:
                             uLogger.debug("FIGI [{}] found in futures list".format(self.figi))
@@ -729,10 +762,10 @@ class TinkoffBrokerServer:
     def GetCurrentPrices(self, showPrice: bool = False) -> dict:
         """
         Get and show Depth of Market with current prices of the instrument. If an error occurred then returns an empty record:
-        {"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}.
+        `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
 
-        :param showPrice: if True then print DOM.
-        :return: dict with Depth of Market (DOM): {"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]} with list of current prices.
+        :param showPrice: if `True` then print DOM.
+        :return: dict with Depth of Market (DOM): `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}` with list of current prices.
         """
         prices = {"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}
 
@@ -832,13 +865,13 @@ class TinkoffBrokerServer:
     def ShowInstrumentsInfo(self, showInstruments: bool = False) -> str:
         """
         This method get and show information about all available broker instruments.
-        If self.instrumentsFile string is not empty then also save information to this file.
+        If `instrumentsFile` string is not empty then also save information to this file.
 
-        :param showInstruments: if True then print to console, if False - print only to file.
+        :param showInstruments: if `True` then print to console, if `False` - print only to file.
         :return: multi-string with all available broker instruments
         """
-        if not self.instrumentsList:
-            self.instrumentsList = self.Listing()
+        if not self.iList:
+            self.iList = self.Listing()
 
         info = [
             "# All available instruments from Tinkoff Broker server for current user token\n\n",
@@ -846,28 +879,28 @@ class TinkoffBrokerServer:
         ]
 
         # add instruments count by type:
-        for iType in self.instrumentsList.keys():
-            info.append("* **{}:** [{}]\n".format(iType, len(self.instrumentsList[iType])))
+        for iType in self.iList.keys():
+            info.append("* **{}:** [{}]\n".format(iType, len(self.iList[iType])))
 
         headerLine = "| Ticker       | Full name                                                      | FIGI         | Cur | Lot    | Step\n"
         splitLine = "|--------------|----------------------------------------------------------------|--------------|-----|--------|---------\n"
 
         # generate info tables with all instruments by type:
-        for iType in self.instrumentsList.keys():
-            info.extend(["\n\n## {} available. Total: [{}]\n\n".format(iType, len(self.instrumentsList[iType])), headerLine, splitLine])
+        for iType in self.iList.keys():
+            info.extend(["\n\n## {} available. Total: [{}]\n\n".format(iType, len(self.iList[iType])), headerLine, splitLine])
 
-            for instrument in self.instrumentsList[iType].keys():
-                iName = self.instrumentsList[iType][instrument]["name"]  # instrument's name
+            for instrument in self.iList[iType].keys():
+                iName = self.iList[iType][instrument]["name"]  # instrument's name
                 if len(iName) > 63:
                     iName = "{}...".format(iName[:60])  # right trim for a long string
     
                 info.append("| {:<12} | {:<63}| {:<13}| {:<4}| {:<7}| {}\n".format(
-                    self.instrumentsList[iType][instrument]["ticker"],
+                    self.iList[iType][instrument]["ticker"],
                     iName,
-                    self.instrumentsList[iType][instrument]["figi"],
-                    self.instrumentsList[iType][instrument]["currency"],
-                    self.instrumentsList[iType][instrument]["lot"],
-                    str(self.instrumentsList[iType][instrument]["step"]).rstrip("0"),
+                    self.iList[iType][instrument]["figi"],
+                    self.iList[iType][instrument]["currency"],
+                    self.iList[iType][instrument]["lot"],
+                    str(self.iList[iType][instrument]["step"]).rstrip("0"),
                 ))
 
         infoText = "".join(info)
@@ -887,12 +920,12 @@ class TinkoffBrokerServer:
         """
         This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
         See limits: https://tinkoff.github.io/investAPI/limits/
-        If self.pricesFile string is not empty then also save information to this file.
+        If `pricesFile` string is not empty then also save information to this file.
 
         :param instruments: list of tickers or FIGIs.
-        :param showPrices: if True then print to console, if False - print only to file.
-        :return: list of instruments looks like this: iList = [{some ticker info, "currentPrice": {current prices}}, {...}, ...]
-                 One item is dict returned by SearchByTicker() or SearchByFIGI() methods.
+        :param showPrices: if `True` then print to console, if `False` - print only to file.
+        :return: list of instruments looks like this: `iList = [{some ticker info, "currentPrice": {current prices}}, {...}, ...]`
+                 One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
         if instruments is None or not instruments:
             raise Exception("You must define some of tickers or FIGIs to request it's actual prices!")
@@ -1047,9 +1080,9 @@ class TinkoffBrokerServer:
     def Overview(self, showStatistics: bool = False) -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for defined accountId.
-        If self.overviewFile is define then also save information to file.
+        If `overviewFile` is define then also save information to file.
 
-        :param showStatistics: if False then only dictionary returns, if True then show more debug information.
+        :param showStatistics: if `False` then only dictionary returns, if `True` then show more debug information.
         :return: dictionary with client's raw portfolio and some statistics.
         """
         view = {
@@ -1687,17 +1720,17 @@ class TinkoffBrokerServer:
     def Deals(self, start: str = None, end: str = None, printDeals: bool = False) -> tuple:
         """
         Returns history operations between two given dates.
-        If self.reportFile string is not empty then also save human-readable report.
+        If `reportFile` string is not empty then also save human-readable report.
         Shows some statistical data of closed positions.
 
-        :param start: see docstring in self._GetDatesAsString() method
-        :param end: see docstring in self._GetDatesAsString() method
-        :param printDeals: if True then also print all records to the console.
+        :param start: see docstring in `GetDatesAsString()` method
+        :param end: see docstring in `GetDatesAsString()` method
+        :param printDeals: if `True` then also print all records to the console.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
         """
-        startDate, endDate = self._GetDatesAsString(start, end)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
+        startDate, endDate = GetDatesAsString(start, end)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
 
         uLogger.debug("Requesting history of a client's operations. Wait, please...")
 
@@ -1932,15 +1965,16 @@ class TinkoffBrokerServer:
 
     def History(self, onlyMissing: bool = False):
         """
-        This method returns last history candles of the current instrument defined by self.ticker.
-        If self.historyFile is not None then method save history to this file, otherwise return only pandas dataframe.
-        self.historyLength define how many candles returns from past to current date.
-        self.historyInterval define candle interval. Available values are strings: 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month.
-        Maximum requested history date in the past: 1970.01.02 03:45
+        This method returns last history candles of the current instrument defined by `ticker`.
+        If `historyFile` is not None then method save history to this file, otherwise return only pandas dataframe.
+        `historyLength` define how many candles returns from past to current date.
+        `historyInterval` define candle interval. Available values are strings: `"1min"`, `"2min"`, `"3min"`, `"5min"`,
+        `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`.
+        Maximum requested history date in the past: `1970.01.02 03:45`
 
         :param onlyMissing: if history file define then add only last missing candles, do not request all history length. False by default.
-        WARNING! History appends only from last candle to current time with replace last candle! Intervals must be similar!
-        :return: pandas dataframe with stock history. Columns: date, time, open, high, low, close, volume.
+                            WARNING! History appends only from last candle to current time with replace last candle! Intervals must be similar!
+        :return: pandas dataframe with stock history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
         """
         history = None  # empty pandas object for history
         # TODO: update history to work with api v2
@@ -2096,9 +2130,10 @@ class TinkoffBrokerServer:
     # TODO: replace method name as `Trade` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
     def OpenTrade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        Create market order and make deal at the current price. Returns JSON data with response.
+        Universal method to create market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
-        See also: `self.OpenOrder()` docstring.
+
+        See also: `OpenOrder()` docstring. More simple methods than `OpenTrade()` are `Buy()` and `Sell()`.
 
         :param operation: string "Buy" or "Sell".
         :param lots: volume, integer count of lots >= 1.
@@ -2165,9 +2200,10 @@ class TinkoffBrokerServer:
 
     def Buy(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        Create `Buy` market order and make deal at the current price. Returns JSON data with response.
+        More simple method than `OpenTrade()`. Create `Buy` market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
-        See also: `self.OpenOrder()` and `self.OpenTrade()` docstrings.
+
+        See also: `OpenOrder()` and `OpenTrade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
@@ -2180,9 +2216,10 @@ class TinkoffBrokerServer:
 
     def Sell(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        Create `Sell` market order and make deal at the current price. Returns JSON data with response.
+        More simple method than `OpenTrade()`. Create `Sell` market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
-        See also: `self.OpenOrder()` and `self.OpenTrade()` docstrings.
+
+        See also: `OpenOrder()` and `OpenTrade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
@@ -2198,7 +2235,7 @@ class TinkoffBrokerServer:
         Close position of given instruments.
 
         :param tickers: tickers list of instruments that must be closed.
-        :param overview: pre-received dictionary with open trades, returned by self.Overview() method.
+        :param overview: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
         if not tickers:
@@ -2259,7 +2296,7 @@ class TinkoffBrokerServer:
         Close all positions of given instruments with defined type.
 
         :param iType: type of the instruments that be closed, it must be one of supported types in TKS_INSTRUMENTS list.
-        :param overview: pre-received dictionary with open trades, returned by self.Overview() method.
+        :param overview: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
         if iType not in TKS_INSTRUMENTS:
@@ -2281,6 +2318,9 @@ class TinkoffBrokerServer:
     # TODO: replace method name as `Order` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
     def OpenOrder(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
+        Universal method to create market or limit orders with all available parameters.
+        See more simple methods: `BuyLimit()`, `BuyStop()`, `SellLimit()`, `SellStop()`.
+
         If orderType is "Limit" then create pending limit-order below current price if operation is "Buy" and above
         current price if operation is "Sell". A limit order has no expiration date, it lasts until the end of the trading day.
 
@@ -2445,7 +2485,7 @@ class TinkoffBrokerServer:
         Create pending `Buy` limit-order (below current price). You must specify only 2 parameters:
         `lots` and `target price` to open buy limit-order. If you try to create buy limit-order above current price then
         broker immediately open `Buy` market order, such as if you do simple `--buy` operation!
-        See also: `self.OpenOrder()` docstring.
+        See also: `OpenOrder()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is open trade price for limit order.
@@ -2458,7 +2498,7 @@ class TinkoffBrokerServer:
         Create `Buy` stop-order. You must specify at least 2 parameters: `lots` `target price` to open buy stop-order.
         In additional you can specify 3 parameters for buy stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
         `expiration date` = Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`. When current price will go up or down to
-        target price value then broker opens a limit order. See also: `self.OpenOrder()` docstring.
+        target price value then broker opens a limit order. See also: `OpenOrder()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is trigger price for buy stop-order.
@@ -2478,7 +2518,7 @@ class TinkoffBrokerServer:
         Create pending `Sell` limit-order (above current price). You must specify only 2 parameters:
         `lots` and `target price` to open sell limit-order. If you try to create sell limit-order below current price then
         broker immediately open `Sell` market order, such as if you do simple `--sell` operation!
-        See also: `self.OpenOrder()` docstring.
+        See also: `OpenOrder()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is open trade price for limit order.
@@ -2491,7 +2531,7 @@ class TinkoffBrokerServer:
         Create `Sell` stop-order. You must specify at least 2 parameters: `lots` `target price` to open sell stop-order.
         In additional you can specify 3 parameters for sell stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
         `expiration date` = Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`. When current price will go up or down to
-        target price value then broker opens a limit order. See also: `self.OpenOrder()` docstring.
+        target price value then broker opens a limit order. See also: `OpenOrder()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is trigger price for sell stop-order.
@@ -2508,9 +2548,9 @@ class TinkoffBrokerServer:
 
     def CloseOrders(self, orderIDs: list, allOrdersIDs: list = None, allStopOrdersIDs: list = None) -> None:
         """
-        Cancel order or list of orders by its orderId or stopOrderId.
+        Cancel order or list of orders by its `orderId` or `stopOrderId`.
 
-        :param orderIDs: list of integers with orderId or stopOrderId.
+        :param orderIDs: list of integers with `orderId` or `stopOrderId`.
         :param allOrdersIDs: pre-received lists of all active pending orders.
                              This avoids unnecessary downloading data from the server.
         :param allStopOrdersIDs: pre-received lists of all active stop orders.
@@ -2597,9 +2637,9 @@ class TinkoffBrokerServer:
         Close all available (not blocked) opened trades and orders.
 
         Also you can select one or more keywords case insensitive:
-        "orders", "shares", "bonds", "etfs" and "futures" from TKS_INSTRUMENTS enum to specify trades type.
+        `orders`, `shares`, `bonds`, `etfs` and `futures` from `TKS_INSTRUMENTS` enum to specify trades type.
 
-        Currency positions you must closes manually using buy or sell operations, CloseTrades() or CloseAllTrades() methods.
+        Currency positions you must closes manually using buy or sell operations, `CloseTrades()` or `CloseAllTrades()` methods.
         """
         overview = self.Overview(showStatistics=False)  # get all open trades info
 
@@ -2670,7 +2710,7 @@ class TinkoffBrokerServer:
 
 class Args:
     """
-    If Main() function is imported as module, then this class used to convert arguments from **kwargs as object.
+    If `Main()` function is imported as module, then this class used to convert arguments from **kwargs as object.
     """
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -2681,7 +2721,7 @@ class Args:
 
 def ParseArgs():
     """
-    Function get and parse command line keys.
+    Function get and parse command line keys. See examples: https://tim55667757.github.io/TKSBrokerAPI/
     """
     parser = ArgumentParser()  # command-line string parser
 
@@ -2740,6 +2780,8 @@ def ParseArgs():
 def Main(**kwargs):
     """
     Main function for work with Tinkoff Open API service. It realize simple logic: get a lot of options and execute one command.
+
+    See examples: https://tim55667757.github.io/TKSBrokerAPI/
     """
     args = Args(**kwargs) if kwargs else ParseArgs()  # get and parse command-line parameters or use **kwarg parameters
 
@@ -2755,7 +2797,7 @@ def Main(**kwargs):
     ))
 
     instruments = kwargs["instruments"] if kwargs else None  # try to decrease requests to server count if class init many times
-    server = TinkoffBrokerServer(args.token, instrumentsList=instruments)  # Init class for trading with Tinkoff Broker
+    server = TinkoffBrokerServer(args.token, iList=instruments)  # Init class for trading with Tinkoff Broker
 
     try:
         # --- set some options:
