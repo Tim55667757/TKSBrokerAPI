@@ -10,7 +10,7 @@ Python API для работы с [Tinkoff Open API](https://tinkoff.github.io/i
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=%D0%94%D0%BE%D0%BD%D0%B0%D1%82%20(%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA)%20%D0%B4%D0%BB%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B2%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20TKSBrokerAPI&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 * 📚 [Documentation and examples in english here (документация и примеры на английском)](https://tim55667757.github.io/TKSBrokerAPI)
-  * ⚙ [API documentation here (автоматическая API-документация на английском для модуля TKSBrokerAPI)](https://tim55667757.github.io/TKSBrokerAPI/docs)
+  * ⚙ [API documentation here (автоматическая API-документация на английском для модуля TKSBrokerAPI)](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
   * 🇺🇸 [Релиз-ноты на английском](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
   * 🇷🇺 [Релиз-ноты на русском](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_RU.md)
     * 💡 [Все запланированные релизы и вошедшие в них фичи](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
