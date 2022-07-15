@@ -69,9 +69,7 @@ NANO = 0.000000001  # SI-constant nano = 10^-9
 
 def NanoToFloat(units: str, nano: int) -> float:
     """
-    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view.
-
-    Examples:
+    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view. Examples:
 
     `NanoToFloat(units="2", nano=500000000) -> 2.5`
 
@@ -86,9 +84,7 @@ def NanoToFloat(units: str, nano: int) -> float:
 
 def FloatToNano(number: float) -> dict:
     """
-    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters: `{"units": "string", "nano": integer}`.
-
-    Examples:
+    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
 
     `FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}`
 
