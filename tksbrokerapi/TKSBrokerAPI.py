@@ -972,7 +972,7 @@ class TinkoffBrokerServer:
 
         if showPrices:
             info = [
-                "# Actual prices at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr.\n",
                 "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|------\n",
             ]
