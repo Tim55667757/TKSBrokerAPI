@@ -55,6 +55,7 @@
 * Fixed a bug in the `Deals()` method: in the case when the end date is not specified, the current date is now taken.
 * Fixed a bug with displaying the history of operations if there were dividend payments for the specified period.
 * Fixed a bug when the server returned an empty fee.
+* [#26](https://github.com/Tim55667757/TKSBrokerAPI/issues/26) Fixed a bug with incorrect result for `FloatToNano(number=0.05)`.
 
 
 ## 1.0.* (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol

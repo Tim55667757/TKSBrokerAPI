@@ -3,9 +3,9 @@
 
 """
 **TKSBrokerAPI** is a Python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also you can set some orders and commands.
+It can view history, orders and market information. Also, you can set some orders and commands.
 
-If you run this module as CLI program then it realize simple logic: receiving a lot of options and execute one command.
+If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
 **See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
 
 **Used constants are in the TKSEnums module**: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
@@ -86,16 +86,26 @@ def FloatToNano(number: float) -> dict:
     """
     Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
 
-    `FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}`
+    `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
 
-    `FloatToNano(number=0.05) -> {"units":"0", "nano": 50000000}`
+    `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
     :param number: float number
     :return: nano-type view of number: `{"units": "string", "nano": integer}`
     """
     splitByPoint = str(number).split(".")
-    frac = int("{:<09n}".format(int(splitByPoint[1]) if len(splitByPoint) > 1 else 0)[:9])
-    frac = -frac if number < 0 else frac
+    frac = 0
+
+    if len(splitByPoint) > 1:
+        if len(splitByPoint[1]) <= 9:
+            frac = int("{}{}".format(
+                int(splitByPoint[1]),
+                "0" * (9 - len(splitByPoint[1])),
+            ))
+
+    if (number < 0) and (frac > 0):
+        frac = -frac
+
     return {"units": str(int(number)), "nano": frac}
 
 
@@ -972,7 +982,7 @@ class TinkoffBrokerServer:
 
         if showPrices:
             info = [
-                "# Actual prices at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr.\n",
                 "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|------\n",
             ]
