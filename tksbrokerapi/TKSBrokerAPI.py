@@ -86,9 +86,9 @@ def FloatToNano(number: float) -> dict:
     """
     Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
 
-    `FloatToNano(number=2.5) -> {"units":"2", "nano": 500000000}`
+    `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
 
-    `FloatToNano(number=0.05) -> {"units":"0", "nano": 50000000}`
+    `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
     :param number: float number
     :return: nano-type view of number: `{"units": "string", "nano": integer}`
