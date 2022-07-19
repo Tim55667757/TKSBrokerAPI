@@ -94,8 +94,18 @@ def FloatToNano(number: float) -> dict:
     :return: nano-type view of number: `{"units": "string", "nano": integer}`
     """
     splitByPoint = str(number).split(".")
-    frac = int("{:<09n}".format(int(splitByPoint[1]) if len(splitByPoint) > 1 else 0)[:9])
-    frac = -frac if number < 0 else frac
+    frac = 0
+
+    if len(splitByPoint) > 1:
+        if len(splitByPoint[1]) <= 9:
+            frac = int("{}{}".format(
+                int(splitByPoint[1]),
+                "0" * (9 - len(splitByPoint[1])),
+            ))
+
+    if (number < 0) and (frac > 0):
+        frac = -frac
+
     return {"units": str(int(number)), "nano": frac}
 
 
