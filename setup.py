@@ -27,7 +27,7 @@ else:
     print("This is local build")
     __version__ += ".dev0"  # set version as major.minor.localbuild if local build: python setup.py install
 
-print("PriceGenerator build version = {}".format(__version__))
+print("TKSBrokerAPI build version = {}".format(__version__))
 
 setup(
     name="tksbrokerapi",
@@ -73,13 +73,13 @@ setup(
         "requests>=2.25.1"  # Apache-2.0 license
         "pandas>=1.2.2"
         "python-dateutil>=2.8.1"  # Apache-2.0 license
-        "PriceGenerator>=1.2.58"  # Apache-2.0 license
+        "PriceGenerator>=1.2.74"  # Apache-2.0 license
     ],
     install_requires=[
         "requests>=2.25.1"  # Apache-2.0 license
         "pandas>=1.2.2"
         "python-dateutil>=2.8.1"  # Apache-2.0 license
-        "PriceGenerator>=1.2.58"  # Apache-2.0 license
+        "PriceGenerator>=1.2.74"  # Apache-2.0 license
     ],
     packages=[
         "tksbrokerapi",
