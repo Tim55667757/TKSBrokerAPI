@@ -9,6 +9,59 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
+### [1.4.* (2022-09-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+
+##### New features
+
+* [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
+* [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
+* [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
+
+##### Improvements
+
+* [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method that implements launching with the `--info` (or `-i`) key. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
+
+##### Bug fixes
+
+* ...
+
+
+### [1.3.* (2022-08-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
+
+##### New features
+
+* [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
+* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
+
+##### Improvements
+
+* [In progress] [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method.
+
+##### Bug fixes
+
+* [In progress] [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Error handling added `raise JSONDecodeError("Expecting value", s, err.value) from None`.
+* [In progress] [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Fixed display of fractional numbers with the first zero after the decimal point, e.g. `1.` was displayed instead of `1.0`.
+* ...
+
+
+### [1.2.* (2022-08-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/2) — preparing for release...
+
+##### New features
+
+* [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
+* [In progress] [#4](https://github.com/Tim55667757/TKSBrokerAPI/issues/4) Added the ability to search for an instrument by part of the name, ticker or FIGI. Added `--search` key.
+* [In progress] [#13](https://github.com/Tim55667757/TKSBrokerAPI/issues/13) Added a local data cache with information on exchange instruments to avoid their permanent download from the server.
+
+##### Improvements
+
+* [In progress] [#8](https://github.com/Tim55667757/TKSBrokerAPI/issues/8) Added the `--no-cancelled` key to not display information about canceled operations when using the `--deals` (or `-d`) key.
+* [In progress] [#12](https://github.com/Tim55667757/TKSBrokerAPI/issues/12) In the general information about the state of the portfolio (key `--overview` or `-o`), the section "Portfolio distribution by countries" has been added.
+
+##### Bug fixes
+
+* ...
+
+
 ### [1.1.* (2022-07-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/1) — preparing for release...
 
 ##### New features
