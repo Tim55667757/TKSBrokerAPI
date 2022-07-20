@@ -138,27 +138,27 @@ def GetDatesAsString(start: str = None, end: str = None) -> tuple:
 
     # from start of the last day to the end of the last day:
     elif start.lower() == "yesterday":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1))
-        e = (now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        e = now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1)
 
     # week (-7 day from 00:00:00 to current date and time):
     elif start.lower() == "week":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7)
         e = now
 
     # month (-30 day from 00:00:00 to current date and time):
     elif start.lower() == "month":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30)
         e = now
 
     # year (-365 day from 00:00:00 to current date and time):
     elif start.lower() == "year":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365)
         e = now
 
     # showing statistics from -N days ago to current date and time:
     elif start.startswith('-') and start[1:].isdigit():
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start))))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start)))
         e = now
 
     # showing statistics between start day at 00:00:00 and the end day at 23:59:59:
