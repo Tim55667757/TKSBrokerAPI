@@ -31,15 +31,25 @@ print("TKSBrokerAPI build version = {}".format(__version__))
 
 setup(
     name="tksbrokerapi",
+
     version=__version__,
+
     description="Simple python API to work with Tinkoff Open API and access to the TKS Broker server using REST protocol.",
+
     long_description="GitHub Pages: https://tim55667757.github.io/TKSBrokerAPI",
+
     license="Apache-2.0",
+
     author="Timur Gilmullin",
+
     author_email="tim55667757@gmail.com",
+
     url="https://github.com/Tim55667757/TKSBrokerAPI/",
+
     download_url="https://github.com/Tim55667757/TKSBrokerAPI.git",
+
     entry_points={"console_scripts": ["tksbrokerapi = tksbrokerapi.TKSBrokerAPI:Main"]},
+
     classifiers=[
         "Development Status :: {}".format(devStatus),
         "Environment :: Console",
@@ -49,6 +59,7 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
     ],  # classifiers are from here: https://pypi.org/classifiers/
+
     keywords=[
         "history",
         "csv",
@@ -68,6 +79,7 @@ setup(
         "tinkoff-api",
         "openapi",
     ],
+
     tests_require=[
         "pytest>=7.1.2"
         "requests>=2.25.1"  # Apache-2.0 license
@@ -75,19 +87,24 @@ setup(
         "python-dateutil>=2.8.1"  # Apache-2.0 license
         "PriceGenerator>=1.2.74"  # Apache-2.0 license
     ],
+
     install_requires=[
         "requests>=2.25.1"  # Apache-2.0 license
         "pandas>=1.2.2"
         "python-dateutil>=2.8.1"  # Apache-2.0 license
         "PriceGenerator>=1.2.74"  # Apache-2.0 license
     ],
+
     packages=[
         "tksbrokerapi",
     ],
+
     package_data={
         "tksbrokerapi": [
         ],
     },
+
     include_package_data=True,
+
     zip_safe=True,
 )
