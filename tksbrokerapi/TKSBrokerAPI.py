@@ -281,7 +281,7 @@ class TinkoffBrokerServer:
         """
         Parse JSON from response string.
 
-        :param rawData is a string with JSON-formatted text.
+        :param rawData: this is a string with JSON-formatted text.
         :param debug: if `True` then print more debug information.
         :return: JSON (dictionary), parsed from server response string.
         """
