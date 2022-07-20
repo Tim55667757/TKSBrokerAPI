@@ -3,6 +3,8 @@
 
 
 import pytest
+from datetime import datetime, timedelta
+from dateutil.tz import tzutc
 from tksbrokerapi import TKSBrokerAPI
 
 
@@ -14,12 +16,12 @@ class TestTKSBrokerAPIMethods:
         TKSBrokerAPI.uLogger.handlers[0].level = 50  # Disable debug logging for STDOUT
         TKSBrokerAPI.uLogger.handlers[1].level = 50  # Disable debug logging for log.txt
         # set up default parameters:
-        self.server = r"https://invest-public-api.tinkoff.ru/rest"
-        self.token = "demo"
-        self.timeout = 3
-        self.tickers = ["IBM", "YNDX", "USD", "RU000A101YV8", "TGLD"]
-        self.figis = ["BBG000BLNNH6", "BBG006L8G4H1", "BBG0013HGFT4", "TCS00A101YV8", "BBG222222222"]
-        self.depth = 3
+        # self.server = r"https://invest-public-api.tinkoff.ru/rest"
+        # self.token = "demo"
+        # self.timeout = 3
+        # self.tickers = ["IBM", "YNDX", "USD", "RU000A101YV8", "TGLD"]
+        # self.figis = ["BBG000BLNNH6", "BBG006L8G4H1", "BBG0013HGFT4", "TCS00A101YV8", "BBG222222222"]
+        # self.depth = 3
 
     def test_NanoToFloatCheckType(self):
         assert isinstance(TKSBrokerAPI.NanoToFloat("123", 456789000), float), "Not float type returned!"
@@ -64,3 +66,74 @@ class TestTKSBrokerAPIMethods:
         for test in testData:
             result = TKSBrokerAPI.FloatToNano(number=test[0])
             assert result == test[1], 'Expected `FloatToNano(number="{}") == {}`, but `result == {}`'.format(test[0], test[1], result)
+
+    def test_GetDatesAsStringCheckType(self):
+        result = TKSBrokerAPI.GetDatesAsString(None, None)
+        assert isinstance(result, tuple), "Not tuple type returned!"
+        assert isinstance(result[0], str), "Not str type in first parameter returned!"
+        assert isinstance(result[1], str), "Not str type in second parameter returned!"
+
+    def test_GetDatesAsStringPositive(self):
+        now = datetime.now(tzutc())
+        delta = timedelta(seconds=1)  # diff between expected and actual results must be less than this value
+        testData = [
+            (None, None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                now,
+            )),
+            ("today", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                now,
+            )),
+            ("yesterday", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1),
+                now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1),
+            )),
+            ("week", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7),
+                now,
+            )),
+            ("month", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30),
+                now,
+            )),
+            ("year", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365),
+                now,
+            )),
+            ("-1", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1),
+                now,
+            )),
+            ("-2", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=2),
+                now,
+            )),
+            ("-365", None, (
+                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365),
+                now,
+            )),
+            ("2020-02-20", None, (
+                datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                now,
+            )),
+            ("2020-02-20", "2022-02-22", (
+                datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                datetime.strptime("2022-02-22", "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()),
+            )),
+        ]
+        for test in testData:
+            result = TKSBrokerAPI.GetDatesAsString(start=test[0], end=test[1])
+            dateFormat = "%Y-%m-%dT%H:%M:%SZ"
+            resultDates = (
+                datetime.strptime(result[0], dateFormat).replace(tzinfo=tzutc()),
+                datetime.strptime(result[1], dateFormat).replace(tzinfo=tzutc()),
+            )
+            delta0 = resultDates[0] - test[2][0] if resultDates[0] >= test[2][0] else test[2][0] - resultDates[0]
+            delta1 = resultDates[1] - test[2][1] if resultDates[1] >= test[2][1] else test[2][1] - resultDates[1]
+            assert delta0 <= delta, 'Expected output ("{}", "{}") and delta must be <= 1 sec!\nActual: `GetDatesAsString(start="{}", end="{}") -> ("{}", "{}")`'.format(
+                test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
+            )
+            assert delta1 <= delta, 'Expected output ("{}", "{}") and delta must be <= 1 sec!\nActual: `GetDatesAsString(start="{}", end="{}") -> ("{}", "{}")`'.format(
+                test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
+            )
