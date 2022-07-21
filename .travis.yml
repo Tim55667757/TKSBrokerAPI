@@ -1,0 +1,27 @@
+language: python
+python: "3.7"
+branches:
+  only:
+#  - master
+#  - /^release-.*$/
+  - develop
+
+install:
+  - python -m pip install --upgrade pip --force-reinstall
+  - pip install -r requirements.txt
+
+script:
+  - py.test tests -v --disable-pytest-warnings
+
+deploy:
+  provider: pypi
+  username: __token__
+  password:
+    secure: IFyXI/35vm0jga75WCNsr1uwJwNTYtyrBj+7fq8i8i1CszEfBSchGHqK35wqSzs0MSonDk7L5gqwtzWraxlxa7gkXKJ11HBeOqydoWxm0gAxzt6asWKfyKnFFi4K7g8AvcgwW9hx+BV1hSnJYV7vi1FmtcqRbHPv5tcTJeGC+EqYd2GBKwzi9SsCMmVJ2pfKSDDe40cOrSXq9MZ/CGriAHrBDVmX4T3chCWVcaYDq/zhYVxEIOuSDpYxlLbzLXzWx9kLLFE1SwxQuP1u/NgdsYclI1wqUUFMpX2WVzezv7svRb2JoARRzQyz6DcBUw2uCWt6T+iNQO4Bptp6h8LEuejCOH6IZLwCJjE02j7vX026/hCzNSCoGLivjFgmQ1ldUqmxiv3IR/LCwxHd0X9jcmb2UrY3KNjytYloYUkyjxDAjb3g2bemUq5OHkYJ14KCZyhd7XvalqRv8LVx0uql2oacJUEqGYXYQRMuXsv+TFY7O++JIiGIYR5O/vSEzg0K0MYRe4jMBOzF4MAuEUMPwEXggJUni0dZ7RvB1JH99IhT+TGtRScdVKI1DBkGpeX1FseivvoSus2IUQU6DlKfjsuQotTrQEtkgJpsxUzv+Zw/1H2Nofp7blY/PVZIJ/w4cgSnEz9rnChxaLSGb9pj/zM5uMqZ1QsU7zEIJhycnsM=
+  distributions: sdist bdist_wheel
+  on:
+    all_branches: true
+  skip_cleanup: true
+
+after_script:
+  - echo "Publish TKSBrokerAPI packet to PyPI - done"
