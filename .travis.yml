@@ -1,5 +1,5 @@
 language: python
-python: "3.8"
+python: "3.7"
 branches:
   only:
 #  - master
@@ -8,11 +8,11 @@ branches:
 
 install:
   - python -m pip install --upgrade pip --force-reinstall
-  - pip install setuptools==59.5.0
+#  - pip install setuptools==59.5.0
   - pip install -r requirements.txt
 
 script:
-  - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
+#  - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
   - py.test tests -v --disable-pytest-warnings
 
 deploy:
