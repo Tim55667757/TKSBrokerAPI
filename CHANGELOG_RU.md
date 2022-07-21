@@ -2,7 +2,7 @@
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=%D0%94%D0%BE%D0%BD%D0%B0%D1%82%20(%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA)%20%D0%B4%D0%BB%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B2%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20TKSBrokerAPI&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
-* 🇺🇸 [See release notes in english here (актуальные релиз-ноты на английском)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
+* 🇺🇸 [Актуальные релиз-ноты на английском (see release notes in english here)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
   * 💡 [Все запланированные релизы и вошедшие в них фичи](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
   * 📂 [Все открытые задачи в беклоге](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc)
 * 📚 [Документация на модуль TKSBrokerAPI и примеры работы в консоли](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_RU.md)
@@ -100,6 +100,7 @@
 * [В работе] [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) `--open-trade` and `--open-order` keys were replaced with `--trade` and `--order` keys, because it's too long.
 * Статический метод `GetDatesAsString()` вынесен за пределы класса `TinkoffBrokerServer()`.
 * Переменная `instrumentsList` для простоты переименована в `iList`.
+* Метод `MDInfo()` переименован в `ShowInstrumentInfo()` (по аналогии с уже имеющимся `ShowInstrumentsInfo()`).
 
 ##### Баг-фиксы
 
