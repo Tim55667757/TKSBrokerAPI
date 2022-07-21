@@ -9,13 +9,13 @@ branches:
 install:
   - python -m pip install --upgrade pip --force-reinstall
   - pip install setuptools==59.5.0
+  - pip install six --upgrade
   - pip install -r requirements.txt
 
 script:
   - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
   - env
-  - cd tests
-  - py.test . -v --disable-pytest-warnings
+  - py.test tests -v --disable-pytest-warnings
 
 deploy:
   provider: pypi
