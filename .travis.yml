@@ -12,7 +12,7 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - export PYTHONPATH=./tksbrokerapi
+  - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
   - env
   - py.test tests -v --disable-pytest-warnings
 
