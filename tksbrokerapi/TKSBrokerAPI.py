@@ -387,7 +387,7 @@ class TinkoffBrokerServer:
         if iType in TKS_INSTRUMENTS:
             uLogger.debug("Requesting available [{}] list. Wait, please...".format(iType))
 
-            # all instruments has the same body in API v2 requests:
+            # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
             instrumentURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/{}".format(iType)
             result = self.SendAPIRequest(instrumentURL, reqType="POST", debug=False)["instruments"]
@@ -439,9 +439,9 @@ class TinkoffBrokerServer:
         return iList
 
     @staticmethod
-    def MDInfo(iJSON: dict, printInfo: bool = False) -> str:
+    def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
-        Show information about instrument defined by json in Markdown format.
+        Show information about instrument defined by json and print in Markdown format.
 
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
         :param printInfo: if `True` then also printing information about instrument and its current price.
@@ -616,7 +616,7 @@ class TinkoffBrokerServer:
         `ticker` must be define! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (because this is long operation).
-        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -669,7 +669,7 @@ class TinkoffBrokerServer:
                     tickerJSON["currentPrice"]["changes"] = 0
 
             if showInfo:
-                self.MDInfo(iJSON=tickerJSON, printInfo=True)  # print info as markdown text
+                self.ShowInstrumentInfo(iJSON=tickerJSON, printInfo=True)  # print info as Markdown text
 
         else:
             if showInfo:
@@ -683,7 +683,7 @@ class TinkoffBrokerServer:
         `figi` must be define! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (it's long operation).
-        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -761,7 +761,7 @@ class TinkoffBrokerServer:
                     figiJSON["currentPrice"]["changes"] = 0
 
             if showInfo:
-                self.MDInfo(iJSON=figiJSON, printInfo=True)  # print info as markdown text
+                self.ShowInstrumentInfo(iJSON=figiJSON, printInfo=True)  # print info as Markdown text
 
         else:
             if showInfo:
