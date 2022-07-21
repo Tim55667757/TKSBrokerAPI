@@ -97,7 +97,7 @@
 * Из метода `Overview()` вынесены в отдельные методы `RequestPortfolio()`, `RequestPositions()`, `RequestPendingOrders` и `RequestStopOrders()` — операции по запросу портфеля, открытых позиций и ордеров пользователя. 
 * При помощи метода `CloseOrders()` теперь можно закрывать и биржевые отложенные (pending) ордера, и стоп-ордера. Достаточно указать ID или список ID.
 * Добавлено отображение разницы в % между предыдущей и текущей ценой закрытия инструмента во все таблицы, где это востребовано.
-* [В работе] [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) `--open-trade` and `--open-order` keys were replaced with `--trade` and `--order` keys, because it's too long.
+* [#22](https://github.com/Tim55667757/TKSBrokerAPI/issues/22) Ключи `--open-trade` и `--open-order` заменены ключами `--trade` и `--order`, потому что у них были слишком длинные имена. Методы `OpenOrder()` и `OpenTrade()` заменены методами `Order()` и `Trade()`.
 * Статический метод `GetDatesAsString()` вынесен за пределы класса `TinkoffBrokerServer()`.
 * Переменная `instrumentsList` для простоты переименована в `iList`.
 * Метод `MDInfo()` переименован в `ShowInstrumentInfo()` (по аналогии с уже имеющимся `ShowInstrumentsInfo()`).
