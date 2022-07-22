@@ -1,5 +1,6 @@
 language: python
 python: "3.7"
+
 branches:
   only:
 #    - master
@@ -10,24 +11,26 @@ install:
   - python -m pip install --upgrade pip --force-reinstall
   - pip install setuptools==59.5.0
   - pip install -r requirements.txt
+  after_failure:
+    - echo "PRE-BUILDING stage - failed"
+  after_success:
+    - echo "PRE-BUILDING stage - done"
 
 script:
   - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
 #  - py.test tests -v --disable-pytest-warnings
+  after_failure:
+    - echo "UNITTEST stage - failed"
+  after_success:
+    - echo "UNITTEST stage - done"
 
 deploy:
   provider: pypi
-  edge: true
-  username: __token__
-  password:
-    secure: "3L9Oa3s328TIv2O1e4ircxWdwN7cfLqql5RS4QjWV+BBnCL6Zbq6TorgbF5JdfRKE38NfQcyOA2VegnKW8Fx73FkDaZClVpFcyFKpFSaVbFAut6/dxm95OdRKfmeap+9Sf/LkE73gF6jGqt3lzQrgG2xrGBmsB/Jk3+78naqhc7F2f7sdMNLGf2vabYKb8qwkzmtH0oCmAInYjqLPRPAIQmW07Z+MJARnB4y0O6Ra2Yv91TGAhFlkcJnS4+5dtEq0Bv0jjPcCDozZFn6gekdA7vb6E0K/NG3W6by5oC7VC9/DcKuWStbwOlIPPLpfUkFQUbNDufDm1ae9u5FAG7F6XTWWeIFVILzcT4JUOK/pPgfahHYbfJNArgB04fOemREcVD/ccEVi4Nu9Q6y2p4GuyAiBowMseCG9ZP1sESldLCQiaEs5hbuW3Hu6OPGNpBsC+bJtRkq0Aq9MTOF0C/0C70+jCJNxXXPijk7kIhMXOTs8VDsfsx6+Sgg5N45yLr6Ta8iK7JcVWbZOhkHIss6CXHGOySun4+nLgQsbISxhFJgTZCLvOBNZSQXPp+gd5a6KsWXOLOQo+xjcN5CmjVzaLzPEL+IZr+G7JKGGc76elczMwHQcyw2ZVkw4rd+wmtD26m1XR9aH1MM0SWjck/xneCyuReQKWrQrrGvEh8WYYw="
-  distributions: sdist bdist_wheel
+  distributions: "sdist bdist_wheel"
   on:
     all_branches: true
   skip_cleanup: true
-
-after_failure:
-  - echo "Some issues occurred"
-
-after_success:
-  - echo "Publish TKSBrokerAPI packet to PyPI - done"
+  after_failure:
+    - echo "BUILD and PUBLISH to PyPI stages - failed"
+  after_success:
+    - echo "BUILD and PUBLISH to PyPI stage - done"
