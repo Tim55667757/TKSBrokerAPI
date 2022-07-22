@@ -2,9 +2,9 @@ language: python
 python: "3.7"
 branches:
   only:
-#  - master
-#  - /^release-.*$/
-  - develop
+#    - master
+#    - /^release-.*$/
+    - develop
 
 install:
   - python -m pip install --upgrade pip --force-reinstall
@@ -19,7 +19,7 @@ deploy:
   provider: pypi
   username: __token__
   password:
-    secure: "dLeACO8w1kU/U87ntKkjNf6Dt0n7kHetjRXci3/dc5Htim+AuOeGVLFO7qOGAbJaFhVWR//lGxyrHrB7R9O6M9+87XVARXJUSqOI1Edj+JLdF2vuGcq4T9BFQchIflD2yfKRPiV8O9pvbtzNMWMt5eStg0UcKMARXsAh5beB+Rln5aN86Fhz2+C/fEc7wARrM2QKqTkd5z78B4pdxmd0fBQQflJLg+ydgtjDmoEoeEEtmIqu4l8qvk13YsUx/cutFmG0wltBEGQvvglZQ78ZaYS7SZ50QuYNN49BAFNMa6IrrvSOHy3JvfL3XqEdwlRqirS8AwcDPIa86TltN+XnJLJjl3AIkqiXV5NKTrGhtzUR6I86mbiEcgtCowtB6UH/DInX6EO1fs6jMjeT1zD4VjLa3NzHxqpIrxrXUzmU/ljPkdxlCH3jlNM5zrVxNJv+ySTX4A2w4qZzvneXqJshqgnwQYXWzP92mqhVD/ob4229hakztc+8bTq2Hu9tv7pezV1lCXpa7Wi5maAmbtxMktLS/KpVIEz5mNYVFxki47o/nDkeJObj6qFimf0GeIFeCSVR7rfmsj5pt9tDIfSE/nf1Wd8MXBpa3FhKvQsq/WjC+vofbP9hXIzk0VHjqciSpffbH1stZoVQn4VNmLxBcf7EUMf9wRu6wphq+coXcPM="
+    secure: TzyUtH0YMP6PgtMmFytyi7WhgOcKlC3Yr1iD/oNY12uym7kKnOsN9hIiQGYi111YdnOY4lcGu73nlT8JchC5NPQ+ysTCJR5Yux1eK4PfS0Mb06Y5bw2UPeusbjgYyTaftqTDFHrLAGZpYYs0G4w35WHBUFd/L5wr+v4IA0ZvHtr7x7GHAsTyj4lPAkTp5rpu5faqux5LzxA5zQol25HaYoxbIyKpjLziwyzxdfiY81u+ArbHjrgyNrDq7nrXODihBcC6t+CPucUsjPQgqcKoiu2Y48901rEOYVsNk/hcWDiAIarpPTbxjFPmf0Y8YowMGUW5kObWT0b+aDmJYsR5ElGdrdliNFuqaZQXLME1BZpEs0zyXMiMC3FI1/4WIQ+hx2R2Kcr5nh047u/1JhmqSYhHu/cZG9tmp4HxwXiM6mWDlldgYU9rXvECuZU/5bLAloLjO5aJxfnCPBWtvA/JUhzH2tUDUto5+tHHF37HI0VYIlpRt+Ttu1i3tUDqfkTgc8e/VshHPGvgucPzAs5JDo5Dc1/yqPsWEbmbsbuNrRHKhnhxvZK8FZ4skvuB5CkiVdVMH0nO4cae8CP76PzBMWImeh2b80OGeewiMa+OIgQxX/6BnG6UpsRybUOtzea35LN3fZsyHcmKuJemnbGI4cxIwj4H5Aj0OLN0phSUk4w=
   distributions: sdist bdist_wheel
   on:
     all_branches: true
