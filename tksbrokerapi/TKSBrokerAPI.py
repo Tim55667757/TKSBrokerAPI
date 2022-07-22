@@ -777,7 +777,7 @@ class TinkoffBrokerServer:
         :param showPrice: if `True` then print DOM.
         :return: dict with Depth of Market (DOM): `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}` with list of current prices.
         """
-        prices = {"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}
+        prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
         if self.depth < 1:
             raise Exception("Depth of Market (DOM) must be >=1!")
@@ -801,23 +801,28 @@ class TinkoffBrokerServer:
             self.body = str({"figi": self.figi, "depth": self.depth})
             pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")
 
-            # list of dicts with sellers orders:
-            prices["buy"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
+            if pricesResponse:
+                # list of dicts with sellers orders:
+                prices["buy"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
 
-            # list of dicts with buyers orders:
-            prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
+                # list of dicts with buyers orders:
+                prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
 
-            # max price of instrument at this time:
-            prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
+                # max price of instrument at this time:
+                prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
 
-            # min price of instrument at this time:
-            prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
+                # min price of instrument at this time:
+                prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
 
-            # last price of deal with instrument:
-            prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
+                # last price of deal with instrument:
+                prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
 
-            # last close price of instrument:
-            prices["closePrice"] = NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]) if "closePrice" in pricesResponse.keys() else 0
+                # last close price of instrument:
+                prices["closePrice"] = NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]) if "closePrice" in pricesResponse.keys() else 0
+
+            else:
+                uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
+                uLogger.debug("Server response: {}".format(pricesResponse))
 
             if showPrice:
                 if prices["buy"] or prices["sell"]:
