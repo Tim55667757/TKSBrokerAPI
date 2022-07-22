@@ -8,37 +8,20 @@ branches:
     - develop
 
 stages:
-  - pre-building
-  - testing
-  - deploy
+  - env-test-build-publish
 
 jobs:
   include:
-    - stage: pre-building
-      name: "PRE-BUILDING stage"
+    - stage: env-test-build-publish
+      name: "PRE-BUILDING - TESTING - BUILDING - PUBLISHING to PyPI"
       install:
         - python -m pip install --upgrade pip --force-reinstall
         - pip install setuptools==59.5.0
-      script:
         - pip install -r requirements.txt
-      after_failure:
-        - echo "PRE-BUILDING stage - failed"
-      after_success:
-        - echo "PRE-BUILDING stage - done"
-
-    - stage: testing
-      name: "TESTING stage"
       script:
         - export PYTHONPATH="$PWD;$PWD/tksbrokerapi;$PWD/tests"
 #        - py.test tests -v --disable-pytest-warnings
         - echo "fake test - done"
-      after_failure:
-        - echo "TESTING stage - failed"
-      after_success:
-        - echo "TESTING stage - done"
-
-    - stage: building-and-publishing
-      name: "BUILDING and PUBLISHING to PyPI stage"
       deploy:
         provider: pypi
         distributions: "sdist bdist_wheel"
@@ -46,6 +29,6 @@ jobs:
           all_branches: true
         skip_cleanup: true
       after_failure:
-        - echo "BUILDING and PUBLISHING to PyPI stages - failed"
+        - echo "Some issues occurred"
       after_success:
-        - echo "BUILDING and PUBLISHING to PyPI stages - done"
+        - echo "All stages - done"
