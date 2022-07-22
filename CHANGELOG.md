@@ -110,6 +110,8 @@
 * Fixed a bug with displaying the history of operations if there were dividend payments for the specified period.
 * Fixed a bug when the server returned an empty fee.
 * [#26](https://github.com/Tim55667757/TKSBrokerAPI/issues/26) Fixed a bug with incorrect result for `FloatToNano(number=0.05)`.
+* [#34](https://github.com/Tim55667757/TKSBrokerAPI/issues/34) Fixed a bug with `KeyError: 'asks'` when no response from server with current prices.
+* [In progress] [#32](https://github.com/Tim55667757/TKSBrokerAPI/issues/32) Fixed a bug with some problems when trying to execute `--close-all orders`.
 
 
 ## 1.0.* (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
