@@ -2595,10 +2595,7 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC). Time of cancel in local time zone: [{}]".format(
-                                responseJSON["time"],
-                                datetime.strptime(responseJSON["time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()).astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-                            ))
+                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
                             uLogger.info("Pending order with ID [{}] successfully cancel".format(orderID))
 
                         else:
@@ -2613,10 +2610,7 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC). Time of cancel in local time zone: [{}]".format(
-                                responseJSON["time"],
-                                datetime.strptime(responseJSON["time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()).astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-                            ))
+                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
                             uLogger.info("Stop order with ID [{}] successfully cancel".format(orderID))
 
                         else:
