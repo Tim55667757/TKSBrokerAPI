@@ -15,20 +15,21 @@ jobs:
     - stage: env-test-build-publish
       name: "PRE-BUILDING - TESTING - BUILDING - PUBLISHING to PyPI"
       install:
+        - echo "PRE-BUILDING stage..."
         - python -m pip install --upgrade pip --force-reinstall
         - pip install setuptools==59.5.0
         - pip install -r requirements.txt
       before_script:
         - export PYTHONPATH=$PYTHONPATH:$PWD:$PWD/tksbrokerapi:$PWD/tests
+        - env
       script:
+        - echo "TESTING stage..."
         - pytest tests -v --disable-pytest-warnings
-      deploy:
-        provider: pypi
-        distributions: "sdist bdist_wheel"
-        on:
-          all_branches: true
-        skip_cleanup: true
+        - echo "BUILDING stage..."
+        - python setup.py sdist bdist_wheel
+        - echo "PUBLISHING to PyPI stage..."
+        - python -m twine upload --verbose dist/* --skip-existing
       after_failure:
-        - echo "Some issues occurred when building. See full logs."
+        - echo "Some issues occurred. See full logs."
       after_success:
-        - echo "All build steps - done"
+        - echo "All stages PRE-BUILDING - TESTING - BUILDING - PUBLISHING to PyPI — done"
