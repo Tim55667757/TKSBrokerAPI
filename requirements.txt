@@ -2,7 +2,6 @@
 # Changing the order has an impact on the overall integration  process, which may cause troubles later.
 
 # Build requirements:
-setuptools==59.5.0
 twine==4.0.1
 pytest>=7.1.2
 
