@@ -17,12 +17,9 @@ jobs:
       install:
         - echo "---> Running PRE-BUILDING stage..."
         - python -m pip install --upgrade pip --force-reinstall
-        - pip install setuptools==59.5.0
-        - pip install twine==4.0.1
         - pip install -r requirements.txt
       before_script:
         - export PYTHONPATH=$PYTHONPATH:$PWD:$PWD/tksbrokerapi:$PWD/tests
-        - env
       script:
         - echo "---> Running TESTING stage..."
         - pytest tests -v --disable-pytest-warnings
@@ -33,4 +30,4 @@ jobs:
       after_failure:
         - echo "Some issues occurred. See full logs."
       after_success:
-        - echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI — done"
+        - echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI - done"
