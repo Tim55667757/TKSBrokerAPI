@@ -2,9 +2,9 @@
 # Changing the order has an impact on the overall integration  process, which may cause troubles later.
 
 # Build requirements:
-pytest>=7.1.2
 setuptools==59.5.0
 twine==4.0.1
+pytest>=7.1.2
 
 # Packet TKSBrokerAPI requirements:
 requests>=2.25.1  # Apache-2.0 license
