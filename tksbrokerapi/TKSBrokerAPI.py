@@ -187,33 +187,34 @@ class TinkoffBrokerServer:
         """
         Main class init.
 
-        :param token: Bearer token for Tinkoff Invest API.
+        :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
         :param iList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
+                          Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
         """
         if token is None or not token:
             try:
                 self.token = r"{}".format(os.environ["TKS_API_TOKEN"])
-                uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable 'TKS_API_TOKEN'. See https://tinkoff.github.io/investAPI/token/")
+                uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
 
             except KeyError:
-                raise Exception("'--token' key or environment variable 'TKS_API_TOKEN' is required! See https://tinkoff.github.io/investAPI/token/")
+                raise Exception("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
 
         else:
             self.token = token  # highly priority than environment variable 'TKS_API_TOKEN'
-            uLogger.debug("Bearer token for Tinkoff OpenApi set up from class variable 'token'")
+            uLogger.debug("Bearer token for Tinkoff OpenApi set up from class variable `token`")
 
         if accountId is None or not accountId:
             try:
                 self.accountId = r"{}".format(os.environ["TKS_ACCOUNT_ID"])
-                uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from environment variable 'TKS_ACCOUNT_ID'")
+                uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`")
 
             except KeyError:
-                uLogger.warning("'--account-id' key or environment variable 'TKS_ACCOUNT_ID' undefined! Some of operations may be unavailable (overview, trading etc).")
+                uLogger.warning("`--account-id` key or environment variable `TKS_ACCOUNT_ID` undefined! Some of operations may be unavailable (overview, trading etc).")
 
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
-            uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable 'accountId'")
+            uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable `accountId`")
 
         self.aliases = TKS_TICKER_ALIASES
         """Some aliases instead official tickers. See `TKSEnums.TKS_TICKER_ALIASES`"""
@@ -2737,10 +2738,10 @@ def ParseArgs():
 
     # --- options:
 
-    parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable 'TKS_API_TOKEN'. See how to use: https://tinkoff.github.io/investAPI/token/")
-    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number).")
-    parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. YNDX, GOOGL etc. Use alias for USD000UTSTOM simple as USD, EUR_RUB__TOM as EUR.")
-    parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. BBG006L8G4H1 (for YNDX).")
+    parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
+    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+    parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. `IBM`, `YNDX`, `GOOGL` etc. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR`.")
+    parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for `YNDX`).")
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
@@ -2759,7 +2760,7 @@ def ParseArgs():
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs. WARNING! This is too long operation if you request a lot of instruments! Also, you can define --output key to save list of prices to file, default: prices.md.")
 
     parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define --output key to save this information to file, default: overview.md.")
-    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: today, yesterday (-1), 2days (-2), 3days (-3), week (-7), month (-30), year (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define --output key to save all deals to file, default: report.md.")
+    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30), `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
     # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market order for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
