@@ -2,8 +2,8 @@
 # Author: Timur Gilmullin
 
 """
-**TKSBrokerAPI** is a Python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also, you can set some orders and commands.
+**TKSBrokerAPI** is a python API to work with some methods of Tinkoff Open API using REST protocol.
+It can view history, orders and market information. Also, you can open orders and trades.
 
 If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
 **See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
@@ -928,7 +928,7 @@ class TinkoffBrokerServer:
             with open(self.instrumentsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("All available instruments are saved to file: {}".format(os.path.abspath(self.instrumentsFile)))
+            uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
         return infoText
 
@@ -2733,7 +2733,7 @@ def ParseArgs():
     """
     parser = ArgumentParser()  # command-line string parser
 
-    parser.description = "TinkoffServerAPI is a CLI-program that can work with Tinkoff Open API REST protocol v2. See more in official site: https://tinkoff.github.io/investAPI/. About REST API: https://tinkoff.github.io/investAPI/swagger-ui/."
+    parser.description = "TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API using REST protocol. It can view history, orders and market information. Also, you can open orders and trades. See examples: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples"
     parser.usage = "python TKSBrokerAPI.py [some options] [one command]"
 
     # --- options:
@@ -2763,7 +2763,7 @@ def ParseArgs():
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30), `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
     # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
 
-    parser.add_argument("--trade", nargs="*", help="Action: universal action to open market order for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
+    parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
     parser.add_argument("--sell", nargs="*", help="Action: immediately open SELL market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
 
