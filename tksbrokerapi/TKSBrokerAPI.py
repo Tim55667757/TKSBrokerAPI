@@ -1021,7 +1021,7 @@ class TinkoffBrokerServer:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Price list for all instruments saved to file: {}".format(os.path.abspath(self.pricesFile)))
+                uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
 
         return iList
 
