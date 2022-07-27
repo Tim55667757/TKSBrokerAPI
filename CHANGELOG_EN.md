@@ -79,8 +79,8 @@
 * Shown extended information on the instrument for the `--info` key, depending on the type of instrument (currency, stock, bond, fund or futures).
 * Added keys `--close-order`, `--close-orders`, `--close-trade` and `--close-trades`. With their help, you can cancel one or more orders by ID or close deals on instruments, knowing their tickers.
 * Implemented methods for closing orders and positions: `ClosePositions()`, `CloseAllPositions()`, `CloseOrders()`, `CloseAllOrders()` and `CloseAll()`.
-* Implemented methods for opening limit and stop orders: `OpenOrder()`, `BuyLimit()`, `BuyStop()`, `SellLimit()` and `SellStop()`.
-* Implemented methods for opening and closing positions for instruments: `OpenTrade()`, `CloseTrades()`, `CloseAllTrades()`, `Buy()`, `Sell()` and fixed the `CloseAll()` method.
+* Implemented methods for opening limit and stop orders: `Order()`, `BuyLimit()`, `BuyStop()`, `SellLimit()` and `SellStop()`.
+* Implemented methods for opening and closing positions for instruments: `Trade()`, `CloseTrades()`, `CloseAllTrades()`, `Buy()`, `Sell()` and fixed the `CloseAll()` method.
 
 ##### Improvements
 
