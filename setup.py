@@ -77,6 +77,7 @@ setup(
         "trade",
         "tinkoff",
         "tinkoff-api",
+        "python-api",
         "openapi",
     ],
 
