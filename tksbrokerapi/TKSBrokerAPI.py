@@ -69,7 +69,7 @@ NANO = 0.000000001  # SI-constant nano = 10^-9
 
 def NanoToFloat(units: str, nano: int) -> float:
     """
-    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view. Examples:
+    Convert number in nano-view mode with string parameter `units` and integer parameter `nano` to float view. Examples:
 
     `NanoToFloat(units="2", nano=500000000) -> 2.5`
 
@@ -84,7 +84,7 @@ def NanoToFloat(units: str, nano: int) -> float:
 
 def FloatToNano(number: float) -> dict:
     """
-    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
+    Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`. Examples:
 
     `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
 
@@ -1975,7 +1975,7 @@ class TinkoffBrokerServer:
                 with open(self.reportFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("History of a client's operations are saved to file: {}".format(os.path.abspath(self.reportFile)))
+                uLogger.info("History of a client's operations are saved to file: [{}]".format(os.path.abspath(self.reportFile)))
 
         return ops, customStat
 
@@ -2763,11 +2763,11 @@ def ParseArgs():
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30), `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
     # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
 
-    parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
+    parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
     parser.add_argument("--sell", nargs="*", help="Action: immediately open SELL market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
 
-    parser.add_argument("--order", nargs="*", help="Action: universal action to open limit or stop-order in any directions. You must specify 4-7 parameters: [direction `Buy` or `Sell] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]]. See examples in readme.")
+    parser.add_argument("--order", nargs="*", help="Action: universal action to open limit or stop-order in any directions. You must specify 4-7 parameters: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]]. See examples in readme.")
     parser.add_argument("--buy-limit", type=float, nargs=2, help="Action: open pending BUY limit-order (below current price). You must specify only 2 parameters: [lots] [target price] to open BUY limit-order. If you try to create `Buy` limit-order above current price then broker immediately open `Buy` market order, such as if you do simple `--buy` operation!")
     parser.add_argument("--sell-limit", type=float, nargs=2, help="Action: open pending SELL limit-order (above current price). You must specify only 2 parameters: [lots] [target price] to open SELL limit-order. If you try to create `Sell` limit-order below current price then broker immediately open `Sell` market order, such as if you do simple `--sell` operation!")
     parser.add_argument("--buy-stop", nargs="*", help="Action: open BUY stop-order. You must specify at least 2 parameters: [lots] [target price] to open BUY stop-order. In additional you can specify 3 parameters for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. When current price will go up or down to target price value then broker opens a limit order. Stop loss order always executed by market price.")
@@ -2900,7 +2900,7 @@ def Main(**kwargs):
                 )
 
             else:
-                uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.buy is not None:
             if 0 <= len(args.buy) <= 4:
@@ -2939,7 +2939,7 @@ def Main(**kwargs):
                 )
 
             else:
-                uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.buy_limit:
             server.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
