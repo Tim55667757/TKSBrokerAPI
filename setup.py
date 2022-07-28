@@ -7,7 +7,7 @@
 from setuptools import setup
 import os
 
-__version__ = "1.2"
+__version__ = "1.1"
 
 devStatus = "4 - Beta"
 
