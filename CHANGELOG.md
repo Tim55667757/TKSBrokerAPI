@@ -62,7 +62,7 @@
 * ...
 
 
-### [1.1.* (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases) — опубликована
+### [1.1.48 (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.1.48) — опубликована
 
 ##### Новая функциональность
 
