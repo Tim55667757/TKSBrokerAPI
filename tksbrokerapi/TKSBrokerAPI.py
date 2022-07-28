@@ -2,8 +2,8 @@
 # Author: Timur Gilmullin
 
 """
-**TKSBrokerAPI** is a Python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also, you can set some orders and commands.
+**TKSBrokerAPI** is a python API to work with some methods of Tinkoff Open API using REST protocol.
+It can view history, orders and market information. Also, you can open orders and trades.
 
 If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
 **See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
@@ -69,7 +69,7 @@ NANO = 0.000000001  # SI-constant nano = 10^-9
 
 def NanoToFloat(units: str, nano: int) -> float:
     """
-    Convert number in nano-view mode with string parameter "units" and integer parameter "nano" to float view. Examples:
+    Convert number in nano-view mode with string parameter `units` and integer parameter `nano` to float view. Examples:
 
     `NanoToFloat(units="2", nano=500000000) -> 2.5`
 
@@ -84,7 +84,7 @@ def NanoToFloat(units: str, nano: int) -> float:
 
 def FloatToNano(number: float) -> dict:
     """
-    Convert float number to nano-type view: dictionary with string "units" and integer "nano" parameters `{"units": "string", "nano": integer}`. Examples:
+    Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`. Examples:
 
     `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
 
@@ -138,27 +138,27 @@ def GetDatesAsString(start: str = None, end: str = None) -> tuple:
 
     # from start of the last day to the end of the last day:
     elif start.lower() == "yesterday":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1))
-        e = (now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        e = now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1)
 
     # week (-7 day from 00:00:00 to current date and time):
     elif start.lower() == "week":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7)
         e = now
 
     # month (-30 day from 00:00:00 to current date and time):
     elif start.lower() == "month":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30)
         e = now
 
     # year (-365 day from 00:00:00 to current date and time):
     elif start.lower() == "year":
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365)
         e = now
 
     # showing statistics from -N days ago to current date and time:
     elif start.startswith('-') and start[1:].isdigit():
-        s = (now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start))))
+        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start)))
         e = now
 
     # showing statistics between start day at 00:00:00 and the end day at 23:59:59:
@@ -187,33 +187,34 @@ class TinkoffBrokerServer:
         """
         Main class init.
 
-        :param token: Bearer token for Tinkoff Invest API.
+        :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
         :param iList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
+                          Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
         """
         if token is None or not token:
             try:
                 self.token = r"{}".format(os.environ["TKS_API_TOKEN"])
-                uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable 'TKS_API_TOKEN'. See https://tinkoff.github.io/investAPI/token/")
+                uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
 
             except KeyError:
-                raise Exception("'--token' key or environment variable 'TKS_API_TOKEN' is required! See https://tinkoff.github.io/investAPI/token/")
+                raise Exception("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
 
         else:
             self.token = token  # highly priority than environment variable 'TKS_API_TOKEN'
-            uLogger.debug("Bearer token for Tinkoff OpenApi set up from class variable 'token'")
+            uLogger.debug("Bearer token for Tinkoff OpenApi set up from class variable `token`")
 
         if accountId is None or not accountId:
             try:
                 self.accountId = r"{}".format(os.environ["TKS_ACCOUNT_ID"])
-                uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from environment variable 'TKS_ACCOUNT_ID'")
+                uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`")
 
             except KeyError:
-                uLogger.warning("'--account-id' key or environment variable 'TKS_ACCOUNT_ID' undefined! Some of operations may be unavailable (overview, trading etc).")
+                uLogger.warning("`--account-id` key or environment variable `TKS_ACCOUNT_ID` undefined! Some of operations may be unavailable (overview, trading etc).")
 
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
-            uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable 'accountId'")
+            uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable `accountId`")
 
         self.aliases = TKS_TICKER_ALIASES
         """Some aliases instead official tickers. See `TKSEnums.TKS_TICKER_ALIASES`"""
@@ -281,7 +282,7 @@ class TinkoffBrokerServer:
         """
         Parse JSON from response string.
 
-        :param rawData is a string with JSON-formatted text.
+        :param rawData: this is a string with JSON-formatted text.
         :param debug: if `True` then print more debug information.
         :return: JSON (dictionary), parsed from server response string.
         """
@@ -387,7 +388,7 @@ class TinkoffBrokerServer:
         if iType in TKS_INSTRUMENTS:
             uLogger.debug("Requesting available [{}] list. Wait, please...".format(iType))
 
-            # all instruments has the same body in API v2 requests:
+            # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
             instrumentURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/{}".format(iType)
             result = self.SendAPIRequest(instrumentURL, reqType="POST", debug=False)["instruments"]
@@ -439,9 +440,9 @@ class TinkoffBrokerServer:
         return iList
 
     @staticmethod
-    def MDInfo(iJSON: dict, printInfo: bool = False) -> str:
+    def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
-        Show information about instrument defined by json in Markdown format.
+        Show information about instrument defined by json and print in Markdown format.
 
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
         :param printInfo: if `True` then also printing information about instrument and its current price.
@@ -616,7 +617,7 @@ class TinkoffBrokerServer:
         `ticker` must be define! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (because this is long operation).
-        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -669,7 +670,7 @@ class TinkoffBrokerServer:
                     tickerJSON["currentPrice"]["changes"] = 0
 
             if showInfo:
-                self.MDInfo(iJSON=tickerJSON, printInfo=True)  # print info as markdown text
+                self.ShowInstrumentInfo(iJSON=tickerJSON, printInfo=True)  # print info as Markdown text
 
         else:
             if showInfo:
@@ -683,7 +684,7 @@ class TinkoffBrokerServer:
         `figi` must be define! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (it's long operation).
-        :param showInfo: if `False` then do not run `MDInfo()` method and do not print info to the console.
+        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -761,7 +762,7 @@ class TinkoffBrokerServer:
                     figiJSON["currentPrice"]["changes"] = 0
 
             if showInfo:
-                self.MDInfo(iJSON=figiJSON, printInfo=True)  # print info as markdown text
+                self.ShowInstrumentInfo(iJSON=figiJSON, printInfo=True)  # print info as Markdown text
 
         else:
             if showInfo:
@@ -777,7 +778,7 @@ class TinkoffBrokerServer:
         :param showPrice: if `True` then print DOM.
         :return: dict with Depth of Market (DOM): `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}` with list of current prices.
         """
-        prices = {"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}
+        prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
         if self.depth < 1:
             raise Exception("Depth of Market (DOM) must be >=1!")
@@ -801,23 +802,28 @@ class TinkoffBrokerServer:
             self.body = str({"figi": self.figi, "depth": self.depth})
             pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")
 
-            # list of dicts with sellers orders:
-            prices["buy"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
+            if pricesResponse:
+                # list of dicts with sellers orders:
+                prices["buy"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
 
-            # list of dicts with buyers orders:
-            prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
+                # list of dicts with buyers orders:
+                prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
 
-            # max price of instrument at this time:
-            prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
+                # max price of instrument at this time:
+                prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
 
-            # min price of instrument at this time:
-            prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
+                # min price of instrument at this time:
+                prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
 
-            # last price of deal with instrument:
-            prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
+                # last price of deal with instrument:
+                prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
 
-            # last close price of instrument:
-            prices["closePrice"] = NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]) if "closePrice" in pricesResponse.keys() else 0
+                # last close price of instrument:
+                prices["closePrice"] = NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]) if "closePrice" in pricesResponse.keys() else 0
+
+            else:
+                uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
+                uLogger.debug("Server response: {}".format(pricesResponse))
 
             if showPrice:
                 if prices["buy"] or prices["sell"]:
@@ -922,7 +928,7 @@ class TinkoffBrokerServer:
             with open(self.instrumentsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("All available instruments are saved to file: {}".format(os.path.abspath(self.instrumentsFile)))
+            uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
         return infoText
 
@@ -1015,7 +1021,7 @@ class TinkoffBrokerServer:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Price list for all instruments saved to file: {}".format(os.path.abspath(self.pricesFile)))
+                uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
 
         return iList
 
@@ -1969,7 +1975,7 @@ class TinkoffBrokerServer:
                 with open(self.reportFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("History of a client's operations are saved to file: {}".format(os.path.abspath(self.reportFile)))
+                uLogger.info("History of a client's operations are saved to file: [{}]".format(os.path.abspath(self.reportFile)))
 
         return ops, customStat
 
@@ -2137,18 +2143,17 @@ class TinkoffBrokerServer:
 
         return history
 
-    # TODO: replace method name as `Trade` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
-    def OpenTrade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
+    def Trade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
         Universal method to create market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
-        See also: `OpenOrder()` docstring. More simple methods than `OpenTrade()` are `Buy()` and `Sell()`.
+        See also: `Order()` docstring. More simple methods than `Trade()` are `Buy()` and `Sell()`.
 
         :param operation: string "Buy" or "Sell".
         :param lots: volume, integer count of lots >= 1.
-        :param tp: float > 0, target price for stop-order with "TP" type. It used as take profit parameter `targetPrice` in `self.OpenOrder()`.
-        :param sl: float > 0, target price for stop-order with "SL" type. It used as stop loss parameter `targetPrice` in `self.OpenOrder()`.
+        :param tp: float > 0, target price for stop-order with "TP" type. It used as take profit parameter `targetPrice` in `self.Order()`.
+        :param sl: float > 0, target price for stop-order with "SL" type. It used as stop loss parameter `targetPrice` in `self.Order()`.
         :param expDate: string "Undefined" by default or local date in future,
                         it is a string with format `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
@@ -2201,19 +2206,19 @@ class TinkoffBrokerServer:
             uLogger.warning("Not `oK` status received! Market order not created. See full debug log or try again and open order later.")
 
         if tp > 0:
-            self.OpenOrder(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
+            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
 
         if sl > 0:
-            self.OpenOrder(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
+            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
 
         return response
 
     def Buy(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        More simple method than `OpenTrade()`. Create `Buy` market order and make deal at the current price. Returns JSON data with response.
+        More simple method than `Trade()`. Create `Buy` market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
-        See also: `OpenOrder()` and `OpenTrade()` docstrings.
+        See also: `Order()` and `Trade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
@@ -2222,14 +2227,14 @@ class TinkoffBrokerServer:
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
-        return self.OpenTrade(operation="Buy", lots=lots, tp=tp, sl=sl, expDate=expDate)
+        return self.Trade(operation="Buy", lots=lots, tp=tp, sl=sl, expDate=expDate)
 
     def Sell(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        More simple method than `OpenTrade()`. Create `Sell` market order and make deal at the current price. Returns JSON data with response.
+        More simple method than `Trade()`. Create `Sell` market order and make deal at the current price. Returns JSON data with response.
         If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
-        See also: `OpenOrder()` and `OpenTrade()` docstrings.
+        See also: `Order()` and `Trade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
@@ -2238,7 +2243,7 @@ class TinkoffBrokerServer:
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
-        return self.OpenTrade(operation="Sell", lots=lots, tp=tp, sl=sl, expDate=expDate)
+        return self.Trade(operation="Sell", lots=lots, tp=tp, sl=sl, expDate=expDate)
 
     def CloseTrades(self, tickers: list, overview: dict = None) -> None:
         """
@@ -2296,7 +2301,7 @@ class TinkoffBrokerServer:
                             ))
 
                         # if direction is "Long" then we need sell, if direction is "Short" then we need buy:
-                        self.OpenTrade(operation="Sell" if instrument["direction"] == "Long" else "Buy", lots=tradeLots)
+                        self.Trade(operation="Sell" if instrument["direction"] == "Long" else "Buy", lots=tradeLots)
 
                     else:
                         uLogger.warning("There are no available lots for instrument [{}] to closing trade at this moment! Try again later or cancel some orders.".format(self.ticker))
@@ -2325,8 +2330,7 @@ class TinkoffBrokerServer:
             else:
                 uLogger.info("Instrument tickers with type [{}] not found, nothing to close.".format(iType))
 
-    # TODO: replace method name as `Order` in issue https://github.com/Tim55667757/TKSBrokerAPI/issues/22
-    def OpenOrder(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
+    def Order(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
         Universal method to create market or limit orders with all available parameters.
         See more simple methods: `BuyLimit()`, `BuyStop()`, `SellLimit()`, `SellStop()`.
@@ -2495,20 +2499,20 @@ class TinkoffBrokerServer:
         Create pending `Buy` limit-order (below current price). You must specify only 2 parameters:
         `lots` and `target price` to open buy limit-order. If you try to create buy limit-order above current price then
         broker immediately open `Buy` market order, such as if you do simple `--buy` operation!
-        See also: `OpenOrder()` docstring.
+        See also: `Order()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is open trade price for limit order.
         :return: JSON with response from broker server.
         """
-        return self.OpenOrder(operation="Buy", orderType="Limit", lots=lots, targetPrice=targetPrice)
+        return self.Order(operation="Buy", orderType="Limit", lots=lots, targetPrice=targetPrice)
 
     def BuyStop(self, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
         Create `Buy` stop-order. You must specify at least 2 parameters: `lots` `target price` to open buy stop-order.
         In additional you can specify 3 parameters for buy stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
         `expiration date` = Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`. When current price will go up or down to
-        target price value then broker opens a limit order. See also: `OpenOrder()` docstring.
+        target price value then broker opens a limit order. See also: `Order()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is trigger price for buy stop-order.
@@ -2521,27 +2525,27 @@ class TinkoffBrokerServer:
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
         """
-        return self.OpenOrder(operation="Buy", orderType="Stop", lots=lots, targetPrice=targetPrice, limitPrice=limitPrice, stopType=stopType, expDate=expDate)
+        return self.Order(operation="Buy", orderType="Stop", lots=lots, targetPrice=targetPrice, limitPrice=limitPrice, stopType=stopType, expDate=expDate)
 
     def SellLimit(self, lots: int, targetPrice: float) -> dict:
         """
         Create pending `Sell` limit-order (above current price). You must specify only 2 parameters:
         `lots` and `target price` to open sell limit-order. If you try to create sell limit-order below current price then
         broker immediately open `Sell` market order, such as if you do simple `--sell` operation!
-        See also: `OpenOrder()` docstring.
+        See also: `Order()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is open trade price for limit order.
         :return: JSON with response from broker server.
         """
-        return self.OpenOrder(operation="Sell", orderType="Limit", lots=lots, targetPrice=targetPrice)
+        return self.Order(operation="Sell", orderType="Limit", lots=lots, targetPrice=targetPrice)
 
     def SellStop(self, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
         Create `Sell` stop-order. You must specify at least 2 parameters: `lots` `target price` to open sell stop-order.
         In additional you can specify 3 parameters for sell stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
         `expiration date` = Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`. When current price will go up or down to
-        target price value then broker opens a limit order. See also: `OpenOrder()` docstring.
+        target price value then broker opens a limit order. See also: `Order()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is trigger price for sell stop-order.
@@ -2554,7 +2558,7 @@ class TinkoffBrokerServer:
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
         """
-        return self.OpenOrder(operation="Sell", orderType="Stop", lots=lots, targetPrice=targetPrice, limitPrice=limitPrice, stopType=stopType, expDate=expDate)
+        return self.Order(operation="Sell", orderType="Stop", lots=lots, targetPrice=targetPrice, limitPrice=limitPrice, stopType=stopType, expDate=expDate)
 
     def CloseOrders(self, orderIDs: list, allOrdersIDs: list = None, allStopOrdersIDs: list = None) -> None:
         """
@@ -2592,10 +2596,7 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC). Time of cancel in local time zone: [{}]".format(
-                                responseJSON["time"],
-                                datetime.strptime(responseJSON["time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()).astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-                            ))
+                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
                             uLogger.info("Pending order with ID [{}] successfully cancel".format(orderID))
 
                         else:
@@ -2610,10 +2611,7 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC). Time of cancel in local time zone: [{}]".format(
-                                responseJSON["time"],
-                                datetime.strptime(responseJSON["time"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()).astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-                            ))
+                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
                             uLogger.info("Stop order with ID [{}] successfully cancel".format(orderID))
 
                         else:
@@ -2735,15 +2733,15 @@ def ParseArgs():
     """
     parser = ArgumentParser()  # command-line string parser
 
-    parser.description = "TinkoffServerAPI is a CLI-program that can work with Tinkoff Open API REST protocol v2. See more in official site: https://tinkoff.github.io/investAPI/. About REST API: https://tinkoff.github.io/investAPI/swagger-ui/."
+    parser.description = "TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API using REST protocol. It can view history, orders and market information. Also, you can open orders and trades. See examples: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples"
     parser.usage = "python TKSBrokerAPI.py [some options] [one command]"
 
     # --- options:
 
-    parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable 'TKS_API_TOKEN'. See how to use: https://tinkoff.github.io/investAPI/token/")
-    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number).")
-    parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. YNDX, GOOGL etc. Use alias for USD000UTSTOM simple as USD, EUR_RUB__TOM as EUR.")
-    parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. BBG006L8G4H1 (for YNDX).")
+    parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
+    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+    parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. `IBM`, `YNDX`, `GOOGL` etc. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR`.")
+    parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for `YNDX`).")
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
@@ -2762,14 +2760,14 @@ def ParseArgs():
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs. WARNING! This is too long operation if you request a lot of instruments! Also, you can define --output key to save list of prices to file, default: prices.md.")
 
     parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define --output key to save this information to file, default: overview.md.")
-    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: today, yesterday (-1), 2days (-2), 3days (-3), week (-7), month (-30), year (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define --output key to save all deals to file, default: report.md.")
+    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30), `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
     # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
 
-    parser.add_argument("--open-trade", nargs="*", help="Action: universal action to open market order for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
+    parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
     parser.add_argument("--sell", nargs="*", help="Action: immediately open SELL market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
 
-    parser.add_argument("--open-order", nargs="*", help="Action: universal action to open limit or stop-order in any directions. You must specify 4-7 parameters: [direction `Buy` or `Sell] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]]. See examples in readme.")
+    parser.add_argument("--order", nargs="*", help="Action: universal action to open limit or stop-order in any directions. You must specify 4-7 parameters: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]]. See examples in readme.")
     parser.add_argument("--buy-limit", type=float, nargs=2, help="Action: open pending BUY limit-order (below current price). You must specify only 2 parameters: [lots] [target price] to open BUY limit-order. If you try to create `Buy` limit-order above current price then broker immediately open `Buy` market order, such as if you do simple `--buy` operation!")
     parser.add_argument("--sell-limit", type=float, nargs=2, help="Action: open pending SELL limit-order (above current price). You must specify only 2 parameters: [lots] [target price] to open SELL limit-order. If you try to create `Sell` limit-order below current price then broker immediately open `Sell` market order, such as if you do simple `--sell` operation!")
     parser.add_argument("--buy-stop", nargs="*", help="Action: open BUY stop-order. You must specify at least 2 parameters: [lots] [target price] to open BUY stop-order. In additional you can specify 3 parameters for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. When current price will go up or down to target price value then broker opens a limit order. Stop loss order always executed by market price.")
@@ -2891,18 +2889,18 @@ def Main(**kwargs):
         #
         #     server.History(onlyMissing=args.only_missing)
 
-        elif args.open_trade is not None:
-            if 1 <= len(args.open_trade) <= 5:
-                server.OpenTrade(
-                    operation=args.open_trade[0],
-                    lots=int(args.open_trade[1]) if len(args.open_trade) >= 2 else 1,
-                    tp=float(args.open_trade[2]) if len(args.open_trade) >= 3 else 0.,
-                    sl=float(args.open_trade[3]) if len(args.open_trade) >= 4 else 0.,
-                    expDate=args.open_trade[4] if len(args.open_trade) == 5 else "Undefined",
+        elif args.trade is not None:
+            if 1 <= len(args.trade) <= 5:
+                server.Trade(
+                    operation=args.trade[0],
+                    lots=int(args.trade[1]) if len(args.trade) >= 2 else 1,
+                    tp=float(args.trade[2]) if len(args.trade) >= 3 else 0.,
+                    sl=float(args.trade[3]) if len(args.trade) >= 4 else 0.,
+                    expDate=args.trade[4] if len(args.trade) == 5 else "Undefined",
                 )
 
             else:
-               uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.buy is not None:
             if 0 <= len(args.buy) <= 4:
@@ -2914,7 +2912,7 @@ def Main(**kwargs):
                 )
 
             else:
-               uLogger.error("You must specify 0-4 parameters to open buy position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 0-4 parameters to open buy position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.sell is not None:
             if 0 <= len(args.sell) <= 4:
@@ -2926,22 +2924,22 @@ def Main(**kwargs):
                 )
 
             else:
-               uLogger.error("You must specify 0-4 parameters to open sell position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 0-4 parameters to open sell position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
 
-        elif args.open_order:
-            if 4 <= len(args.open_order) <= 7:
-                server.OpenOrder(
-                    operation=args.open_order[0],
-                    orderType=args.open_order[1],
-                    lots=int(args.open_order[2]),
-                    targetPrice=float(args.open_order[3]),
-                    limitPrice=float(args.open_order[4]) if len(args.open_order) >= 5 else 0.,
-                    stopType=args.open_order[5] if len(args.open_order) >= 6 else "Limit",
-                    expDate=args.open_order[6] if len(args.open_order) == 7 else "Undefined",
+        elif args.order:
+            if 4 <= len(args.order) <= 7:
+                server.Order(
+                    operation=args.order[0],
+                    orderType=args.order[1],
+                    lots=int(args.order[2]),
+                    targetPrice=float(args.order[3]),
+                    limitPrice=float(args.order[4]) if len(args.order) >= 5 else 0.,
+                    stopType=args.order[5] if len(args.order) >= 6 else "Limit",
+                    expDate=args.order[6] if len(args.order) == 7 else "Undefined",
                 )
 
             else:
-               uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.buy_limit:
             server.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
@@ -2960,7 +2958,7 @@ def Main(**kwargs):
                 )
 
             else:
-               uLogger.error("You must specify 2-5 parameters for buy stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                uLogger.error("You must specify 2-5 parameters for buy stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
 
         elif args.sell_stop:
             if 2 <= len(args.sell_stop) <= 7:
@@ -2973,7 +2971,7 @@ def Main(**kwargs):
                 )
 
             else:
-               uLogger.error("You must specify 2-5 parameters for sell stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: python TKSBrokerAPI.py --help")
+                uLogger.error("You must specify 2-5 parameters for sell stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: python TKSBrokerAPI.py --help")
 
         # elif args.buy_order_grid is not None:
         #     # TODO: update order grid work with api v2
@@ -2981,7 +2979,7 @@ def Main(**kwargs):
         #         orderParams = server.ParseOrderParameters(operation="Buy", **dict(kw.split('=') for kw in args.buy_order_grid))
         #
         #         for order in orderParams:
-        #             server.OpenOrder(operation="Buy", lots=order["lot"], price=order["price"])
+        #             server.Order(operation="Buy", lots=order["lot"], price=order["price"])
         #
         #     else:
         #         uLogger.error("To open grid of pending BUY limit-orders (below current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
@@ -2992,7 +2990,7 @@ def Main(**kwargs):
         #         orderParams = server.ParseOrderParameters(operation="Sell", **dict(kw.split('=') for kw in args.sell_order_grid))
         #
         #         for order in orderParams:
-        #             server.OpenOrder(operation="Sell", lots=order["lot"], price=order["price"])
+        #             server.Order(operation="Sell", lots=order["lot"], price=order["price"])
         #
         #     else:
         #         uLogger.error("To open grid of pending SELL limit-orders (above current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")

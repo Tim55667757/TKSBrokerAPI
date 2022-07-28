@@ -1,0 +1,34 @@
+language: python
+python: "3.7"
+
+branches:
+  only:
+    - master
+    - /^release-.*$/
+    - develop
+
+stages:
+  - env-test-build-publish
+
+jobs:
+  include:
+    - stage: env-test-build-publish
+      name: "Stages: PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI"
+      install:
+        - echo "---> Running PRE-BUILDING stage..."
+        - python -m pip install --upgrade pip --force-reinstall
+        - pip install setuptools==59.5.0 --force-reinstall
+        - pip install -r requirements.txt
+      before_script:
+        - export PYTHONPATH=$PYTHONPATH:$PWD:$PWD/tksbrokerapi:$PWD/tests
+      script:
+        - echo "---> Running TESTING stage..."
+        - pytest tests -v --disable-pytest-warnings
+        - echo "---> Running BUILDING stage..."
+        - python setup.py sdist bdist_wheel
+        - echo "---> Running PUBLISHING to PyPI stage..."
+        - python -m twine upload --verbose dist/* --skip-existing
+      after_failure:
+        - echo "Some issues occurred. See full logs."
+      after_success:
+        - echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI - done"
