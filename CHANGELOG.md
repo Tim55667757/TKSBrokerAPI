@@ -62,7 +62,7 @@
 * ...
 
 
-### [1.1.* (2022-07-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/1) — готовится к выпуску...
+### [1.1.* (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases) — опубликована
 
 ##### Новая функциональность
 
