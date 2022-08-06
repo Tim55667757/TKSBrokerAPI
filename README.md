@@ -277,149 +277,150 @@ tksbrokerapi [необязательные ключи и параметры] [о
 tksbrokerapi --help
 ```
 
-Вывод:
+Вывод (в переводе):
 
 ```text
-usage: python TKSBrokerAPI.py [some options] [one command]
+Как использовать: 
+/как модуль/ python TKSBrokerAPI.py [возможно несколько параметров] [одна команда]
+/as CLI tool/ tksbrokerapi [возможно несколько параметров] [одна команда]
 
-TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API
-using REST protocol. It can view history, orders and market information. Also,
-you can open orders and trades. See examples:
-https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+TKSBrokerAPI это python API для упрощения работы с некоторыми методами Tinkoff Open API
+используя REST-запросы. Модуль умеет получать исторические данные, данные по ордерам и информацию с рынка.
+Также с его помощью вы можете открывать и закрывать ордера различных типов и торговать "по рынку". Смотрите примеры:
+https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --token TOKEN         Option: Tinkoff service's api key. If not set then
-                        used environment variable `TKS_API_TOKEN`. See how to
-                        use: https://tinkoff.github.io/investAPI/token/
+Параметры и команды:
+  -h, --help            Посмотреть эту помощь и выйти.
+  --token TOKEN         Параметр: токен для доступа к брокеру Тинькофф Инвестиции.
+                        Если параметр не указан, то используется переменная `TKS_API_TOKEN`.
+                        Как работать с токенами: https://tinkoff.github.io/investAPI/token/
   --account-id ACCOUNT_ID
-                        Option: string with an user numeric account ID in
-                        Tinkoff Broker. It can be found in any broker's
-                        reports (see the contract number). Also, this variable
-                        can be set from environment variable `TKS_ACCOUNT_ID`.
+                        Параметр: строка с числовым идентификатором пользователя у брокера
+                        Тинькофф Инвестиции. Он может быть найден в любом брокерском
+                        отчёте (ищите фразу "номер контракта"). Также эта переменная
+                        может быть установлена через переменную окружения `TKS_ACCOUNT_ID`.
   --ticker TICKER, -t TICKER
-                        Option: instrument's ticker, e.g. `IBM`, `YNDX`,
-                        `GOOGL` etc. Use alias for `USD000UTSTOM` simple as
-                        `USD`, `EUR_RUB__TOM` as `EUR`.
-  --figi FIGI, -f FIGI  Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for
-                        `YNDX`).
-  --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
-                        default.
-  --output OUTPUT       Option: replace default paths to output files for some
-                        commands. If None then used default files.
+                        Параметр: строка с тикером инструмента, например, `IBM`, `YNDX`,
+                        `GOOGL` и т.п. Можно использовать алиасы для валют, например, вместо
+                        `USD000UTSTOM` просто `USD`, а вместо `EUR_RUB__TOM` писать `EUR`.
+  --figi FIGI, -f FIGI  Параметр: строка с идентификатором FIGI инструмента, например,
+                        `BBG006L8G4H1` для инструмента с тикером `YNDX`.
+  --depth DEPTH         Параметр: число, показывающее "глубину биржевого стакана"
+                        (Depth of Market, DOM), должно быть  >=1, по умолчанию 1.
+  --output OUTPUT       Параметр: строка, которая заменяет стандартный путь вывода в файл
+                        для некоторых команд. Если None, тогда используется стандартный путь.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
-                        Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
-                        ERROR, 50 = CRITICAL. INFO (20) by default.
-  --list, -l            Action: get and print all available instruments and
-                        some information from broker server. Also, you can
-                        define --output key to save list of instruments to
-                        file, default: instruments.md.
-  --info, -i            Action: get information from broker server about
-                        instrument by it's ticker or FIGI. `--ticker` key or
-                        `--figi` key must be defined!
-  --price               Action: show actual price list for current instrument.
-                        Also, you can use --depth key. `--ticker` key or
-                        `--figi` key must be defined!
+                        Параметр: число, которое указывает минимальный уровень вывода
+                        логов в STDOUT, например, 10 = DEBUG, 20 = INFO, 30 = WARNING,
+                        40 = ERROR, 50 = CRITICAL. По умолчанию используется уровень INFO (20).
+  --list, -l            Команда: получить и напечатать все доступные для работы инструменты
+                        и некоторую информацию по ним с сервера брокера. Также можно
+                        задать ключ --output, чтобы сохранить список инструментов
+                        в файл, по умолчанию: instruments.md.
+  --info, -i            Команда: получить информацию с сервера брокера по конкретному
+                        инструменту, зная его тикер или FIGI. Ключ `--ticker` или
+                        ключ `--figi` должны быть заданы!
+  --price               Команда: показать стакан цен для выбранного инструмента.
+                        Можно использовать совместно с ключом --depth, для указания
+                        глубины. Ключ `--ticker` или ключ `--figi` должны быть заданы!
   --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
-                        Action: get and print current prices for list of given
-                        instruments (by it's tickers or by FIGIs. WARNING!
-                        This is too long operation if you request a lot of
-                        instruments! Also, you can define --output key to save
-                        list of prices to file, default: prices.md.
-  --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define --output key to save
-                        this information to file, default: overview.md.
+                        Команда: получить таблицу актуальных цен для выбранных
+                        инструментов (по их тикерам или FIGI). Внимание!
+                        Операция будет выполняться очень долго, если вы запросите
+                        слишком много инструментов! Также можно задать ключ --output,
+                        чтобы сохранить таблицу цен в файл, по умолчанию: prices.md.
+  --overview, -o        Команда: показать все открытые позиции, ордера и немного
+                        статистики. Также можно задать ключ --output, чтобы сохранить
+                        эту информацию в файл, по умолчанию: overview.md.
   --deals [DEALS [DEALS ...]], -d [DEALS [DEALS ...]]
-                        Action: show all deals between two given dates. Start
-                        day may be an integer number: -1, -2, -3 days ago.
-                        Also, you can use keywords: `today`, `yesterday` (-1),
-                        `week` (-7), `month` (-30), `year` (-365). Dates
-                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. Also, you
-                        can define `--output` key to save all deals to file,
-                        default: report.md.
+                        Команда: показать все сделки между двумя датами. Первый
+                        параметр указывает на начальную дату: -1, -2, -3 дней назад.
+                        Также можно использовать ключевики: `today`, `yesterday` (-1),
+                        `week` (-7), `month` (-30) и `year` (-365). Формат дат должен
+                        быть такой: `%Y-%m-%d`, например, 2020-02-03. Также можно
+                        задать ключ `--output`, чтобы сохранить сделки в файл,
+                        по умолчанию: report.md.
   --trade [TRADE [TRADE ...]]
-                        Action: universal action to open market position for
-                        defined ticker or FIGI. You must specify 1-5
-                        parameters: [direction `Buy` or `Sell] [lots, >= 1]
-                        [take profit, >= 0] [stop loss, >= 0] [expiration date
-                        for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See
-                        examples in readme.
+                        Команда: универсальный способ, чтобы открыть сделку "по рынку"
+                        для инструмента, заданного тикером или FIGI. Можно указать
+                        от 1 до 5 параметров: [направление `Buy` или `Sell] [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`]. Смотрите подробные
+                        примеры в README.md.
   --buy [BUY [BUY ...]]
-                        Action: immediately open BUY market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
+                        Команда: немедленно открыть BUY позицию "по рынку"
+                        по текущим ценам в стакане для указанного тикера или FIGI.
+                        Можно указать до 4 необязательных параметра: [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`].
   --sell [SELL [SELL ...]]
-                        Action: immediately open SELL market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
+                        Команда: немедленно открыть SELL позицию "по рынку"
+                        по текущим ценам в стакане для указанного тикера или FIGI.
+                        Можно указать до 4 необязательных параметра: [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`].
   --order [ORDER [ORDER ...]]
-                        Action: universal action to open limit or stop-order
-                        in any directions. You must specify 4-7 parameters:
-                        [direction `Buy` or `Sell] [order type `Limit` or
-                        `Stop`] [lots] [target price] [maybe for stop-order:
-                        [limit price, >= 0] [stop type, Limit|SL|TP]
-                        [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See
-                        examples in readme.
+                        Команда: универсальный способ, чтобы открыть лимитный или стоп-ордер
+                        в любом направлении. Нужно указать от 4 до 7 параметров:
+                        [направление `Buy` или `Sell] [тип ордера `Limit` или`Stop`]
+                        [лоты] [целевая цена] [дополнительно для стоп-ордеров:
+                        [цена открываемого лимитного ордера, >= 0] [тип стоп-ордера, Limit|SL|TP]
+                        [срок действия ордеров, Undefined|`%Y-%m-%d %H:%M:%S`]].
+                        Смотрите подробные примеры в README.md.
   --buy-limit BUY_LIMIT BUY_LIMIT
-                        Action: open pending BUY limit-order (below current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open BUY limit-order. If you try to
-                        create `Buy` limit-order above current price then
-                        broker immediately open `Buy` market order, such as if
-                        you do simple `--buy` operation!
+                        Команда: открыть отложенный лимитный ордер в направлении BUY
+                        (ниже текущей цены). Нужно задать только 2 обязательных параметра:
+                        [лоты] [целевая цена] для открытия лимитного BUY ордера. Если вы
+                        попытаетесь создать лимитный `Buy` ордер выше текущей цены, тогда
+                        брокер немедленно откроет рыночный `Buy` ордер, как если бы вы
+                        просто указали `--buy` операцию!
   --sell-limit SELL_LIMIT SELL_LIMIT
-                        Action: open pending SELL limit-order (above current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open SELL limit-order. If you try to
-                        create `Sell` limit-order below current price then
-                        broker immediately open `Sell` market order, such as
-                        if you do simple `--sell` operation!
+                        Команда: открыть отложенный лимитный ордер в направлении SELL
+                        (выше текущей цены). Нужно задать только 2 обязательных параметра:
+                        [лоты] [целевая цена] для открытия лимитного SELL ордера. Если вы
+                        попытаетесь создать лимитный `Sell` ордер ниже текущей цены, тогда
+                        брокер немедленно откроет рыночный `Sell` ордер, как если бы вы
+                        просто указали `--sell` операцию!
   --buy-stop [BUY_STOP [BUY_STOP ...]]
-                        Action: open BUY stop-order. You must specify at least
-                        2 parameters: [lots] [target price] to open BUY stop-
-                        order. In additional you can specify 3 parameters for
-                        stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
+                        Команда: открыть стоп-ордер в направлении BUY. Нужно задать только
+                        2 обязательных параметра: [лоты] [целевая цена] для открытия BUY
+                        стоп-ордера. Можно указать 3 дополнительных параметра для
+                        стоп-ордера: [цена открываемого лимитного ордера, >= 0]
+                        [тип стоп-ордера, Limit|SL|TP] [срок действия ордеров,
+                        Undefined|`%Y-%m-%d %H:%M:%S`]. Когда текущая цена дойдёт вверх
+                        или вниз до целевой цены, тогда брокер откроет лимитный ордер.
+                        Ордер типа стоп-лосс всегда исполняется по текущей рыночной цене.
   --sell-stop [SELL_STOP [SELL_STOP ...]]
-                        Action: open SELL stop-order. You must specify at
-                        least 2 parameters: [lots] [target price] to open SELL
-                        stop-order. In additional you can specify 3 parameters
-                        for stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
+                        Команда: открыть стоп-ордер в направлении SELL. Нужно задать только
+                        2 обязательных параметра: [лоты] [целевая цена] для открытия SELL
+                        стоп-ордера. Можно указать 3 дополнительных параметра для
+                        стоп-ордера: [цена открываемого лимитного ордера, >= 0]
+                        [тип стоп-ордера, Limit|SL|TP] [срок действия ордеров,
+                        Undefined|`%Y-%m-%d %H:%M:%S`]. Когда текущая цена дойдёт вверх
+                        или вниз до целевой цены, тогда брокер откроет лимитный ордер.
+                        Ордер типа стоп-лосс всегда исполняется по текущей рыночной цене.
   --close-order CLOSE_ORDER, --cancel-order CLOSE_ORDER
-                        Action: close only one order by it's `orderId` or
-                        `stopOrderId`. You can find out the meaning of these
-                        IDs using the key `--overview`
+                        Команда: закрыть один ордер, указав его `orderId` или
+                        `stopOrderId`. Вы можете найти эти идентификаторы в отчёте
+                        по ключу `--overview`.
   --close-orders CLOSE_ORDERS [CLOSE_ORDERS ...], --cancel-orders CLOSE_ORDERS [CLOSE_ORDERS ...]
-                        Action: close one or list of orders by it's `orderId`
-                        or `stopOrderId`. You can find out the meaning of
-                        these IDs using the key `--overview`
+                        Команда: закрыть один или более ордеров, указав список их `orderId`
+                        или `stopOrderId`. Вы можете найти эти идентификаторы в отчёте
+                        по ключу `--overview`.
   --close-trade, --cancel-trade
-                        Action: close only one position for instrument defined
-                        by `--ticker` key, including for currencies tickers.
+                        Команда: закрыть позицию по одному инструменту, заданному ключом
+                        `--ticker`, в том числе можно указывать тикеры валют.
   --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
-                        Action: close positions for list of tickers, including
-                        for currencies tickers.
+                        Команда: закрыть позиции для списка инструментов,
+                        в том числе можно указывать тикеры валют.
   --close-all [CLOSE_ALL [CLOSE_ALL ...]], --cancel-all [CLOSE_ALL [CLOSE_ALL ...]]
-                        Action: close all available (not blocked) opened
-                        trades and orders, excluding for currencies. Also you
-                        can select one or more keywords case insensitive to
-                        specify trades type: `orders`, `shares`, `bonds`,
-                        `etfs` and `futures`, but not `currencies`. Currency
-                        positions you must closes manually using `--buy`,
-                        `--sell`, `--close-trade` or `--close-trades`
-                        operations.
+                        Команда: закрыть все доступные (не заблокированные) открытые
+                        позиции и отменить ордера, кроме валютных позиций. Также вы можете
+                        указать одно или более ключевых слов (регистронезависимых) для
+                        уточнения типа инструментов: `orders`, `shares`, `bonds`,
+                        `etfs` или `futures`, но нельзя использовать `currencies`. Валютные
+                        позиции при необходимости вы должны закрыть вручную, используя ключи
+                         `--buy`, `--sell`, `--close-trade` или `--close-trades`.
 ```
 
 </details>

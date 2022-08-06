@@ -280,14 +280,16 @@ tksbrokerapi --help
 Output:
 
 ```text
-usage: python TKSBrokerAPI.py [some options] [one command]
+usage: 
+/as module/ python TKSBrokerAPI.py [some options] [one command]
+/as CLI tool/ tksbrokerapi [some options] [one command]
 
 TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API
 using REST protocol. It can view history, orders and market information. Also,
 you can open orders and trades. See examples:
-https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   --token TOKEN         Option: Tinkoff service's api key. If not set then
                         used environment variable `TKS_API_TOKEN`. See how to
@@ -309,8 +311,8 @@ optional arguments:
                         commands. If None then used default files.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
                         Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
-                        ERROR, 50 = CRITICAL. INFO (20) by default.
+                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING,
+                        40 = ERROR, 50 = CRITICAL. INFO (20) by default.
   --list, -l            Action: get and print all available instruments and
                         some information from broker server. Also, you can
                         define --output key to save list of instruments to
@@ -323,7 +325,7 @@ optional arguments:
                         `--figi` key must be defined!
   --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
                         Action: get and print current prices for list of given
-                        instruments (by it's tickers or by FIGIs. WARNING!
+                        instruments (by it's tickers or by FIGIs). WARNING!
                         This is too long operation if you request a lot of
                         instruments! Also, you can define --output key to save
                         list of prices to file, default: prices.md.
@@ -334,7 +336,7 @@ optional arguments:
                         Action: show all deals between two given dates. Start
                         day may be an integer number: -1, -2, -3 days ago.
                         Also, you can use keywords: `today`, `yesterday` (-1),
-                        `week` (-7), `month` (-30), `year` (-365). Dates
+                        `week` (-7), `month` (-30) and `year` (-365). Dates
                         format must be: `%Y-%m-%d`, e.g. 2020-02-03. Also, you
                         can define `--output` key to save all deals to file,
                         default: report.md.
@@ -400,11 +402,11 @@ optional arguments:
   --close-order CLOSE_ORDER, --cancel-order CLOSE_ORDER
                         Action: close only one order by it's `orderId` or
                         `stopOrderId`. You can find out the meaning of these
-                        IDs using the key `--overview`
+                        IDs using the key `--overview`.
   --close-orders CLOSE_ORDERS [CLOSE_ORDERS ...], --cancel-orders CLOSE_ORDERS [CLOSE_ORDERS ...]
                         Action: close one or list of orders by it's `orderId`
                         or `stopOrderId`. You can find out the meaning of
-                        these IDs using the key `--overview`
+                        these IDs using the key `--overview`.
   --close-trade, --cancel-trade
                         Action: close only one position for instrument defined
                         by `--ticker` key, including for currencies tickers.
