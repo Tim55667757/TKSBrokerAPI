@@ -290,7 +290,7 @@ class TinkoffBrokerServer:
             uLogger.debug("Raw text body:")
             uLogger.debug(rawData)
 
-        responseJSON = json.loads(rawData, encoding="UTF-8") if rawData else {}
+        responseJSON = json.loads(rawData) if rawData else {}
 
         if debug:
             uLogger.debug("JSON formatted:")
