@@ -59,7 +59,7 @@
 
 ##### Bug fixes
 
-* ...
+* Bug fix with bond type (failed with `iJSON["type"] == "Bond"`, correct: `iJSON["type"] == "Bonds"`).
 
 
 ### [1.1.48 (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.1.48) — released
