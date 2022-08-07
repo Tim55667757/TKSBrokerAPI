@@ -513,7 +513,7 @@ class TinkoffBrokerServer:
                 info.append("| Basic asset:                                            | {}\n".format(iJSON["basicAsset"]))
 
             if "basicAssetSize" in iJSON.keys() and iJSON["basicAssetSize"]:
-                info.append("| Basic asset size:                                       | {}\n".format(NanoToFloat(int(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
+                info.append("| Basic asset size:                                       | {:.2f}\n".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
 
             if "isoCurrencyName" in iJSON.keys() and iJSON["isoCurrencyName"]:
                 info.append("| ISO currency name:                                      | {}\n".format(iJSON["isoCurrencyName"]))
@@ -545,11 +545,11 @@ class TinkoffBrokerServer:
             if "otcFlag" in iJSON.keys() and iJSON["otcFlag"]:
                 info.append("| Over-the-counter (OTC) securities:                      | Yes\n")
 
-            if iJSON["type"] == "Bond":
+            if iJSON["type"] == "Bonds":
                 info.append("| Bond issue (size / plan):                               | {} / {}\n".format(iJSON["issueSize"], iJSON["issueSizePlan"]))
 
-                info.append("| Nominal price (100%):                                   | {} {}\n".format(
-                    NanoToFloat(int(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
+                info.append("| Nominal price (100%):                                   | {:.2f} {}\n".format(
+                    NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
                     iJSON["nominal"]["currency"],
                 ))
 
@@ -563,8 +563,8 @@ class TinkoffBrokerServer:
                     info.append("| Number of coupon payments per year:                     | {}\n".format(iJSON["couponQuantityPerYear"]))
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current ACI (Accrued Interest):                         | {} {}\n".format(
-                        NanoToFloat(int(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
+                    info.append("| Current ACI (Accrued Interest):                         | {:.2f} {}\n".format(
+                        NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
                     ))
 
@@ -574,24 +574,24 @@ class TinkoffBrokerServer:
                 info.extend([
                     "| Previous close price of the instrument:                 | {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Last deal price of the instrument:                      | {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Changes between last deal price and last close  %       | {:.2f}%\n".format(iJSON["currentPrice"]["changes"]),
                     "| Current limit price, min / max:                         | {}{} / {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Actual price, sell / buy:                               | {}{} / {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["sell"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["sell"] else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["buy"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["buy"] else "N/A",
-                        "%" if iJSON["type"] == "Bond" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                 ])
 
