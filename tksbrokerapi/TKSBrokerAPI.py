@@ -6,7 +6,7 @@
 It can view history, orders and market information. Also, you can open orders and trades.
 
 If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
-**See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+**See examples**: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
 **Used constants are in the TKSEnums module**: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 
