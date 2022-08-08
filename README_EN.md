@@ -315,8 +315,12 @@ options:
                         40 = ERROR, 50 = CRITICAL. INFO (20) by default.
   --list, -l            Action: get and print all available instruments and
                         some information from broker server. Also, you can
-                        define --output key to save list of instruments to
-                        file, default: instruments.md.
+                        define `--output` key to save list of instruments to
+                        file, default: `instruments.md`.
+  --dump                Action: get and save raw data about instruments from
+                        broker server for future re-use. You must define
+                        `--output` key to dump instruments to file, default:
+                        `iListDump.json`.
   --info, -i            Action: get information from broker server about
                         instrument by it's ticker or FIGI. `--ticker` key or
                         `--figi` key must be defined!
@@ -327,11 +331,11 @@ options:
                         Action: get and print current prices for list of given
                         instruments (by it's tickers or by FIGIs). WARNING!
                         This is too long operation if you request a lot of
-                        instruments! Also, you can define --output key to save
-                        list of prices to file, default: prices.md.
+                        instruments! Also, you can define `--output` key to save
+                        list of prices to file, default: `prices.md`.
   --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define --output key to save
-                        this information to file, default: overview.md.
+                        statistics. Also, you can define `--output` key to save
+                        this information to file, default: `overview.md`.
   --deals [DEALS [DEALS ...]], -d [DEALS [DEALS ...]]
                         Action: show all deals between two given dates. Start
                         day may be an integer number: -1, -2, -3 days ago.
@@ -339,7 +343,7 @@ options:
                         `week` (-7), `month` (-30) and `year` (-365). Dates
                         format must be: `%Y-%m-%d`, e.g. 2020-02-03. Also, you
                         can define `--output` key to save all deals to file,
-                        default: report.md.
+                        default: `report.md`.
   --trade [TRADE [TRADE ...]]
                         Action: universal action to open market position for
                         defined ticker or FIGI. You must specify 1-5
@@ -420,8 +424,7 @@ options:
                         specify trades type: `orders`, `shares`, `bonds`,
                         `etfs` and `futures`, but not `currencies`. Currency
                         positions you must closes manually using `--buy`,
-                        `--sell`, `--close-trade` or `--close-trades`
-                        operations.
+                        `--sell`, `--close-trade` or `--close-trades` operations.
 ```
 
 </details>
@@ -1549,9 +1552,9 @@ In this documentation, we do not want to focus on specific trading scenarios, bu
 - requesting the client's current portfolio and determining funds available for trading;
 - request for a Depth of Market with a depth of 20 for the selected instrument, for example, shares with the ticker `IBM`;
 - if the instrument was not purchased earlier, then checking:
-  - if the buying volumes in the DOM are at least 50% higher than the selling volumes, then buy 1 share on the market and place the take profit as a stop order 5% higher than the current buy price with an expire period until cancellation;
+  - if the buying volumes in the DOM are at least 50% higher than the selling volumes, then buy 1 share on the market and place the take profit as a stop order 5% higher than the current buy price with an expiry until cancellation;
 - if the instrument is in the list of open positions, then checking:
-   - if the current price is 3% higher than the average position price, then place the take profit as a pending limit order 0.05% more higher than the current price so that the position is closed with a profit with a high probability during the current session.
+   - if the current price is 3% higher than the average position price, then place the take profit as a pending limit order 0.05% higher than the current price so that the position is closed with a profit with a high probability during the current session.
 - requesting the current user's portfolio.
 
 To understand the example, save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)).
