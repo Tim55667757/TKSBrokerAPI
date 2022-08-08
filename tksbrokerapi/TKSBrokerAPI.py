@@ -260,7 +260,8 @@ class TinkoffBrokerServer:
         For future use, you can save this variable and substitute it in the `iList` to avoid permanent downloads from the server.
         """
 
-        self.pricesList = {}  # You can request all current prices with `ShowAllPrices()` method. WARNING! This is too long operation!
+        self.iListDumpFile = "iListDump.json"
+        """Filename where raw data about stocks, currencies, bonds, etfs and futures will be stored. Default: `"iListDump.json"`"""
 
         self.instrumentsFile = "instruments.md"
         """Filename where full broker's instruments list will be saved. Default: `"instruments.md"`"""
@@ -397,7 +398,7 @@ class TinkoffBrokerServer:
 
     def _IWrapper(self, kwargs):
         """
-        Wrapper runs instrument's update method self._IUpdater().
+        Wrapper runs instrument's update method `_IUpdater()`.
         It's a workaround for using multiprocessing with kwargs. See: https://stackoverflow.com/a/36799206
         """
         return self._IUpdater(**kwargs)
@@ -438,6 +439,28 @@ class TinkoffBrokerServer:
                     iList[iType][ticker]["step"] = 0  # hack to avoid empty value in some instruments, e.g. futures
 
         return iList
+
+    def DumpInstruments(self, forceUpdate: bool = False) -> str:
+        """
+        Receives and returns actual raw data about stocks, currencies, bonds, etfs and futures from broker server
+        using `Listing()` method. If `iListDumpFile` string is not empty then also save information to this file.
+
+        :param forceUpdate: if `True` then at first updates data with `Listing()` method.
+        :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` file.
+        """
+        if self.iListDumpFile is None or not self.iListDumpFile:
+            raise Exception("Output name of dump file must be defined!")
+
+        if not self.iList or forceUpdate:
+            self.iList = self.Listing()
+
+        dump = json.dumps(self.iList, indent=4, sort_keys=False)
+        with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
+            fH.write(dump)
+
+        uLogger.info("Raw instruments data were dumped to file: [{}]".format(os.path.abspath(self.iListDumpFile)))
+
+        return dump
 
     @staticmethod
     def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
@@ -2747,21 +2770,22 @@ def ParseArgs():
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
 
     # parser.add_argument("--length", type=int, default=24, help="Option: how many last candles returns for history. Used only with --history key.")
-    # parser.add_argument("--interval", type=str, default="60", help="Option: available values are 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month. Used only with --history key. This is time period used in 'interval' api parameter. Default: --interval=60 that means 60 min for every history candles.")
-    # parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by --output key then add only last missing candles, do not request all history length. False by default.")
+    # parser.add_argument("--interval", type=str, default="60", help="Option: available values are 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month. Used only with `--history` key. This is time period used in 'interval' api parameter. Default: `--interval=60` that means 60 min for every history candles.")
+    # parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. False by default.")
 
     parser.add_argument("--debug-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
 
     # --- commands:
 
-    parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define --output key to save list of instruments to file, default: instruments.md.")
+    parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
+    parser.add_argument("--dump", action="store_true", help="Action: get and save raw data about instruments from broker server for future re-use. You must define `--output` key to dump instruments to file, default: `iListDump.json`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use --depth key. `--ticker` key or `--figi` key must be defined!")
-    parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define --output key to save list of prices to file, default: prices.md.")
+    parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
-    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define --output key to save this information to file, default: overview.md.")
-    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
-    # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
+    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: `report.md`.")
+    # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define `--output` key to save history candles to .csv-file.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -2834,7 +2858,19 @@ def Main(**kwargs):
 
         # --- do one of commands:
 
-        if args.info:
+        if args.list:
+            if args.output is not None:
+                server.instrumentsFile = args.output
+
+            server.ShowInstrumentsInfo(showInstruments=True)
+
+        elif args.dump:
+            if args.output is not None:
+                server.iListDumpFile = args.output
+
+            server.DumpInstruments(forceUpdate=False)
+
+        elif args.info:
             if not (args.ticker or args.figi):
                 raise Exception("`--ticker` key or `--figi` key is required for this operation!")
 
@@ -2843,12 +2879,6 @@ def Main(**kwargs):
 
             else:
                 server.SearchByFIGI(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by FIGI id
-
-        elif args.list:
-            if args.output is not None:
-                server.instrumentsFile = args.output
-
-            server.ShowInstrumentsInfo(showInstruments=True)
 
         elif args.price:
             if not (args.ticker or args.figi):
