@@ -183,14 +183,14 @@ class TinkoffBrokerServer:
 
     Where is `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, iList: dict = None, accountId: str = None) -> None:
+    def __init__(self, token: str, accountId: str = None, iList: dict = None) -> None:
         """
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
-        :param iList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
+        :param iList: dictionary of dictionaries with instrument's data.
         """
         if token is None or not token:
             try:
