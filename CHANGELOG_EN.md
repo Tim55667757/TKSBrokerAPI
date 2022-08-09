@@ -48,7 +48,7 @@
 
 ##### New features
 
-* [In progress] [#13](https://github.com/Tim55667757/TKSBrokerAPI/issues/13) To reduce the number of requests to the server, the ability to create a local dump with information on exchange instruments has been added. The dump can be used to avoid loading data on symbols during the initial initialization of the `TinkoffBrokerServer` class. Added `DumpInstruments()` method and `--dump` key with which you can create a primary dump file.
+* [#13](https://github.com/Tim55667757/TKSBrokerAPI/issues/13) To reduce the number of requests to the server, the ability to cache raw data on exchange instruments has been added. The cache is used by default when the `TinkoffBrokerServer` class is initialized, but this action can be canceled using the `useCache=False` class variable or using the `--no-cache` key in the console. The `DumpInstruments()` method has been added, with which you can create a data dump from the server. The `iListDumpFile` variable has also been added to the `TinkoffBrokerServer` class (the path to the cache, `dump.json` by default). The cache is automatically refreshed if there is a different day than the day the `dump.json` file was last modified. Note: all dates are used in UTC format.
 * [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
 * [In progress] [#4](https://github.com/Tim55667757/TKSBrokerAPI/issues/4) Added the ability to search for an instrument by part of the name, ticker or FIGI. Added `--search` key.
 

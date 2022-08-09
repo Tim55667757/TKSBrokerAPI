@@ -32,6 +32,7 @@
 4. [Usage examples](#Usage-examples)
    - [Command line](#Command-line)
      - [Reference](#Reference)
+     - [Local cache](#Local-cache)
      - [Get a list of all instruments available for trading](#Get-a-list-of-all-instruments-available-for-trading)
      - [Get information about an instrument](#Get-information-about-an-instrument)
      - [Request Depth of Market with a specified depth](#Request-Depth-of-Market-with-a-specified-depth)
@@ -163,6 +164,9 @@ In the future, based on this module, ready-made trading scenarios and templates 
 
 At the time of the latest release, the TKSBrokerAPI tool can:
 
+- Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
+  - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
+  - API-method: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
 - Receive from the broker's server a list of all instruments available for the specified account: currencies, stocks, bonds, funds and futures;
   - key `--list` or `-l`;
   - API-method: [`Listing()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Listing).
@@ -291,6 +295,9 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examp
 
 options:
   -h, --help            show this help message and exit
+  --no-cache            Option: not use local cache `dump.json`, but update
+                        raw instruments data when starting the program.
+                        `False` by default.
   --token TOKEN         Option: Tinkoff service's api key. If not set then
                         used environment variable `TKS_API_TOKEN`. See how to
                         use: https://tinkoff.github.io/investAPI/token/
@@ -428,6 +435,14 @@ options:
 ```
 
 </details>
+
+#### Local cache
+
+Starting with TKSBrokerAPI v1.2.* versions, the ability to use the local cache `dump.json` with data on traded instruments has been added, which allows you to avoid constant requests for this data from the broker's server and significantly save time. The cache is used by default when executing any command, there is no need to specifically set it.
+
+If the current day differs from the day the cache was last modified, it will be automatically updated at the next time when program is started. If the `dump.json` file does not exist in the local directory, it will also be created automatically.
+
+Usually, stock exchanges rarely experience critical changes in instruments during the day, and updating the cache at least once a day is justified. But if you want to be completely sure about the consistency of the data, you can specify the `--no-cahce` key together with each command. In this case, data on instruments will be requested every time.
 
 #### Get a list of all instruments available for trading
 
