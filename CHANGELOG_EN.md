@@ -50,10 +50,11 @@
 
 * [#13](https://github.com/Tim55667757/TKSBrokerAPI/issues/13) To reduce the number of requests to the server, the ability to cache raw data on exchange instruments has been added. The cache is used by default when the `TinkoffBrokerServer` class is initialized, but this action can be canceled using the `useCache=False` class variable or using the `--no-cache` key in the console. The `DumpInstruments()` method has been added, with which you can create a data dump from the server. The `iListDumpFile` variable has also been added to the `TinkoffBrokerServer` class (the path to the cache, `dump.json` by default). The cache is automatically refreshed if there is a different day than the day the `dump.json` file was last modified. Note: all dates are used in UTC format.
 * [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
-* [In progress] [#4](https://github.com/Tim55667757/TKSBrokerAPI/issues/4) Added the ability to search for an instrument by part of the name, ticker or FIGI. Added `--search` key.
+* [In progress] [#7](https://github.com/Tim55667757/TKSBrokerAPI/issues/7) Added the ability to search for an instrument by part of the name, ticker or FIGI. Added `--search` key.
 
 ##### Improvements
 
+* [В работе] [#42](https://github.com/Tim55667757/TKSBrokerAPI/issues/42) [Example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Abstract-scenario-implementation-example) with abstract trade scenario was added.
 * [In progress] [#8](https://github.com/Tim55667757/TKSBrokerAPI/issues/8) Added the `--no-cancelled` key to not display information about canceled operations when using the `--deals` (or `-d`) key.
 * [In progress] [#12](https://github.com/Tim55667757/TKSBrokerAPI/issues/12) In the general information about the state of the portfolio (key `--overview` or `-o`), the section "Portfolio distribution by countries" has been added.
 
