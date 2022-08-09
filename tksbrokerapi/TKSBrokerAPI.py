@@ -181,16 +181,23 @@ class TinkoffBrokerServer:
 
     Examples to work with API: https://tinkoff.github.io/investAPI/swagger-ui/
 
-    Where is `token`: https://tinkoff.github.io/investAPI/token/
+    About `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, accountId: str = None, iList: dict = None) -> None:
+    def __init__(self, token: str, accountId: str = None, iList: dict = None, useCache: bool = True) -> None:
         """
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
-        :param iList: dictionary of dictionaries with instrument's data.
+        :param iList: dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server.
+                      At first time, when class init, `Listing()` method auto-update this variable, or you can use dump file.
+                      For future use, you can save this variable and use as `iList` to avoid permanent downloads
+                      from the server. Also, you can try `DumpInstruments()` method.
+        :param useCache: use default cache file `dump.json` with raw data to use instead of `iList` if `iList` set as `None`.
+                         True by default. Cache is auto-update if new day has come.
+                         If `iList` is not `None` then it value has higher priority than `dump.json` and `useCache`.
+                         If you don't want to use cache and always updates raw data then set `useCache=False`.
         """
         if token is None or not token:
             try:
@@ -234,7 +241,7 @@ class TinkoffBrokerServer:
         self.server = r"https://invest-public-api.tinkoff.ru/rest"
         """Tinkoff REST API server for real trade operations. Default: https://invest-public-api.tinkoff.ru/rest
 
-        See: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
+        See also: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
         """
 
         uLogger.debug("Broker API server: {}".format(self.server))
@@ -254,29 +261,59 @@ class TinkoffBrokerServer:
         self.historyInterval = "hour"
         """Interval string for Tinkoff API (see: `TKSEnums.TKS_TIMEFRAMES`). Available values are `"1min"`, `"2min"`, `"3min"`, `"5min"`, `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`"""
 
-        self.iList = iList if iList is not None else self.Listing()
-        """Dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server.
-        At first time, when class init, `Listing()` method auto-update this variable.
-        For future use, you can save this variable and substitute it in the `iList` to avoid permanent downloads from the server.
-        """
-
-        self.iListDumpFile = "iListDump.json"
-        """Filename where raw data about stocks, currencies, bonds, etfs and futures will be stored. Default: `"iListDump.json"`"""
-
         self.instrumentsFile = "instruments.md"
-        """Filename where full broker's instruments list will be saved. Default: `"instruments.md"`"""
+        """Filename where full broker's instruments list will be saved. Default: `instruments.md`"""
 
         self.pricesFile = "prices.md"
-        """Filename where prices of selected instruments will be saved. Default: `"prices.md"`"""
+        """Filename where prices of selected instruments will be saved. Default: `prices.md`"""
 
         self.overviewFile = "overview.md"
-        """Filename where current portfolio, open trades and orders will be saved. Default: `"overview.md"`"""
+        """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
 
         self.reportFile = "report.md"
-        """Filename where history of deals and trade statistics will be saved. Default: `"report.md"`"""
+        """Filename where history of deals and trade statistics will be saved. Default: `report.md`"""
 
         self.historyFile = None
         """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
+
+        self.iListDumpFile = "dump.json"
+        """Filename where raw data about stocks, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
+
+        self.iList = None  # init iList
+        """Dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server. Auto-updating.
+        
+        See also: `Listing()` and `DumpInstruments()`.
+        """
+
+        # try to re-use raw instruments data saved as `iList` or try to load it from the dump file:
+        if iList is not None and isinstance(iList, dict):
+            uLogger.debug("Instruments raw data set up from given `iList` variable. Dump file not updated.")
+
+            self.iList = iList  # only used given iList, dump not updated
+
+        elif useCache:
+            if os.path.exists(self.iListDumpFile):
+                dumpTime = datetime.fromtimestamp(os.path.getmtime(self.iListDumpFile)).astimezone(tzutc())  # dump modification date and time
+                curTime = datetime.now(tzutc())
+
+                if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
+                    uLogger.warning("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+
+                    self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump file
+
+                else:
+                    self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
+
+                    uLogger.debug("Local cache with raw instruments data is used: [{}]".format(os.path.abspath(self.iListDumpFile)))
+                    uLogger.debug("Dump file was modified [{}] UTC".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+
+            else:
+                uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
+                self.DumpInstruments(forceUpdate=True)  # updating self.iList and creating default dump file
+
+        else:
+            self.iList = self.Listing()  # request new raw instruments data from broker server
+            self.DumpInstruments(forceUpdate=False)  # save updated info to default dump file
 
     @staticmethod
     def _ParseJSON(rawData="{}", debug: bool = False) -> dict:
@@ -440,12 +477,12 @@ class TinkoffBrokerServer:
 
         return iList
 
-    def DumpInstruments(self, forceUpdate: bool = False) -> str:
+    def DumpInstruments(self, forceUpdate: bool = True) -> str:
         """
         Receives and returns actual raw data about stocks, currencies, bonds, etfs and futures from broker server
         using `Listing()` method. If `iListDumpFile` string is not empty then also save information to this file.
 
-        :param forceUpdate: if `True` then at first updates data with `Listing()` method.
+        :param forceUpdate: if `True` then at first updates data with `Listing()` method, otherwise just saves exist `iList`.
         :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` file.
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
@@ -458,7 +495,7 @@ class TinkoffBrokerServer:
         with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
             fH.write(dump)
 
-        uLogger.info("Raw instruments data were dumped to file: [{}]".format(os.path.abspath(self.iListDumpFile)))
+        uLogger.info("Instruments raw data were cached for future used: [{}]".format(os.path.abspath(self.iListDumpFile)))
 
         return dump
 
@@ -2761,8 +2798,9 @@ def ParseArgs():
 
     # --- options:
 
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Option: not use local cache `dump.json`, but update raw instruments data when starting the program. `False` by default.")
     parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
-    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+    parser.add_argument("--account-id", type=str, default=None, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
     parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. `IBM`, `YNDX`, `GOOGL` etc. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR`.")
     parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for `YNDX`).")
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
@@ -2778,7 +2816,6 @@ def ParseArgs():
     # --- commands:
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
-    parser.add_argument("--dump", action="store_true", help="Action: get and save raw data about instruments from broker server for future re-use. You must define `--output` key to dump instruments to file, default: `iListDump.json`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use --depth key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
@@ -2811,7 +2848,7 @@ def ParseArgs():
 
 def Main(**kwargs):
     """
-    Main function for work with Tinkoff Open API service. It realize simple logic: get a lot of options and execute one command.
+    Main function for work with Tinkoff Open API service. It realizes simple logic: get a lot of options and execute one command.
 
     See examples: https://tim55667757.github.io/TKSBrokerAPI/
     """
@@ -2828,14 +2865,16 @@ def Main(**kwargs):
         start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
     ))
 
-    instruments = kwargs["instruments"] if kwargs else None  # try to decrease requests to server count if class init many times
-    server = TinkoffBrokerServer(args.token, iList=instruments)  # Init class for trading with Tinkoff Broker
+    # Init class for trading with Tinkoff Broker:
+    server = TinkoffBrokerServer(
+        token=args.token,
+        accountId=args.account_id,
+        iList=kwargs["instruments"] if kwargs and "instruments" in kwargs.keys() else None,  # re-use iList
+        useCache=not args.no_cache,
+    )
 
     try:
         # --- set some options:
-
-        if args.account_id:
-            server.accountId = args.account_id
 
         if args.ticker:
             if args.ticker in server.aliasesKeys:
@@ -2863,12 +2902,6 @@ def Main(**kwargs):
                 server.instrumentsFile = args.output
 
             server.ShowInstrumentsInfo(showInstruments=True)
-
-        elif args.dump:
-            if args.output is not None:
-                server.iListDumpFile = args.output
-
-            server.DumpInstruments(forceUpdate=False)
 
         elif args.info:
             if not (args.ticker or args.figi):
