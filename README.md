@@ -380,7 +380,7 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examp
                         `--no-cancelled` информация об отменённых операциях
                         не будет отображаться в отчёте по сделкам. Также можно
                         задать ключ `--output`, чтобы сохранить сделки в файл,
-                        по умолчанию: `report.md`.
+                        по умолчанию: `deals.md`.
   --trade [TRADE [TRADE ...]]
                         Команда: универсальный способ, чтобы открыть сделку "по рынку"
                         для инструмента, заданного тикером или FIGI. Можно указать
@@ -996,7 +996,7 @@ TKSBrokerAPI.py     L:3138 DEBUG   [2022-08-10 22:06:27,154] TKSBrokerAPI module
 
 Вместо начальной даты можно указать отрицательное число — количество предыдущих дней от текущей даты (`--deals -1`, `-d -2`, `-d -3`, ...), тогда конечную дату указывать не нужно. Также вместо начальной даты можно указать одно из ключевых слов: `today`, `yesterday` (-1 день), `week` (-7 дней), `month` (-30 дней), `year` (-365 дней). Во всех этих случаях будет выдан отчёт за указанное количество предыдущих дней и вплоть до сегодняшнего числа и текущего времени.
 
-Дополнительно можно указать ключ `--output` для указания файла, куда сохранить отчёт по операциям в формате Markdown (по умолчанию `report.md` в текущей рабочей директории).
+Дополнительно можно указать ключ `--output` для указания файла, куда сохранить отчёт по операциям в формате Markdown (по умолчанию `deals.md` в текущей рабочей директории).
  
 <details>
   <summary>Команда для получения отчёта по операциям между двумя указанными датами</summary>
@@ -1193,7 +1193,7 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:15,026] # Client's operatio
 | 2022-07-25 08:25:59 | TCS00A103X66 | POSI         | Shares     | —         |       -1.17 rub | √ Executed | Operation fee deduction
 | 2022-07-25 08:25:58 | TCS00A103X66 | POSI         | Shares     | 5         |    +4676.00 rub | √ Executed | Sell securities
 
-TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:15,032] History of a client's operations are saved to file: [report.md]
+TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:15,032] History of a client's operations are saved to file: [deals.md]
 ```
 
 </details>
@@ -1275,7 +1275,7 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:59,035] # Client's operatio
 | 2022-07-21 17:11:30 | BBG00JN4FXG8 | SLDB         | Shares     | —         |       -0.01 usd | √ Executed | Operation fee deduction
 | 2022-07-21 17:11:29 | BBG00JN4FXG8 | SLDB         | Shares     | 1         |       -0.74 usd | √ Executed | Buy securities
 
-TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:59,045] History of a client's operations are saved to file: [report.md]
+TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:59,045] History of a client's operations are saved to file: [deals.md]
 ```
 
 </details>
