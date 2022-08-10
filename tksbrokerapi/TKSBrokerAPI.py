@@ -190,7 +190,7 @@ class TinkoffBrokerServer:
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
-        :param iList: dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server.
+        :param iList: dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server.
                       At first time, when class init, `Listing()` method auto-update this variable, or you can use dump file.
                       For future use, you can save this variable and use as `iList` to avoid permanent downloads
                       from the server. Also, you can try `DumpInstruments()` method.
@@ -277,10 +277,10 @@ class TinkoffBrokerServer:
         """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
 
         self.iListDumpFile = "dump.json"
-        """Filename where raw data about stocks, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
+        """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
 
         self.iList = None  # init iList
-        """Dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server. Auto-updating.
+        """Dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server. Auto-updating.
         
         See also: `Listing()` and `DumpInstruments()`.
         """
@@ -442,9 +442,9 @@ class TinkoffBrokerServer:
 
     def Listing(self) -> dict:
         """
-        Gets JSON with raw data about stocks, currencies, bonds, etfs and futures from broker server.
+        Gets JSON with raw data about shares, currencies, bonds, etfs and futures from broker server.
 
-        :return: Dictionary with all available broker instruments: currencies, stocks, bonds, etfs and futures.
+        :return: Dictionary with all available broker instruments: currencies, shares, bonds, etfs and futures.
         """
         uLogger.debug("Requesting all available instruments from broker for current user token. Wait, please...")
         uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
@@ -457,7 +457,7 @@ class TinkoffBrokerServer:
         listing = poolUpdater.map(self._IWrapper, iParams)  # execute update operations
         poolUpdater.close()
 
-        # Dictionary with all broker instruments: stocks, currencies, bonds, etfs and futures.
+        # Dictionary with all broker instruments: shares, currencies, bonds, etfs and futures.
         # Next in this code: item[0] is "iType" and item[1] is list of available instruments from the result of _IUpdater() method
         iList = {item[0]: {instrument["ticker"]: instrument for instrument in item[1]} for item in listing}
 
@@ -479,7 +479,7 @@ class TinkoffBrokerServer:
 
     def DumpInstruments(self, forceUpdate: bool = True) -> str:
         """
-        Receives and returns actual raw data about stocks, currencies, bonds, etfs and futures from broker server
+        Receives and returns actual raw data about shares, currencies, bonds, etfs and futures from broker server
         using `Listing()` method. If `iListDumpFile` string is not empty then also save information to this file.
 
         :param forceUpdate: if `True` then at first updates data with `Listing()` method, otherwise just saves exist `iList`.
@@ -514,7 +514,7 @@ class TinkoffBrokerServer:
                 "# Information is actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                              | Values\n",
                 "|---------------------------------------------------------|---------------------------------------------------------\n",
-                "| Stock ticker:                                           | {}\n".format(iJSON["ticker"]),
+                "| Ticker:                                                 | {}\n".format(iJSON["ticker"]),
                 "| Full name:                                              | {}\n".format(iJSON["name"]),
             ]
 
@@ -695,7 +695,7 @@ class TinkoffBrokerServer:
             if self.ticker in self.iList["Shares"].keys():
                 tickerJSON = self.iList["Shares"][self.ticker]
                 if debug:
-                    uLogger.debug("Ticker [{}] found in stocks list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in shares list".format(self.ticker))
 
             elif self.ticker in self.iList["Currencies"].keys():
                 tickerJSON = self.iList["Currencies"][self.ticker]
@@ -764,7 +764,7 @@ class TinkoffBrokerServer:
                     figiJSON = self.iList["Shares"][item]
 
                     if debug:
-                        uLogger.debug("FIGI [{}] found in stocks list".format(self.figi))
+                        uLogger.debug("FIGI [{}] found in shares list".format(self.figi))
 
                     break
 
@@ -1165,7 +1165,7 @@ class TinkoffBrokerServer:
             "raw": {  # --- raw portfolio responses from broker with user portfolio data:
                 "headers": {},  # list of dictionaries, response headers without "positions" section
                 "Currencies": [],  # list of dictionaries, open trades with currencies from "positions" section
-                "Shares": [],  # list of dictionaries, open trades with stocks from "positions" section
+                "Shares": [],  # list of dictionaries, open trades with shares from "positions" section
                 "Bonds": [],  # list of dictionaries, open trades with bonds from "positions" section
                 "Etfs": [],  # list of dictionaries, open trades with etfs from "positions" section
                 "Futures": [],  # list of dictionaries, open trades with futures from "positions" section
@@ -1181,11 +1181,11 @@ class TinkoffBrokerServer:
                 "totalChangesPercentRUB": 0.,  # changes for all open trades in percents
                 "allCurrenciesCostRUB": 0.,  # costs of all currencies (include rubles) in RUB
                 "availableRUB": 0.,  # available rubles (without other currencies)
-                "stocksCostRUB": 0.,  # costs of all stocks in RUB
+                "sharesCostRUB": 0.,  # costs of all shares in RUB
                 "bondsCostRUB": 0.,  # costs of all bonds in RUB
                 "etfsCostRUB": 0.,  # costs of all etfs in RUB
                 "Currencies": [],  # list of dictionaries of all currencies statistics
-                "Shares": [],  # list of dictionaries of all stocks statistics
+                "Shares": [],  # list of dictionaries of all shares statistics
                 "Bonds": [],  # list of dictionaries of all bonds statistics
                 "Etfs": [], # list of dictionaries of all etfs statistics
                 "Futures": [], # list of dictionaries of all futures statistics
@@ -1194,11 +1194,12 @@ class TinkoffBrokerServer:
                 "blockedCurrencies": {},  # dict with blocked instruments and currencies, e.g. {"rub": 1291.87, "usd": 6.21}
                 "blockedInstruments": {},  # dict with blocked  by FIGI, e.g. {}
             },
-            "analytics":{  # --- some analytics of portfolio:
+            "analytics": {  # --- some analytics of portfolio:
                 "distrByAssets": {},  # portfolio distribution by assets
                 "distrByCompanies": {},  # portfolio distribution by companies
                 "distrBySectors": {},  # portfolio distribution by sectors
                 "distrByCurrencies": {},  # portfolio distribution by currencies
+                "distrByCountries": {},  # portfolio distribution by countries
             }
         }
 
@@ -1268,15 +1269,15 @@ class TinkoffBrokerServer:
         if "rub" in allBlocked.keys():
             view["stat"]["currentBlockedRUB"] = allBlocked["rub"]  # blocked rubles
 
-        # --- saving current total amount in RUB of all currencies (with ruble), stocks, bonds, etfs, futures and currencies:
+        # --- saving current total amount in RUB of all currencies (with ruble), shares, bonds, etfs, futures and currencies:
         view["stat"]["allCurrenciesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountCurrencies"]["units"], portfolioResponse["totalAmountCurrencies"]["nano"])
-        view["stat"]["stocksCostRUB"] = NanoToFloat(portfolioResponse["totalAmountShares"]["units"], portfolioResponse["totalAmountShares"]["nano"])
+        view["stat"]["sharesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountShares"]["units"], portfolioResponse["totalAmountShares"]["nano"])
         view["stat"]["bondsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountBonds"]["units"], portfolioResponse["totalAmountBonds"]["nano"])
         view["stat"]["etfsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountEtf"]["units"], portfolioResponse["totalAmountEtf"]["nano"])
         view["stat"]["futuresCostRUB"] = NanoToFloat(portfolioResponse["totalAmountFutures"]["units"], portfolioResponse["totalAmountFutures"]["nano"])
         view["stat"]["portfolioCostRUB"] = sum([
             view["stat"]["allCurrenciesCostRUB"],
-            view["stat"]["stocksCostRUB"],
+            view["stat"]["sharesCostRUB"],
             view["stat"]["bondsCostRUB"],
             view["stat"]["etfsCostRUB"],
             view["stat"]["futuresCostRUB"],
@@ -1286,6 +1287,8 @@ class TinkoffBrokerServer:
         byComp = {}  # distribution by companies
         bySect = {}  # distribution by sectors
         byCurr = {}  # distribution by currencies (include RUB)
+        unknownCountryName = "All other countries"  # default name for instruments without "countryOfRisk" and "countryOfRiskName"
+        byCountry = {unknownCountryName: {"cost": 0, "percent": 0.}}  # distribution by countries (currencies are included in their countries)
 
         for item in portfolioResponse["positions"]:
             self.figi = item["figi"]
@@ -1310,6 +1313,7 @@ class TinkoffBrokerServer:
                 currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "future") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
                 cost = (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
+                countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
                 costRUB = cost if item["instrumentType"] == "currency" else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
                 percentCostRUB = 100 * costRUB / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.  # instrument's part in percent of full portfolio cost
 
@@ -1332,7 +1336,16 @@ class TinkoffBrokerServer:
                     "sector": instrument["sector"] if "sector" in instrument.keys() and instrument["sector"] else "other",
                     "name": instrument["name"] if "name" in instrument.keys() else "",  # human-readable names of instruments
                     "isoCurrencyName": instrument["isoCurrencyName"] if "isoCurrencyName" in instrument.keys() else "",  # ISO name for currencies only
+                    "country": countryName,  # e.g. "[RU] Российская Федерация" or unknownCountryName
                 }
+
+                # adding distribution by unique countries:
+                if statData["country"] not in byCountry.keys():
+                    byCountry[statData["country"]] = {"cost": costRUB, "percent": percentCostRUB}
+
+                else:
+                    byCountry[statData["country"]]["cost"] += costRUB
+                    byCountry[statData["country"]]["percent"] += percentCostRUB
 
                 if item["instrumentType"] != "currency":
                     # adding distribution by unique companies:
@@ -1364,7 +1377,7 @@ class TinkoffBrokerServer:
                     byCurr[currency]["cost"] += costRUB
                     byCurr[currency]["percent"] += percentCostRUB
 
-                # saving statistics for every instruments:
+                # saving statistics for every instrument:
                 if item["instrumentType"] == "currency":
                     view["stat"]["Currencies"].append(statData)
 
@@ -1498,8 +1511,8 @@ class TinkoffBrokerServer:
             },
             "Shares": {
                 "uniques": len(view["stat"]["Shares"]),
-                "cost": view["stat"]["stocksCostRUB"],
-                "percent": 100 * view["stat"]["stocksCostRUB"] / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.,
+                "cost": view["stat"]["sharesCostRUB"],
+                "percent": 100 * view["stat"]["sharesCostRUB"] / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.,
             },
             "Bonds": {
                 "uniques": len(view["stat"]["Bonds"]),
@@ -1537,6 +1550,9 @@ class TinkoffBrokerServer:
         view["analytics"]["distrByCurrencies"].update(byCurr)
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
         view["analytics"]["distrByCurrencies"]["rub"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
+
+        # portfolio distribution by countries:
+        view["analytics"]["distrByCountries"].update(byCountry)
 
         # --- Prepare text statistics overview in human-readable:
         if showStatistics:
@@ -1602,15 +1618,15 @@ class TinkoffBrokerServer:
             else:
                 info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
 
-            # --- Show stocks section:
+            # --- Show shares section:
             if view["stat"]["Shares"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["stocksCostRUB"], typeStr="**Stocks:**"))
+                info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
 
                 for item in view["stat"]["Shares"]:
                     info.append(_InfoStr(item))
 
             else:
-                info.extend(_SplitStr(noTradeStr="**Stocks:** no trades"))
+                info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
 
             # --- Show bonds section:
             if view["stat"]["Bonds"]:
@@ -1778,6 +1794,25 @@ class TinkoffBrokerServer:
                             ),
                             "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
                             view["analytics"]["distrByCurrencies"][curr]["cost"],
+                        ))
+
+                maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
+                info.extend([
+                    "\n## Portfolio distribution by countries\n"
+                    "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
+                    "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
+                ])
+
+                for country in view["analytics"]["distrByCountries"].keys():
+                    if view["analytics"]["distrByCountries"][country]["cost"] > 0:
+                        nameLen = len(country)
+                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                            "{}{}".format(
+                                country,
+                                "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
+                            ),
+                            "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
+                            view["analytics"]["distrByCountries"][country]["cost"],
                         ))
 
             infoText = "".join(info)
@@ -2050,7 +2085,7 @@ class TinkoffBrokerServer:
 
         :param onlyMissing: if history file define then add only last missing candles, do not request all history length. False by default.
                             WARNING! History appends only from last candle to current time with replace last candle! Intervals must be similar!
-        :return: pandas dataframe with stock history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
+        :return: pandas dataframe with prices history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
         """
         history = None  # empty pandas object for history
         # TODO: update history to work with api v2
