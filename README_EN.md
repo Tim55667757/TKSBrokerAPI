@@ -339,6 +339,9 @@ options:
                         `YNDX`).
   --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
                         default.
+  --no-cancelled        Option: remove information about cancelled operations
+                        from the deals report by the `--deals` key. `False` by
+                        default.
   --output OUTPUT       Option: replace default paths to output files for some
                         commands. If None then used default files.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
@@ -368,14 +371,16 @@ options:
   --overview, -o        Action: show all open positions, orders and some
                         statistics. Also, you can define `--output` key to save
                         this information to file, default: `overview.md`.
-  --deals [DEALS [DEALS ...]], -d [DEALS [DEALS ...]]
+  --deals [DEALS ...], -d [DEALS ...]
                         Action: show all deals between two given dates. Start
                         day may be an integer number: -1, -2, -3 days ago.
                         Also, you can use keywords: `today`, `yesterday` (-1),
                         `week` (-7), `month` (-30) and `year` (-365). Dates
-                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. Also, you
-                        can define `--output` key to save all deals to file,
-                        default: `report.md`.
+                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. With
+                        `--no-cancelled` key information about cancelled
+                        operations will be removed from the deals report.
+                        Also, you can define `--output` key to save all deals
+                        to file, default: `report.md`.
   --trade [TRADE [TRADE ...]]
                         Action: universal action to open market position for
                         defined ticker or FIGI. You must specify 1-5
