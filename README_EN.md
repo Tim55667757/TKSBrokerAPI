@@ -60,36 +60,42 @@ When working with any API, there are always technical difficulties: a high entry
 ```commandline
 $ tksbrokerapi --overview
 
-TKSBrokerAPI.py     L:1726 INFO    [2022-07-26 12:43:12,279] Statistics of client's portfolio:
+TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of client's portfolio:
 # Client's portfolio
 
-* **Actual date:** [2022-07-26 09:43:12] (UTC)
-* **Portfolio cost:** 19835.73 RUB
-* **Changes:** +415.14 RUB (+2.05%)
+* **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Open positions
 
 | Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)
 |-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------
-| Ruble                       |                90.96 (0.30) rub |          |              |              |                     |
+| Ruble                       |                 5.62 (0.00) rub |          |              |              |                     |
 |                             |                                 |          |              |              |                     |
-| **Currencies:**             |                                 |          |              |              |         9159.71 RUB |
-| EUR_RUB__TOM [BBG0013HJJ31] |                 6.29 (0.00) eur | 0.0063   |    59.35 rub |    56.11 rub |          373.31 rub | +22.80 rub (+5.76%)
-| CNYRUB_TOM [BBG0013HRTL0]   |                23.00 (0.00) cny | 0.0230   |     8.78 rub |     8.92 rub |          201.95 rub | -3.20 rub (-1.56%)
+| **Currencies:**             |                                 |          |              |              |        13886.03 RUB |
+| EUR_RUB__TOM [BBG0013HJJ31] |                 5.29 (0.00) eur | 0.0053   |    62.75 rub |    61.41 rub |          331.96 rub | +7.10 rub (+2.19%)
+| CNYRUB_TOM [BBG0013HRTL0]   |               928.93 (0.00) cny | 0.9289   |     9.09 rub |     8.95 rub |         8443.97 rub | +134.69 rub (+1.62%)
 | CHFRUB_TOM [BBG0013HQ5K4]   |                 1.00 (0.00) chf | 0.0010   |    60.54 rub |    64.00 rub |           60.54 rub | -3.46 rub (-5.41%)
-| GBPRUB_TOM [BBG0013HQ5F0]   |                 2.00 (0.00) gbp | 0.0020   |    72.80 rub |    90.10 rub |          145.59 rub | -34.61 rub (-19.21%)
-| TRYRUB_TOM [BBG0013J12N1]   |                 1.00 (0.00) try | 0.0010   |     3.26 rub |     4.75 rub |            3.26 rub | -1.50 rub (-31.55%)
-| USD000UTSTOM [BBG0013HGFT4] |               143.03 (0.00) usd | 0.1430   |    58.50 rub |    55.88 rub |         8367.25 rub | +395.68 rub (+4.96%)
-| HKDRUB_TOM [BBG0013HSW87]   |                 1.00 (0.00) hkd | 0.0010   |     7.79 rub |    11.46 rub |            7.79 rub | -3.67 rub (-32.02%)
+| GBPRUB_TOM [BBG0013HQ5F0]   |                10.00 (0.00) gbp | 0.0100   |    74.39 rub |    75.88 rub |          743.85 rub | -14.94 rub (-1.97%)
+| TRYRUB_TOM [BBG0013J12N1]   |               100.00 (0.00) try | 0.1000   |     3.42 rub |     3.41 rub |          342.00 rub | +0.65 rub (+0.19%)
+| USD000UTSTOM [BBG0013HGFT4] |                34.42 (0.05) usd | 0.0344   |    60.66 rub |    60.33 rub |         2088.09 rub | +11.44 rub (+0.55%)
+| HKDRUB_TOM [BBG0013HSW87]   |               237.75 (0.00) hkd | 0.2378   |     7.89 rub |     7.83 rub |         1875.61 rub | +14.27 rub (+0.77%)
 |                             |                                 |          |              |              |                     |
-| **Stocks:**                 |                                 |          |              |              |          905.80 RUB |
-| POSI [TCS00A103X66]         |                           1 (1) | 1        |   905.80 rub |   906.80 rub |          905.80 rub | -1.00 rub (-0.11%)
+| **Shares:**                 |                                 |          |              |              |       199987.52 RUB |
+| POSI [TCS00A103X66]         |                           3 (0) | 3        |  1161.80 rub |  1120.20 rub |         3485.40 rub | +124.60 rub (+3.71%)
+| 288 [BBG00699M8Q7]          |                         800 (0) | 8        |     5.53 hkd |     5.69 hkd |         4424.00 hkd | -128.00 hkd (-2.81%)
+| YNDX [BBG006L8G4H1]         |                           4 (0) | 4        |  1971.80 rub |  1958.80 rub |         7887.20 rub | +52.22 rub (+0.67%)
+| IBM [BBG000BLNNH6]          |                           1 (1) | 1        |   131.03 usd |   131.13 usd |          131.03 usd | -0.10 usd (-0.08%)
+| 1810 [BBG00KVTBY91]         |                        1100 (0) | 11       |    11.79 hkd |    11.76 hkd |        12969.00 hkd | +30.00 hkd (+0.23%)
+| 9988 [BBG006G2JVL2]         |                          60 (0) | 6        |    91.80 hkd |    91.05 hkd |         5508.00 hkd | +45.50 hkd (+0.83%)
 |                             |                                 |          |              |              |                     |
-| **Bonds:**                  |                                 |          |              |              |         3024.30 RUB |
-| RU000A101YV8 [TCS00A101YV8] |                           3 (0) | 3        |  1008.10 rub |  1004.40 rub |         3024.30 rub | +11.10 rub (+0.37%)
+| **Bonds:**                  |                                 |          |              |              |        56240.33 RUB |
+| RU000A105104 [TCS00A105104] |                           5 (0) | 5        |  1012.00 cny |  1013.00 cny |         5064.80 cny | -5.00 cny (-0.10%)
+| RU000A101YV8 [TCS00A101YV8] |                          10 (0) | 10       |  1015.40 rub |  1011.21 rub |        10201.30 rub | +41.90 rub (+0.41%)
 |                             |                                 |          |              |              |                     |
-| **Etfs:**                   |                                 |          |              |              |         6654.96 RUB |
-| TGLD [BBG222222222]         |                        1600 (0) | 16       |     0.07 usd |     0.07 usd |          113.76 usd | -3.63 usd (-3.09%)
+| **Etfs:**                   |                                 |          |              |              |       135586.27 RUB |
+| TGLD [BBG222222222]         |                       30000 (0) | 300      |     0.07 usd |     0.07 usd |         2235.00 usd | -3.39 usd (-0.15%)
 |                             |                                 |          |              |              |                     |
 | **Futures:** no trades      |                                 |          |              |              |                     |
 
@@ -97,61 +103,80 @@ TKSBrokerAPI.py     L:1726 INFO    [2022-07-26 12:43:12,279] Statistics of clien
 
 | Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)
 |-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------
-| POSI [TCS00A103X66]         | ***********    | 1 (0)        |     905.80 rub (-9.33%) |    999.00 rub | ↓ Sell    | Limit     | 2022-07-26 12:43:05
+| IBM [BBG000BLNNH6]          | ************   | 1 (0)        |     131.02 usd (-4.36%) |    137.00 usd | ↓ Sell    | Limit     | 2022-08-10 22:02:44
 
-## Opened stop-orders: 2
+## Opened stop-orders: 3
 
 | Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)
 |-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------
-| POSI [TCS00A103X66]         | ********-****-****-****-************ | 1      |     905.80 rub (-9.42%) |   1000.00 rub |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 08:58:02 | Undefined
-| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |         N/A usd (0.00%) |    135.00 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 09:38:44 | Undefined
+| 1810 [BBG00KVTBY91]         | ********-****-****-****-************ | 11     |         N/A hkd (0.00%) |     14.00 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:24:57 | Undefined
+| 288 [BBG00699M8Q7]          | ********-****-****-****-************ | 8      |         N/A hkd (0.00%) |      5.80 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:06:28 | Undefined
+| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     130.99 usd (-4.49%) |    137.15 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 19:02:21 | Undefined
 
 # Analytics
 
-* **Current total portfolio cost:** 19835.73 RUB
-* **Changes:** +415.14 RUB (+2.05%)
+* **Current total portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Portfolio distribution by assets
 
 | Type       | Uniques | Percent | Current cost
 |------------|---------|---------|-----------------
-| Ruble      | 1       | 0.46%   | 90.96 rub
-| Currencies | 7       | 46.18%  | 9159.71 rub
-| Shares     | 1       | 4.57%   | 905.80 rub
-| Bonds      | 1       | 15.25%  | 3024.30 rub
-| Etfs       | 1       | 33.55%  | 6654.96 rub
+| Ruble      | 1       | 0.00%   | 5.62 rub
+| Currencies | 7       | 3.42%   | 13886.03 rub
+| Shares     | 6       | 49.29%  | 199987.52 rub
+| Bonds      | 2       | 13.86%  | 56240.33 rub
+| Etfs       | 1       | 33.42%  | 135586.27 rub
 
 ## Portfolio distribution by companies
 
 | Company                                     | Percent | Current cost
 |---------------------------------------------|---------|-----------------
-| All money cash                              | 46.64%  | 9250.67 rub
-| [POSI] Positive Technologies                | 4.57%   | 905.80 rub
-| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 15.25%  | 3024.30 rub
-| [TGLD] Тинькофф Золото                      | 33.55%  | 6654.96 rub
+| All money cash                              | 3.42%   | 13891.65 rub
+| [POSI] Positive Technologies                | 0.86%   | 3485.40 rub
+| [288] WH Group                              | 8.60%   | 34900.94 rub
+| [YNDX] Yandex                               | 1.94%   | 7887.20 rub
+| [IBM] IBM                                   | 1.96%   | 7948.93 rub
+| [1810] Xiaomi                               | 25.22%  | 102312.44 rub
+| [9988] Alibaba                              | 10.71%  | 43452.61 rub
+| [RU000A105104] РУСАЛ выпуск 5               | 11.35%  | 46039.03 rub
+| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 2.51%   | 10201.30 rub
+| [TGLD] Тинькофф Золото                      | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by sectors
 
 | Sector         | Percent | Current cost
 |----------------|---------|-----------------
-| All money cash | 46.64%  | 9250.67 rub
-| it             | 19.81%  | 3930.10 rub
-| other          | 33.55%  | 6654.96 rub
+| All money cash | 3.42%   | 13891.65 rub
+| it             | 30.55%  | 123948.08 rub
+| consumer       | 19.31%  | 78353.55 rub
+| telecom        | 1.94%   | 7887.20 rub
+| materials      | 11.35%  | 46039.03 rub
+| other          | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by currencies
 
 | Instruments currencies   | Percent | Current cost
 |--------------------------|---------|-----------------
-| [rub] Российский рубль   | 20.27%  | 4021.06 rub
-| [usd] Доллар США         | 75.73%  | 15022.22 rub
-| [eur] Евро               | 1.88%   | 373.33 rub
-| [cny] Юань               | 1.02%   | 201.95 rub
-| [chf] Швейцарский франк  | 0.31%   | 60.54 rub
-| [gbp] Фунт стерлингов    | 0.73%   | 145.59 rub
-| [try] Турецкая лира      | 0.02%   | 3.26 rub
-| [hkd] Гонконгский доллар | 0.04%   | 7.79 rub
+| [rub] Российский рубль   | 5.32%   | 21579.52 rub
+| [hkd] Гонконгский доллар | 44.99%  | 182541.60 rub
+| [usd] Доллар США         | 35.89%  | 145623.30 rub
+| [cny] Юань               | 13.43%  | 54483.01 rub
+| [eur] Евро               | 0.08%   | 331.96 rub
+| [chf] Швейцарский франк  | 0.01%   | 60.54 rub
+| [gbp] Фунт стерлингов    | 0.18%   | 743.85 rub
+| [try] Турецкая лира      | 0.08%   | 342.00 rub
 
-TKSBrokerAPI.py     L:1732 INFO    [2022-07-26 12:43:12,303] Client's portfolio is saved to file: [overview.md]
+## Portfolio distribution by countries
+
+| Assets by country                  | Percent | Current cost
+|------------------------------------|---------|-----------------
+| All other countries                | 36.84%  | 149472.30 rub
+| [RU] Российская Федерация          | 16.67%  | 67612.93 rub
+| [CN] Китайская Народная Республика | 44.53%  | 180665.99 rub
+| [US] Соединенные Штаты Америки     | 1.96%   | 7948.93 rub
+
+TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio is saved to file: [overview.md]
 ```
 
 </details>
@@ -167,7 +192,7 @@ At the time of the latest release, the TKSBrokerAPI tool can:
 - Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
   - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
   - API-method: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
-- Receive from the broker's server a list of all instruments available for the specified account: currencies, stocks, bonds, funds and futures;
+- Receive from the broker's server a list of all instruments available for the specified account: currencies, shares, bonds, funds and futures;
   - key `--list` or `-l`;
   - API-method: [`Listing()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Listing).
 - Request the broker for information about the instrument, knowing its ticker or FIGI ID;
@@ -179,7 +204,7 @@ At the time of the latest release, the TKSBrokerAPI tool can:
 - Receive a table of the latest prices from the broker server;
   - key `--prices` with the list of requested instruments;
   - API-method: [`GetListOfPrices()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetListOfPrices).
-- Receive information about the user's portfolio and some analytics on it: distribution of the portfolio by assets, companies, sectors and currencies of assets;
+- Receive information about the user's portfolio and some analytics on it: distribution of the portfolio by assets, companies, sectors, currencies and countries of assets;
   - key `--overview` or `-o`;
   - API-method: [`Overview()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview).
 - Receive from the broker server information about completed transactions for the specified period and show it as a table;
@@ -442,7 +467,7 @@ Starting with TKSBrokerAPI v1.2.* versions, the ability to use the local cache `
 
 If the current day differs from the day the cache was last modified, it will be automatically updated at the next time when program is started. If the `dump.json` file does not exist in the local directory, it will also be created automatically.
 
-Usually, stock exchanges rarely experience critical changes in instruments during the day, and updating the cache at least once a day is justified. But if you want to be completely sure about the consistency of the data, you can specify the `--no-cahce` key together with each command. In this case, data on instruments will be requested every time.
+Usually, share exchanges rarely experience critical changes in instruments during the day, and updating the cache at least once a day is justified. But if you want to be completely sure about the consistency of the data, you can specify the `--no-cahce` key together with each command. In this case, data on instruments will be requested every time.
 
 #### Get a list of all instruments available for trading
 
@@ -498,7 +523,7 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-26 22:04:41,215] TKSBrokerAPI module
 
 #### Get information about an instrument
 
-The key `--info` (`-i`) is used, and one of the two parameters must be specified: the instrument's ticker, or its FIGI ID. They are specified by the `--ticker` (`-t`) and `--figi` (`-f`) keys, respectively. The information displayed to the user is the same for both keys. The difference is in the content and number of fields displayed in the information table, depending on the type of instrument found: it is a currency, stock, bond, fund or futures.
+The key `--info` (`-i`) is used, and one of the two parameters must be specified: the instrument's ticker, or its FIGI ID. They are specified by the `--ticker` (`-t`) and `--figi` (`-f`) keys, respectively. The information displayed to the user is the same for both keys. The difference is in the content and number of fields displayed in the information table, depending on the type of instrument found: it is a currency, share, bond, fund or futures.
 
 <details>
   <summary>Command to get currency information (using ticker alias, minimal logs)</summary>
@@ -511,7 +536,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:48:31,766] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | CNYRUB_TOM
+| Ticker:                                                 | CNYRUB_TOM
 | Full name:                                              | Юань
 | Country of instrument:                                  |
 |                                                         |
@@ -540,7 +565,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:48:31,766] Information about i
 </details>
 
 <details>
-  <summary>Command to get information about the stock (using ticker, detailed logs)</summary>
+  <summary>Command to get information about the share (using ticker, detailed logs)</summary>
 
 ```commandline
 $ tksbrokerapi -v 10 --ticker IBM --info
@@ -562,7 +587,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:49:59,462] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | IBM
+| Ticker:                                                 | IBM
 | Full name:                                              | IBM
 | Sector:                                                 | it
 | Country of instrument:                                  | (US) Соединенные Штаты Америки
@@ -607,7 +632,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:57:22,581] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | RU000A101YV8
+| Ticker:                                                 | RU000A101YV8
 | Full name:                                              | Позитив Текнолоджиз выпуск 1
 | Sector:                                                 | it
 | Country of instrument:                                  | (RU) Российская Федерация
@@ -650,7 +675,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:59:07,204] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | TGLD
+| Ticker:                                                 | TGLD
 | Full name:                                              | Тинькофф Золото
 | Country of instrument:                                  |
 |                                                         |
@@ -703,7 +728,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-27 00:01:49,075] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | PZH2
+| Ticker:                                                 | PZH2
 | Full name:                                              | PLZL-3.22 Полюс Золото
 | Sector:                                                 | SECTOR_MATERIALS
 | Country of instrument:                                  |
@@ -807,71 +832,71 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 </details>
 
-
 #### Get the current portfolio and asset allocation statistics
 
 The `--overview` (`-o`) key is used. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not nesessary to specify it).
 
 <details>
-  <summary>Command to get user's portfolio</summary>
+  <summary>Command to show user's portfolio</summary>
 
 ```commandline
 $ tksbrokerapi --verbosity=10 --overview --output portfolio.md
 
-TKSBrokerAPI.py     L:2804 DEBUG   [2022-07-27 18:03:05,365] TKSBrokerAPI module started at: [2022-07-27 15:03:05] (UTC), it is [2022-07-27 18:03:05] local time
-TKSBrokerAPI.py     L:198  DEBUG   [2022-07-27 18:03:05,366] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
-TKSBrokerAPI.py     L:210  DEBUG   [2022-07-27 18:03:05,367] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
-TKSBrokerAPI.py     L:240  DEBUG   [2022-07-27 18:03:05,368] Broker API server: https://invest-public-api.tinkoff.ru/rest
-TKSBrokerAPI.py     L:411  DEBUG   [2022-07-27 18:03:05,369] Requesting all available instruments from broker for current user token. Wait, please...
-TKSBrokerAPI.py     L:412  DEBUG   [2022-07-27 18:03:05,370] CPU usages for parallel requests: [7]
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Currencies] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Shares] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Bonds] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Etfs] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Futures] list. Wait, please...
-TKSBrokerAPI.py     L:1146 DEBUG   [2022-07-27 18:03:06,455] Request portfolio of a client...
-TKSBrokerAPI.py     L:1035 DEBUG   [2022-07-27 18:03:06,456] Requesting current actual user's portfolio. Wait, please...
-TKSBrokerAPI.py     L:1041 DEBUG   [2022-07-27 18:03:06,659] Records about user's portfolio successfully received
-TKSBrokerAPI.py     L:1052 DEBUG   [2022-07-27 18:03:06,660] Requesting current open positions in currencies and instruments. Wait, please...
-TKSBrokerAPI.py     L:1058 DEBUG   [2022-07-27 18:03:06,779] Records about current open positions successfully received
-TKSBrokerAPI.py     L:1069 DEBUG   [2022-07-27 18:03:06,779] Requesting current actual pending orders. Wait, please...
-TKSBrokerAPI.py     L:1075 DEBUG   [2022-07-27 18:03:06,914] [1] records about pending orders successfully received
-TKSBrokerAPI.py     L:1086 DEBUG   [2022-07-27 18:03:06,916] Requesting current actual stop orders. Wait, please...
-TKSBrokerAPI.py     L:1092 DEBUG   [2022-07-27 18:03:07,027] [3] records about stop orders successfully received
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,039] Requesting current prices for instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8]...
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,144] Requesting current prices for instrument with ticker [POSI] and FIGI [TCS00A103X66]...
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,235] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
-TKSBrokerAPI.py     L:1726 INFO    [2022-07-27 18:03:07,387] Statistics of client's portfolio:
+TKSBrokerAPI.py     L:2898 DEBUG   [2022-08-10 22:06:22,087] TKSBrokerAPI module started at: [2022-08-10 19:06:22] (UTC), it is [2022-08-10 22:06:22] local time
+TKSBrokerAPI.py     L:205  DEBUG   [2022-08-10 22:06:22,087] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:217  DEBUG   [2022-08-10 22:06:22,087] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:247  DEBUG   [2022-08-10 22:06:22,087] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:307  DEBUG   [2022-08-10 22:06:22,113] Local cache with raw instruments data is used: [dump.json]
+TKSBrokerAPI.py     L:308  DEBUG   [2022-08-10 22:06:22,114] Dump file was modified [2022-08-10 12:02:58] UTC
+TKSBrokerAPI.py     L:1207 DEBUG   [2022-08-10 22:06:22,114] Request portfolio of a client...
+TKSBrokerAPI.py     L:1095 DEBUG   [2022-08-10 22:06:22,114] Requesting current actual user's portfolio. Wait, please...
+TKSBrokerAPI.py     L:1101 DEBUG   [2022-08-10 22:06:22,499] Records about user's portfolio successfully received
+TKSBrokerAPI.py     L:1112 DEBUG   [2022-08-10 22:06:22,499] Requesting current open positions in currencies and instruments. Wait, please...
+TKSBrokerAPI.py     L:1118 DEBUG   [2022-08-10 22:06:22,854] Records about current open positions successfully received
+TKSBrokerAPI.py     L:1129 DEBUG   [2022-08-10 22:06:22,854] Requesting current actual pending orders. Wait, please...
+TKSBrokerAPI.py     L:1135 DEBUG   [2022-08-10 22:06:23,192] [1] records about pending orders successfully received
+TKSBrokerAPI.py     L:1146 DEBUG   [2022-08-10 22:06:23,193] Requesting current actual stop orders. Wait, please...
+TKSBrokerAPI.py     L:1152 DEBUG   [2022-08-10 22:06:23,807] [5] records about stop orders successfully received
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:23,824] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,152] Requesting current prices for instrument with ticker [1810] and FIGI [BBG00KVTBY91]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,571] Requesting current prices for instrument with ticker [288] and FIGI [BBG00699M8Q7]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,843] Requesting current prices for instrument with ticker [9988] and FIGI [BBG006G2JVL2]...
+TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of client's portfolio:
 # Client's portfolio
 
-* **Actual date:** [2022-07-27 15:03:07] (UTC)
-* **Portfolio cost:** 34501.76 RUB
-* **Changes:** +168.23 RUB (+0.49%)
+* **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Open positions
 
 | Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)
 |-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------
-| Ruble                       |                 7.05 (0.62) rub |          |              |              |                     |
+| Ruble                       |                 5.62 (0.00) rub |          |              |              |                     |
 |                             |                                 |          |              |              |                     |
-| **Currencies:**             |                                 |          |              |              |        11186.55 RUB |
-| EUR_RUB__TOM [BBG0013HJJ31] |                 6.29 (0.00) eur | 0.0063   |    61.06 rub |    62.98 rub |          384.07 rub | -12.06 rub (-3.04%)
-| CNYRUB_TOM [BBG0013HRTL0]   |               264.00 (0.00) cny | 0.2640   |     9.08 rub |     8.95 rub |         2396.99 rub | +35.51 rub (+1.50%)
+| **Currencies:**             |                                 |          |              |              |        13886.03 RUB |
+| EUR_RUB__TOM [BBG0013HJJ31] |                 5.29 (0.00) eur | 0.0053   |    62.75 rub |    61.41 rub |          331.96 rub | +7.10 rub (+2.19%)
+| CNYRUB_TOM [BBG0013HRTL0]   |               928.93 (0.00) cny | 0.9289   |     9.09 rub |     8.95 rub |         8443.97 rub | +134.69 rub (+1.62%)
 | CHFRUB_TOM [BBG0013HQ5K4]   |                 1.00 (0.00) chf | 0.0010   |    60.54 rub |    64.00 rub |           60.54 rub | -3.46 rub (-5.41%)
-| GBPRUB_TOM [BBG0013HQ5F0]   |                 2.00 (0.00) gbp | 0.0020   |    73.85 rub |    90.10 rub |          147.70 rub | -32.50 rub (-18.04%)
-| TRYRUB_TOM [BBG0013J12N1]   |                 1.00 (0.00) try | 0.0010   |     3.34 rub |     4.75 rub |            3.34 rub | -1.41 rub (-29.65%)
-| USD000UTSTOM [BBG0013HGFT4] |               135.68 (0.00) usd | 0.1357   |    60.33 rub |    59.40 rub |         8185.91 rub | +126.52 rub (+1.57%)
-| HKDRUB_TOM [BBG0013HSW87]   |                 1.00 (0.00) hkd | 0.0010   |     8.00 rub |    11.46 rub |            8.00 rub | -3.46 rub (-30.19%)
+| GBPRUB_TOM [BBG0013HQ5F0]   |                10.00 (0.00) gbp | 0.0100   |    74.39 rub |    75.88 rub |          743.85 rub | -14.94 rub (-1.97%)
+| TRYRUB_TOM [BBG0013J12N1]   |               100.00 (0.00) try | 0.1000   |     3.42 rub |     3.41 rub |          342.00 rub | +0.65 rub (+0.19%)
+| USD000UTSTOM [BBG0013HGFT4] |                34.42 (0.05) usd | 0.0344   |    60.66 rub |    60.33 rub |         2088.09 rub | +11.44 rub (+0.55%)
+| HKDRUB_TOM [BBG0013HSW87]   |               237.75 (0.00) hkd | 0.2378   |     7.89 rub |     7.83 rub |         1875.61 rub | +14.27 rub (+0.77%)
 |                             |                                 |          |              |              |                     |
-| **Stocks:**                 |                                 |          |              |              |         8660.80 RUB |
-| POSI [TCS00A103X66]         |                           1 (0) | 1        |   929.80 rub |   906.80 rub |          929.80 rub | +23.00 rub (+2.54%)
-| IBM [BBG000BLNNH6]          |                           1 (0) | 1        |   128.14 usd |   128.89 usd |          128.14 usd | -0.75 usd (-0.58%)
+| **Shares:**                 |                                 |          |              |              |       199987.52 RUB |
+| POSI [TCS00A103X66]         |                           3 (0) | 3        |  1161.80 rub |  1120.20 rub |         3485.40 rub | +124.60 rub (+3.71%)
+| 288 [BBG00699M8Q7]          |                         800 (0) | 8        |     5.53 hkd |     5.69 hkd |         4424.00 hkd | -128.00 hkd (-2.81%)
+| YNDX [BBG006L8G4H1]         |                           4 (0) | 4        |  1971.80 rub |  1958.80 rub |         7887.20 rub | +52.22 rub (+0.67%)
+| IBM [BBG000BLNNH6]          |                           1 (1) | 1        |   131.03 usd |   131.13 usd |          131.03 usd | -0.10 usd (-0.08%)
+| 1810 [BBG00KVTBY91]         |                        1100 (0) | 11       |    11.79 hkd |    11.76 hkd |        12969.00 hkd | +30.00 hkd (+0.23%)
+| 9988 [BBG006G2JVL2]         |                          60 (0) | 6        |    91.80 hkd |    91.05 hkd |         5508.00 hkd | +45.50 hkd (+0.83%)
 |                             |                                 |          |              |              |                     |
-| **Bonds:**                  |                                 |          |              |              |         3032.76 RUB |
-| RU000A101YV8 [TCS00A101YV8] |                           3 (2) | 3        |  1010.60 rub |  1004.40 rub |         3032.76 rub | +18.60 rub (+0.62%)
+| **Bonds:**                  |                                 |          |              |              |        56240.33 RUB |
+| RU000A105104 [TCS00A105104] |                           5 (0) | 5        |  1012.00 cny |  1013.00 cny |         5064.80 cny | -5.00 cny (-0.10%)
+| RU000A101YV8 [TCS00A101YV8] |                          10 (0) | 10       |  1015.40 rub |  1011.21 rub |        10201.30 rub | +41.90 rub (+0.41%)
 |                             |                                 |          |              |              |                     |
-| **Etfs:**                   |                                 |          |              |              |        11614.60 RUB |
-| TGLD [BBG222222222]         |                        2700 (0) | 27       |     0.07 usd |     0.07 usd |          192.51 usd | -3.31 usd (-1.69%)
+| **Etfs:**                   |                                 |          |              |              |       135586.27 RUB |
+| TGLD [BBG222222222]         |                       30000 (0) | 300      |     0.07 usd |     0.07 usd |         2235.00 usd | -3.39 usd (-0.15%)
 |                             |                                 |          |              |              |                     |
 | **Futures:** no trades      |                                 |          |              |              |                     |
 
@@ -879,65 +904,83 @@ TKSBrokerAPI.py     L:1726 INFO    [2022-07-27 18:03:07,387] Statistics of clien
 
 | Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)
 |-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------
-| RU000A101YV8 [TCS00A101YV8] | ***********    | 2 (0)        |     101.13 rub (-0.85%) |    102.00 rub | ↓ Sell    | Limit     | 2022-07-27 16:10:38
+| IBM [BBG000BLNNH6]          | ************   | 1 (0)        |     131.02 usd (-4.36%) |    137.00 usd | ↓ Sell    | Limit     | 2022-08-10 22:02:44
 
-## Opened stop-orders: 2
+## Opened stop-orders: 3
 
 | Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)
 |-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------
-| POSI [TCS00A103X66]         | ********-****-****-****-************ | 1      |     929.80 rub (-7.02%) |   1000.00 rub |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 08:58:02 | Undefined
-| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     128.16 usd (-1.42%) |    130.00 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 14:46:07 | Undefined
+| 1810 [BBG00KVTBY91]         | ********-****-****-****-************ | 11     |         N/A hkd (0.00%) |     14.00 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:24:57 | Undefined
+| 288 [BBG00699M8Q7]          | ********-****-****-****-************ | 8      |         N/A hkd (0.00%) |      5.80 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:06:28 | Undefined
+| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     130.99 usd (-4.49%) |    137.15 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 19:02:21 | Undefined
 
 # Analytics
 
-* **Current total portfolio cost:** 34501.76 RUB
-* **Changes:** +168.23 RUB (+0.49%)
+* **Current total portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Portfolio distribution by assets
 
 | Type       | Uniques | Percent | Current cost
 |------------|---------|---------|-----------------
-| Ruble      | 1       | 0.02%   | 7.05 rub
-| Currencies | 7       | 32.42%  | 11186.55 rub
-| Shares     | 2       | 25.10%  | 8660.80 rub
-| Bonds      | 1       | 8.79%   | 3032.76 rub
-| Etfs       | 1       | 33.66%  | 11614.60 rub
+| Ruble      | 1       | 0.00%   | 5.62 rub
+| Currencies | 7       | 3.42%   | 13886.03 rub
+| Shares     | 6       | 49.29%  | 199987.52 rub
+| Bonds      | 2       | 13.86%  | 56240.33 rub
+| Etfs       | 1       | 33.42%  | 135586.27 rub
 
 ## Portfolio distribution by companies
 
 | Company                                     | Percent | Current cost
 |---------------------------------------------|---------|-----------------
-| All money cash                              | 32.44%  | 11193.60 rub
-| [POSI] Positive Technologies                | 2.69%   | 929.80 rub
-| [IBM] IBM                                   | 22.41%  | 7731.01 rub
-| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 8.79%   | 3032.76 rub
-| [TGLD] Тинькофф Золото                      | 33.66%  | 11614.61 rub
+| All money cash                              | 3.42%   | 13891.65 rub
+| [POSI] Positive Technologies                | 0.86%   | 3485.40 rub
+| [288] WH Group                              | 8.60%   | 34900.94 rub
+| [YNDX] Yandex                               | 1.94%   | 7887.20 rub
+| [IBM] IBM                                   | 1.96%   | 7948.93 rub
+| [1810] Xiaomi                               | 25.22%  | 102312.44 rub
+| [9988] Alibaba                              | 10.71%  | 43452.61 rub
+| [RU000A105104] РУСАЛ выпуск 5               | 11.35%  | 46039.03 rub
+| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 2.51%   | 10201.30 rub
+| [TGLD] Тинькофф Золото                      | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by sectors
 
 | Sector         | Percent | Current cost
 |----------------|---------|-----------------
-| All money cash | 32.44%  | 11193.60 rub
-| it             | 33.89%  | 11693.57 rub
-| other          | 33.66%  | 11614.61 rub
+| All money cash | 3.42%   | 13891.65 rub
+| it             | 30.55%  | 123948.08 rub
+| consumer       | 19.31%  | 78353.55 rub
+| telecom        | 1.94%   | 7887.20 rub
+| materials      | 11.35%  | 46039.03 rub
+| other          | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by currencies
 
 | Instruments currencies   | Percent | Current cost
 |--------------------------|---------|-----------------
-| [rub] Российский рубль   | 11.51%  | 3969.61 rub
-| [usd] Доллар США         | 79.80%  | 27531.53 rub
-| [eur] Евро               | 1.11%   | 384.07 rub
-| [cny] Юань               | 6.95%   | 2396.99 rub
-| [chf] Швейцарский франк  | 0.18%   | 60.54 rub
-| [gbp] Фунт стерлингов    | 0.43%   | 147.70 rub
-| [try] Турецкая лира      | 0.01%   | 3.34 rub
-| [hkd] Гонконгский доллар | 0.02%   | 8.00 rub
+| [rub] Российский рубль   | 5.32%   | 21579.52 rub
+| [hkd] Гонконгский доллар | 44.99%  | 182541.60 rub
+| [usd] Доллар США         | 35.89%  | 145623.30 rub
+| [cny] Юань               | 13.43%  | 54483.01 rub
+| [eur] Евро               | 0.08%   | 331.96 rub
+| [chf] Швейцарский франк  | 0.01%   | 60.54 rub
+| [gbp] Фунт стерлингов    | 0.18%   | 743.85 rub
+| [try] Турецкая лира      | 0.08%   | 342.00 rub
 
-TKSBrokerAPI.py     L:1732 INFO    [2022-07-27 18:03:07,410] Client's portfolio is saved to file: [portfolio.md]
-TKSBrokerAPI.py     L:3034 DEBUG   [2022-07-27 18:03:07,411] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
-TKSBrokerAPI.py     L:3039 DEBUG   [2022-07-27 18:03:07,411] TKSBrokerAPI module work duration: [0:00:02.045574]
-TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 18:03:07,412] TKSBrokerAPI module finished: [2022-07-27 15:03:07] (UTC), it is [2022-07-27 18:03:07] local time
+## Portfolio distribution by countries
+
+| Assets by country                  | Percent | Current cost
+|------------------------------------|---------|-----------------
+| All other countries                | 36.84%  | 149472.30 rub
+| [RU] Российская Федерация          | 16.67%  | 67612.93 rub
+| [CN] Китайская Народная Республика | 44.53%  | 180665.99 rub
+| [US] Соединенные Штаты Америки     | 1.96%   | 7948.93 rub
+
+TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio is saved to file: [portfolio.md]
+TKSBrokerAPI.py     L:3132 DEBUG   [2022-08-10 22:06:27,153] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
+TKSBrokerAPI.py     L:3137 DEBUG   [2022-08-10 22:06:27,153] TKSBrokerAPI module work duration: [0:00:05.066358]
+TKSBrokerAPI.py     L:3138 DEBUG   [2022-08-10 22:06:27,154] TKSBrokerAPI module finished: [2022-08-10 19:06:27] (UTC), it is [2022-08-10 22:06:27] local time
 ```
 
 </details>
@@ -1394,13 +1437,13 @@ To close one order of any type by its ID, you can use the `--close-order` (`--ca
 
 To close a previously opened position (both "long" or "short") use the `--close-trade` (`--cancel-trade`) key, preceded by the instrument with the `--ticker key `. In fact, a market order is opened with the direction opposite to the open position. To close positions for several instruments, you can use the similar key `--close-trades` (`--cancel-trades`), after which define the required tickers (the `--ticker` key is no longer required).
 
-You can also use the common key `--close-all` (`--cancel-all`). If you specify it without parameters, then an attempt will be made to close all instruments and orders, except for those that are blocked or not available for trading. First, all orders will be closed, otherwise, for example, limit orders may block the closing of part of the available volumes for instruments. Then, in order, positions will be closed for all instruments: stocks, bonds, ETFs and futures. This key is more convenient when you need to urgently close all positions than to perform these operations one by one.
+You can also use the common key `--close-all` (`--cancel-all`). If you specify it without parameters, then an attempt will be made to close all instruments and orders, except for those that are blocked or not available for trading. First, all orders will be closed, otherwise, for example, limit orders may block the closing of part of the available volumes for instruments. Then, in order, positions will be closed for all instruments: shares, bonds, ETFs and futures. This key is more convenient when you need to urgently close all positions than to perform these operations one by one.
 
 ❗ It is important to note that in the current version of TKSBrokerAPI, open currency positions will not be closed with the `--close-all` (`--cancel-all`) key. This is because other instruments may use different base currencies. In addition, the user may not want to reduce their currency positions in order to buy other instruments with these funds in the future. If necessary, currency positions can be closed manually using the keys `--buy`, `--sell`, `--close-trade` or `--close-trades`.
 
 To selectively reduce positions, you can use the `--close-all` (`--cancel-all`) key, followed by one or more instrument's types, separated by spaces:
 - `orders` — close all orders (both limit and stop orders),
-- `shares` — close all stock positions,
+- `shares` — close all share positions,
 - `bonds` — close all positions on bonds,
 - `etfs` — close all ETFs positions,
 - `futures` — close all futures positions,
@@ -1594,6 +1637,6 @@ To understand the example, save and run the script under the spoiler below. Befo
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
 
-🚀 Good luck for you in automating stock trading! And profit!
+🚀 Good luck for you in trade automation! And profit!
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
