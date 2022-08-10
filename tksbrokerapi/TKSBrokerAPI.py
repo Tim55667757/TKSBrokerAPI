@@ -270,8 +270,8 @@ class TinkoffBrokerServer:
         self.overviewFile = "overview.md"
         """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
 
-        self.reportFile = "report.md"
-        """Filename where history of deals and trade statistics will be saved. Default: `report.md`"""
+        self.reportFile = "deals.md"
+        """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
 
         self.historyFile = None
         """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
@@ -1828,7 +1828,7 @@ class TinkoffBrokerServer:
 
         return view
 
-    def Deals(self, start: str = None, end: str = None, printDeals: bool = False) -> tuple:
+    def Deals(self, start: str = None, end: str = None, printDeals: bool = False, showCancelled: bool = True) -> tuple:
         """
         Returns history operations between two given dates.
         If `reportFile` string is not empty then also save human-readable report.
@@ -1837,6 +1837,7 @@ class TinkoffBrokerServer:
         :param start: see docstring in `GetDatesAsString()` method
         :param end: see docstring in `GetDatesAsString()` method
         :param printDeals: if `True` then also print all records to the console.
+        :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
@@ -1974,7 +1975,7 @@ class TinkoffBrokerServer:
                 info.extend([
                     "| 1                          | 2                             | 3                            | 4                    | 5\n",
                     "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------\n",
-                    "| **Actions:**               | Operations executed: {:<8} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
+                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
                     "|                            |   Buy: {:<22} | {:<28} |                      |\n".format(
                         "{} ({:.1f}%)".format(customStat["buyCount"], 100 * customStat["buyCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, buy: {:<16}".format("{:.2f}".format(customStat["buyTotal"]["rub"])) if customStat["buyTotal"]["rub"] != 0 else "  —",
@@ -2028,7 +2029,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 info.extend([
-                    "\n## All operations\n\n",
+                    "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
                     "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type\n",
                     "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------\n",
                 ])
@@ -2038,28 +2039,32 @@ class TinkoffBrokerServer:
 
             # --- view "Operations" section:
             for item in ops:
-                self.figi = item["figi"] if item["figi"] else ""
-                payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
-                instrument = self.SearchByFIGI(requestPrice=False) if self.figi else {}
-
-                # group of deals during one day:
-                if nextDay and item["date"].split("T")[0] != nextDay:
-                    info.append(splitLine2)
-                    nextDay = ""
+                if not showCancelled and TKS_OPERATION_STATES[item["state"]] == TKS_OPERATION_STATES["OPERATION_STATE_CANCELED"]:
+                    continue
 
                 else:
-                    nextDay = item["date"].split("T")[0]  # saving current day for splitting
+                    self.figi = item["figi"] if item["figi"] else ""
+                    payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
+                    instrument = self.SearchByFIGI(requestPrice=False) if self.figi else {}
 
-                info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
-                    item["date"].replace("T", " ").replace("Z", "").split(".")[0],
-                    self.figi if self.figi else "—",
-                    instrument["ticker"] if instrument else "—",
-                    instrument["type"] if instrument else "—",
-                    item["quantity"] if int(item["quantity"]) > 0 else "—",
-                    "{}{:.2f} {}".format("+" if payment > 0 else "", payment, item["payment"]["currency"]) if payment != 0 else "—",
-                    TKS_OPERATION_STATES[item["state"]],
-                    TKS_OPERATION_TYPES[item["operationType"]],
-                ))
+                    # group of deals during one day:
+                    if nextDay and item["date"].split("T")[0] != nextDay:
+                        info.append(splitLine2)
+                        nextDay = ""
+
+                    else:
+                        nextDay = item["date"].split("T")[0]  # saving current day for splitting
+
+                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
+                        item["date"].replace("T", " ").replace("Z", "").split(".")[0],
+                        self.figi if self.figi else "—",
+                        instrument["ticker"] if instrument else "—",
+                        instrument["type"] if instrument else "—",
+                        item["quantity"] if int(item["quantity"]) > 0 else "—",
+                        "{}{:.2f} {}".format("+" if payment > 0 else "", payment, item["payment"]["currency"]) if payment != 0 else "—",
+                        TKS_OPERATION_STATES[item["state"]],
+                        TKS_OPERATION_TYPES[item["operationType"]],
+                    ))
 
             infoText = "".join(info)
 
@@ -2836,9 +2841,12 @@ def ParseArgs():
     parser.add_argument("--no-cache", action="store_true", default=False, help="Option: not use local cache `dump.json`, but update raw instruments data when starting the program. `False` by default.")
     parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
     parser.add_argument("--account-id", type=str, default=None, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+
     parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. `IBM`, `YNDX`, `GOOGL` etc. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR`.")
     parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for `YNDX`).")
+
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
+    parser.add_argument("--no-cancelled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
 
@@ -2856,7 +2864,7 @@ def ParseArgs():
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
     parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
-    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: `report.md`.")
+    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
     # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define `--output` key to save history candles to .csv-file.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
@@ -2974,7 +2982,8 @@ def Main(**kwargs):
                 server.Deals(
                     start=args.deals[0] if len(args.deals) >= 1 else None,
                     end=args.deals[1] if len(args.deals) == 2 else None,
-                    printDeals=True,
+                    printDeals=True,  # Always show deals report in console
+                    showCancelled=not args.no_cancelled,  # If --no-cancelled key then remove cancelled operations from the deals report. False by default.
                 )
 
             else:
