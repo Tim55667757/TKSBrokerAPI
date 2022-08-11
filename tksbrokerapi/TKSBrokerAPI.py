@@ -1008,15 +1008,15 @@ class TinkoffBrokerServer:
         if not self.iList:
             self.iList = self.Listing()
 
-        searchResults = {iType: {} for iType in self.iList}
-        patternCompiled = re.compile(pattern, re.IGNORECASE)
+        searchResults = {iType: {} for iType in self.iList}  # same as iList but will contains only filtered instruments
+        compiledPattern = re.compile(pattern, re.IGNORECASE)
 
-        # search results filter (same as iList but only filtered instruments):
         for iType in self.iList:
             for instrument in self.iList[iType].values():
-                searchString = " ".join([instrument["ticker"], instrument["figi"], instrument["name"]])
-                searchResult = patternCompiled.search(searchString)
-                # if p in instrument["ticker"].lower() or p in instrument["figi"].lower() or p in instrument["name"].lower():
+                searchResult = compiledPattern.search(" ".join(
+                    [instrument["ticker"], instrument["figi"], instrument["name"]]
+                ))
+
                 if searchResult:
                     searchResults[iType][instrument["ticker"]] = instrument
 
