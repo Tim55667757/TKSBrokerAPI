@@ -34,6 +34,7 @@
      - [Reference](#Reference)
      - [Local cache](#Local-cache)
      - [Get a list of all instruments available for trading](#Get-a-list-of-all-instruments-available-for-trading)
+     - [Find an instrument](#Find-an-instrument)
      - [Get information about an instrument](#Get-information-about-an-instrument)
      - [Request Depth of Market with a specified depth](#Request-Depth-of-Market-with-a-specified-depth)
      - [Request a table of the latest up-to-date prices for a list of instruments](#Request-a-table-of-the-latest-up-to-date-prices-for-a-list-of-instruments)
@@ -187,7 +188,7 @@ In the future, based on this module, ready-made trading scenarios and templates 
 
 ### Key features
 
-At the time of the latest release, the TKSBrokerAPI tool can:
+At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the TKSBrokerAPI tool can:
 
 - Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
   - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
@@ -195,6 +196,9 @@ At the time of the latest release, the TKSBrokerAPI tool can:
 - Receive from the broker's server a list of all instruments available for the specified account: currencies, shares, bonds, funds and futures;
   - key `--list` or `-l`;
   - API-method: [`Listing()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Listing).
+- Search for instruments by specifying only part of their name, ticker or FIGI identifier, or by define a regular expression;
+  - key `--search` or `-s`;
+  - API-method: [`SearchInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchInstruments).
 - Request the broker for information about the instrument, knowing its ticker or FIGI ID;
   - key `--info` or `-i`;
   - API-methods: [`SearchByTicker()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker), [`SearchByFIGI()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByFIGI) and [`ShowInstrumentInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowInstrumentInfo).
@@ -297,7 +301,7 @@ tksbrokerapi [необязательные ключи и параметры] [о
 
 #### Reference
 
-The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be displayed in the console.
+The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be shown in the console.
 
 <details>
   <summary>Command for displaying internal help on working with the keys</summary>
@@ -352,10 +356,10 @@ options:
                         some information from broker server. Also, you can
                         define `--output` key to save list of instruments to
                         file, default: `instruments.md`.
-  --dump                Action: get and save raw data about instruments from
-                        broker server for future re-use. You must define
-                        `--output` key to dump instruments to file, default:
-                        `iListDump.json`.
+  --search SEARCH, -s SEARCH
+                        Action: search for an instruments by part of the name,
+                        ticker or FIGI. Also, you can define `--output` key to
+                        save results to file, default: `search-results.md`.
   --info, -i            Action: get information from broker server about
                         instrument by it's ticker or FIGI. `--ticker` key or
                         `--figi` key must be defined!
@@ -522,6 +526,78 @@ TKSBrokerAPI.py     L:931  INFO    [2022-07-26 22:04:41,211] All available instr
 TKSBrokerAPI.py     L:3034 DEBUG   [2022-07-26 22:04:41,213] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
 TKSBrokerAPI.py     L:3039 DEBUG   [2022-07-26 22:04:41,214] TKSBrokerAPI module work duration: [0:00:01.641989]
 TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-26 22:04:41,215] TKSBrokerAPI module finished: [2022-07-26 19:04:41] (UTC), it is [2022-07-26 22:04:41] local time
+```
+
+</details>
+
+#### Find an instrument
+
+To work with exchange instruments, receive information on them, request prices and make deals, you usually need to specify a ticker (key `--ticker`) or FIGI (key `--figi`). But there are hardly many people who know them by heart. Most often, there is only an assumption about a part of the ticker or the name of the company. In this case, you can use the search by pattern: part of the name, ticker or FIGI, or by specifying a regular expression. The search is performed by the standard python module [`re`](https://docs.python.org/3/library/re.html#re.compile), case-insensitive.
+
+Starting with TKSBrokerAPI v1.2.*, the `--search` key has been added, after which you need to specify the pattern. For example, you want to find all the instruments of the Russian Sber group of companies, then you can try to specify a part of the word: `tksbrokerapi --search "sber"`. Or you want to know all the instruments of companies whose names contain the word "United" with "medical" or "rent". In this case, you can try to specify a regular expression: `tksbrokerapi --search "(United.*).*(?:.*medical|rent)"`.
+
+In addition to the `--search` key, you can specify the `--output` key and define the file name where to save the search results. By default, full search results are stored in `search-results.md`. Only the first 5 found instruments of each type are shown in the console.
+
+After the desired instrument has been found and its ticker and FIGI have become known, you can view more detailed information with the command `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info` ([more](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Get-information-about-an-instrument)).
+
+<details>
+  <summary>Command to search for an instrument by part of its name</summary>
+
+```commandline
+$ tksbrokerapi --search "sber"
+
+TKSBrokerAPI.py     L:1067 INFO    [2022-08-11 23:42:54,569] # Search results
+
+* **Search pattern:** [sber]
+* **Found instruments:** [7]
+
+**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.
+
+### Shares: [3]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Shares     | SBER         | Сбер Банк                                                      | BBG004730N88 |
+| Shares     | SBERP        | Сбер Банк - привилегированные акции                            | BBG0047315Y7 |
+| Shares     | SBER@GS      | Sberbank of Russia PJSC                                        | BBG001VBZR00 |
+
+### Bonds: [4]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Bonds      | RU000A102CU4 | Сбер Банк 001P-SBER19                                          | BBG00Y9B45C2 |
+| Bonds      | RU000A102RS6 | Сбер Банк 001P-SBER24                                          | BBG00ZZ927H8 |
+| Bonds      | RU000A101C89 | Сбер Банк 001P-SBER15                                          | BBG00RKBQ4D2 |
+| Bonds      | RU000A103G75 | Сбер Банк 001P-SBER32                                          | BBG0122KNFZ0 |
+
+TKSBrokerAPI.py     L:1068 INFO    [2022-08-11 23:42:54,569] You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`
+TKSBrokerAPI.py     L:1074 INFO    [2022-08-11 23:42:54,569] Full search results were saved to file: [search-results.md]
+```
+
+</details>
+
+<details>
+  <summary>Command to search for an instrument by regular expression</summary>
+
+```commandline
+$ tksbrokerapi --search "(United.*).*(?:.*medical|rent)"
+
+TKSBrokerAPI.py     L:1067 INFO    [2022-08-12 00:08:08,944] # Search results
+
+* **Search pattern:** [(United.*).*(?:.*medical|rent)]
+* **Found instruments:** [2]
+
+**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.
+
+### Shares: [2]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Shares     | GEMC         | United medical group                                           | BBG011MCM288 |
+| Shares     | URI          | United Rentals                                                 | BBG000BXMFC3 |
+
+TKSBrokerAPI.py     L:1068 INFO    [2022-08-12 00:08:08,944] You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`
+TKSBrokerAPI.py     L:1074 INFO    [2022-08-12 00:08:08,945] Full search results were saved to file: [search-results.md]
 ```
 
 </details>
