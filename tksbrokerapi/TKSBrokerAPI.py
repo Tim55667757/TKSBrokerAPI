@@ -38,6 +38,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from time import sleep
 
+import re
 import json
 import requests
 from urllib.parse import quote
@@ -263,6 +264,9 @@ class TinkoffBrokerServer:
 
         self.instrumentsFile = "instruments.md"
         """Filename where full broker's instruments list will be saved. Default: `instruments.md`"""
+
+        self.searchResultsFile = "search-results.md"
+        """Filename with all found instruments searched by part of its ticker, FIGI or name. Default: `search-results.md`"""
 
         self.pricesFile = "prices.md"
         """Filename where prices of selected instruments will be saved. Default: `prices.md`"""
@@ -943,7 +947,7 @@ class TinkoffBrokerServer:
         This method get and show information about all available broker instruments.
         If `instrumentsFile` string is not empty then also save information to this file.
 
-        :param showInstruments: if `True` then print to console, if `False` - print only to file.
+        :param showInstruments: if `True` then print results to console, if `False` - print only to file.
         :return: multi-string with all available broker instruments
         """
         if not self.iList:
@@ -961,7 +965,7 @@ class TinkoffBrokerServer:
         headerLine = "| Ticker       | Full name                                                      | FIGI         | Cur | Lot    | Step\n"
         splitLine = "|--------------|----------------------------------------------------------------|--------------|-----|--------|---------\n"
 
-        # generate info tables with all instruments by type:
+        # generating info tables with all instruments by type:
         for iType in self.iList.keys():
             info.extend(["\n\n## {} available. Total: [{}]\n\n".format(iType, len(self.iList[iType])), headerLine, splitLine])
 
@@ -991,6 +995,85 @@ class TinkoffBrokerServer:
             uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
         return infoText
+
+    def SearchInstruments(self, pattern: str, showResults: bool = False) -> dict:
+        """
+        This method search and show information about instruments by part of its ticker, FIGI or name.
+        If `searchResultsFile` string is not empty then also save information to this file.
+
+        :param pattern: string with part of ticker, FIGI or instrument's name.
+        :param showResults: if `True` then print results to console, if `False` - return list of result only.
+        :return: list of dictionaries with all found instruments.
+        """
+        if not self.iList:
+            self.iList = self.Listing()
+
+        searchResults = {iType: {} for iType in self.iList}
+        patternCompiled = re.compile(pattern, re.IGNORECASE)
+
+        # search results filter (same as iList but only filtered instruments):
+        for iType in self.iList:
+            for instrument in self.iList[iType].values():
+                searchString = " ".join([instrument["ticker"], instrument["figi"], instrument["name"]])
+                searchResult = patternCompiled.search(searchString)
+                # if p in instrument["ticker"].lower() or p in instrument["figi"].lower() or p in instrument["name"].lower():
+                if searchResult:
+                    searchResults[iType][instrument["ticker"]] = instrument
+
+        resultsLen = sum([len(searchResults[iType]) for iType in searchResults])
+        info = [
+            "# Search results\n\n",
+            "* **Search pattern:** [{}]\n".format(pattern),
+            "* **Found instruments:** [{}]\n\n".format(resultsLen),
+            "**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.\n"
+        ]
+        infoShort = info[:]
+
+        headerLine = "| Type       | Ticker       | Full name                                                      | FIGI         |\n"
+        splitLine = "|------------|--------------|----------------------------------------------------------------|--------------|\n"
+        skippedLine = "| ...        | ...          | ...                                                            | ...          |\n"
+
+        if resultsLen == 0:
+            info.append("\nNo results\n")
+            infoShort.append("\nNo results\n")
+            uLogger.warning("No results. Try changing your search pattern.")
+
+        else:
+            for iType in searchResults:
+                iTypeValuesCount = len(searchResults[iType].values())
+                if iTypeValuesCount > 0:
+                    info.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
+                    infoShort.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
+
+                    for instrument in searchResults[iType].values():
+                        info.append("| {:<10} | {:<12} | {:<63}| {:<13}|\n".format(
+                            instrument["type"],
+                            instrument["ticker"],
+                            "{}...".format(instrument["name"][:60]) if len(instrument["name"]) > 63 else instrument["name"],  # right trim for a long string
+                            instrument["figi"],
+                        ))
+
+                    if iTypeValuesCount <= 5:
+                        infoShort.extend(info[-iTypeValuesCount:])
+
+                    else:
+                        infoShort.extend(info[-5:])
+                        infoShort.append(skippedLine)
+
+        infoText = "".join(info)
+        infoTextShort = "".join(infoShort)
+
+        if showResults:
+            uLogger.info(infoTextShort)
+            uLogger.info("You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
+
+        if self.searchResultsFile:
+            with open(self.searchResultsFile, "w", encoding="UTF-8") as fH:
+                fH.write(infoText)
+
+            uLogger.info("Full search results were saved to file: [{}]".format(os.path.abspath(self.searchResultsFile)))
+
+        return searchResults
 
     def GetListOfPrices(self, instruments: list = None, showPrices: bool = False) -> list:
         """
@@ -2859,6 +2942,7 @@ def ParseArgs():
     # --- commands:
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
+    parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use --depth key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
@@ -2945,6 +3029,12 @@ def Main(**kwargs):
                 server.instrumentsFile = args.output
 
             server.ShowInstrumentsInfo(showInstruments=True)
+
+        if args.search:
+            if args.output is not None:
+                server.searchResultsFile = args.output
+
+            server.SearchInstruments(pattern=args.search[0], showResults=True)
 
         elif args.info:
             if not (args.ticker or args.figi):
