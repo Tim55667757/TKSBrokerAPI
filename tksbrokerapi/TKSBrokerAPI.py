@@ -3030,7 +3030,7 @@ def Main(**kwargs):
 
             server.ShowInstrumentsInfo(showInstruments=True)
 
-        if args.search:
+        elif args.search:
             if args.output is not None:
                 server.searchResultsFile = args.output
 
