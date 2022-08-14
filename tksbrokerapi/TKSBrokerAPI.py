@@ -2910,6 +2910,47 @@ class TinkoffBrokerServer:
         #
         # return result
 
+    def IsInPortfolio(self, portfolio: dict = None) -> bool:
+        """
+        Checks if instrument is in the user's portfolio. Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: `True` if portfolio contains open position with given instrument, `False` otherwise.
+        """
+        result = False
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(showStatistics=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["ticker"] == self.ticker:
+                        result = True
+                        msg = "Instrument with ticker [{}] is present in open positions".format(self.ticker)
+                        break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["figi"] == self.figi:
+                        result = True
+                        msg = "Instrument with FIGI [{}] is present in open positions".format(self.figi)
+                        break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
 
 class Args:
     """
