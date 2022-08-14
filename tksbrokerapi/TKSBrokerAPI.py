@@ -840,7 +840,7 @@ class TinkoffBrokerServer:
         `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
 
         :param showPrice: if `True` then print DOM.
-        :return: dict with Depth of Market (DOM): `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}` with list of current prices.
+        :return: orders book dict with lists of current buy and sell prices: `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}`.
         """
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
