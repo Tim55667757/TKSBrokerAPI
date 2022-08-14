@@ -1259,23 +1259,25 @@ class TinkoffBrokerServer:
             },
             "stat": {  # --- some statistics calculated using "raw" sections:
                 "portfolioCostRUB": 0.,  # portfolio cost in RUB (Russian Rouble)
-                "currentBlockedRUB": 0.,  # blocked sum in Russian Rouble
+                "availableRUB": 0.,  # available rubles (without other currencies)
+                "blockedRUB": 0.,  # blocked sum in Russian Rouble
                 "totalChangesRUB": 0.,  # changes for all open trades in RUB
                 "totalChangesPercentRUB": 0.,  # changes for all open trades in percents
                 "allCurrenciesCostRUB": 0.,  # costs of all currencies (include rubles) in RUB
-                "availableRUB": 0.,  # available rubles (without other currencies)
                 "sharesCostRUB": 0.,  # costs of all shares in RUB
                 "bondsCostRUB": 0.,  # costs of all bonds in RUB
                 "etfsCostRUB": 0.,  # costs of all etfs in RUB
+                "futuresCostRUB": 0.,  # costs of all futures in RUB
                 "Currencies": [],  # list of dictionaries of all currencies statistics
                 "Shares": [],  # list of dictionaries of all shares statistics
                 "Bonds": [],  # list of dictionaries of all bonds statistics
-                "Etfs": [], # list of dictionaries of all etfs statistics
-                "Futures": [], # list of dictionaries of all futures statistics
+                "Etfs": [],  # list of dictionaries of all etfs statistics
+                "Futures": [],  # list of dictionaries of all futures statistics
                 "orders": [],  # list of dictionaries of all pending (market) orders and it's parameters
                 "stopOrders": [],  # list of dictionaries of all stop orders and it's parameters
                 "blockedCurrencies": {},  # dict with blocked instruments and currencies, e.g. {"rub": 1291.87, "usd": 6.21}
                 "blockedInstruments": {},  # dict with blocked  by FIGI, e.g. {}
+                "funds": {},  # dict with free funds for trading (total - blocked), by all currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
             },
             "analytics": {  # --- some analytics of portfolio:
                 "distrByAssets": {},  # portfolio distribution by assets
@@ -1287,7 +1289,7 @@ class TinkoffBrokerServer:
         }
 
         if showStatistics:
-            uLogger.debug("Request portfolio of a client...")
+            uLogger.debug("Requesting portfolio of a client. Wait, please...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
@@ -1350,7 +1352,7 @@ class TinkoffBrokerServer:
         allBlocked = {**view["stat"]["blockedCurrencies"], **view["stat"]["blockedInstruments"]}
 
         if "rub" in allBlocked.keys():
-            view["stat"]["currentBlockedRUB"] = allBlocked["rub"]  # blocked rubles
+            view["stat"]["blockedRUB"] = allBlocked["rub"]  # blocked rubles
 
         # --- saving current total amount in RUB of all currencies (with ruble), shares, bonds, etfs, futures and currencies:
         view["stat"]["allCurrenciesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountCurrencies"]["units"], portfolioResponse["totalAmountCurrencies"]["nano"])
@@ -1372,6 +1374,12 @@ class TinkoffBrokerServer:
         byCurr = {}  # distribution by currencies (include RUB)
         unknownCountryName = "All other countries"  # default name for instruments without "countryOfRisk" and "countryOfRiskName"
         byCountry = {unknownCountryName: {"cost": 0, "percent": 0.}}  # distribution by countries (currencies are included in their countries)
+
+        # dict with free funds for trading (total - blocked), by currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
+        view["stat"]["funds"]["rub"] = {
+            "total": view["stat"]["availableRUB"],
+            "free": view["stat"]["blockedRUB"],
+        }
 
         for item in portfolioResponse["positions"]:
             self.figi = item["figi"]
@@ -1463,6 +1471,12 @@ class TinkoffBrokerServer:
                 # saving statistics for every instrument:
                 if item["instrumentType"] == "currency":
                     view["stat"]["Currencies"].append(statData)
+
+                    # update dict with free funds for trading (total - blocked), by currencies:
+                    view["stat"]["funds"][currency] = {
+                        "total": volume,
+                        "free": volume - blocked,
+                    }
 
                 elif item["instrumentType"] == "share":
                     view["stat"]["Shares"].append(statData)
@@ -1655,7 +1669,7 @@ class TinkoffBrokerServer:
                 "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
                     "{:.2f} ({:.2f}) rub".format(
                         view["stat"]["availableRUB"],
-                        view["stat"]["currentBlockedRUB"],
+                        view["stat"]["blockedRUB"],
                     )
                 )
             ]
