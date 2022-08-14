@@ -56,7 +56,8 @@
 
 * [#12](https://github.com/Tim55667757/TKSBrokerAPI/issues/12) In the general information about the state of the portfolio (key `--overview` or `-o`), the section "Portfolio distribution by countries" has been added ([example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Get-the-current-portfolio-and-asset-allocation-statistics)).
 * [#8](https://github.com/Tim55667757/TKSBrokerAPI/issues/8) Added the `--no-cancelled` key and the `showCancelled` variable in the `Deals()` method to control shows canceled operations when using the `--deals` (or `-d`) key. Changed default report filename from `report.md` to `deals.md`.
-* [В работе] [#42](https://github.com/Tim55667757/TKSBrokerAPI/issues/42) [Example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Abstract-scenario-implementation-example) with abstract trade scenario was added.
+* [In progress] [#42](https://github.com/Tim55667757/TKSBrokerAPI/issues/42) [Example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Abstract-scenario-implementation-example) with abstract trade scenario was added.
+* To the `stat` section of the `Overview()` result was added `funds` field. This is dict with free funds for trading (total - blocked), by all currencies, e.g. `{"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}`.
 
 ##### Bug fixes
 
