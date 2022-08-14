@@ -1375,12 +1375,6 @@ class TinkoffBrokerServer:
         unknownCountryName = "All other countries"  # default name for instruments without "countryOfRisk" and "countryOfRiskName"
         byCountry = {unknownCountryName: {"cost": 0, "percent": 0.}}  # distribution by countries (currencies are included in their countries)
 
-        # dict with free funds for trading (total - blocked), by currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
-        view["stat"]["funds"]["rub"] = {
-            "total": view["stat"]["availableRUB"],
-            "free": view["stat"]["blockedRUB"],
-        }
-
         for item in portfolioResponse["positions"]:
             self.figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=False)  # full raw info about instrument by FIGI
@@ -1472,7 +1466,7 @@ class TinkoffBrokerServer:
                 if item["instrumentType"] == "currency":
                     view["stat"]["Currencies"].append(statData)
 
-                    # update dict with free funds for trading (total - blocked), by currencies:
+                    # update dict with free funds for trading (total - blocked), by currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
                     view["stat"]["funds"][currency] = {
                         "total": volume,
                         "free": volume - blocked,
@@ -1493,11 +1487,15 @@ class TinkoffBrokerServer:
                 else:
                     continue
 
-        # total changes:
+        # total changes in Russian Ruble:
         view["stat"]["availableRUB"] = view["stat"]["allCurrenciesCostRUB"] - sum([item["cost"] for item in view["stat"]["Currencies"]])  # available RUB without other currencies
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"].keys() else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
+        view["stat"]["funds"]["rub"] = {
+            "total": view["stat"]["availableRUB"],
+            "free": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
+        }
 
         # --- pending orders sector data:
         for item in view["raw"]["orders"]:

@@ -63,6 +63,7 @@
 
 * Bug fix with bond type (failed with `iJSON["type"] == "Bond"`, correct: `iJSON["type"] == "Bonds"`).
 * Bug fixed: `TypeError: JSONDecoder.__init__() got an unexpected keyword argument 'encoding'`. Bug occurred because changed in Python version 3.9: The keyword argument encoding has been removed. See: https://docs.python.org/3/library/json.html#json.loads
+* Bug fix with incorrect `Overview()["stat"]["funds"]["rub"]` calculation in rubles.
 
 
 ### [1.1.48 (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.1.48) — released

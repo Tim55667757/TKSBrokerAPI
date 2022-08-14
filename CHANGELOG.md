@@ -63,6 +63,7 @@
 
 * Исправлен тип данных для облигаций (неправильно: `iJSON["type"] == "Bond"`, правильно: `iJSON["type"] == "Bonds"`).
 * Исправлена ошибка с JSON-декодером: `TypeError: JSONDecoder.__init__() got an unexpected keyword argument 'encoding'`. Ошибка была из-за изменений в Python 3.9: аргумент `encoding` был удалён. Смотрите: https://docs.python.org/3/library/json.html#json.loads
+* Исправлена ошибка с неверным расчётом оставшихся свободных средств в рублях: `Overview()["stat"]["funds"]["rub"]`.
 
 
 ### [1.1.48 (2022-07-28)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.1.48) — опубликована
