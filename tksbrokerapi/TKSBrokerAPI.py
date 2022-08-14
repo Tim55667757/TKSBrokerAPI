@@ -2952,6 +2952,7 @@ class TinkoffBrokerServer:
 
         return result
 
+
 class Args:
     """
     If `Main()` function is imported as module, then this class used to convert arguments from **kwargs as object.
