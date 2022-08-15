@@ -858,7 +858,10 @@ class TinkoffBrokerServer:
             instrumentByFigi = self.SearchByFIGI(requestPrice=False)  # WARNING! requestPrice=False to avoid recursion!
             self.ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
 
-        if self.figi:
+        if not self.figi:
+            uLogger.error("FIGI is not determined!")
+
+        else:
             uLogger.debug("Requesting current prices for instrument with ticker [{}] and FIGI [{}]...".format(self.ticker, self.figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
@@ -936,9 +939,6 @@ class TinkoffBrokerServer:
 
                 else:
                     uLogger.warning("Orders book is empty at this time! Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
-
-        else:
-            uLogger.error("FIGI is not defined!")
 
         return prices
 
