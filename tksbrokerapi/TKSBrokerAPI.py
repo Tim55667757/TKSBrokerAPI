@@ -1277,7 +1277,7 @@ class TinkoffBrokerServer:
                 "stopOrders": [],  # list of dictionaries of all stop orders and it's parameters
                 "blockedCurrencies": {},  # dict with blocked instruments and currencies, e.g. {"rub": 1291.87, "usd": 6.21}
                 "blockedInstruments": {},  # dict with blocked  by FIGI, e.g. {}
-                "funds": {},  # dict with free funds for trading (total - blocked), by all currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
+                "funds": {},  # dict with free funds for trading (total - blocked), by all currencies, e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}
             },
             "analytics": {  # --- some analytics of portfolio:
                 "distrByAssets": {},  # portfolio distribution by assets
@@ -1422,6 +1422,7 @@ class TinkoffBrokerServer:
                     "name": instrument["name"] if "name" in instrument.keys() else "",  # human-readable names of instruments
                     "isoCurrencyName": instrument["isoCurrencyName"] if "isoCurrencyName" in instrument.keys() else "",  # ISO name for currencies only
                     "country": countryName,  # e.g. "[RU] Российская Федерация" or unknownCountryName
+                    "step": instrument["step"],  # minimum price increment
                 }
 
                 # adding distribution by unique countries:
@@ -1466,10 +1467,13 @@ class TinkoffBrokerServer:
                 if item["instrumentType"] == "currency":
                     view["stat"]["Currencies"].append(statData)
 
-                    # update dict with free funds for trading (total - blocked), by currencies, e.g. {"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}
+                    # update dict with free funds for trading (total - blocked) by currencies
+                    # e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}
                     view["stat"]["funds"][currency] = {
                         "total": volume,
+                        "totalCostRUB": costRUB,  # total volume cost in rubles
                         "free": volume - blocked,
+                        "freeCostRUB": costRUB * ((volume - blocked) / volume),  # free volume cost in rubles
                     }
 
                 elif item["instrumentType"] == "share":
@@ -1494,7 +1498,9 @@ class TinkoffBrokerServer:
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
         view["stat"]["funds"]["rub"] = {
             "total": view["stat"]["availableRUB"],
+            "totalCostRUB": view["stat"]["availableRUB"],
             "free": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
+            "freeCostRUB": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
         }
 
         # --- pending orders sector data:
@@ -2449,7 +2455,7 @@ class TinkoffBrokerServer:
                          This avoids unnecessary downloading data from the server.
         """
         if not tickers:
-            uLogger.info("Tickers list empty, nothing to close.")
+            uLogger.info("Tickers list is empty, nothing to close.")
 
         else:
             if overview is None or not overview:
@@ -2459,7 +2465,7 @@ class TinkoffBrokerServer:
             uLogger.debug("All opened instruments by it's tickers names: {}".format(allOpenedTickers))
 
             for ticker in tickers:
-                if not ticker in allOpenedTickers:
+                if ticker not in allOpenedTickers:
                     uLogger.warning("Instrument with ticker [{}] not in open positions list!".format(ticker))
                     continue
 
@@ -2943,6 +2949,49 @@ class TinkoffBrokerServer:
                     if instrument["figi"] == self.figi:
                         result = True
                         msg = "Instrument with FIGI [{}] is present in open positions".format(self.figi)
+                        break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def GetInstrumentFromPortfolio(self, portfolio: dict = None) -> dict:
+        """
+        Returns instrument is in the user's portfolio if it presents there.
+        Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: dict with instrument if portfolio contains open position with this instrument, `None` otherwise.
+        """
+        result = None
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(showStatistics=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["ticker"] == self.ticker:
+                        result = instrument
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self.ticker, instrument["figi"])
+                        break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["figi"] == self.figi:
+                        result = instrument
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self.figi)
                         break
 
         else:
