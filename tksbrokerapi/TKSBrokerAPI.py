@@ -1473,7 +1473,7 @@ class TinkoffBrokerServer:
                         "total": volume,
                         "totalCostRUB": costRUB,  # total volume cost in rubles
                         "free": volume - blocked,
-                        "freeCostRUB": costRUB * ((volume - blocked) / volume),  # free volume cost in rubles
+                        "freeCostRUB": costRUB * ((volume - blocked) / volume) if volume > 0 else 0,  # free volume cost in rubles
                     }
 
                 elif item["instrumentType"] == "share":
