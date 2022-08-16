@@ -52,13 +52,14 @@
 * [#7](https://github.com/Tim55667757/TKSBrokerAPI/issues/7) Added the ability to search for an instrument by part of the name, ticker or FIGI with`--search` key (or `-s`). A method for searching `SearchInstruments()` has been implemented, to which a search pattern can be passed as input: part of a word or a string with a regular expression. As a result, the method returns a dictionary of dictionaries, similar to variable `iList`, but containing only found instruments ([examples](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Find-an-instrument)).
 * [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
 * New method `IsInPortfolio()` was added. It checks if instrument is in the user's portfolio. Instrument must be defined by `self.ticker` (highly priority) or `self.figi`. Method returns `True` if portfolio contains open position with given instrument, `False` otherwise.
+* New method `GetInstrumentFromPortfolio()` was added. It returns instrument's data if it is in the user's portfolio. Instrument must be defined by `self.ticker` (highly priority) or `self.figi`.
 
 ##### Improvements
 
 * [#12](https://github.com/Tim55667757/TKSBrokerAPI/issues/12) In the general information about the state of the portfolio (key `--overview` or `-o`), the section "Portfolio distribution by countries" has been added ([example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Get-the-current-portfolio-and-asset-allocation-statistics)).
 * [#8](https://github.com/Tim55667757/TKSBrokerAPI/issues/8) Added the `--no-cancelled` key and the `showCancelled` variable in the `Deals()` method to control shows canceled operations when using the `--deals` (or `-d`) key. Changed default report filename from `report.md` to `deals.md`.
 * [In progress] [#42](https://github.com/Tim55667757/TKSBrokerAPI/issues/42) [Example](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Abstract-scenario-implementation-example) with abstract trade scenario was added.
-* To the `stat` section of the `Overview()` result was added `funds` field. This is dict with free funds for trading (total - blocked), by all currencies, e.g. `{"rub": {"total": 10000.99, "free": 1234.56}, "usd": {"total": 250.55, "free": 125.05}}`.
+* To the `stat` section of the `Overview()` result was added `funds` field. This is dict with free funds for trading (total - blocked), by all currencies, e.g. `{"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}`.
 
 ##### Bug fixes
 
