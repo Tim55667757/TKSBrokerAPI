@@ -140,16 +140,18 @@ for ticker in TICKERS_LIST_FOR_TRADING:
                 sumBuyers = sum([x["quantity"] for x in ordersBook["sell"]])  # current buyers volumes in the DOM
 
                 if sumBuyers >= sumSellers * (1 + VOLUME_DIFF):
-                    uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}])".format(sumBuyers, 1 + VOLUME_DIFF, sumSellers))
-
                     # Getting current price, then calculating take profit price and validity for stop-order:
                     currentPriceToBuy = ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
                     target = currentPriceToBuy * (1 + TP_STOP_DIFF)  # take profit price target
                     targetStop = ceil(target / rawIData["step"]) * rawIData["step"]  # real target for placing stop-order
                     aliveTo = (datetime.now(tzutc()) + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")  # current time + 1 hour
 
+                    uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
+                        sumBuyers, 1 + VOLUME_DIFF, sumSellers, currentPriceToBuy, iCurr,
+                    ))
+
                     # Opening BUY market position and creating take profit stop-order:
-                    # trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=aliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
+                    trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=aliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
 
                 else:
                     uLogger.info("BUY position not opened, because buyers volumes [{}] < {} * sellers volumes [{}]".format(sumBuyers, 1 + VOLUME_DIFF, sumSellers))
@@ -180,17 +182,17 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 
             # Checking for a sufficient price difference:
             if (curPriceToSell - averagePrice) / averagePrice >= TP_LIMIT_DIFF:
-                uLogger.info("The current price is [{} {}] and enough price target is [{} {}], so profit more than target +{:.2f}%. Opening SELL pending limit order...".format(
+                uLogger.info("The current price is [{:.2f} {}] and enough price target is [{:.2f} {}], so profit more than target +{:.2f}%. Opening SELL pending limit order...".format(
                     curPriceToSell, iData["currency"],
                     targetLimit, iData["currency"],
                     TP_LIMIT_DIFF * 100,
                 ))
 
                 # Opening SELL pending limit order:
-                # trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
+                trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
             else:
-                uLogger.info("The price did not reach enough price target [{} {}]. Current price is [{} {}], so profit less than target +{:.2f}%.".format(
+                uLogger.info("The price did not reach enough price target [{} {}]. Current price is [{:.2f} {}], so profit less than target +{:.2f}%.".format(
                     targetLimit, iData["currency"],
                     curPriceToSell, iData["currency"],
                     TP_LIMIT_DIFF * 100,
@@ -201,7 +203,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
 
 # Showing detailed user portfolio information:
-# trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
 
 # --- Operations finalization section ----------------------------------------------------------------------------------
