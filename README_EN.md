@@ -1073,7 +1073,7 @@ The key `--deals` (`-d`) is used, after which you need to specify two dates: the
 
 Instead of the start date, you can specify a negative number — the number of previous days from the current date (`--deals -1`, `-d -2`, `-d -3`, ...), then you do not need to specify the end date. Also, instead of the start date, you can specify one of the keywords: `today`, `yesterday` (-1 day), `week` (-7 days), `month` (-30 days), `year` (-365 days) . In all these cases, a report will be issued for the specified number of previous days up to today and the current time.
 
-Additionally, you can specify the `--output` key to specify the file where to save the report on deals in Markdown format (by default, `deals.md` in the current working directory).
+In additional, you can specify the `--output` key to specify the file where to save the report on deals in Markdown format (by default, `deals.md` in the current working directory). Also, the `--no-cancelled` key can remove information about cancelled operations from the report to reduce its volume.
  
 <details>
   <summary>Command to get a report on operations between two specified dates</summary>
