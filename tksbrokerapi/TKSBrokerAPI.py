@@ -3090,7 +3090,7 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("TKSBrokerAPI module started at: [{}] (UTC), it is [{}] local time".format(
+    uLogger.debug("TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime("%Y-%m-%d %H:%M:%S"),
         start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
     ))
@@ -3337,7 +3337,7 @@ def Main(**kwargs):
             uLogger.error("TKSBrokerAPI module returns an error! See full debug log with key in run command `--debug-level 10`. Summary code: {}".format(exitCode))
 
         uLogger.debug("TKSBrokerAPI module work duration: [{}]".format(finish - start))
-        uLogger.debug("TKSBrokerAPI module finished: [{}] (UTC), it is [{}] local time".format(
+        uLogger.debug("TKSBrokerAPI module finished: [{}] UTC, it is [{}] local time".format(
             finish.strftime("%Y-%m-%d %H:%M:%S"),
             finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
         ))
