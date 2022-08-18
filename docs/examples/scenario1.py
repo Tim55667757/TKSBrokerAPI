@@ -90,8 +90,8 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
         portfolio["stat"]["portfolioCostRUB"],
         portfolio["stat"]["blockedRUB"],
-        "+" if portfolio["stat"]["totalChangesRUB"] >= 0 else "-", portfolio["stat"]["totalChangesRUB"],
-        "+" if portfolio["stat"]["totalChangesPercentRUB"] >= 0 else "-", portfolio["stat"]["totalChangesPercentRUB"],
+        "+" if portfolio["stat"]["totalChangesRUB"] > 0 else "", portfolio["stat"]["totalChangesRUB"],
+        "+" if portfolio["stat"]["totalChangesPercentRUB"] > 0 else "", portfolio["stat"]["totalChangesPercentRUB"],
     ))
 
     # How much money in different currencies do we have (total - blocked)?
