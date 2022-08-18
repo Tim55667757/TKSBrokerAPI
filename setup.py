@@ -36,7 +36,7 @@ setup(
 
     description="Simple python API to work with Tinkoff Open API and access to the TKS Broker server using REST protocol.",
 
-    long_description="See full documentation with examples on GitHub Pages: https://tim55667757.github.io/TKSBrokerAPI",
+    long_description="See full documentation with examples on GitHub Pages: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md\nTKSBrokerAPI module documentation: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html\n\nПодробная документация на русском с примерами: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md\nДокументация на модуль TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html",
 
     license="Apache-2.0",
 
