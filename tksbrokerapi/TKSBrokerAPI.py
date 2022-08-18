@@ -1417,7 +1417,7 @@ class TinkoffBrokerServer:
                     "costRUB": costRUB,  # cost of instrument in ruble
                     "percentCostRUB": percentCostRUB,  # instrument's part in percent of full portfolio cost in RUB
                     "profit": profit,  # expected profit at current moment
-                    "percentProfit": 100 * profit / (average * volume),  # expected percents of profit at current moment for this instrument
+                    "percentProfit": 100 * profit / (average * volume) if average != 0 and volume != 0 else 0,  # expected percents of profit at current moment for this instrument
                     "sector": instrument["sector"] if "sector" in instrument.keys() and instrument["sector"] else "other",
                     "name": instrument["name"] if "name" in instrument.keys() else "",  # human-readable names of instruments
                     "isoCurrencyName": instrument["isoCurrencyName"] if "isoCurrencyName" in instrument.keys() else "",  # ISO name for currencies only
