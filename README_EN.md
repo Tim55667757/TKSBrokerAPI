@@ -1761,7 +1761,7 @@ uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by
 start = datetime.now(tzutc())
 
 uLogger.debug("=--=" * 20)
-uLogger.debug("Trading scenario started at: [{}] (UTC), it is [{}] local time".format(
+uLogger.debug("Trading scenario started at: [{}] UTC, it is [{}] local time".format(
     start.strftime("%Y-%m-%d %H:%M:%S"),
     start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
 ))
@@ -1798,8 +1798,8 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
         portfolio["stat"]["portfolioCostRUB"],
         portfolio["stat"]["blockedRUB"],
-        "+" if portfolio["stat"]["totalChangesRUB"] >= 0 else "-", portfolio["stat"]["totalChangesRUB"],
-        "+" if portfolio["stat"]["totalChangesPercentRUB"] >= 0 else "-", portfolio["stat"]["totalChangesPercentRUB"],
+        "+" if portfolio["stat"]["totalChangesRUB"] > 0 else "", portfolio["stat"]["totalChangesRUB"],
+        "+" if portfolio["stat"]["totalChangesPercentRUB"] > 0 else "", portfolio["stat"]["totalChangesPercentRUB"],
     ))
 
     # How much money in different currencies do we have (total - blocked)?
@@ -1831,7 +1831,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
         isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
         if not isInPortfolio:
-            uLogger.info("Ticker [{}]: no open positions with that instrument, checking opens rules...".format(trader.ticker))
+            uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
             # Getting instrument's data and it currency:
             rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
@@ -1852,14 +1852,14 @@ for ticker in TICKERS_LIST_FOR_TRADING:
                     currentPriceToBuy = ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
                     target = currentPriceToBuy * (1 + TP_STOP_DIFF)  # take profit price target
                     targetStop = ceil(target / rawIData["step"]) * rawIData["step"]  # real target for placing stop-order
-                    aliveTo = (datetime.now(tzutc()) + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")  # current time + 1 hour
+                    localAliveTo = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")  # current local time + 1 hour
 
                     uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
                         sumBuyers, 1 + VOLUME_DIFF, sumSellers, currentPriceToBuy, iCurr,
                     ))
 
                     # Opening BUY market position and creating take profit stop-order:
-                    trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=aliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
+                    trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
 
                 else:
                     uLogger.info("BUY position not opened, because buyers volumes [{}] < {} * sellers volumes [{}]".format(sumBuyers, 1 + VOLUME_DIFF, sumSellers))
@@ -1885,14 +1885,15 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             curPriceToSell = ordersBook["sell"][0]["price"]  # 1st price in the list of buyers orders is the actual price that you can sell
 
             # Calculating price to close position without waiting for the take profit:
-            target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
-            targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target for placing pending limit order
+            curProfit = (curPriceToSell - averagePrice) / averagePrice  # changes between current price and average price of instrument
+            target = averagePrice * (1 + TP_LIMIT_DIFF + TOLERANCE)  # enough price target to sell
+            targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
 
             # Checking for a sufficient price difference:
-            if (curPriceToSell - averagePrice) / averagePrice >= TP_LIMIT_DIFF:
-                uLogger.info("The current price is [{:.2f} {}] and enough price target is [{:.2f} {}], so profit more than target +{:.2f}%. Opening SELL pending limit order...".format(
+            if curProfit >= TP_LIMIT_DIFF:
+                uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit more than +{:.2f}%. Opening SELL pending limit order...".format(
                     curPriceToSell, iData["currency"],
-                    targetLimit, iData["currency"],
+                    averagePrice, iData["currency"],
                     TP_LIMIT_DIFF * 100,
                 ))
 
@@ -1900,9 +1901,9 @@ for ticker in TICKERS_LIST_FOR_TRADING:
                 trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
             else:
-                uLogger.info("The price did not reach enough price target [{} {}]. Current price is [{:.2f} {}], so profit less than target +{:.2f}%.".format(
-                    targetLimit, iData["currency"],
+                uLogger.info("Current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
                     curPriceToSell, iData["currency"],
+                    averagePrice, iData["currency"],
                     TP_LIMIT_DIFF * 100,
                 ))
 
@@ -1918,20 +1919,38 @@ trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github
 
 finish = datetime.now(tzutc())
 uLogger.debug("Trading scenario work duration: [{}]".format(finish - start))
-uLogger.debug("Trading scenario finished: [{}] (UTC), it is [{}] local time".format(
+uLogger.debug("Trading scenario finished: [{}] UTC, it is [{}] local time".format(
     finish.strftime("%Y-%m-%d %H:%M:%S"),
     finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
 ))
 uLogger.debug("=--=" * 20)
-
 ```
 </details>
 
 <details>
-  <summary>Scenario run results</summary>
+  <summary>Scenario run results example</summary>
 
 ```commandline
-
+scenario1.py        L:83   INFO    [2022-08-18 19:35:55,631] --- Ticker [YNDX], data analysis...
+scenario1.py        L:90   INFO    [2022-08-18 19:35:56,479] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-18 19:35:56,479] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:112  WARNING [2022-08-18 19:35:56,573] Not possible to trade an instrument with the ticker [YNDX]! Try again later.
+scenario1.py        L:83   INFO    [2022-08-18 19:35:56,574] --- Ticker [IBM], data analysis...
+scenario1.py        L:90   INFO    [2022-08-18 19:35:57,297] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-18 19:35:57,297] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:126  INFO    [2022-08-18 19:35:57,396] Ticker [IBM]: no current open positions with that instrument, checking opens rules...
+scenario1.py        L:157  INFO    [2022-08-18 19:35:57,396] BUY position not opened, because buyers volumes [452] < 1.1 * sellers volumes [944]
+scenario1.py        L:83   INFO    [2022-08-18 19:35:57,396] --- Ticker [GOOGL], data analysis...
+scenario1.py        L:90   INFO    [2022-08-18 19:35:58,066] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-18 19:35:58,066] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:126  INFO    [2022-08-18 19:35:58,161] Ticker [GOOGL]: no current open positions with that instrument, checking opens rules...
+scenario1.py        L:149  INFO    [2022-08-18 19:35:58,161] Opening BUY position... (Buyers volumes [3974] >= 1.1 * sellers volumes [2611] and current price to buy: [119.98 usd])
+TKSBrokerAPI.py     L:2398 INFO    [2022-08-18 19:35:58,647] [Buy] market order [456488037450] was executed: ticker [GOOGL], FIGI [BBG009S39JX6], lots [1]. Total order price: [119.9800 usd] (with commission: [0.04 usd]). Average price of lot: [119.98 usd]
+TKSBrokerAPI.py     L:2669 INFO    [2022-08-18 19:35:59,162] Stop-order [********-****-****-****-************] was created: ticker [GOOGL], FIGI [BBG009S39JX6], action [Sell], lots [1], target price [123.58 usd], limit price [123.58 usd], stop-order type [Take profit] and expiration date in UTC [2022-08-18 17:35:58]
+scenario1.py        L:204  INFO    [2022-08-18 19:35:59,163] --- All trade operations finished. Let's show what we got in the user's portfolio after all trades.
+TKSBrokerAPI.py     L:1922 INFO    [2022-08-18 19:35:59,958] Statistics of client's portfolio:
+# Client's portfolio
+...
 ```
 
 </details>
