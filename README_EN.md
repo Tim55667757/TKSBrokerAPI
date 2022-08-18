@@ -1709,44 +1709,6 @@ Download script here: [./docs/examples/scenario1.py](./docs/examples/scenario1.p
 # -*- coding: utf-8 -*-
 # Author: Timur Gilmullin
 
-"""
-This is simple trade scenario using TKSBrokerAPI module, without using additional technical analysis.
-See: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Abstract-scenario-implementation-example
-
-The actions will be the following:
-
-- request the client's current portfolio and determining funds available for trading;
-- request for a Depth of Market with a depth of 20 for the selected instruments, e.g. shares with the tickers
-  `YNDX`, `IBM` and `GOOGLE`;
-- if the instrument was not purchased earlier, then checking:
-  - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-    of all instruments in this currency, then check:
-    - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-      and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
-- if the instrument is in the list of open positions, then checking:
-   - if the current price is 2.5% already higher than the average position price, then place pending limit order
-     with all volumes 0.1% higher than the current price so that the position is closed with a profit with a high
-     probability during the current session.
-- request the current user's portfolio after all trades and show changes.
-
-To understand the example, just save and run this script. Before doing this, don't forget to get a token and find out
-your accountId and set up their as environment variables (see the section "Auth" in README_EN.md).
-"""
-
-# Copyright (c) 2022 Gilmillin Timur Mansurovich
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 
 # --- Import, constants and variables initialization section -----------------------------------------------------------
 
@@ -1901,7 +1863,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
                 trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
             else:
-                uLogger.info("Current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
+                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
                     curPriceToSell, iData["currency"],
                     averagePrice, iData["currency"],
                     TP_LIMIT_DIFF * 100,

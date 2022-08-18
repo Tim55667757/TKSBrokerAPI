@@ -193,7 +193,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
                 trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
             else:
-                uLogger.info("Current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
+                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
                     curPriceToSell, iData["currency"],
                     averagePrice, iData["currency"],
                     TP_LIMIT_DIFF * 100,
