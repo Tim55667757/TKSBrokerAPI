@@ -23,6 +23,7 @@ class TestTKSBrokerAPIMethods:
             token="TKSBrokerAPI_unittest_fake_token",
             iList=self.testIList,
             accountId="TKSBrokerAPI_unittest_fake_accountId",
+            useCache=False,
         )
 
     def test_NanoToFloatCheckType(self):
