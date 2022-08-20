@@ -120,7 +120,7 @@
 * [#32](https://github.com/Tim55667757/TKSBrokerAPI/issues/32) Fixed a bug with some problems when trying to execute `--close-all orders`. Extra messages, and with them the formatting error, have been removed.
 
 
-## 1.0.* (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
+## 1.0.1 (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
 
 ##### Retrospective
 
