@@ -1897,7 +1897,7 @@ scenario1.py        L:83   INFO    [2022-08-23 17:35:55,631] --- Ticker [YNDX], 
 scenario1.py        L:90   INFO    [2022-08-23 17:35:56,479] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
 scenario1.py        L:100  INFO    [2022-08-23 17:35:56,479] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
 scenario1.py        L:112  INFO    [2022-08-23 17:35:56,573] The current price is [2056.40 rub], average price is [1997.20 rub], so profit more than +2.50%. Opening SELL pending limit order...
-scenario1.py        L:112  INFO    [2022-08-23 17:35:56,573] Limit-order [R69341918] was created: ticker [YNDX], FIGI [BBG006L8G4H1], action [Sell], lots [4.0], target price [2056.40 rub]
+scenario1.py        L:112  INFO    [2022-08-23 17:35:56,573] Limit-order [*********] was created: ticker [YNDX], FIGI [BBG006L8G4H1], action [Sell], lots [4.0], target price [2056.40 rub]
 scenario1.py        L:83   INFO    [2022-08-23 17:35:56,574] --- Ticker [IBM], data analysis...
 scenario1.py        L:90   INFO    [2022-08-23 17:35:57,297] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
 scenario1.py        L:100  INFO    [2022-08-23 17:35:57,297] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
