@@ -6,7 +6,7 @@
 It can view history, orders and market information. Also, you can open orders and trades.
 
 If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
-**See examples**: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+**See examples**: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
 **Used constants are in the TKSEnums module**: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 
@@ -38,6 +38,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from time import sleep
 
+import re
 import json
 import requests
 from urllib.parse import quote
@@ -181,16 +182,23 @@ class TinkoffBrokerServer:
 
     Examples to work with API: https://tinkoff.github.io/investAPI/swagger-ui/
 
-    Where is `token`: https://tinkoff.github.io/investAPI/token/
+    About `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, iList: dict = None, accountId: str = None) -> None:
+    def __init__(self, token: str, accountId: str = None, iList: dict = None, useCache: bool = True) -> None:
         """
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
-        :param iList: dictionary of dictionaries with instrument's data.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
+        :param iList: dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server.
+                      At first time, when class init, `Listing()` method auto-update this variable, or you can use dump file.
+                      For future use, you can save this variable and use as `iList` to avoid permanent downloads
+                      from the server. Also, you can try `DumpInstruments()` method.
+        :param useCache: use default cache file `dump.json` with raw data to use instead of `iList` if `iList` set as `None`.
+                         True by default. Cache is auto-update if new day has come.
+                         If `iList` is not `None` then it value has higher priority than `dump.json` and `useCache`.
+                         If you don't want to use cache and always updates raw data then set `useCache=False`.
         """
         if token is None or not token:
             try:
@@ -234,7 +242,7 @@ class TinkoffBrokerServer:
         self.server = r"https://invest-public-api.tinkoff.ru/rest"
         """Tinkoff REST API server for real trade operations. Default: https://invest-public-api.tinkoff.ru/rest
 
-        See: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
+        See also: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
         """
 
         uLogger.debug("Broker API server: {}".format(self.server))
@@ -254,28 +262,62 @@ class TinkoffBrokerServer:
         self.historyInterval = "hour"
         """Interval string for Tinkoff API (see: `TKSEnums.TKS_TIMEFRAMES`). Available values are `"1min"`, `"2min"`, `"3min"`, `"5min"`, `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`"""
 
-        self.iList = iList if iList is not None else self.Listing()
-        """Dictionary with raw data about stocks, currencies, bonds, etfs and futures from broker server.
-        At first time, when class init, `Listing()` method auto-update this variable.
-        For future use, you can save this variable and substitute it in the `iList` to avoid permanent downloads from the server.
-        """
-
-        self.pricesList = {}  # You can request all current prices with `ShowAllPrices()` method. WARNING! This is too long operation!
-
         self.instrumentsFile = "instruments.md"
-        """Filename where full broker's instruments list will be saved. Default: `"instruments.md"`"""
+        """Filename where full broker's instruments list will be saved. Default: `instruments.md`"""
+
+        self.searchResultsFile = "search-results.md"
+        """Filename with all found instruments searched by part of its ticker, FIGI or name. Default: `search-results.md`"""
 
         self.pricesFile = "prices.md"
-        """Filename where prices of selected instruments will be saved. Default: `"prices.md"`"""
+        """Filename where prices of selected instruments will be saved. Default: `prices.md`"""
 
         self.overviewFile = "overview.md"
-        """Filename where current portfolio, open trades and orders will be saved. Default: `"overview.md"`"""
+        """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
 
-        self.reportFile = "report.md"
-        """Filename where history of deals and trade statistics will be saved. Default: `"report.md"`"""
+        self.reportFile = "deals.md"
+        """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
 
         self.historyFile = None
         """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
+
+        self.iListDumpFile = "dump.json"
+        """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
+
+        self.iList = None  # init iList
+        """Dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server. Auto-updating.
+        
+        See also: `Listing()` and `DumpInstruments()`.
+        """
+
+        # try to re-use raw instruments data saved as `iList` or try to load it from the dump file:
+        if iList is not None and isinstance(iList, dict):
+            uLogger.debug("Instruments raw data set up from given `iList` variable. Dump file not updated.")
+
+            self.iList = iList  # only used given iList, dump not updated
+
+        elif useCache:
+            if os.path.exists(self.iListDumpFile):
+                dumpTime = datetime.fromtimestamp(os.path.getmtime(self.iListDumpFile)).astimezone(tzutc())  # dump modification date and time
+                curTime = datetime.now(tzutc())
+
+                if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
+                    uLogger.warning("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+
+                    self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump file
+
+                else:
+                    self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
+
+                    uLogger.debug("Local cache with raw instruments data is used: [{}]".format(os.path.abspath(self.iListDumpFile)))
+                    uLogger.debug("Dump file was modified [{}] UTC".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+
+            else:
+                uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
+                self.DumpInstruments(forceUpdate=True)  # updating self.iList and creating default dump file
+
+        else:
+            self.iList = self.Listing()  # request new raw instruments data from broker server
+            self.DumpInstruments(forceUpdate=False)  # save updated info to default dump file
 
     @staticmethod
     def _ParseJSON(rawData="{}", debug: bool = False) -> dict:
@@ -290,7 +332,7 @@ class TinkoffBrokerServer:
             uLogger.debug("Raw text body:")
             uLogger.debug(rawData)
 
-        responseJSON = json.loads(rawData, encoding="UTF-8") if rawData else {}
+        responseJSON = json.loads(rawData) if rawData else {}
 
         if debug:
             uLogger.debug("JSON formatted:")
@@ -397,16 +439,16 @@ class TinkoffBrokerServer:
 
     def _IWrapper(self, kwargs):
         """
-        Wrapper runs instrument's update method self._IUpdater().
+        Wrapper runs instrument's update method `_IUpdater()`.
         It's a workaround for using multiprocessing with kwargs. See: https://stackoverflow.com/a/36799206
         """
         return self._IUpdater(**kwargs)
 
     def Listing(self) -> dict:
         """
-        Gets JSON with raw data about stocks, currencies, bonds, etfs and futures from broker server.
+        Gets JSON with raw data about shares, currencies, bonds, etfs and futures from broker server.
 
-        :return: Dictionary with all available broker instruments: currencies, stocks, bonds, etfs and futures.
+        :return: Dictionary with all available broker instruments: currencies, shares, bonds, etfs and futures.
         """
         uLogger.debug("Requesting all available instruments from broker for current user token. Wait, please...")
         uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
@@ -419,7 +461,7 @@ class TinkoffBrokerServer:
         listing = poolUpdater.map(self._IWrapper, iParams)  # execute update operations
         poolUpdater.close()
 
-        # Dictionary with all broker instruments: stocks, currencies, bonds, etfs and futures.
+        # Dictionary with all broker instruments: shares, currencies, bonds, etfs and futures.
         # Next in this code: item[0] is "iType" and item[1] is list of available instruments from the result of _IUpdater() method
         iList = {item[0]: {instrument["ticker"]: instrument for instrument in item[1]} for item in listing}
 
@@ -439,6 +481,28 @@ class TinkoffBrokerServer:
 
         return iList
 
+    def DumpInstruments(self, forceUpdate: bool = True) -> str:
+        """
+        Receives and returns actual raw data about shares, currencies, bonds, etfs and futures from broker server
+        using `Listing()` method. If `iListDumpFile` string is not empty then also save information to this file.
+
+        :param forceUpdate: if `True` then at first updates data with `Listing()` method, otherwise just saves exist `iList`.
+        :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` file.
+        """
+        if self.iListDumpFile is None or not self.iListDumpFile:
+            raise Exception("Output name of dump file must be defined!")
+
+        if not self.iList or forceUpdate:
+            self.iList = self.Listing()
+
+        dump = json.dumps(self.iList, indent=4, sort_keys=False)
+        with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
+            fH.write(dump)
+
+        uLogger.info("Instruments raw data were cached for future used: [{}]".format(os.path.abspath(self.iListDumpFile)))
+
+        return dump
+
     @staticmethod
     def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
@@ -454,7 +518,7 @@ class TinkoffBrokerServer:
                 "# Information is actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                              | Values\n",
                 "|---------------------------------------------------------|---------------------------------------------------------\n",
-                "| Stock ticker:                                           | {}\n".format(iJSON["ticker"]),
+                "| Ticker:                                                 | {}\n".format(iJSON["ticker"]),
                 "| Full name:                                              | {}\n".format(iJSON["name"]),
             ]
 
@@ -513,7 +577,7 @@ class TinkoffBrokerServer:
                 info.append("| Basic asset:                                            | {}\n".format(iJSON["basicAsset"]))
 
             if "basicAssetSize" in iJSON.keys() and iJSON["basicAssetSize"]:
-                info.append("| Basic asset size:                                       | {}\n".format(NanoToFloat(int(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
+                info.append("| Basic asset size:                                       | {:.2f}\n".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
 
             if "isoCurrencyName" in iJSON.keys() and iJSON["isoCurrencyName"]:
                 info.append("| ISO currency name:                                      | {}\n".format(iJSON["isoCurrencyName"]))
@@ -545,11 +609,11 @@ class TinkoffBrokerServer:
             if "otcFlag" in iJSON.keys() and iJSON["otcFlag"]:
                 info.append("| Over-the-counter (OTC) securities:                      | Yes\n")
 
-            if iJSON["type"] == "Bond":
+            if iJSON["type"] == "Bonds":
                 info.append("| Bond issue (size / plan):                               | {} / {}\n".format(iJSON["issueSize"], iJSON["issueSizePlan"]))
 
-                info.append("| Nominal price (100%):                                   | {} {}\n".format(
-                    NanoToFloat(int(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
+                info.append("| Nominal price (100%):                                   | {:.2f} {}\n".format(
+                    NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
                     iJSON["nominal"]["currency"],
                 ))
 
@@ -563,8 +627,8 @@ class TinkoffBrokerServer:
                     info.append("| Number of coupon payments per year:                     | {}\n".format(iJSON["couponQuantityPerYear"]))
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current ACI (Accrued Interest):                         | {} {}\n".format(
-                        NanoToFloat(int(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
+                    info.append("| Current ACI (Accrued Interest):                         | {:.2f} {}\n".format(
+                        NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
                     ))
 
@@ -574,24 +638,24 @@ class TinkoffBrokerServer:
                 info.extend([
                     "| Previous close price of the instrument:                 | {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Last deal price of the instrument:                      | {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Changes between last deal price and last close  %       | {:.2f}%\n".format(iJSON["currentPrice"]["changes"]),
                     "| Current limit price, min / max:                         | {}{} / {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                     "| Actual price, sell / buy:                               | {}{} / {}{}\n".format(
                         "{}".format(iJSON["currentPrice"]["sell"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["sell"] else "N/A",
-                        "%" if iJSON["type"] == "Bond" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["buy"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["buy"] else "N/A",
-                        "%" if iJSON["type"] == "Bond" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                        "%" if iJSON["type"] == "Bonds" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                     ),
                 ])
 
@@ -635,7 +699,7 @@ class TinkoffBrokerServer:
             if self.ticker in self.iList["Shares"].keys():
                 tickerJSON = self.iList["Shares"][self.ticker]
                 if debug:
-                    uLogger.debug("Ticker [{}] found in stocks list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in shares list".format(self.ticker))
 
             elif self.ticker in self.iList["Currencies"].keys():
                 tickerJSON = self.iList["Currencies"][self.ticker]
@@ -704,7 +768,7 @@ class TinkoffBrokerServer:
                     figiJSON = self.iList["Shares"][item]
 
                     if debug:
-                        uLogger.debug("FIGI [{}] found in stocks list".format(self.figi))
+                        uLogger.debug("FIGI [{}] found in shares list".format(self.figi))
 
                     break
 
@@ -776,7 +840,7 @@ class TinkoffBrokerServer:
         `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
 
         :param showPrice: if `True` then print DOM.
-        :return: dict with Depth of Market (DOM): `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}` with list of current prices.
+        :return: orders book dict with lists of current buy and sell prices: `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}`.
         """
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
@@ -794,7 +858,10 @@ class TinkoffBrokerServer:
             instrumentByFigi = self.SearchByFIGI(requestPrice=False)  # WARNING! requestPrice=False to avoid recursion!
             self.ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
 
-        if self.figi:
+        if not self.figi:
+            uLogger.error("FIGI is not determined!")
+
+        else:
             uLogger.debug("Requesting current prices for instrument with ticker [{}] and FIGI [{}]...".format(self.ticker, self.figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
@@ -873,9 +940,6 @@ class TinkoffBrokerServer:
                 else:
                     uLogger.warning("Orders book is empty at this time! Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
 
-        else:
-            uLogger.error("FIGI is not defined!")
-
         return prices
 
     def ShowInstrumentsInfo(self, showInstruments: bool = False) -> str:
@@ -883,7 +947,7 @@ class TinkoffBrokerServer:
         This method get and show information about all available broker instruments.
         If `instrumentsFile` string is not empty then also save information to this file.
 
-        :param showInstruments: if `True` then print to console, if `False` - print only to file.
+        :param showInstruments: if `True` then print results to console, if `False` - print only to file.
         :return: multi-string with all available broker instruments
         """
         if not self.iList:
@@ -901,7 +965,7 @@ class TinkoffBrokerServer:
         headerLine = "| Ticker       | Full name                                                      | FIGI         | Cur | Lot    | Step\n"
         splitLine = "|--------------|----------------------------------------------------------------|--------------|-----|--------|---------\n"
 
-        # generate info tables with all instruments by type:
+        # generating info tables with all instruments by type:
         for iType in self.iList.keys():
             info.extend(["\n\n## {} available. Total: [{}]\n\n".format(iType, len(self.iList[iType])), headerLine, splitLine])
 
@@ -931,6 +995,85 @@ class TinkoffBrokerServer:
             uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
         return infoText
+
+    def SearchInstruments(self, pattern: str, showResults: bool = False) -> dict:
+        """
+        This method search and show information about instruments by part of its ticker, FIGI or name.
+        If `searchResultsFile` string is not empty then also save information to this file.
+
+        :param pattern: string with part of ticker, FIGI or instrument's name.
+        :param showResults: if `True` then print results to console, if `False` - return list of result only.
+        :return: list of dictionaries with all found instruments.
+        """
+        if not self.iList:
+            self.iList = self.Listing()
+
+        searchResults = {iType: {} for iType in self.iList}  # same as iList but will contains only filtered instruments
+        compiledPattern = re.compile(pattern, re.IGNORECASE)
+
+        for iType in self.iList:
+            for instrument in self.iList[iType].values():
+                searchResult = compiledPattern.search(" ".join(
+                    [instrument["ticker"], instrument["figi"], instrument["name"]]
+                ))
+
+                if searchResult:
+                    searchResults[iType][instrument["ticker"]] = instrument
+
+        resultsLen = sum([len(searchResults[iType]) for iType in searchResults])
+        info = [
+            "# Search results\n\n",
+            "* **Search pattern:** [{}]\n".format(pattern),
+            "* **Found instruments:** [{}]\n\n".format(resultsLen),
+            "**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.\n"
+        ]
+        infoShort = info[:]
+
+        headerLine = "| Type       | Ticker       | Full name                                                      | FIGI         |\n"
+        splitLine = "|------------|--------------|----------------------------------------------------------------|--------------|\n"
+        skippedLine = "| ...        | ...          | ...                                                            | ...          |\n"
+
+        if resultsLen == 0:
+            info.append("\nNo results\n")
+            infoShort.append("\nNo results\n")
+            uLogger.warning("No results. Try changing your search pattern.")
+
+        else:
+            for iType in searchResults:
+                iTypeValuesCount = len(searchResults[iType].values())
+                if iTypeValuesCount > 0:
+                    info.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
+                    infoShort.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
+
+                    for instrument in searchResults[iType].values():
+                        info.append("| {:<10} | {:<12} | {:<63}| {:<13}|\n".format(
+                            instrument["type"],
+                            instrument["ticker"],
+                            "{}...".format(instrument["name"][:60]) if len(instrument["name"]) > 63 else instrument["name"],  # right trim for a long string
+                            instrument["figi"],
+                        ))
+
+                    if iTypeValuesCount <= 5:
+                        infoShort.extend(info[-iTypeValuesCount:])
+
+                    else:
+                        infoShort.extend(info[-5:])
+                        infoShort.append(skippedLine)
+
+        infoText = "".join(info)
+        infoTextShort = "".join(infoShort)
+
+        if showResults:
+            uLogger.info(infoTextShort)
+            uLogger.info("You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
+
+        if self.searchResultsFile:
+            with open(self.searchResultsFile, "w", encoding="UTF-8") as fH:
+                fH.write(infoText)
+
+            uLogger.info("Full search results were saved to file: [{}]".format(os.path.abspath(self.searchResultsFile)))
+
+        return searchResults
 
     def GetListOfPrices(self, instruments: list = None, showPrices: bool = False) -> list:
         """
@@ -1105,7 +1248,7 @@ class TinkoffBrokerServer:
             "raw": {  # --- raw portfolio responses from broker with user portfolio data:
                 "headers": {},  # list of dictionaries, response headers without "positions" section
                 "Currencies": [],  # list of dictionaries, open trades with currencies from "positions" section
-                "Shares": [],  # list of dictionaries, open trades with stocks from "positions" section
+                "Shares": [],  # list of dictionaries, open trades with shares from "positions" section
                 "Bonds": [],  # list of dictionaries, open trades with bonds from "positions" section
                 "Etfs": [],  # list of dictionaries, open trades with etfs from "positions" section
                 "Futures": [],  # list of dictionaries, open trades with futures from "positions" section
@@ -1116,34 +1259,37 @@ class TinkoffBrokerServer:
             },
             "stat": {  # --- some statistics calculated using "raw" sections:
                 "portfolioCostRUB": 0.,  # portfolio cost in RUB (Russian Rouble)
-                "currentBlockedRUB": 0.,  # blocked sum in Russian Rouble
+                "availableRUB": 0.,  # available rubles (without other currencies)
+                "blockedRUB": 0.,  # blocked sum in Russian Rouble
                 "totalChangesRUB": 0.,  # changes for all open trades in RUB
                 "totalChangesPercentRUB": 0.,  # changes for all open trades in percents
                 "allCurrenciesCostRUB": 0.,  # costs of all currencies (include rubles) in RUB
-                "availableRUB": 0.,  # available rubles (without other currencies)
-                "stocksCostRUB": 0.,  # costs of all stocks in RUB
+                "sharesCostRUB": 0.,  # costs of all shares in RUB
                 "bondsCostRUB": 0.,  # costs of all bonds in RUB
                 "etfsCostRUB": 0.,  # costs of all etfs in RUB
+                "futuresCostRUB": 0.,  # costs of all futures in RUB
                 "Currencies": [],  # list of dictionaries of all currencies statistics
-                "Shares": [],  # list of dictionaries of all stocks statistics
+                "Shares": [],  # list of dictionaries of all shares statistics
                 "Bonds": [],  # list of dictionaries of all bonds statistics
-                "Etfs": [], # list of dictionaries of all etfs statistics
-                "Futures": [], # list of dictionaries of all futures statistics
+                "Etfs": [],  # list of dictionaries of all etfs statistics
+                "Futures": [],  # list of dictionaries of all futures statistics
                 "orders": [],  # list of dictionaries of all pending (market) orders and it's parameters
                 "stopOrders": [],  # list of dictionaries of all stop orders and it's parameters
                 "blockedCurrencies": {},  # dict with blocked instruments and currencies, e.g. {"rub": 1291.87, "usd": 6.21}
                 "blockedInstruments": {},  # dict with blocked  by FIGI, e.g. {}
+                "funds": {},  # dict with free funds for trading (total - blocked), by all currencies, e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}
             },
-            "analytics":{  # --- some analytics of portfolio:
+            "analytics": {  # --- some analytics of portfolio:
                 "distrByAssets": {},  # portfolio distribution by assets
                 "distrByCompanies": {},  # portfolio distribution by companies
                 "distrBySectors": {},  # portfolio distribution by sectors
                 "distrByCurrencies": {},  # portfolio distribution by currencies
+                "distrByCountries": {},  # portfolio distribution by countries
             }
         }
 
         if showStatistics:
-            uLogger.debug("Request portfolio of a client...")
+            uLogger.debug("Requesting portfolio of a client. Wait, please...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
@@ -1206,17 +1352,17 @@ class TinkoffBrokerServer:
         allBlocked = {**view["stat"]["blockedCurrencies"], **view["stat"]["blockedInstruments"]}
 
         if "rub" in allBlocked.keys():
-            view["stat"]["currentBlockedRUB"] = allBlocked["rub"]  # blocked rubles
+            view["stat"]["blockedRUB"] = allBlocked["rub"]  # blocked rubles
 
-        # --- saving current total amount in RUB of all currencies (with ruble), stocks, bonds, etfs, futures and currencies:
+        # --- saving current total amount in RUB of all currencies (with ruble), shares, bonds, etfs, futures and currencies:
         view["stat"]["allCurrenciesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountCurrencies"]["units"], portfolioResponse["totalAmountCurrencies"]["nano"])
-        view["stat"]["stocksCostRUB"] = NanoToFloat(portfolioResponse["totalAmountShares"]["units"], portfolioResponse["totalAmountShares"]["nano"])
+        view["stat"]["sharesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountShares"]["units"], portfolioResponse["totalAmountShares"]["nano"])
         view["stat"]["bondsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountBonds"]["units"], portfolioResponse["totalAmountBonds"]["nano"])
         view["stat"]["etfsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountEtf"]["units"], portfolioResponse["totalAmountEtf"]["nano"])
         view["stat"]["futuresCostRUB"] = NanoToFloat(portfolioResponse["totalAmountFutures"]["units"], portfolioResponse["totalAmountFutures"]["nano"])
         view["stat"]["portfolioCostRUB"] = sum([
             view["stat"]["allCurrenciesCostRUB"],
-            view["stat"]["stocksCostRUB"],
+            view["stat"]["sharesCostRUB"],
             view["stat"]["bondsCostRUB"],
             view["stat"]["etfsCostRUB"],
             view["stat"]["futuresCostRUB"],
@@ -1226,6 +1372,8 @@ class TinkoffBrokerServer:
         byComp = {}  # distribution by companies
         bySect = {}  # distribution by sectors
         byCurr = {}  # distribution by currencies (include RUB)
+        unknownCountryName = "All other countries"  # default name for instruments without "countryOfRisk" and "countryOfRiskName"
+        byCountry = {unknownCountryName: {"cost": 0, "percent": 0.}}  # distribution by countries (currencies are included in their countries)
 
         for item in portfolioResponse["positions"]:
             self.figi = item["figi"]
@@ -1250,6 +1398,7 @@ class TinkoffBrokerServer:
                 currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "future") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
                 cost = (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
+                countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
                 costRUB = cost if item["instrumentType"] == "currency" else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
                 percentCostRUB = 100 * costRUB / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.  # instrument's part in percent of full portfolio cost
 
@@ -1268,11 +1417,21 @@ class TinkoffBrokerServer:
                     "costRUB": costRUB,  # cost of instrument in ruble
                     "percentCostRUB": percentCostRUB,  # instrument's part in percent of full portfolio cost in RUB
                     "profit": profit,  # expected profit at current moment
-                    "percentProfit": 100 * profit / (average * volume),  # expected percents of profit at current moment for this instrument
+                    "percentProfit": 100 * profit / (average * volume) if average != 0 and volume != 0 else 0,  # expected percents of profit at current moment for this instrument
                     "sector": instrument["sector"] if "sector" in instrument.keys() and instrument["sector"] else "other",
                     "name": instrument["name"] if "name" in instrument.keys() else "",  # human-readable names of instruments
                     "isoCurrencyName": instrument["isoCurrencyName"] if "isoCurrencyName" in instrument.keys() else "",  # ISO name for currencies only
+                    "country": countryName,  # e.g. "[RU] Российская Федерация" or unknownCountryName
+                    "step": instrument["step"],  # minimum price increment
                 }
+
+                # adding distribution by unique countries:
+                if statData["country"] not in byCountry.keys():
+                    byCountry[statData["country"]] = {"cost": costRUB, "percent": percentCostRUB}
+
+                else:
+                    byCountry[statData["country"]]["cost"] += costRUB
+                    byCountry[statData["country"]]["percent"] += percentCostRUB
 
                 if item["instrumentType"] != "currency":
                     # adding distribution by unique companies:
@@ -1304,9 +1463,18 @@ class TinkoffBrokerServer:
                     byCurr[currency]["cost"] += costRUB
                     byCurr[currency]["percent"] += percentCostRUB
 
-                # saving statistics for every instruments:
+                # saving statistics for every instrument:
                 if item["instrumentType"] == "currency":
                     view["stat"]["Currencies"].append(statData)
+
+                    # update dict with free funds for trading (total - blocked) by currencies
+                    # e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}
+                    view["stat"]["funds"][currency] = {
+                        "total": volume,
+                        "totalCostRUB": costRUB,  # total volume cost in rubles
+                        "free": volume - blocked,
+                        "freeCostRUB": costRUB * ((volume - blocked) / volume) if volume > 0 else 0,  # free volume cost in rubles
+                    }
 
                 elif item["instrumentType"] == "share":
                     view["stat"]["Shares"].append(statData)
@@ -1323,11 +1491,17 @@ class TinkoffBrokerServer:
                 else:
                     continue
 
-        # total changes:
+        # total changes in Russian Ruble:
         view["stat"]["availableRUB"] = view["stat"]["allCurrenciesCostRUB"] - sum([item["cost"] for item in view["stat"]["Currencies"]])  # available RUB without other currencies
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"].keys() else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
+        view["stat"]["funds"]["rub"] = {
+            "total": view["stat"]["availableRUB"],
+            "totalCostRUB": view["stat"]["availableRUB"],
+            "free": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
+            "freeCostRUB": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
+        }
 
         # --- pending orders sector data:
         for item in view["raw"]["orders"]:
@@ -1438,8 +1612,8 @@ class TinkoffBrokerServer:
             },
             "Shares": {
                 "uniques": len(view["stat"]["Shares"]),
-                "cost": view["stat"]["stocksCostRUB"],
-                "percent": 100 * view["stat"]["stocksCostRUB"] / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.,
+                "cost": view["stat"]["sharesCostRUB"],
+                "percent": 100 * view["stat"]["sharesCostRUB"] / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.,
             },
             "Bonds": {
                 "uniques": len(view["stat"]["Bonds"]),
@@ -1478,6 +1652,9 @@ class TinkoffBrokerServer:
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
         view["analytics"]["distrByCurrencies"]["rub"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
+        # portfolio distribution by countries:
+        view["analytics"]["distrByCountries"].update(byCountry)
+
         # --- Prepare text statistics overview in human-readable:
         if showStatistics:
             info = [
@@ -1496,7 +1673,7 @@ class TinkoffBrokerServer:
                 "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
                     "{:.2f} ({:.2f}) rub".format(
                         view["stat"]["availableRUB"],
-                        view["stat"]["currentBlockedRUB"],
+                        view["stat"]["blockedRUB"],
                     )
                 )
             ]
@@ -1542,15 +1719,15 @@ class TinkoffBrokerServer:
             else:
                 info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
 
-            # --- Show stocks section:
+            # --- Show shares section:
             if view["stat"]["Shares"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["stocksCostRUB"], typeStr="**Stocks:**"))
+                info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
 
                 for item in view["stat"]["Shares"]:
                     info.append(_InfoStr(item))
 
             else:
-                info.extend(_SplitStr(noTradeStr="**Stocks:** no trades"))
+                info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
 
             # --- Show bonds section:
             if view["stat"]["Bonds"]:
@@ -1720,6 +1897,25 @@ class TinkoffBrokerServer:
                             view["analytics"]["distrByCurrencies"][curr]["cost"],
                         ))
 
+                maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
+                info.extend([
+                    "\n## Portfolio distribution by countries\n"
+                    "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
+                    "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
+                ])
+
+                for country in view["analytics"]["distrByCountries"].keys():
+                    if view["analytics"]["distrByCountries"][country]["cost"] > 0:
+                        nameLen = len(country)
+                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                            "{}{}".format(
+                                country,
+                                "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
+                            ),
+                            "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
+                            view["analytics"]["distrByCountries"][country]["cost"],
+                        ))
+
             infoText = "".join(info)
 
             if showStatistics:
@@ -1733,7 +1929,7 @@ class TinkoffBrokerServer:
 
         return view
 
-    def Deals(self, start: str = None, end: str = None, printDeals: bool = False) -> tuple:
+    def Deals(self, start: str = None, end: str = None, printDeals: bool = False, showCancelled: bool = True) -> tuple:
         """
         Returns history operations between two given dates.
         If `reportFile` string is not empty then also save human-readable report.
@@ -1742,6 +1938,7 @@ class TinkoffBrokerServer:
         :param start: see docstring in `GetDatesAsString()` method
         :param end: see docstring in `GetDatesAsString()` method
         :param printDeals: if `True` then also print all records to the console.
+        :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
@@ -1879,7 +2076,7 @@ class TinkoffBrokerServer:
                 info.extend([
                     "| 1                          | 2                             | 3                            | 4                    | 5\n",
                     "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------\n",
-                    "| **Actions:**               | Operations executed: {:<8} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
+                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
                     "|                            |   Buy: {:<22} | {:<28} |                      |\n".format(
                         "{} ({:.1f}%)".format(customStat["buyCount"], 100 * customStat["buyCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, buy: {:<16}".format("{:.2f}".format(customStat["buyTotal"]["rub"])) if customStat["buyTotal"]["rub"] != 0 else "  —",
@@ -1933,7 +2130,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 info.extend([
-                    "\n## All operations\n\n",
+                    "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
                     "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type\n",
                     "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------\n",
                 ])
@@ -1943,28 +2140,32 @@ class TinkoffBrokerServer:
 
             # --- view "Operations" section:
             for item in ops:
-                self.figi = item["figi"] if item["figi"] else ""
-                payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
-                instrument = self.SearchByFIGI(requestPrice=False) if self.figi else {}
-
-                # group of deals during one day:
-                if nextDay and item["date"].split("T")[0] != nextDay:
-                    info.append(splitLine2)
-                    nextDay = ""
+                if not showCancelled and TKS_OPERATION_STATES[item["state"]] == TKS_OPERATION_STATES["OPERATION_STATE_CANCELED"]:
+                    continue
 
                 else:
-                    nextDay = item["date"].split("T")[0]  # saving current day for splitting
+                    self.figi = item["figi"] if item["figi"] else ""
+                    payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
+                    instrument = self.SearchByFIGI(requestPrice=False) if self.figi else {}
 
-                info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
-                    item["date"].replace("T", " ").replace("Z", "").split(".")[0],
-                    self.figi if self.figi else "—",
-                    instrument["ticker"] if instrument else "—",
-                    instrument["type"] if instrument else "—",
-                    item["quantity"] if int(item["quantity"]) > 0 else "—",
-                    "{}{:.2f} {}".format("+" if payment > 0 else "", payment, item["payment"]["currency"]) if payment != 0 else "—",
-                    TKS_OPERATION_STATES[item["state"]],
-                    TKS_OPERATION_TYPES[item["operationType"]],
-                ))
+                    # group of deals during one day:
+                    if nextDay and item["date"].split("T")[0] != nextDay:
+                        info.append(splitLine2)
+                        nextDay = ""
+
+                    else:
+                        nextDay = item["date"].split("T")[0]  # saving current day for splitting
+
+                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
+                        item["date"].replace("T", " ").replace("Z", "").split(".")[0],
+                        self.figi if self.figi else "—",
+                        instrument["ticker"] if instrument else "—",
+                        instrument["type"] if instrument else "—",
+                        item["quantity"] if int(item["quantity"]) > 0 else "—",
+                        "{}{:.2f} {}".format("+" if payment > 0 else "", payment, item["payment"]["currency"]) if payment != 0 else "—",
+                        TKS_OPERATION_STATES[item["state"]],
+                        TKS_OPERATION_TYPES[item["operationType"]],
+                    ))
 
             infoText = "".join(info)
 
@@ -1990,7 +2191,7 @@ class TinkoffBrokerServer:
 
         :param onlyMissing: if history file define then add only last missing candles, do not request all history length. False by default.
                             WARNING! History appends only from last candle to current time with replace last candle! Intervals must be similar!
-        :return: pandas dataframe with stock history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
+        :return: pandas dataframe with prices history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
         """
         history = None  # empty pandas object for history
         # TODO: update history to work with api v2
@@ -2254,7 +2455,7 @@ class TinkoffBrokerServer:
                          This avoids unnecessary downloading data from the server.
         """
         if not tickers:
-            uLogger.info("Tickers list empty, nothing to close.")
+            uLogger.info("Tickers list is empty, nothing to close.")
 
         else:
             if overview is None or not overview:
@@ -2264,7 +2465,7 @@ class TinkoffBrokerServer:
             uLogger.debug("All opened instruments by it's tickers names: {}".format(allOpenedTickers))
 
             for ticker in tickers:
-                if not ticker in allOpenedTickers:
+                if ticker not in allOpenedTickers:
                     uLogger.warning("Instrument with ticker [{}] not in open positions list!".format(ticker))
                     continue
 
@@ -2715,6 +2916,91 @@ class TinkoffBrokerServer:
         #
         # return result
 
+    def IsInPortfolio(self, portfolio: dict = None) -> bool:
+        """
+        Checks if instrument is in the user's portfolio. Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: `True` if portfolio contains open position with given instrument, `False` otherwise.
+        """
+        result = False
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(showStatistics=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["ticker"] == self.ticker:
+                        result = True
+                        msg = "Instrument with ticker [{}] is present in open positions".format(self.ticker)
+                        break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["figi"] == self.figi:
+                        result = True
+                        msg = "Instrument with FIGI [{}] is present in open positions".format(self.figi)
+                        break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def GetInstrumentFromPortfolio(self, portfolio: dict = None) -> dict:
+        """
+        Returns instrument is in the user's portfolio if it presents there.
+        Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: dict with instrument if portfolio contains open position with this instrument, `None` otherwise.
+        """
+        result = None
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(showStatistics=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["ticker"] == self.ticker:
+                        result = instrument
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self.ticker, instrument["figi"])
+                        break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+
+            for iType in TKS_INSTRUMENTS:
+                for instrument in portfolio["stat"][iType]:
+                    if instrument["figi"] == self.figi:
+                        result = instrument
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self.figi)
+                        break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
 
 class Args:
     """
@@ -2733,35 +3019,40 @@ def ParseArgs():
     """
     parser = ArgumentParser()  # command-line string parser
 
-    parser.description = "TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API using REST protocol. It can view history, orders and market information. Also, you can open orders and trades. See examples: https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples"
-    parser.usage = "python TKSBrokerAPI.py [some options] [one command]"
+    parser.description = "TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API using REST protocol. It can view history, orders and market information. Also, you can open orders and trades. See examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples"
+    parser.usage = "\n/as module/ python TKSBrokerAPI.py [some options] [one command]\n/as CLI tool/ tksbrokerapi [some options] [one command]"
 
     # --- options:
 
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Option: not use local cache `dump.json`, but update raw instruments data when starting the program. `False` by default.")
     parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
-    parser.add_argument("--account-id", type=str, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+    parser.add_argument("--account-id", type=str, default=None, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
+
     parser.add_argument("--ticker", "-t", type=str, help="Option: instrument's ticker, e.g. `IBM`, `YNDX`, `GOOGL` etc. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR`.")
     parser.add_argument("--figi", "-f", type=str, help="Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for `YNDX`).")
+
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
+    parser.add_argument("--no-cancelled", "--no-canceled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
 
     # parser.add_argument("--length", type=int, default=24, help="Option: how many last candles returns for history. Used only with --history key.")
-    # parser.add_argument("--interval", type=str, default="60", help="Option: available values are 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month. Used only with --history key. This is time period used in 'interval' api parameter. Default: --interval=60 that means 60 min for every history candles.")
-    # parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by --output key then add only last missing candles, do not request all history length. False by default.")
+    # parser.add_argument("--interval", type=str, default="60", help="Option: available values are 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month. Used only with `--history` key. This is time period used in 'interval' api parameter. Default: `--interval=60` that means 60 min for every history candles.")
+    # parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. False by default.")
 
     parser.add_argument("--debug-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
 
     # --- commands:
 
-    parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define --output key to save list of instruments to file, default: instruments.md.")
+    parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
+    parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use --depth key. `--ticker` key or `--figi` key must be defined!")
-    parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs. WARNING! This is too long operation if you request a lot of instruments! Also, you can define --output key to save list of prices to file, default: prices.md.")
+    parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
-    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define --output key to save this information to file, default: overview.md.")
-    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30), `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. Also, you can define `--output` key to save all deals to file, default: report.md.")
-    # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define --output key to save history candles to .csv-file.")
+    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
+    # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define `--output` key to save history candles to .csv-file.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -2775,8 +3066,8 @@ def ParseArgs():
     # parser.add_argument("--buy-limit-order-grid", type=str, nargs="*", help="Action: open grid of pending BUY limit-orders (below current price). Parameters format: l(ots)=[L_int,...] p(rices)=[P_float,...]. Counts of values in lots and prices lists must be equals!")
     # parser.add_argument("--sell-limit-order-grid", type=str, nargs="*", help="Action: open grid of pending SELL limit-orders (above current price). Parameters format: l(ots)=[L_int,...] p(rices)=[P_float,...]. Counts of values in lots and prices lists must be equals!")
 
-    parser.add_argument("--close-order", "--cancel-order", type=str, nargs=1, help="Action: close only one order by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`")
-    parser.add_argument("--close-orders", "--cancel-orders", type=str, nargs="+", help="Action: close one or list of orders by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`")
+    parser.add_argument("--close-order", "--cancel-order", type=str, nargs=1, help="Action: close only one order by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`.")
+    parser.add_argument("--close-orders", "--cancel-orders", type=str, nargs="+", help="Action: close one or list of orders by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`.")
     parser.add_argument("--close-trade", "--cancel-trade", action="store_true", help="Action: close only one position for instrument defined by `--ticker` key, including for currencies tickers.")
     parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers, including for currencies tickers.")
     parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations.")
@@ -2787,7 +3078,7 @@ def ParseArgs():
 
 def Main(**kwargs):
     """
-    Main function for work with Tinkoff Open API service. It realize simple logic: get a lot of options and execute one command.
+    Main function for work with Tinkoff Open API service. It realizes simple logic: get a lot of options and execute one command.
 
     See examples: https://tim55667757.github.io/TKSBrokerAPI/
     """
@@ -2799,19 +3090,21 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("TKSBrokerAPI module started at: [{}] (UTC), it is [{}] local time".format(
+    uLogger.debug("TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime("%Y-%m-%d %H:%M:%S"),
         start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
     ))
 
-    instruments = kwargs["instruments"] if kwargs else None  # try to decrease requests to server count if class init many times
-    server = TinkoffBrokerServer(args.token, iList=instruments)  # Init class for trading with Tinkoff Broker
+    # Init class for trading with Tinkoff Broker:
+    server = TinkoffBrokerServer(
+        token=args.token,
+        accountId=args.account_id,
+        iList=kwargs["instruments"] if kwargs and "instruments" in kwargs.keys() else None,  # re-use iList
+        useCache=not args.no_cache,
+    )
 
     try:
         # --- set some options:
-
-        if args.account_id:
-            server.accountId = args.account_id
 
         if args.ticker:
             if args.ticker in server.aliasesKeys:
@@ -2834,7 +3127,19 @@ def Main(**kwargs):
 
         # --- do one of commands:
 
-        if args.info:
+        if args.list:
+            if args.output is not None:
+                server.instrumentsFile = args.output
+
+            server.ShowInstrumentsInfo(showInstruments=True)
+
+        elif args.search:
+            if args.output is not None:
+                server.searchResultsFile = args.output
+
+            server.SearchInstruments(pattern=args.search[0], showResults=True)
+
+        elif args.info:
             if not (args.ticker or args.figi):
                 raise Exception("`--ticker` key or `--figi` key is required for this operation!")
 
@@ -2843,12 +3148,6 @@ def Main(**kwargs):
 
             else:
                 server.SearchByFIGI(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by FIGI id
-
-        elif args.list:
-            if args.output is not None:
-                server.instrumentsFile = args.output
-
-            server.ShowInstrumentsInfo(showInstruments=True)
 
         elif args.price:
             if not (args.ticker or args.figi):
@@ -2876,7 +3175,8 @@ def Main(**kwargs):
                 server.Deals(
                     start=args.deals[0] if len(args.deals) >= 1 else None,
                     end=args.deals[1] if len(args.deals) == 2 else None,
-                    printDeals=True,
+                    printDeals=True,  # Always show deals report in console
+                    showCancelled=not args.no_cancelled,  # If --no-cancelled key then remove cancelled operations from the deals report. False by default.
                 )
 
             else:
@@ -3037,7 +3337,7 @@ def Main(**kwargs):
             uLogger.error("TKSBrokerAPI module returns an error! See full debug log with key in run command `--debug-level 10`. Summary code: {}".format(exitCode))
 
         uLogger.debug("TKSBrokerAPI module work duration: [{}]".format(finish - start))
-        uLogger.debug("TKSBrokerAPI module finished: [{}] (UTC), it is [{}] local time".format(
+        uLogger.debug("TKSBrokerAPI module finished: [{}] UTC, it is [{}] local time".format(
             finish.strftime("%Y-%m-%d %H:%M:%S"),
             finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
         ))

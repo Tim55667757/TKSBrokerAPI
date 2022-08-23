@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.com/Tim55667757/TKSBrokerAPI.svg?branch=master)](https://travis-ci.com/Tim55667757/TKSBrokerAPI)
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
 [![license](https://img.shields.io/pypi/l/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/LICENSE)
+[![release-notes](https://badgen.net/badge/release/notes/orange)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
 [![en-doc](https://badgen.net/badge/english/readme/pink)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
 [![api-doc](https://badgen.net/badge/api-doc/TKSBrokerAPI/blue)](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=%D0%94%D0%BE%D0%BD%D0%B0%D1%82%20(%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA)%20%D0%B4%D0%BB%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B2%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20TKSBrokerAPI&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
@@ -32,7 +33,9 @@
 4. [Примеры использования](#Примеры-использования)
    - [Из командной строки](#Из-командной-строки)
      - [Получить справку по ключам](#Получить-справку-по-ключам)
+     - [Локальный кэш данных](#Локальный-кэш-данных)
      - [Получить список всех доступных для торговли инструментов](#Получить-список-всех-доступных-для-торговли-инструментов)
+     - [Найти инструмент](#Найти-инструмент)
      - [Получить информацию по инструменту](#Получить-информацию-по-инструменту)
      - [Запросить стакан цен с заданной глубиной](#Запросить-стакан-цен-с-заданной-глубиной)
      - [Запросить таблицу последних актуальных цен для списка инструментов](#Запросить-таблицу-последних-актуальных-цен-для-списка-инструментов)
@@ -59,36 +62,42 @@
 ```commandline
 $ tksbrokerapi --overview
 
-TKSBrokerAPI.py     L:1726 INFO    [2022-07-26 12:43:12,279] Statistics of client's portfolio:
+TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of client's portfolio:
 # Client's portfolio
 
-* **Actual date:** [2022-07-26 09:43:12] (UTC)
-* **Portfolio cost:** 19835.73 RUB
-* **Changes:** +415.14 RUB (+2.05%)
+* **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Open positions
 
 | Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)
 |-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------
-| Ruble                       |                90.96 (0.30) rub |          |              |              |                     |
+| Ruble                       |                 5.62 (0.00) rub |          |              |              |                     |
 |                             |                                 |          |              |              |                     |
-| **Currencies:**             |                                 |          |              |              |         9159.71 RUB |
-| EUR_RUB__TOM [BBG0013HJJ31] |                 6.29 (0.00) eur | 0.0063   |    59.35 rub |    56.11 rub |          373.31 rub | +22.80 rub (+5.76%)
-| CNYRUB_TOM [BBG0013HRTL0]   |                23.00 (0.00) cny | 0.0230   |     8.78 rub |     8.92 rub |          201.95 rub | -3.20 rub (-1.56%)
+| **Currencies:**             |                                 |          |              |              |        13886.03 RUB |
+| EUR_RUB__TOM [BBG0013HJJ31] |                 5.29 (0.00) eur | 0.0053   |    62.75 rub |    61.41 rub |          331.96 rub | +7.10 rub (+2.19%)
+| CNYRUB_TOM [BBG0013HRTL0]   |               928.93 (0.00) cny | 0.9289   |     9.09 rub |     8.95 rub |         8443.97 rub | +134.69 rub (+1.62%)
 | CHFRUB_TOM [BBG0013HQ5K4]   |                 1.00 (0.00) chf | 0.0010   |    60.54 rub |    64.00 rub |           60.54 rub | -3.46 rub (-5.41%)
-| GBPRUB_TOM [BBG0013HQ5F0]   |                 2.00 (0.00) gbp | 0.0020   |    72.80 rub |    90.10 rub |          145.59 rub | -34.61 rub (-19.21%)
-| TRYRUB_TOM [BBG0013J12N1]   |                 1.00 (0.00) try | 0.0010   |     3.26 rub |     4.75 rub |            3.26 rub | -1.50 rub (-31.55%)
-| USD000UTSTOM [BBG0013HGFT4] |               143.03 (0.00) usd | 0.1430   |    58.50 rub |    55.88 rub |         8367.25 rub | +395.68 rub (+4.96%)
-| HKDRUB_TOM [BBG0013HSW87]   |                 1.00 (0.00) hkd | 0.0010   |     7.79 rub |    11.46 rub |            7.79 rub | -3.67 rub (-32.02%)
+| GBPRUB_TOM [BBG0013HQ5F0]   |                10.00 (0.00) gbp | 0.0100   |    74.39 rub |    75.88 rub |          743.85 rub | -14.94 rub (-1.97%)
+| TRYRUB_TOM [BBG0013J12N1]   |               100.00 (0.00) try | 0.1000   |     3.42 rub |     3.41 rub |          342.00 rub | +0.65 rub (+0.19%)
+| USD000UTSTOM [BBG0013HGFT4] |                34.42 (0.05) usd | 0.0344   |    60.66 rub |    60.33 rub |         2088.09 rub | +11.44 rub (+0.55%)
+| HKDRUB_TOM [BBG0013HSW87]   |               237.75 (0.00) hkd | 0.2378   |     7.89 rub |     7.83 rub |         1875.61 rub | +14.27 rub (+0.77%)
 |                             |                                 |          |              |              |                     |
-| **Stocks:**                 |                                 |          |              |              |          905.80 RUB |
-| POSI [TCS00A103X66]         |                           1 (1) | 1        |   905.80 rub |   906.80 rub |          905.80 rub | -1.00 rub (-0.11%)
+| **Shares:**                 |                                 |          |              |              |       199987.52 RUB |
+| POSI [TCS00A103X66]         |                           3 (0) | 3        |  1161.80 rub |  1120.20 rub |         3485.40 rub | +124.60 rub (+3.71%)
+| 288 [BBG00699M8Q7]          |                         800 (0) | 8        |     5.53 hkd |     5.69 hkd |         4424.00 hkd | -128.00 hkd (-2.81%)
+| YNDX [BBG006L8G4H1]         |                           4 (0) | 4        |  1971.80 rub |  1958.80 rub |         7887.20 rub | +52.22 rub (+0.67%)
+| IBM [BBG000BLNNH6]          |                           1 (1) | 1        |   131.03 usd |   131.13 usd |          131.03 usd | -0.10 usd (-0.08%)
+| 1810 [BBG00KVTBY91]         |                        1100 (0) | 11       |    11.79 hkd |    11.76 hkd |        12969.00 hkd | +30.00 hkd (+0.23%)
+| 9988 [BBG006G2JVL2]         |                          60 (0) | 6        |    91.80 hkd |    91.05 hkd |         5508.00 hkd | +45.50 hkd (+0.83%)
 |                             |                                 |          |              |              |                     |
-| **Bonds:**                  |                                 |          |              |              |         3024.30 RUB |
-| RU000A101YV8 [TCS00A101YV8] |                           3 (0) | 3        |  1008.10 rub |  1004.40 rub |         3024.30 rub | +11.10 rub (+0.37%)
+| **Bonds:**                  |                                 |          |              |              |        56240.33 RUB |
+| RU000A105104 [TCS00A105104] |                           5 (0) | 5        |  1012.00 cny |  1013.00 cny |         5064.80 cny | -5.00 cny (-0.10%)
+| RU000A101YV8 [TCS00A101YV8] |                          10 (0) | 10       |  1015.40 rub |  1011.21 rub |        10201.30 rub | +41.90 rub (+0.41%)
 |                             |                                 |          |              |              |                     |
-| **Etfs:**                   |                                 |          |              |              |         6654.96 RUB |
-| TGLD [BBG222222222]         |                        1600 (0) | 16       |     0.07 usd |     0.07 usd |          113.76 usd | -3.63 usd (-3.09%)
+| **Etfs:**                   |                                 |          |              |              |       135586.27 RUB |
+| TGLD [BBG222222222]         |                       30000 (0) | 300      |     0.07 usd |     0.07 usd |         2235.00 usd | -3.39 usd (-0.15%)
 |                             |                                 |          |              |              |                     |
 | **Futures:** no trades      |                                 |          |              |              |                     |
 
@@ -96,61 +105,80 @@ TKSBrokerAPI.py     L:1726 INFO    [2022-07-26 12:43:12,279] Statistics of clien
 
 | Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)
 |-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------
-| POSI [TCS00A103X66]         | ***********    | 1 (0)        |     905.80 rub (-9.33%) |    999.00 rub | ↓ Sell    | Limit     | 2022-07-26 12:43:05
+| IBM [BBG000BLNNH6]          | ************   | 1 (0)        |     131.02 usd (-4.36%) |    137.00 usd | ↓ Sell    | Limit     | 2022-08-10 22:02:44
 
-## Opened stop-orders: 2
+## Opened stop-orders: 3
 
 | Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)
 |-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------
-| POSI [TCS00A103X66]         | ********-****-****-****-************ | 1      |     905.80 rub (-9.42%) |   1000.00 rub |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 08:58:02 | Undefined
-| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |         N/A usd (0.00%) |    135.00 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 09:38:44 | Undefined
+| 1810 [BBG00KVTBY91]         | ********-****-****-****-************ | 11     |         N/A hkd (0.00%) |     14.00 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:24:57 | Undefined
+| 288 [BBG00699M8Q7]          | ********-****-****-****-************ | 8      |         N/A hkd (0.00%) |      5.80 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:06:28 | Undefined
+| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     130.99 usd (-4.49%) |    137.15 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 19:02:21 | Undefined
 
 # Analytics
 
-* **Current total portfolio cost:** 19835.73 RUB
-* **Changes:** +415.14 RUB (+2.05%)
+* **Current total portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Portfolio distribution by assets
 
 | Type       | Uniques | Percent | Current cost
 |------------|---------|---------|-----------------
-| Ruble      | 1       | 0.46%   | 90.96 rub
-| Currencies | 7       | 46.18%  | 9159.71 rub
-| Shares     | 1       | 4.57%   | 905.80 rub
-| Bonds      | 1       | 15.25%  | 3024.30 rub
-| Etfs       | 1       | 33.55%  | 6654.96 rub
+| Ruble      | 1       | 0.00%   | 5.62 rub
+| Currencies | 7       | 3.42%   | 13886.03 rub
+| Shares     | 6       | 49.29%  | 199987.52 rub
+| Bonds      | 2       | 13.86%  | 56240.33 rub
+| Etfs       | 1       | 33.42%  | 135586.27 rub
 
 ## Portfolio distribution by companies
 
 | Company                                     | Percent | Current cost
 |---------------------------------------------|---------|-----------------
-| All money cash                              | 46.64%  | 9250.67 rub
-| [POSI] Positive Technologies                | 4.57%   | 905.80 rub
-| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 15.25%  | 3024.30 rub
-| [TGLD] Тинькофф Золото                      | 33.55%  | 6654.96 rub
+| All money cash                              | 3.42%   | 13891.65 rub
+| [POSI] Positive Technologies                | 0.86%   | 3485.40 rub
+| [288] WH Group                              | 8.60%   | 34900.94 rub
+| [YNDX] Yandex                               | 1.94%   | 7887.20 rub
+| [IBM] IBM                                   | 1.96%   | 7948.93 rub
+| [1810] Xiaomi                               | 25.22%  | 102312.44 rub
+| [9988] Alibaba                              | 10.71%  | 43452.61 rub
+| [RU000A105104] РУСАЛ выпуск 5               | 11.35%  | 46039.03 rub
+| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 2.51%   | 10201.30 rub
+| [TGLD] Тинькофф Золото                      | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by sectors
 
 | Sector         | Percent | Current cost
 |----------------|---------|-----------------
-| All money cash | 46.64%  | 9250.67 rub
-| it             | 19.81%  | 3930.10 rub
-| other          | 33.55%  | 6654.96 rub
+| All money cash | 3.42%   | 13891.65 rub
+| it             | 30.55%  | 123948.08 rub
+| consumer       | 19.31%  | 78353.55 rub
+| telecom        | 1.94%   | 7887.20 rub
+| materials      | 11.35%  | 46039.03 rub
+| other          | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by currencies
 
 | Instruments currencies   | Percent | Current cost
 |--------------------------|---------|-----------------
-| [rub] Российский рубль   | 20.27%  | 4021.06 rub
-| [usd] Доллар США         | 75.73%  | 15022.22 rub
-| [eur] Евро               | 1.88%   | 373.33 rub
-| [cny] Юань               | 1.02%   | 201.95 rub
-| [chf] Швейцарский франк  | 0.31%   | 60.54 rub
-| [gbp] Фунт стерлингов    | 0.73%   | 145.59 rub
-| [try] Турецкая лира      | 0.02%   | 3.26 rub
-| [hkd] Гонконгский доллар | 0.04%   | 7.79 rub
+| [rub] Российский рубль   | 5.32%   | 21579.52 rub
+| [hkd] Гонконгский доллар | 44.99%  | 182541.60 rub
+| [usd] Доллар США         | 35.89%  | 145623.30 rub
+| [cny] Юань               | 13.43%  | 54483.01 rub
+| [eur] Евро               | 0.08%   | 331.96 rub
+| [chf] Швейцарский франк  | 0.01%   | 60.54 rub
+| [gbp] Фунт стерлингов    | 0.18%   | 743.85 rub
+| [try] Турецкая лира      | 0.08%   | 342.00 rub
 
-TKSBrokerAPI.py     L:1732 INFO    [2022-07-26 12:43:12,303] Client's portfolio is saved to file: [overview.md]
+## Portfolio distribution by countries
+
+| Assets by country                  | Percent | Current cost
+|------------------------------------|---------|-----------------
+| All other countries                | 36.84%  | 149472.30 rub
+| [RU] Российская Федерация          | 16.67%  | 67612.93 rub
+| [CN] Китайская Народная Республика | 44.53%  | 180665.99 rub
+| [US] Соединенные Штаты Америки     | 1.96%   | 7948.93 rub
+
+TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio is saved to file: [overview.md]
 ```
 
 </details>
@@ -161,11 +189,17 @@ TKSBrokerAPI позволяет автоматизировать рутинны�
 
 ### Основные возможности
 
-На момент последнего актуального релиза инструмент TKSBrokerAPI умеет:
+На момент [последнего релиза](https://pypi.org/project/tksbrokerapi/) инструмент TKSBrokerAPI умеет:
 
+- Кэшировать по умолчанию все данные по всем торгуемым инструментам в файл `dump.json` и использовать его в дальнейшем, что позволяет уменьшить число обращений на сервер брокера;
+  - ключ `--no-cache` отменяет использование локального кэша, данные запрашиваются с сервера при каждом запуске;
+  - API-метод: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
 - Получать с сервера брокера список всех доступных для указанного аккаунта инструментов: валют, акций, облигаций, фондов и фьючерсов;
   - ключ `--list` или `-l`;
   - API-метод: [`Listing()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Listing).
+- Выполнять поиск инструментов, указав только часть их имени, тикера или FIGI идентификатора, либо задав регулярное выражение;
+  - ключ `--search` или `-s`;
+  - API-метод: [`SearchInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchInstruments).
 - Запрашивать у брокера информацию об инструменте, зная его тикер или идентификатор FIGI;
   - ключ `--info` или `-i`;
   - API-методы: [`SearchByTicker()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker), [`SearchByFIGI()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByFIGI) и [`ShowInstrumentInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowInstrumentInfo).
@@ -175,7 +209,7 @@ TKSBrokerAPI позволяет автоматизировать рутинны�
 - Получать с сервера брокера таблицу последних цен;
   - ключ `--prices` с перечислением списка интересующих инструментов;
   - API-метод: [`GetListOfPrices()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetListOfPrices).
-- Получать информацию о состоянии портфеля пользователя и аналитику по нему: распределение портфеля по активам, компаниям, секторам и валютам активов;
+- Получать информацию о состоянии портфеля пользователя и аналитику по нему: распределение портфеля по активам, компаниям, секторам, валютам и странам активов;
   - ключ `--overview` или `-o`;
   - API-метод: [`Overview()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview).
 - Получать с сервера брокера информацию о совершённых сделках за указанный период и представлять её в табличном виде;
@@ -277,152 +311,173 @@ tksbrokerapi [необязательные ключи и параметры] [о
 tksbrokerapi --help
 ```
 
-Вывод:
+Вывод (в переводе):
 
 ```text
-usage: python TKSBrokerAPI.py [some options] [one command]
+Как использовать: 
+/как модуль/ python TKSBrokerAPI.py [возможно несколько параметров] [одна команда]
+/as CLI tool/ tksbrokerapi [возможно несколько параметров] [одна команда]
 
-TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API
-using REST protocol. It can view history, orders and market information. Also,
-you can open orders and trades. See examples:
-https://tim55667757.github.io/TKSBrokerAPI/#Usage-examples
+TKSBrokerAPI это python API для упрощения работы с некоторыми методами Tinkoff Open API
+используя REST-запросы. Модуль умеет получать исторические данные, данные по ордерам и информацию с рынка.
+Также с его помощью вы можете открывать и закрывать ордера различных типов и торговать "по рынку". Смотрите примеры:
+https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --token TOKEN         Option: Tinkoff service's api key. If not set then
-                        used environment variable `TKS_API_TOKEN`. See how to
-                        use: https://tinkoff.github.io/investAPI/token/
+Параметры и команды:
+  -h, --help            Посмотреть эту помощь и выйти.
+  --no-cache            Параметр: не использовать локальный кэш `dump.json`, но обновлять
+                        сырые данные с сервера брокера при запуске программы.
+                        `False` по умолчанию.
+  --token TOKEN         Параметр: токен для доступа к брокеру Тинькофф Инвестиции.
+                        Если параметр не указан, то используется переменная `TKS_API_TOKEN`.
+                        Как работать с токенами: https://tinkoff.github.io/investAPI/token/
   --account-id ACCOUNT_ID
-                        Option: string with an user numeric account ID in
-                        Tinkoff Broker. It can be found in any broker's
-                        reports (see the contract number). Also, this variable
-                        can be set from environment variable `TKS_ACCOUNT_ID`.
+                        Параметр: строка с числовым идентификатором пользователя у брокера
+                        Тинькофф Инвестиции. Он может быть найден в любом брокерском
+                        отчёте (ищите фразу "номер контракта"). Также эта переменная
+                        может быть установлена через переменную окружения `TKS_ACCOUNT_ID`.
   --ticker TICKER, -t TICKER
-                        Option: instrument's ticker, e.g. `IBM`, `YNDX`,
-                        `GOOGL` etc. Use alias for `USD000UTSTOM` simple as
-                        `USD`, `EUR_RUB__TOM` as `EUR`.
-  --figi FIGI, -f FIGI  Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for
-                        `YNDX`).
-  --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
-                        default.
-  --output OUTPUT       Option: replace default paths to output files for some
-                        commands. If None then used default files.
+                        Параметр: строка с тикером инструмента, например, `IBM`, `YNDX`,
+                        `GOOGL` и т.п. Можно использовать алиасы для валют, например, вместо
+                        `USD000UTSTOM` просто `USD`, а вместо `EUR_RUB__TOM` писать `EUR`.
+  --figi FIGI, -f FIGI  Параметр: строка с идентификатором FIGI инструмента, например,
+                        `BBG006L8G4H1` для инструмента с тикером `YNDX`.
+  --depth DEPTH         Параметр: число, показывающее "глубину биржевого стакана"
+                        (Depth of Market, DOM), должно быть  >=1, по умолчанию 1.
+  --no-cancelled        Параметр: удалить информацию об отменённых операциях
+                        из отчёта по сделкам, полученного с ключом `--deals`.
+                        False по умолчанию.
+  --output OUTPUT       Параметр: строка, которая заменяет стандартный путь вывода в файл
+                        для некоторых команд. Если None, тогда используется стандартный путь.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
-                        Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
-                        ERROR, 50 = CRITICAL. INFO (20) by default.
-  --list, -l            Action: get and print all available instruments and
-                        some information from broker server. Also, you can
-                        define --output key to save list of instruments to
-                        file, default: instruments.md.
-  --info, -i            Action: get information from broker server about
-                        instrument by it's ticker or FIGI. `--ticker` key or
-                        `--figi` key must be defined!
-  --price               Action: show actual price list for current instrument.
-                        Also, you can use --depth key. `--ticker` key or
-                        `--figi` key must be defined!
+                        Параметр: число, которое указывает минимальный уровень вывода
+                        логов в STDOUT, например, 10 = DEBUG, 20 = INFO, 30 = WARNING,
+                        40 = ERROR, 50 = CRITICAL. По умолчанию используется уровень INFO (20).
+  --list, -l            Команда: получить и напечатать все доступные для работы инструменты
+                        и некоторую информацию по ним с сервера брокера. Также можно
+                        задать ключ `--output`, чтобы сохранить список инструментов
+                        в файл, по умолчанию: `instruments.md`.
+  --search SEARCH, -s SEARCH
+                        Команда: найти инструмент по части его имени, тикера
+                        или FIGI. Также можно задать ключ `--output`, чтобы сохранить
+                        результаты поиска в файл, по умолчанию: `search-results.md`.
+  --info, -i            Команда: получить информацию с сервера брокера по конкретному
+                        инструменту, зная его тикер или FIGI. Ключ `--ticker` или
+                        ключ `--figi` должны быть заданы!
+  --price               Команда: показать стакан цен для выбранного инструмента.
+                        Можно использовать совместно с ключом --depth, для указания
+                        глубины. Ключ `--ticker` или ключ `--figi` должны быть заданы!
   --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
-                        Action: get and print current prices for list of given
-                        instruments (by it's tickers or by FIGIs. WARNING!
-                        This is too long operation if you request a lot of
-                        instruments! Also, you can define --output key to save
-                        list of prices to file, default: prices.md.
-  --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define --output key to save
-                        this information to file, default: overview.md.
+                        Команда: получить таблицу актуальных цен для выбранных
+                        инструментов (по их тикерам или FIGI). Внимание!
+                        Операция будет выполняться очень долго, если вы запросите
+                        слишком много инструментов! Также можно задать ключ `--output`,
+                        чтобы сохранить таблицу цен в файл, по умолчанию: `prices.md`.
+  --overview, -o        Команда: показать все открытые позиции, ордера и немного
+                        статистики. Также можно задать ключ `--output`, чтобы сохранить
+                        эту информацию в файл, по умолчанию: `overview.md`.
   --deals [DEALS [DEALS ...]], -d [DEALS [DEALS ...]]
-                        Action: show all deals between two given dates. Start
-                        day may be an integer number: -1, -2, -3 days ago.
-                        Also, you can use keywords: `today`, `yesterday` (-1),
-                        `week` (-7), `month` (-30), `year` (-365). Dates
-                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. Also, you
-                        can define `--output` key to save all deals to file,
-                        default: report.md.
+                        Команда: показать все сделки между двумя датами. Первый
+                        параметр указывает на начальную дату: -1, -2, -3 дней назад.
+                        Также можно использовать ключевики: `today`, `yesterday` (-1),
+                        `week` (-7), `month` (-30) и `year` (-365). Формат дат должен
+                        быть такой: `%Y-%m-%d`, например, 2020-02-03. С ключом
+                        `--no-cancelled` информация об отменённых операциях
+                        не будет отображаться в отчёте по сделкам. Также можно
+                        задать ключ `--output`, чтобы сохранить сделки в файл,
+                        по умолчанию: `deals.md`.
   --trade [TRADE [TRADE ...]]
-                        Action: universal action to open market position for
-                        defined ticker or FIGI. You must specify 1-5
-                        parameters: [direction `Buy` or `Sell] [lots, >= 1]
-                        [take profit, >= 0] [stop loss, >= 0] [expiration date
-                        for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See
-                        examples in readme.
+                        Команда: универсальный способ, чтобы открыть сделку "по рынку"
+                        для инструмента, заданного тикером или FIGI. Можно указать
+                        от 1 до 5 параметров: [направление `Buy` или `Sell] [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`]. Смотрите подробные
+                        примеры в README.md.
   --buy [BUY [BUY ...]]
-                        Action: immediately open BUY market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
+                        Команда: немедленно открыть BUY позицию "по рынку"
+                        по текущим ценам в стакане для указанного тикера или FIGI.
+                        Можно указать до 4 необязательных параметра: [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`].
   --sell [SELL [SELL ...]]
-                        Action: immediately open SELL market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
+                        Команда: немедленно открыть SELL позицию "по рынку"
+                        по текущим ценам в стакане для указанного тикера или FIGI.
+                        Можно указать до 4 необязательных параметра: [лоты, >= 1]
+                        [тейк-профит, >= 0] [стоп-лосс, >= 0] [срок действия ордеров
+                        TP/SL, Undefined|`%Y-%m-%d %H:%M:%S`].
   --order [ORDER [ORDER ...]]
-                        Action: universal action to open limit or stop-order
-                        in any directions. You must specify 4-7 parameters:
-                        [direction `Buy` or `Sell] [order type `Limit` or
-                        `Stop`] [lots] [target price] [maybe for stop-order:
-                        [limit price, >= 0] [stop type, Limit|SL|TP]
-                        [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See
-                        examples in readme.
+                        Команда: универсальный способ, чтобы открыть лимитный или стоп-ордер
+                        в любом направлении. Нужно указать от 4 до 7 параметров:
+                        [направление `Buy` или `Sell] [тип ордера `Limit` или`Stop`]
+                        [лоты] [целевая цена] [дополнительно для стоп-ордеров:
+                        [цена открываемого лимитного ордера, >= 0] [тип стоп-ордера, Limit|SL|TP]
+                        [срок действия ордеров, Undefined|`%Y-%m-%d %H:%M:%S`]].
+                        Смотрите подробные примеры в README.md.
   --buy-limit BUY_LIMIT BUY_LIMIT
-                        Action: open pending BUY limit-order (below current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open BUY limit-order. If you try to
-                        create `Buy` limit-order above current price then
-                        broker immediately open `Buy` market order, such as if
-                        you do simple `--buy` operation!
+                        Команда: открыть отложенный лимитный ордер в направлении BUY
+                        (ниже текущей цены). Нужно задать только 2 обязательных параметра:
+                        [лоты] [целевая цена] для открытия лимитного BUY ордера. Если вы
+                        попытаетесь создать лимитный `Buy` ордер выше текущей цены, тогда
+                        брокер немедленно откроет рыночный `Buy` ордер, как если бы вы
+                        просто указали `--buy` операцию!
   --sell-limit SELL_LIMIT SELL_LIMIT
-                        Action: open pending SELL limit-order (above current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open SELL limit-order. If you try to
-                        create `Sell` limit-order below current price then
-                        broker immediately open `Sell` market order, such as
-                        if you do simple `--sell` operation!
+                        Команда: открыть отложенный лимитный ордер в направлении SELL
+                        (выше текущей цены). Нужно задать только 2 обязательных параметра:
+                        [лоты] [целевая цена] для открытия лимитного SELL ордера. Если вы
+                        попытаетесь создать лимитный `Sell` ордер ниже текущей цены, тогда
+                        брокер немедленно откроет рыночный `Sell` ордер, как если бы вы
+                        просто указали `--sell` операцию!
   --buy-stop [BUY_STOP [BUY_STOP ...]]
-                        Action: open BUY stop-order. You must specify at least
-                        2 parameters: [lots] [target price] to open BUY stop-
-                        order. In additional you can specify 3 parameters for
-                        stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
+                        Команда: открыть стоп-ордер в направлении BUY. Нужно задать только
+                        2 обязательных параметра: [лоты] [целевая цена] для открытия BUY
+                        стоп-ордера. Можно указать 3 дополнительных параметра для
+                        стоп-ордера: [цена открываемого лимитного ордера, >= 0]
+                        [тип стоп-ордера, Limit|SL|TP] [срок действия ордеров,
+                        Undefined|`%Y-%m-%d %H:%M:%S`]. Когда текущая цена дойдёт вверх
+                        или вниз до целевой цены, тогда брокер откроет лимитный ордер.
+                        Ордер типа стоп-лосс всегда исполняется по текущей рыночной цене.
   --sell-stop [SELL_STOP [SELL_STOP ...]]
-                        Action: open SELL stop-order. You must specify at
-                        least 2 parameters: [lots] [target price] to open SELL
-                        stop-order. In additional you can specify 3 parameters
-                        for stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
+                        Команда: открыть стоп-ордер в направлении SELL. Нужно задать только
+                        2 обязательных параметра: [лоты] [целевая цена] для открытия SELL
+                        стоп-ордера. Можно указать 3 дополнительных параметра для
+                        стоп-ордера: [цена открываемого лимитного ордера, >= 0]
+                        [тип стоп-ордера, Limit|SL|TP] [срок действия ордеров,
+                        Undefined|`%Y-%m-%d %H:%M:%S`]. Когда текущая цена дойдёт вверх
+                        или вниз до целевой цены, тогда брокер откроет лимитный ордер.
+                        Ордер типа стоп-лосс всегда исполняется по текущей рыночной цене.
   --close-order CLOSE_ORDER, --cancel-order CLOSE_ORDER
-                        Action: close only one order by it's `orderId` or
-                        `stopOrderId`. You can find out the meaning of these
-                        IDs using the key `--overview`
+                        Команда: закрыть один ордер, указав его `orderId` или
+                        `stopOrderId`. Вы можете найти эти идентификаторы в отчёте
+                        по ключу `--overview`.
   --close-orders CLOSE_ORDERS [CLOSE_ORDERS ...], --cancel-orders CLOSE_ORDERS [CLOSE_ORDERS ...]
-                        Action: close one or list of orders by it's `orderId`
-                        or `stopOrderId`. You can find out the meaning of
-                        these IDs using the key `--overview`
+                        Команда: закрыть один или более ордеров, указав список их `orderId`
+                        или `stopOrderId`. Вы можете найти эти идентификаторы в отчёте
+                        по ключу `--overview`.
   --close-trade, --cancel-trade
-                        Action: close only one position for instrument defined
-                        by `--ticker` key, including for currencies tickers.
+                        Команда: закрыть позицию по одному инструменту, заданному ключом
+                        `--ticker`, в том числе можно указывать тикеры валют.
   --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
-                        Action: close positions for list of tickers, including
-                        for currencies tickers.
+                        Команда: закрыть позиции для списка инструментов,
+                        в том числе можно указывать тикеры валют.
   --close-all [CLOSE_ALL [CLOSE_ALL ...]], --cancel-all [CLOSE_ALL [CLOSE_ALL ...]]
-                        Action: close all available (not blocked) opened
-                        trades and orders, excluding for currencies. Also you
-                        can select one or more keywords case insensitive to
-                        specify trades type: `orders`, `shares`, `bonds`,
-                        `etfs` and `futures`, but not `currencies`. Currency
-                        positions you must closes manually using `--buy`,
-                        `--sell`, `--close-trade` or `--close-trades`
-                        operations.
+                        Команда: закрыть все доступные (не заблокированные) открытые
+                        позиции и отменить ордера, кроме валютных позиций. Также вы можете
+                        указать одно или более ключевых слов (регистронезависимых) для
+                        уточнения типа инструментов: `orders`, `shares`, `bonds`,
+                        `etfs` или `futures`, но нельзя использовать `currencies`. Валютные
+                        позиции при необходимости вы должны закрыть вручную, используя ключи
+                        `--buy`, `--sell`, `--close-trade` или `--close-trades`.
 ```
 
 </details>
+
+#### Локальный кэш данных
+
+Начиная с версий TKSBrokerAPI v1.2.* добавлена возможность использования локального кэша `dump.json` с данными по торгуемым инструментам, что позволяет избежать постоянных запросов этих данных с сервера брокера и существенно сэкономить время. Кэш используется по умолчанию при исполнении любой команды, специально задавать его не требуется.
+
+Если текущий день отличается от дня последнего изменения кэша, то он автоматически обновится при очередном запуске программы. Если файл `dump.json` не существует в локальном каталоге, он также будет создан автоматически.
+
+Обычно на биржах редко происходят критические изменения по инструментам в течение дня и обновление кэша минимум раз в день оправданно. Но если вы хотите быть полностью уверены в консистентности данных, то можете указывать ключ `--no-cahce` вместе с каждой командой. В этом случае данные по инструментам будут запрашиваться каждый раз.
 
 #### Получить список всех доступных для торговли инструментов
 
@@ -476,6 +531,104 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-26 22:04:41,215] TKSBrokerAPI module
 
 </details>
 
+#### Найти инструмент
+
+Чтобы работать с биржевыми инструментами, получать информацию по ним, запрашивать цены и совершать сделки, обычно требуется указать тикер (ключ `--ticker`) или FIGI (ключ `--figi`). Но вряд ли есть много людей, кто знает их наизусть. Чаще всего имеется лишь предположение о части символов тикера или примерного названия компании. В этом случае можно воспользоваться поиском по паттерну: части имени, тикера или FIGI, либо указав регулярное выражение. Поиск осуществляется стандартным python модулем [`re`](https://docs.python.org/3/library/re.html#re.compile), без учёта регистра.
+
+Начиная с версий TKSBrokerAPI v1.2.* добавлен ключ `--search`, после которого нужно указать паттерн. Например, требуется найти все инструменты группы компаний Сбер, тогда можно попробовать задать часть слова: `tksbrokerapi --search "sbe"` (или по-русски `"сбер"`). Или же хочется узнать все инструменты компаний, в названии которых встречаются слова "Российские", "акции" и "облигации". В этом случае можно попробовать скомбинировать слова и задать регулярное выражение: `tksbrokerapi --search "(Росс.*).*(?:.*ции)"`.
+
+Дополнительно к ключу `--search` можно указать ключ `--output` и задать имя файла, куда сохранить результаты поиска. По умолчанию полные результаты поиска сохраняются в `search-results.md`. В консоли отображаются только первые 5 найденных инструмента каждого типа.
+
+После того как нужный инструмент был найден и стали известны его тикер и FIGI, посмотреть более подробную информацию можно командой `tksbrokerapi -t TICKER --info` или `tksbrokerapi -f FIGI --info` ([подробнее](https://github.com/Tim55667757/TKSBrokerAPI#Получить-информацию-по-инструменту)).
+
+<details>
+  <summary>Команда для поиска инструмента по части названия</summary>
+
+```commandline
+$ tksbrokerapi --search "сбер"
+
+TKSBrokerAPI.py     L:1065 INFO    [2022-08-11 22:00:31,171] # Search results
+
+* **Search pattern:** [сбер]
+* **Found instruments:** [21]
+
+**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.
+
+### Shares: [2]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Shares     | SBER         | Сбер Банк                                                      | BBG004730N88 |
+| Shares     | SBERP        | Сбер Банк - привилегированные акции                            | BBG0047315Y7 |
+
+### Bonds: [8]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Bonds      | RU000A101QW2 | Сбер Банк                                                      | BBG00V9STNC5 |
+| Bonds      | RU000A103YM3 | Сбер Банк 002P выпуск 1                                        | BBG013J0F816 |
+| Bonds      | RU000A101C89 | Сбер Банк 001P-SBER15                                          | BBG00RKBQ4D2 |
+| Bonds      | RU000A102FR3 | Сбербанк                                                       | BBG00YHVQ768 |
+| Bonds      | RU000A103G75 | Сбер Банк 001P-SBER32                                          | BBG0122KNFZ0 |
+| ...        | ...          | ...                                                            | ...          |
+
+### Etfs: [1]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Etfs       | RU000A104172 | ЗПИФ ПАРУС-Сберлог                                             | TCS00A104172 |
+
+### Futures: [10]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Futures    | SPH2         | SBPR-3.22 Сбер Банк (привилегированные)                        | FUTSBPR03220 |
+| Futures    | SRU2         | SBRF-9.22 Сбер Банк (обыкновенные)                             | FUTSBRF09220 |
+| Futures    | SRH3         | SBRF-3.23 Сбер Банк (обыкновенные)                             | FUTSBRF03230 |
+| Futures    | SRH2         | SBRF-3.22 Сбер Банк (обыкновенные)                             | FUTSBRF03220 |
+| Futures    | SPM2         | SBPR-6.22 Сбер Банк (привилегированные)                        | FUTSBPR06220 |
+| ...        | ...          | ...                                                            | ...          |
+
+TKSBrokerAPI.py     L:1066 INFO    [2022-08-11 22:00:31,172] You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`
+TKSBrokerAPI.py     L:1072 INFO    [2022-08-11 22:00:31,172] Full search results were saved to file: [search-results.md]
+```
+
+</details>
+
+<details>
+  <summary>Команда для поиска инструмента по регулярному выражению</summary>
+
+```commandline
+$ tksbrokerapi --search "(Росс.*).*(?:.*ции)"
+
+TKSBrokerAPI.py     L:1067 INFO    [2022-08-11 22:41:39,039] # Search results
+
+* **Search pattern:** [(Росс.*).*(?:.*ции)]
+* **Found instruments:** [5]
+
+**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.
+
+### Shares: [1]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Shares     | RSTIP        | Российские сети - акции привилегированные                      | BBG000KTF667 |
+
+### Etfs: [4]
+
+| Type       | Ticker       | Full name                                                      | FIGI         |
+|------------|--------------|----------------------------------------------------------------|--------------|
+| Etfs       | AMRE         | АТОН Российские акции +                                        | TCS00A102XX4 |
+| Etfs       | AMRB         | АТОН Российские облигации +                                    | TCS00A102XY2 |
+| Etfs       | SBCB         | Первая - Фонд Российские еврооблигации                         | BBG00NB6KGN0 |
+| Etfs       | AKME         | Альфа-Капитал Управляемые Российские Акции                     | BBG00YRW4B42 |
+
+TKSBrokerAPI.py     L:1068 INFO    [2022-08-11 22:41:39,039] You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`
+TKSBrokerAPI.py     L:1074 INFO    [2022-08-11 22:41:39,040] Full search results were saved to file: [search-results.md]
+```
+
+</details>
+
 #### Получить информацию по инструменту
 
 Используется ключ `--info` (`-i`), а также необходимо указать одно из двух: тикер инструмента, либо его FIGI идентификатор. Они задаются ключами `--ticker` (`-t`) и `--figi` (`-f`) соответственно. Выводимая пользователю информация при этом не отличается для обоих ключей. Разница имеется в содержании и количестве полей, отображаемых в информационной таблице, в зависимости от типа найденного инструмента: это валюта, акция, облигация, фонд или фьючерс.
@@ -491,7 +644,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:48:31,766] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | CNYRUB_TOM
+| Ticker:                                                 | CNYRUB_TOM
 | Full name:                                              | Юань
 | Country of instrument:                                  |
 |                                                         |
@@ -542,7 +695,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:49:59,462] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | IBM
+| Ticker:                                                 | IBM
 | Full name:                                              | IBM
 | Sector:                                                 | it
 | Country of instrument:                                  | (US) Соединенные Штаты Америки
@@ -587,7 +740,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:57:22,581] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | RU000A101YV8
+| Ticker:                                                 | RU000A101YV8
 | Full name:                                              | Позитив Текнолоджиз выпуск 1
 | Sector:                                                 | it
 | Country of instrument:                                  | (RU) Российская Федерация
@@ -630,7 +783,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:59:07,204] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | TGLD
+| Ticker:                                                 | TGLD
 | Full name:                                              | Тинькофф Золото
 | Country of instrument:                                  |
 |                                                         |
@@ -683,7 +836,7 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-27 00:01:49,075] Information about i
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
-| Stock ticker:                                           | PZH2
+| Ticker:                                                 | PZH2
 | Full name:                                              | PLZL-3.22 Полюс Золото
 | Sector:                                                 | SECTOR_MATERIALS
 | Country of instrument:                                  |
@@ -787,71 +940,71 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 </details>
 
-
 #### Получить текущий портфель пользователя и статистику распределения активов
 
 Используется ключ `--overview` (`-o`). Дополнительно можно указать ключ `--output` и задать имя файла, куда сохранить отчёт о состоянии портфеля в формате Markdown (по умолчанию `overview.md` в текущей рабочей директории). Ключ `--verbosity=10` выведет всю отладочную информацию в консоль (можно его не указывать).
 
 <details>
-  <summary>Команда для получения портфеля пользователя</summary>
+  <summary>Команда для отображения портфеля пользователя</summary>
 
 ```commandline
 $ tksbrokerapi --verbosity=10 --overview --output portfolio.md
 
-TKSBrokerAPI.py     L:2804 DEBUG   [2022-07-27 18:03:05,365] TKSBrokerAPI module started at: [2022-07-27 15:03:05] (UTC), it is [2022-07-27 18:03:05] local time
-TKSBrokerAPI.py     L:198  DEBUG   [2022-07-27 18:03:05,366] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
-TKSBrokerAPI.py     L:210  DEBUG   [2022-07-27 18:03:05,367] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
-TKSBrokerAPI.py     L:240  DEBUG   [2022-07-27 18:03:05,368] Broker API server: https://invest-public-api.tinkoff.ru/rest
-TKSBrokerAPI.py     L:411  DEBUG   [2022-07-27 18:03:05,369] Requesting all available instruments from broker for current user token. Wait, please...
-TKSBrokerAPI.py     L:412  DEBUG   [2022-07-27 18:03:05,370] CPU usages for parallel requests: [7]
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Currencies] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Shares] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Bonds] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Etfs] list. Wait, please...
-TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 18:03:05,375] Requesting available [Futures] list. Wait, please...
-TKSBrokerAPI.py     L:1146 DEBUG   [2022-07-27 18:03:06,455] Request portfolio of a client...
-TKSBrokerAPI.py     L:1035 DEBUG   [2022-07-27 18:03:06,456] Requesting current actual user's portfolio. Wait, please...
-TKSBrokerAPI.py     L:1041 DEBUG   [2022-07-27 18:03:06,659] Records about user's portfolio successfully received
-TKSBrokerAPI.py     L:1052 DEBUG   [2022-07-27 18:03:06,660] Requesting current open positions in currencies and instruments. Wait, please...
-TKSBrokerAPI.py     L:1058 DEBUG   [2022-07-27 18:03:06,779] Records about current open positions successfully received
-TKSBrokerAPI.py     L:1069 DEBUG   [2022-07-27 18:03:06,779] Requesting current actual pending orders. Wait, please...
-TKSBrokerAPI.py     L:1075 DEBUG   [2022-07-27 18:03:06,914] [1] records about pending orders successfully received
-TKSBrokerAPI.py     L:1086 DEBUG   [2022-07-27 18:03:06,916] Requesting current actual stop orders. Wait, please...
-TKSBrokerAPI.py     L:1092 DEBUG   [2022-07-27 18:03:07,027] [3] records about stop orders successfully received
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,039] Requesting current prices for instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8]...
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,144] Requesting current prices for instrument with ticker [POSI] and FIGI [TCS00A103X66]...
-TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 18:03:07,235] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
-TKSBrokerAPI.py     L:1726 INFO    [2022-07-27 18:03:07,387] Statistics of client's portfolio:
+TKSBrokerAPI.py     L:2898 DEBUG   [2022-08-10 22:06:22,087] TKSBrokerAPI module started at: [2022-08-10 19:06:22] (UTC), it is [2022-08-10 22:06:22] local time
+TKSBrokerAPI.py     L:205  DEBUG   [2022-08-10 22:06:22,087] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:217  DEBUG   [2022-08-10 22:06:22,087] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:247  DEBUG   [2022-08-10 22:06:22,087] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:307  DEBUG   [2022-08-10 22:06:22,113] Local cache with raw instruments data is used: [dump.json]
+TKSBrokerAPI.py     L:308  DEBUG   [2022-08-10 22:06:22,114] Dump file was modified [2022-08-10 12:02:58] UTC
+TKSBrokerAPI.py     L:1207 DEBUG   [2022-08-10 22:06:22,114] Request portfolio of a client...
+TKSBrokerAPI.py     L:1095 DEBUG   [2022-08-10 22:06:22,114] Requesting current actual user's portfolio. Wait, please...
+TKSBrokerAPI.py     L:1101 DEBUG   [2022-08-10 22:06:22,499] Records about user's portfolio successfully received
+TKSBrokerAPI.py     L:1112 DEBUG   [2022-08-10 22:06:22,499] Requesting current open positions in currencies and instruments. Wait, please...
+TKSBrokerAPI.py     L:1118 DEBUG   [2022-08-10 22:06:22,854] Records about current open positions successfully received
+TKSBrokerAPI.py     L:1129 DEBUG   [2022-08-10 22:06:22,854] Requesting current actual pending orders. Wait, please...
+TKSBrokerAPI.py     L:1135 DEBUG   [2022-08-10 22:06:23,192] [1] records about pending orders successfully received
+TKSBrokerAPI.py     L:1146 DEBUG   [2022-08-10 22:06:23,193] Requesting current actual stop orders. Wait, please...
+TKSBrokerAPI.py     L:1152 DEBUG   [2022-08-10 22:06:23,807] [5] records about stop orders successfully received
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:23,824] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,152] Requesting current prices for instrument with ticker [1810] and FIGI [BBG00KVTBY91]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,571] Requesting current prices for instrument with ticker [288] and FIGI [BBG00699M8Q7]...
+TKSBrokerAPI.py     L:858  DEBUG   [2022-08-10 22:06:24,843] Requesting current prices for instrument with ticker [9988] and FIGI [BBG006G2JVL2]...
+TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of client's portfolio:
 # Client's portfolio
 
-* **Actual date:** [2022-07-27 15:03:07] (UTC)
-* **Portfolio cost:** 34501.76 RUB
-* **Changes:** +168.23 RUB (+0.49%)
+* **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Open positions
 
 | Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)
 |-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------
-| Ruble                       |                 7.05 (0.62) rub |          |              |              |                     |
+| Ruble                       |                 5.62 (0.00) rub |          |              |              |                     |
 |                             |                                 |          |              |              |                     |
-| **Currencies:**             |                                 |          |              |              |        11186.55 RUB |
-| EUR_RUB__TOM [BBG0013HJJ31] |                 6.29 (0.00) eur | 0.0063   |    61.06 rub |    62.98 rub |          384.07 rub | -12.06 rub (-3.04%)
-| CNYRUB_TOM [BBG0013HRTL0]   |               264.00 (0.00) cny | 0.2640   |     9.08 rub |     8.95 rub |         2396.99 rub | +35.51 rub (+1.50%)
+| **Currencies:**             |                                 |          |              |              |        13886.03 RUB |
+| EUR_RUB__TOM [BBG0013HJJ31] |                 5.29 (0.00) eur | 0.0053   |    62.75 rub |    61.41 rub |          331.96 rub | +7.10 rub (+2.19%)
+| CNYRUB_TOM [BBG0013HRTL0]   |               928.93 (0.00) cny | 0.9289   |     9.09 rub |     8.95 rub |         8443.97 rub | +134.69 rub (+1.62%)
 | CHFRUB_TOM [BBG0013HQ5K4]   |                 1.00 (0.00) chf | 0.0010   |    60.54 rub |    64.00 rub |           60.54 rub | -3.46 rub (-5.41%)
-| GBPRUB_TOM [BBG0013HQ5F0]   |                 2.00 (0.00) gbp | 0.0020   |    73.85 rub |    90.10 rub |          147.70 rub | -32.50 rub (-18.04%)
-| TRYRUB_TOM [BBG0013J12N1]   |                 1.00 (0.00) try | 0.0010   |     3.34 rub |     4.75 rub |            3.34 rub | -1.41 rub (-29.65%)
-| USD000UTSTOM [BBG0013HGFT4] |               135.68 (0.00) usd | 0.1357   |    60.33 rub |    59.40 rub |         8185.91 rub | +126.52 rub (+1.57%)
-| HKDRUB_TOM [BBG0013HSW87]   |                 1.00 (0.00) hkd | 0.0010   |     8.00 rub |    11.46 rub |            8.00 rub | -3.46 rub (-30.19%)
+| GBPRUB_TOM [BBG0013HQ5F0]   |                10.00 (0.00) gbp | 0.0100   |    74.39 rub |    75.88 rub |          743.85 rub | -14.94 rub (-1.97%)
+| TRYRUB_TOM [BBG0013J12N1]   |               100.00 (0.00) try | 0.1000   |     3.42 rub |     3.41 rub |          342.00 rub | +0.65 rub (+0.19%)
+| USD000UTSTOM [BBG0013HGFT4] |                34.42 (0.05) usd | 0.0344   |    60.66 rub |    60.33 rub |         2088.09 rub | +11.44 rub (+0.55%)
+| HKDRUB_TOM [BBG0013HSW87]   |               237.75 (0.00) hkd | 0.2378   |     7.89 rub |     7.83 rub |         1875.61 rub | +14.27 rub (+0.77%)
 |                             |                                 |          |              |              |                     |
-| **Stocks:**                 |                                 |          |              |              |         8660.80 RUB |
-| POSI [TCS00A103X66]         |                           1 (0) | 1        |   929.80 rub |   906.80 rub |          929.80 rub | +23.00 rub (+2.54%)
-| IBM [BBG000BLNNH6]          |                           1 (0) | 1        |   128.14 usd |   128.89 usd |          128.14 usd | -0.75 usd (-0.58%)
+| **Shares:**                 |                                 |          |              |              |       199987.52 RUB |
+| POSI [TCS00A103X66]         |                           3 (0) | 3        |  1161.80 rub |  1120.20 rub |         3485.40 rub | +124.60 rub (+3.71%)
+| 288 [BBG00699M8Q7]          |                         800 (0) | 8        |     5.53 hkd |     5.69 hkd |         4424.00 hkd | -128.00 hkd (-2.81%)
+| YNDX [BBG006L8G4H1]         |                           4 (0) | 4        |  1971.80 rub |  1958.80 rub |         7887.20 rub | +52.22 rub (+0.67%)
+| IBM [BBG000BLNNH6]          |                           1 (1) | 1        |   131.03 usd |   131.13 usd |          131.03 usd | -0.10 usd (-0.08%)
+| 1810 [BBG00KVTBY91]         |                        1100 (0) | 11       |    11.79 hkd |    11.76 hkd |        12969.00 hkd | +30.00 hkd (+0.23%)
+| 9988 [BBG006G2JVL2]         |                          60 (0) | 6        |    91.80 hkd |    91.05 hkd |         5508.00 hkd | +45.50 hkd (+0.83%)
 |                             |                                 |          |              |              |                     |
-| **Bonds:**                  |                                 |          |              |              |         3032.76 RUB |
-| RU000A101YV8 [TCS00A101YV8] |                           3 (2) | 3        |  1010.60 rub |  1004.40 rub |         3032.76 rub | +18.60 rub (+0.62%)
+| **Bonds:**                  |                                 |          |              |              |        56240.33 RUB |
+| RU000A105104 [TCS00A105104] |                           5 (0) | 5        |  1012.00 cny |  1013.00 cny |         5064.80 cny | -5.00 cny (-0.10%)
+| RU000A101YV8 [TCS00A101YV8] |                          10 (0) | 10       |  1015.40 rub |  1011.21 rub |        10201.30 rub | +41.90 rub (+0.41%)
 |                             |                                 |          |              |              |                     |
-| **Etfs:**                   |                                 |          |              |              |        11614.60 RUB |
-| TGLD [BBG222222222]         |                        2700 (0) | 27       |     0.07 usd |     0.07 usd |          192.51 usd | -3.31 usd (-1.69%)
+| **Etfs:**                   |                                 |          |              |              |       135586.27 RUB |
+| TGLD [BBG222222222]         |                       30000 (0) | 300      |     0.07 usd |     0.07 usd |         2235.00 usd | -3.39 usd (-0.15%)
 |                             |                                 |          |              |              |                     |
 | **Futures:** no trades      |                                 |          |              |              |                     |
 
@@ -859,65 +1012,83 @@ TKSBrokerAPI.py     L:1726 INFO    [2022-07-27 18:03:07,387] Statistics of clien
 
 | Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)
 |-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------
-| RU000A101YV8 [TCS00A101YV8] | ***********    | 2 (0)        |     101.13 rub (-0.85%) |    102.00 rub | ↓ Sell    | Limit     | 2022-07-27 16:10:38
+| IBM [BBG000BLNNH6]          | ************   | 1 (0)        |     131.02 usd (-4.36%) |    137.00 usd | ↓ Sell    | Limit     | 2022-08-10 22:02:44
 
-## Opened stop-orders: 2
+## Opened stop-orders: 3
 
 | Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)
 |-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------
-| POSI [TCS00A103X66]         | ********-****-****-****-************ | 1      |     929.80 rub (-7.02%) |   1000.00 rub |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 08:58:02 | Undefined
-| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     128.16 usd (-1.42%) |    130.00 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-07-26 14:46:07 | Undefined
+| 1810 [BBG00KVTBY91]         | ********-****-****-****-************ | 11     |         N/A hkd (0.00%) |     14.00 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:24:57 | Undefined
+| 288 [BBG00699M8Q7]          | ********-****-****-****-************ | 8      |         N/A hkd (0.00%) |      5.80 hkd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 11:06:28 | Undefined
+| IBM [BBG000BLNNH6]          | ********-****-****-****-************ | 1      |     130.99 usd (-4.49%) |    137.15 usd |        Market | ↓ Sell    | Take profit | Until cancel | 2022-08-10 19:02:21 | Undefined
 
 # Analytics
 
-* **Current total portfolio cost:** 34501.76 RUB
-* **Changes:** +168.23 RUB (+0.49%)
+* **Current total portfolio cost:** 405705.77 RUB
+* **Changes:** +2098.76 RUB (+0.52%)
 
 ## Portfolio distribution by assets
 
 | Type       | Uniques | Percent | Current cost
 |------------|---------|---------|-----------------
-| Ruble      | 1       | 0.02%   | 7.05 rub
-| Currencies | 7       | 32.42%  | 11186.55 rub
-| Shares     | 2       | 25.10%  | 8660.80 rub
-| Bonds      | 1       | 8.79%   | 3032.76 rub
-| Etfs       | 1       | 33.66%  | 11614.60 rub
+| Ruble      | 1       | 0.00%   | 5.62 rub
+| Currencies | 7       | 3.42%   | 13886.03 rub
+| Shares     | 6       | 49.29%  | 199987.52 rub
+| Bonds      | 2       | 13.86%  | 56240.33 rub
+| Etfs       | 1       | 33.42%  | 135586.27 rub
 
 ## Portfolio distribution by companies
 
 | Company                                     | Percent | Current cost
 |---------------------------------------------|---------|-----------------
-| All money cash                              | 32.44%  | 11193.60 rub
-| [POSI] Positive Technologies                | 2.69%   | 929.80 rub
-| [IBM] IBM                                   | 22.41%  | 7731.01 rub
-| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 8.79%   | 3032.76 rub
-| [TGLD] Тинькофф Золото                      | 33.66%  | 11614.61 rub
+| All money cash                              | 3.42%   | 13891.65 rub
+| [POSI] Positive Technologies                | 0.86%   | 3485.40 rub
+| [288] WH Group                              | 8.60%   | 34900.94 rub
+| [YNDX] Yandex                               | 1.94%   | 7887.20 rub
+| [IBM] IBM                                   | 1.96%   | 7948.93 rub
+| [1810] Xiaomi                               | 25.22%  | 102312.44 rub
+| [9988] Alibaba                              | 10.71%  | 43452.61 rub
+| [RU000A105104] РУСАЛ выпуск 5               | 11.35%  | 46039.03 rub
+| [RU000A101YV8] Позитив Текнолоджиз выпуск 1 | 2.51%   | 10201.30 rub
+| [TGLD] Тинькофф Золото                      | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by sectors
 
 | Sector         | Percent | Current cost
 |----------------|---------|-----------------
-| All money cash | 32.44%  | 11193.60 rub
-| it             | 33.89%  | 11693.57 rub
-| other          | 33.66%  | 11614.61 rub
+| All money cash | 3.42%   | 13891.65 rub
+| it             | 30.55%  | 123948.08 rub
+| consumer       | 19.31%  | 78353.55 rub
+| telecom        | 1.94%   | 7887.20 rub
+| materials      | 11.35%  | 46039.03 rub
+| other          | 33.42%  | 135586.28 rub
 
 ## Portfolio distribution by currencies
 
 | Instruments currencies   | Percent | Current cost
 |--------------------------|---------|-----------------
-| [rub] Российский рубль   | 11.51%  | 3969.61 rub
-| [usd] Доллар США         | 79.80%  | 27531.53 rub
-| [eur] Евро               | 1.11%   | 384.07 rub
-| [cny] Юань               | 6.95%   | 2396.99 rub
-| [chf] Швейцарский франк  | 0.18%   | 60.54 rub
-| [gbp] Фунт стерлингов    | 0.43%   | 147.70 rub
-| [try] Турецкая лира      | 0.01%   | 3.34 rub
-| [hkd] Гонконгский доллар | 0.02%   | 8.00 rub
+| [rub] Российский рубль   | 5.32%   | 21579.52 rub
+| [hkd] Гонконгский доллар | 44.99%  | 182541.60 rub
+| [usd] Доллар США         | 35.89%  | 145623.30 rub
+| [cny] Юань               | 13.43%  | 54483.01 rub
+| [eur] Евро               | 0.08%   | 331.96 rub
+| [chf] Швейцарский франк  | 0.01%   | 60.54 rub
+| [gbp] Фунт стерлингов    | 0.18%   | 743.85 rub
+| [try] Турецкая лира      | 0.08%   | 342.00 rub
 
-TKSBrokerAPI.py     L:1732 INFO    [2022-07-27 18:03:07,410] Client's portfolio is saved to file: [portfolio.md]
-TKSBrokerAPI.py     L:3034 DEBUG   [2022-07-27 18:03:07,411] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
-TKSBrokerAPI.py     L:3039 DEBUG   [2022-07-27 18:03:07,411] TKSBrokerAPI module work duration: [0:00:02.045574]
-TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 18:03:07,412] TKSBrokerAPI module finished: [2022-07-27 15:03:07] (UTC), it is [2022-07-27 18:03:07] local time
+## Portfolio distribution by countries
+
+| Assets by country                  | Percent | Current cost
+|------------------------------------|---------|-----------------
+| All other countries                | 36.84%  | 149472.30 rub
+| [RU] Российская Федерация          | 16.67%  | 67612.93 rub
+| [CN] Китайская Народная Республика | 44.53%  | 180665.99 rub
+| [US] Соединенные Штаты Америки     | 1.96%   | 7948.93 rub
+
+TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio is saved to file: [portfolio.md]
+TKSBrokerAPI.py     L:3132 DEBUG   [2022-08-10 22:06:27,153] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
+TKSBrokerAPI.py     L:3137 DEBUG   [2022-08-10 22:06:27,153] TKSBrokerAPI module work duration: [0:00:05.066358]
+TKSBrokerAPI.py     L:3138 DEBUG   [2022-08-10 22:06:27,154] TKSBrokerAPI module finished: [2022-08-10 19:06:27] (UTC), it is [2022-08-10 22:06:27] local time
 ```
 
 </details>
@@ -928,7 +1099,7 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 18:03:07,412] TKSBrokerAPI module
 
 Вместо начальной даты можно указать отрицательное число — количество предыдущих дней от текущей даты (`--deals -1`, `-d -2`, `-d -3`, ...), тогда конечную дату указывать не нужно. Также вместо начальной даты можно указать одно из ключевых слов: `today`, `yesterday` (-1 день), `week` (-7 дней), `month` (-30 дней), `year` (-365 дней). Во всех этих случаях будет выдан отчёт за указанное количество предыдущих дней и вплоть до сегодняшнего числа и текущего времени.
 
-Дополнительно можно указать ключ `--output` для указания файла, куда сохранить отчёт по операциям в формате Markdown (по умолчанию `report.md` в текущей рабочей директории).
+Дополнительно можно указать ключ `--output` для указания файла, куда сохранить отчёт по операциям в формате Markdown (по умолчанию `deals.md` в текущей рабочей директории). А также ключ `--no-cancelled` может удалить информацию об отмененных операциях из отчёта, чтобы уменьшить его объё м.
  
 <details>
   <summary>Команда для получения отчёта по операциям между двумя указанными датами</summary>
@@ -1125,7 +1296,7 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:15,026] # Client's operatio
 | 2022-07-25 08:25:59 | TCS00A103X66 | POSI         | Shares     | —         |       -1.17 rub | √ Executed | Operation fee deduction
 | 2022-07-25 08:25:58 | TCS00A103X66 | POSI         | Shares     | 5         |    +4676.00 rub | √ Executed | Sell securities
 
-TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:15,032] History of a client's operations are saved to file: [report.md]
+TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:15,032] History of a client's operations are saved to file: [deals.md]
 ```
 
 </details>
@@ -1207,7 +1378,7 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:59,035] # Client's operatio
 | 2022-07-21 17:11:30 | BBG00JN4FXG8 | SLDB         | Shares     | —         |       -0.01 usd | √ Executed | Operation fee deduction
 | 2022-07-21 17:11:29 | BBG00JN4FXG8 | SLDB         | Shares     | 1         |       -0.74 usd | √ Executed | Buy securities
 
-TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:59,045] History of a client's operations are saved to file: [report.md]
+TKSBrokerAPI.py     L:1978 INFO    [2022-07-28 18:29:59,045] History of a client's operations are saved to file: [deals.md]
 ```
 
 </details>
@@ -1542,31 +1713,229 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Пример реализации абстрактного сценария
 
-В данной документации не хочется акцентировать внимание на конкретных торговых сценариях, а только лишь указать возможности для их автоматизации. Поэтому, давайте рассмотрим один простой, но полностью вымышленный сценарий, и реализуем его при помощи модуля TKSBrokerAPI. Действия будут следующие:
+В данной документации не хочется акцентировать внимание на конкретных торговых сценариях, а только лишь указать возможности для их автоматизации. Поэтому, давайте рассмотрим один простой сценарий, основанный на сравнении объёмов текущих покупок и продаж, и реализуем его при помощи модуля TKSBrokerAPI, без использования дополнительных методов технического анализа. Действия будут следующие:
 
-- запрос текущего портфолио клиента и определение доступных для торговли средств;
-- запрос стакана цен с глубиной 20 для выбранного инструмента, например, акции с тикером `IBM`;
-- если ранее инструмент куплен не был, то проверить:
-  - если в стакане объёмы на покупку больше объёмов на продажу хотя бы на 50%, то купить 1 акцию по рынку и выставить тейк-профит как стоп-ордер на 5% выше текущей цены покупки со сроком действия до отмены;
+- запросить текущий портфель клиента и определение доступных для торговли средств;
+- запросить стакан цен с глубиной 20 для выбранных инструментов, например, акции с тикерами `YNDX`, `IBM` and `GOOGLE`;
+- если инструмент ранее ещё не был куплен, то проверить:
+  - если резерв денежных средств (свободный кеш) в валюте инструмента больше, чем 5% от общей стоимости всех инструментов в этой валюте, то проверить:
+    - если в стакане объёмы на покупку больше объёмов на продажу минимум на 10%, то купить 1 акцию по рынку и выставить тейк-профит как стоп-ордер на 3% выше текущей цены покупки со сроком действия 1 час;
 - если инструмент имеется в списке открытых позиций, то проверить:
-   - если текущая цена выше средней цены позиции на 3%, то выставить тейк-профит как отложенный лимитный ордер ещё на 0.05% выше текущей цены, чтобы позиция закрылась с профитом с большой вероятностью в течении текущей сессии.
-- напечатать пользователю в консоль текущее состояние портфеля.
+   - если текущая цена уже выше средней цены позиции хотя бы на 2.5%, то выставить отложенный лимитный ордер на весь объём, но ещё чуть-чуть выше (на 0.1%) от текущей цены, чтобы позиция закрылась с профитом с большой вероятностью в течении текущей сессии.
+- после всех торговых операций напечатать в консоль текущее состояние портфеля пользователя.
 
 Для понимания примера сохраните и запустите скрипт под спойлером ниже. Не забудьте перед этим получить token и узнать свой accountId (см. раздел ["Аутентификация"](#Аутентификация)).
 
 <details>
   <summary>Торговый сценарий на python с использованием модуля TKSBrokerAPI</summary>
 
-```python
+Скачать скрипт можно здесь: [./docs/examples/scenario1.py](./docs/examples/scenario1.py)
 
+```python
+# -*- coding: utf-8 -*-
+# Author: Timur Gilmullin
+
+
+# --- Import, constants and variables initialization section -----------------------------------------------------------
+
+from datetime import datetime, timedelta
+from dateutil.tz import tzlocal, tzutc
+from math import ceil
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations
+
+uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log
+uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
+
+start = datetime.now(tzutc())
+
+uLogger.debug("=--=" * 20)
+uLogger.debug("Trading scenario started at: [{}] UTC, it is [{}] local time".format(
+    start.strftime("%Y-%m-%d %H:%M:%S"),
+    start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
+))
+
+# Set here any constants you need for trading:
+TICKERS_LIST_FOR_TRADING = ["YNDX", "IBM", "GOOGL"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
+RESERVED_MONEY = 0.05  # We reserve some money when open positions, 5% by default
+LOTS = 1  # Minimum lots to buy or sell
+TP_STOP_DIFF = 0.03  # 3% TP by default for stop-orders
+TP_LIMIT_DIFF = 0.025  # 2.5% TP by default for pending limit-orders
+TOLERANCE = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
+DEPTH_OF_MARKET = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
+VOLUME_DIFF = 0.1  # Enough volumes difference to open position, 10% by default
+
+# Main trader object init, TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
+trader = TinkoffBrokerServer(
+    token="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
+    accountId="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
+    iList=None,  # Do not use previous saved dictionaries with instruments from broker server
+    useCache=True,  # Use auto-updated local cache from `dump.json`
+)
+
+
+# --- Trading scenario section -----------------------------------------------------------------------------------------
+
+for ticker in TICKERS_LIST_FOR_TRADING:
+    uLogger.info("--- Ticker [{}], data analysis...".format(ticker))
+
+    # - Step 1: request the client's current portfolio and determining funds available for trading
+
+    # User's portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
+    portfolio = trader.Overview(showStatistics=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+
+    uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
+        portfolio["stat"]["portfolioCostRUB"],
+        portfolio["stat"]["blockedRUB"],
+        "+" if portfolio["stat"]["totalChangesRUB"] > 0 else "", portfolio["stat"]["totalChangesRUB"],
+        "+" if portfolio["stat"]["totalChangesPercentRUB"] > 0 else "", portfolio["stat"]["totalChangesPercentRUB"],
+    ))
+
+    # How much money in different currencies do we have (total - blocked)?
+    funds = portfolio["stat"]["funds"]  # dict, e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}
+
+    uLogger.info("Available funds free for trading: {}".format("; ".join(["{:.2f} {}".format(funds[currency]["free"], currency) for currency in funds.keys()])))
+
+    # - Step 2: request a Depth of Market for the selected instruments
+
+    trader.ticker = ticker
+    trader.figi = ""  # We don't know FIGI for every ticker, so empty string means to determine it automatically
+    trader.depth = DEPTH_OF_MARKET
+
+    # Getting broker's prices on that instrument:
+    ordersBook = trader.GetCurrentPrices(showPrice=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
+
+    if not (ordersBook["buy"] and ordersBook["sell"]):
+        uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(trader.ticker))
+
+    else:
+
+        # - Step 3: if the instrument was not purchased earlier, then checking:
+        #   - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
+        #     of all instruments in this currency, then check:
+        #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
+        #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
+
+        # Checks if instrument is in portfolio:
+        isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
+
+        if not isInPortfolio:
+            uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
+
+            # Getting instrument's data and it currency:
+            rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            iCurr = rawIData["currency"]  # currency of current instrument
+
+            # Getting distribution by currencies, cost of previously purchased assets and free money in that currency:
+            distrByCurr = portfolio["analytics"]["distrByCurrencies"]  # asset distribution by currencies, cost in rub
+            assetsCostInRuble = distrByCurr[iCurr]["cost"]  # cost of all assets in that currency recalc in rub
+            currencyFreeCostInRuble = funds[iCurr]["freeCostRUB"]  # free money in that currency recalc in rub
+
+            # Checking reserve and volumes diff before buy:
+            if currencyFreeCostInRuble / assetsCostInRuble >= RESERVED_MONEY:
+                sumSellers = sum([x["quantity"] for x in ordersBook["buy"]])  # current sellers volumes in the DOM
+                sumBuyers = sum([x["quantity"] for x in ordersBook["sell"]])  # current buyers volumes in the DOM
+
+                if sumBuyers >= sumSellers * (1 + VOLUME_DIFF):
+                    # Getting current price, then calculating take profit price and validity for stop-order:
+                    currentPriceToBuy = ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
+                    target = currentPriceToBuy * (1 + TP_STOP_DIFF)  # take profit price target
+                    targetStop = ceil(target / rawIData["step"]) * rawIData["step"]  # real target for placing stop-order
+                    localAliveTo = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")  # current local time + 1 hour
+
+                    uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
+                        sumBuyers, 1 + VOLUME_DIFF, sumSellers, currentPriceToBuy, iCurr,
+                    ))
+
+                    # Opening BUY market position and creating take profit stop-order:
+                    trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
+
+                else:
+                    uLogger.info("BUY position not opened, because buyers volumes [{}] < {} * sellers volumes [{}]".format(sumBuyers, 1 + VOLUME_DIFF, sumSellers))
+
+            else:
+                uLogger.info("BUY position not opened, because the reserves in [{}] will be less than {:.2f}% of free funds".format(iCurr, RESERVED_MONEY * 100))
+
+        else:
+
+            # - Step 4: if the instrument is in the list of open positions, then checking:
+            #   - if the current price is 2.5% already higher than the average position price, then place pending
+            #     limit order with all volumes 0.1% higher than the current price so that the position is closed
+            #     with a profit with a high probability during the current session.
+
+            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking closure rules...".format(trader.ticker))
+
+            # Getting instrument from list of instruments in user portfolio:
+            iData = trader.GetInstrumentFromPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
+
+            # Calculating available lots for sell, average price and current price of instrument:
+            lotsToSell = iData["volume"] - iData["blocked"]  # not blocked lots of current instrument, available for trading
+            averagePrice = iData["average"]  # average price by all lots
+            curPriceToSell = ordersBook["sell"][0]["price"]  # 1st price in the list of buyers orders is the actual price that you can sell
+
+            # Calculating price to close position without waiting for the take profit:
+            curProfit = (curPriceToSell - averagePrice) / averagePrice  # changes between current price and average price of instrument
+            target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
+            targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
+
+            # Checking for a sufficient price difference:
+            if curProfit >= TP_LIMIT_DIFF:
+                uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
+                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
+                ))
+
+                # Opening SELL pending limit order:
+                trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
+
+            else:
+                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% less than {:.2f}% target.".format(
+                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
+                ))
+
+# - Step 5: request the current user's portfolio after all trades and show changes
+
+uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
+
+# Showing detailed user portfolio information:
+trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+
+
+# --- Operations finalization section ----------------------------------------------------------------------------------
+
+finish = datetime.now(tzutc())
+uLogger.debug("Trading scenario work duration: [{}]".format(finish - start))
+uLogger.debug("Trading scenario finished: [{}] UTC, it is [{}] local time".format(
+    finish.strftime("%Y-%m-%d %H:%M:%S"),
+    finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
+))
+uLogger.debug("=--=" * 20)
 ```
 </details>
 
 <details>
-  <summary>Результаты запуска сценария</summary>
+  <summary>Пример результатов запуска сценария</summary>
 
 ```commandline
-
+scenario1.py        L:83   INFO    [2022-08-23 17:35:55,631] --- Ticker [YNDX], data analysis...
+scenario1.py        L:90   INFO    [2022-08-23 17:35:56,479] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-23 17:35:56,479] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:112  INFO    [2022-08-23 17:35:56,573] The current price is [2056.40 rub], average price is [1997.20 rub], so profit more than +2.50%. Opening SELL pending limit order...
+scenario1.py        L:112  INFO    [2022-08-23 17:35:56,573] Limit-order [*********] was created: ticker [YNDX], FIGI [BBG006L8G4H1], action [Sell], lots [4.0], target price [2056.40 rub]
+scenario1.py        L:83   INFO    [2022-08-23 17:35:56,574] --- Ticker [IBM], data analysis...
+scenario1.py        L:90   INFO    [2022-08-23 17:35:57,297] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-23 17:35:57,297] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:126  INFO    [2022-08-23 17:35:57,396] Ticker [IBM]: no current open positions with that instrument, checking opens rules...
+scenario1.py        L:157  INFO    [2022-08-23 17:35:57,396] BUY position not opened, because buyers volumes [452] < 1.1 * sellers volumes [944]
+scenario1.py        L:83   INFO    [2022-08-23 17:35:57,396] --- Ticker [GOOGL], data analysis...
+scenario1.py        L:90   INFO    [2022-08-23 17:35:58,066] Total portfolio cost: 407899.66 rub; blocked: 0.00 rub; changes: +7151.71 rub (+1.77%)
+scenario1.py        L:100  INFO    [2022-08-23 17:35:58,066] Available funds free for trading: 5.29 eur; 928.93 cny; 1.00 chf; 10.00 gbp; 100.00 try; 167.84 usd; 237.75 hkd; 540.45 rub
+scenario1.py        L:126  INFO    [2022-08-23 17:35:58,161] Ticker [GOOGL]: no current open positions with that instrument, checking opens rules...
+scenario1.py        L:149  INFO    [2022-08-23 17:35:58,161] Opening BUY position... (Buyers volumes [3974] >= 1.1 * sellers volumes [2611] and current price to buy: [119.98 usd])
+TKSBrokerAPI.py     L:2398 INFO    [2022-08-23 17:35:58,647] [Buy] market order [456488037450] was executed: ticker [GOOGL], FIGI [BBG009S39JX6], lots [1]. Total order price: [119.9800 usd] (with commission: [0.04 usd]). Average price of lot: [119.98 usd]
+TKSBrokerAPI.py     L:2669 INFO    [2022-08-23 17:35:59,162] Stop-order [********-****-****-****-************] was created: ticker [GOOGL], FIGI [BBG009S39JX6], action [Sell], lots [1], target price [123.58 usd], limit price [123.58 usd], stop-order type [Take profit] and expiration date in UTC [2022-08-18 17:35:58]
+scenario1.py        L:204  INFO    [2022-08-23 17:35:59,163] --- All trade operations finished. Let's show what we got in the user's portfolio after all trades.
+TKSBrokerAPI.py     L:1922 INFO    [2022-08-23 17:35:59,958] Statistics of client's portfolio:
+# Client's portfolio
+...
 ```
 
 </details>

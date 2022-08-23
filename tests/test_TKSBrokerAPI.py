@@ -18,11 +18,12 @@ class TestTKSBrokerAPIMethods:
         TKSBrokerAPI.uLogger.handlers[1].level = 50  # Disable debug logging for log.txt
 
         # set up default parameters:
-        self.testIList = json.load(open("./tests/InstrumentsDump.json", mode="r", encoding="UTF-8"), encoding="UTF-8")
+        self.testIList = json.load(open("./tests/InstrumentsDump.json", mode="r", encoding="UTF-8"))
         self.server = TKSBrokerAPI.TinkoffBrokerServer(
             token="TKSBrokerAPI_unittest_fake_token",
             iList=self.testIList,
             accountId="TKSBrokerAPI_unittest_fake_accountId",
+            useCache=False,
         )
 
     def test_NanoToFloatCheckType(self):

@@ -38,7 +38,7 @@ TKS_TICKER_ALIASES = {
 }
 """Some aliases instead official tickers for using in CLI. For example, you can use `"USD"` instead of `"USD000UTSTOM"`."""
 
-# some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
+# some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
 TKS_TICKERS_OR_FIGI_EXCLUDED = [
     # "ISSUANCEBRUS",  # now available
 ]
