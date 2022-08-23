@@ -45,7 +45,7 @@
 * ...
 
 
-### [1.2.* (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/2) — released
+### [1.2.62 (2022-08-23)]([https://github.com/Tim55667757/TKSBrokerAPI/milestone/2](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62)) — released
 
 ##### New features
 
