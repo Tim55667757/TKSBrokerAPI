@@ -1874,25 +1874,21 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 
             # Calculating price to close position without waiting for the take profit:
             curProfit = (curPriceToSell - averagePrice) / averagePrice  # changes between current price and average price of instrument
-            target = averagePrice * (1 + TP_LIMIT_DIFF + TOLERANCE)  # enough price target to sell
+            target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
             targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
 
             # Checking for a sufficient price difference:
             if curProfit >= TP_LIMIT_DIFF:
-                uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit more than +{:.2f}%. Opening SELL pending limit order...".format(
-                    curPriceToSell, iData["currency"],
-                    averagePrice, iData["currency"],
-                    TP_LIMIT_DIFF * 100,
+                uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
+                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
                 ))
 
                 # Opening SELL pending limit order:
                 trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
             else:
-                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit less than +{:.2f}%.".format(
-                    curPriceToSell, iData["currency"],
-                    averagePrice, iData["currency"],
-                    TP_LIMIT_DIFF * 100,
+                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% less than {:.2f}% target.".format(
+                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
                 ))
 
 # - Step 5: request the current user's portfolio after all trades and show changes
