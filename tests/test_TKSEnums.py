@@ -16,7 +16,7 @@ class TestConstantsConsistent:
             "TKS_INSTRUMENTS": "<class 'list'>",
             "TKS_TICKER_ALIASES": "<class 'dict'>",
             "TKS_TICKERS_OR_FIGI_EXCLUDED": "<class 'list'>",
-            "TKS_CANDLE_INTERVAL": "<class 'dict'>",
+            "TKS_CANDLE_INTERVALS": "<class 'dict'>",
             "TKS_TRADING_STATUSES": "<class 'dict'>",
             "TKS_OPERATION_TYPES": "<class 'dict'>",
             "TKS_OPERATION_STATES": "<class 'dict'>",

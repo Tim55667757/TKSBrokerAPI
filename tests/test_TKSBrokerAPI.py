@@ -82,49 +82,50 @@ class TestTKSBrokerAPIMethods:
         assert isinstance(result[1], str), "Not str type in second parameter returned!"
 
     def test_GetDatesAsStringPositive(self):
-        now = datetime.now(tzutc())
+        now = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)
+        end = now.replace(hour=23, minute=59, second=59, microsecond=0)
         delta = timedelta(seconds=1)  # diff between expected and actual results must be less than this value
 
         testData = [
             (None, None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
                 now,
+                end,
             )),
             ("today", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
                 now,
+                end,
             )),
             ("yesterday", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1),
-                now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1),
+                now - timedelta(days=1),
+                end - timedelta(days=1),
             )),
             ("week", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7),
-                now,
+                now - timedelta(days=6),
+                end,
             )),
             ("month", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30),
-                now,
+                now - timedelta(days=29),
+                end,
             )),
             ("year", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365),
-                now,
+                now - timedelta(days=364),
+                end,
             )),
             ("-1", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1),
-                now,
+                now - timedelta(days=0),
+                end,
             )),
             ("-2", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=2),
-                now,
+                now - timedelta(days=1),
+                end,
             )),
             ("-365", None, (
-                now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365),
-                now,
+                now - timedelta(days=364),
+                end,
             )),
             ("2020-02-20", None, (
                 datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
-                now,
+                end,
             )),
             ("2020-02-20", "2022-02-22", (
                 datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
