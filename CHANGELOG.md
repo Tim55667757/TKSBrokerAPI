@@ -41,8 +41,7 @@
 ##### Баг-фиксы
 
 * [В работе] [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Добавлена обработка ошибки `raise JSONDecodeError("Expecting value", s, err.value) from None`.
-* [В работе] [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Исправлено отображение дробных чисел с первым нулём после десятичной точки, в случаях, когда вместо `1.0` выводилось `1.`.
-* ...
+* [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Исправлено отображение дробных чисел с первым нулём после десятичной точки, в случаях, когда вместо `1.0` выводилось `1.`.
 
 
 ### [1.2.62 (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62) — опубликована
