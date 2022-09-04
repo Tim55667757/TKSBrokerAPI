@@ -26,11 +26,11 @@
 * ...
 
 
-### [1.3.* (2022-08-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
+### [1.3.* (2022-09-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
 
 ##### New features
 
-* [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
+* [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key. Also, the `--interval` key allows you to specify the time interval for downloading price candles in the OHLCV format. The `--only-missing` key allows you to download only the last candles saved in the file specified via `--output`. The `--csv-sep` key sets the separator between data in csv files. Minimum requested date in the past is `1970-01-01`. Warning! Broker server used ISO UTC time by default.
 * [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
 * [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
 
@@ -45,7 +45,7 @@
 * ...
 
 
-### [1.2.* (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/2) — released
+### [1.2.* (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62) — released
 
 ##### New features
 
@@ -120,7 +120,7 @@
 * [#32](https://github.com/Tim55667757/TKSBrokerAPI/issues/32) Fixed a bug with some problems when trying to execute `--close-all orders`. Extra messages, and with them the formatting error, have been removed.
 
 
-## 1.0.1 (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
+## [1.0.1 (2020-05 - 2022-07)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_EN.md#101-2020-05---2022-07--deprecated-version-not-working-with-new-tinkoff-open-api-rest-protocol) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
 
 ##### Retrospective
 
