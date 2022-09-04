@@ -30,7 +30,7 @@
 
 ##### New features
 
-* [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key. Also, the `--interval` key allows you to specify the time interval for downloading price candles in the OHLCV format. The `--only-missing` key allows you to download only the last candles saved in the file specified via `--output`. The `--csv-sep` key sets the separator between data in csv files. Minimum requested date in the past is `1970-01-01`. Warning! Broker server used ISO UTC time by default.
+* [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key. Also, the `--interval` key allows you to specify the time interval for downloading price candles in the OHLCV format. The `--only-missing` key allows you to download only the last candles saved in the file specified via `--output`. The `--csv-sep` key sets the separator between data in csv files. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
 * [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
 * [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
 
