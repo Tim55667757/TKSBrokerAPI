@@ -3344,9 +3344,15 @@ def Main(**kwargs):
             raise Exception("There is no command to execute!")
 
     except Exception:
-        uLogger.debug(tb.format_exc())
-        uLogger.debug("Unknown error occurred, open a ticket for this issue, please! https://github.com/Tim55667757/TKSBrokerAPI/issues")
-        exitCode = 255  # unknown error occurred, must be open a ticket for this issue
+        trace = tb.format_exc()
+        for e in ["socket.gaierror", "nodename nor servname provided", "or not known", "NewConnectionError", "[Errno 8]", "Failed to establish a new connection"]:
+            if e in trace:
+                uLogger.error("Check your Internet connection! Failed to establish connection to broker server!")
+                break
+
+        uLogger.debug(trace)
+        uLogger.debug("Please, checks troubleshooting or open a ticket for this issue at https://github.com/Tim55667757/TKSBrokerAPI/issues")
+        exitCode = 255  # an error occurred, must be open a ticket for this issue
 
     finally:
         finish = datetime.now(tzutc())
@@ -3355,7 +3361,9 @@ def Main(**kwargs):
             uLogger.debug("All operations with Tinkoff Server using Open API are finished success (summary code is 0).")
 
         else:
-            uLogger.error("TKSBrokerAPI module returns an error! See full debug log with key in run command `--debug-level 10`. Summary code: {}".format(exitCode))
+            uLogger.error("An issue occurred with TKSBrokerAPI module! See full debug log in [{}] or run TKSBrokerAPI once again with the key `--debug-level 10`. Summary code: {}".format(
+                os.path.abspath(uLog.defaultLogFile), exitCode,
+            ))
 
         uLogger.debug("TKSBrokerAPI module work duration: [{}]".format(finish - start))
         uLogger.debug("TKSBrokerAPI module finished: [{}] UTC, it is [{}] local time".format(
