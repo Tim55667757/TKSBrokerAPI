@@ -44,6 +44,7 @@
      - [Make a deal on the market](#Make-a-deal-on-the-market)
      - [Open a pending limit or stop order](#Open-a-pending-limit-or-stop-order)
      - [Cancel orders and close positions](#Cancel-orders-and-close-positions)
+     - [Download historical data in OHLCV-candles format](#Download-historical-data-in-OHLCV-candles-format)
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
 
@@ -191,6 +192,9 @@ In the future, based on this module, ready-made trading scenarios and templates 
 
 At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the TKSBrokerAPI tool can:
 
+- Download historical data from the broker's server in the OHLCV price model (intervals available: `1min`, `5min`, `15min`, `hour` and `day` for any period of time, starting from `1970-01-01`);
+   - common key `--history` and additional keys: `--interval`, `--only-missing` and `--csv-sep`;
+   - API-method: [`History()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.History).
 - Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
   - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
   - API-method: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
@@ -344,11 +348,20 @@ options:
                         `YNDX`).
   --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
                         default.
-  --no-cancelled        Option: remove information about cancelled operations
+  --no-cancelled, --no-canceled
+                        Option: remove information about cancelled operations
                         from the deals report by the `--deals` key. `False` by
                         default.
   --output OUTPUT       Option: replace default paths to output files for some
-                        commands. If None then used default files.
+                        commands. If `None` then used default files.
+  --interval INTERVAL   Option: available values are `1min`, `5min`, `15min`,
+                        `hour` and `day`. Used only with `--history` key. This
+                        is time period of one candle. Default: `hour` for
+                        every history candles.
+  --only-missing        Option: if history file define by `--output` key then
+                        add only last missing candles, do not request all
+                        history length. `False` by default.
+  --csv-sep CSV_SEP     Option: separator if .csv-file is used, `,` by default.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
                         Option: showing STDOUT messages of minimal debug
                         level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING,
@@ -365,17 +378,17 @@ options:
                         instrument by it's ticker or FIGI. `--ticker` key or
                         `--figi` key must be defined!
   --price               Action: show actual price list for current instrument.
-                        Also, you can use --depth key. `--ticker` key or
+                        Also, you can use `--depth` key. `--ticker` key or
                         `--figi` key must be defined!
   --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
                         Action: get and print current prices for list of given
                         instruments (by it's tickers or by FIGIs). WARNING!
                         This is too long operation if you request a lot of
-                        instruments! Also, you can define `--output` key to save
-                        list of prices to file, default: `prices.md`.
+                        instruments! Also, you can define `--output` key to
+                        save list of prices to file, default: `prices.md`.
   --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define `--output` key to save
-                        this information to file, default: `overview.md`.
+                        statistics. Also, you can define `--output` key to
+                        save this information to file, default: `overview.md`.
   --deals [DEALS ...], -d [DEALS ...]
                         Action: show all deals between two given dates. Start
                         day may be an integer number: -1, -2, -3 days ago.
@@ -386,29 +399,32 @@ options:
                         operations will be removed from the deals report.
                         Also, you can define `--output` key to save all deals
                         to file, default: `deals.md`.
-  --trade [TRADE [TRADE ...]]
-                        Action: universal action to open market position for
+  --history [HISTORY ...]
+                        Action: get last history candles of the current
+                        instrument defined by `--ticker` or `--figi` (FIGI id)
+                        keys. History returned between two given dates:
+                        `start` and `end`. Minimum requested date in the past
+                        is `1970-01-01`. Also, you can define `--output` key
+                        to save history candlesticks to file.
+  --trade [TRADE ...]   Action: universal action to open market position for
                         defined ticker or FIGI. You must specify 1-5
-                        parameters: [direction `Buy` or `Sell] [lots, >= 1]
+                        parameters: [direction `Buy` or `Sell`] [lots, >= 1]
                         [take profit, >= 0] [stop loss, >= 0] [expiration date
                         for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See
                         examples in readme.
-  --buy [BUY [BUY ...]]
-                        Action: immediately open BUY market position at the
+  --buy [BUY ...]       Action: immediately open BUY market position at the
                         current price for defined ticker or FIGI. You must
                         specify 0-4 parameters: [lots, >= 1] [take profit, >=
                         0] [stop loss, >= 0] [expiration date for TP/SL
                         orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --sell [SELL [SELL ...]]
-                        Action: immediately open SELL market position at the
+  --sell [SELL ...]     Action: immediately open SELL market position at the
                         current price for defined ticker or FIGI. You must
                         specify 0-4 parameters: [lots, >= 1] [take profit, >=
                         0] [stop loss, >= 0] [expiration date for TP/SL
                         orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --order [ORDER [ORDER ...]]
-                        Action: universal action to open limit or stop-order
+  --order [ORDER ...]   Action: universal action to open limit or stop-order
                         in any directions. You must specify 4-7 parameters:
-                        [direction `Buy` or `Sell] [order type `Limit` or
+                        [direction `Buy` or `Sell`] [order type `Limit` or
                         `Stop`] [lots] [target price] [maybe for stop-order:
                         [limit price, >= 0] [stop type, Limit|SL|TP]
                         [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See
@@ -427,7 +443,7 @@ options:
                         create `Sell` limit-order below current price then
                         broker immediately open `Sell` market order, such as
                         if you do simple `--sell` operation!
-  --buy-stop [BUY_STOP [BUY_STOP ...]]
+  --buy-stop [BUY_STOP ...]
                         Action: open BUY stop-order. You must specify at least
                         2 parameters: [lots] [target price] to open BUY stop-
                         order. In additional you can specify 3 parameters for
@@ -436,7 +452,7 @@ options:
                         %H:%M:%S`]. When current price will go up or down to
                         target price value then broker opens a limit order.
                         Stop loss order always executed by market price.
-  --sell-stop [SELL_STOP [SELL_STOP ...]]
+  --sell-stop [SELL_STOP ...]
                         Action: open SELL stop-order. You must specify at
                         least 2 parameters: [lots] [target price] to open SELL
                         stop-order. In additional you can specify 3 parameters
@@ -459,7 +475,7 @@ options:
   --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
                         Action: close positions for list of tickers, including
                         for currencies tickers.
-  --close-all [CLOSE_ALL [CLOSE_ALL ...]], --cancel-all [CLOSE_ALL [CLOSE_ALL ...]]
+  --close-all [CLOSE_ALL ...], --cancel-all [CLOSE_ALL ...]
                         Action: close all available (not blocked) opened
                         trades and orders, excluding for currencies. Also you
                         can select one or more keywords case insensitive to
@@ -1673,6 +1689,236 @@ TKSBrokerAPI.py     L:2202 INFO    [2022-07-27 23:25:40,685] [Sell] market order
 TKSBrokerAPI.py     L:3034 DEBUG   [2022-07-27 23:25:40,686] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
 TKSBrokerAPI.py     L:3039 DEBUG   [2022-07-27 23:25:40,686] TKSBrokerAPI module work duration: [0:00:04.204806]
 TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module finished: [2022-07-27 20:25:40] (UTC), it is [2022-07-27 23:25:40] local time
+```
+
+</details>
+
+#### Download historical data in OHLCV-candles format
+
+Since TKSBrokerAPI v.1.3.* you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
+
+History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
+
+<details>
+  <summary>Command to request today's history by hour candles</summary>
+
+```commandline
+$ tksbrokerapi -v 10 -t GAZP --interval hour --history today 
+
+TKSBrokerAPI.py     L:3108 DEBUG   [2022-09-04 14:08:40,443] TKSBrokerAPI module started at: [2022-09-04 11:08:40] UTC, it is [2022-09-04 14:08:40] local time
+TKSBrokerAPI.py     L:207  DEBUG   [2022-09-04 14:08:40,443] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:219  DEBUG   [2022-09-04 14:08:40,443] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:249  DEBUG   [2022-09-04 14:08:40,443] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:303  WARNING [2022-09-04 14:08:40,443] Local cache may be outdated! It has last modified [2022-09-03 19:51:24] UTC. Updating from broker server, wait, please...
+TKSBrokerAPI.py     L:452  DEBUG   [2022-09-04 14:08:40,443] Requesting all available instruments from broker for current user token. Wait, please...
+TKSBrokerAPI.py     L:453  DEBUG   [2022-09-04 14:08:40,443] CPU usages for parallel requests: [7]
+TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Currencies] list. Wait, please...
+TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Shares] list. Wait, please...
+TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Bonds] list. Wait, please...
+TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Etfs] list. Wait, please...
+TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Futures] list. Wait, please...
+TKSBrokerAPI.py     L:501  INFO    [2022-09-04 14:08:41,919] Instruments raw data were cached for future used: [dump.json]
+TKSBrokerAPI.py     L:137  DEBUG   [2022-09-04 14:08:41,919] Input start day is [today] (UTC), end day is [None] (UTC)
+TKSBrokerAPI.py     L:175  DEBUG   [2022-09-04 14:08:41,919] Start day converted to UTC ISO format, with Z: [2022-09-04T00:00:00Z], and the end day: [2022-09-04T23:59:59Z]
+TKSBrokerAPI.py     L:2239 DEBUG   [2022-09-04 14:08:41,920] Original requested time period in local time: from [today] to [None]
+TKSBrokerAPI.py     L:2240 DEBUG   [2022-09-04 14:08:41,920] Requested time period is about from [2022-09-04T00:00:00Z] UTC to [2022-09-04T23:59:59Z] UTC
+TKSBrokerAPI.py     L:2241 DEBUG   [2022-09-04 14:08:41,920] Calculated history length: [24], interval: [hour]
+TKSBrokerAPI.py     L:2242 DEBUG   [2022-09-04 14:08:41,920] Data blocks, count: [1], max candles in block: [167]
+TKSBrokerAPI.py     L:2243 DEBUG   [2022-09-04 14:08:41,920] Requesting history candlesticks, ticker: [GAZP], FIGI: [BBG004730RP0]. Wait, please...
+TKSBrokerAPI.py     L:2275 DEBUG   [2022-09-04 14:08:41,920] [Block #1/1] time period: [2022-09-04T00:00:00Z] UTC - [2022-09-05T00:00:00Z] UTC
+TKSBrokerAPI.py     L:2340 DEBUG   [2022-09-04 14:08:42,024] Last 3 rows of received history:
+      date  time   open   high    low  close  volume
+2022.09.04 09:00 253.82 255.43 252.81 252.95    3506
+2022.09.04 10:00 252.95 255.36 252.55 254.02    3522
+2022.09.04 11:00 254.02 255.05 253.22 254.26     574
+TKSBrokerAPI.py     L:2343 INFO    [2022-09-04 14:08:42,026] Here's requested history between [2022-09-04 00:00:00] UTC and [2022-09-04 23:59:59] UTC, not-empty candles count: [5]
+      date  time   open   high    low  close  volume
+2022.09.04 07:00 254.21 254.92 253.14 254.48    6635
+2022.09.04 08:00 253.45 254.98 251.99 253.79    4048
+2022.09.04 09:00 253.82 255.43 252.81 252.95    3506
+2022.09.04 10:00 252.95 255.36 252.55 254.02    3522
+2022.09.04 11:00 254.02 255.05 253.22 254.26     574
+TKSBrokerAPI.py     L:2357 DEBUG   [2022-09-04 14:08:42,026] --output key is not defined. Parsed history file not saved to file, only pandas dataframe returns.
+TKSBrokerAPI.py     L:3354 DEBUG   [2022-09-04 14:08:42,026] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
+TKSBrokerAPI.py     L:3359 DEBUG   [2022-09-04 14:08:42,026] TKSBrokerAPI module work duration: [0:00:01.582813]
+TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:08:42,026] TKSBrokerAPI module finished: [2022-09-04 11:08:42] UTC, it is [2022-09-04 14:08:42] local time
+```
+
+</details>
+
+<details>
+  <summary>Command to request day-by-day history between two dates</summary>
+
+```commandline
+$ tksbrokerapi -t IBM --history 2022-08-01 2022-08-31 --interval day
+
+TKSBrokerAPI.py     L:2343 INFO    [2022-09-04 14:21:05,788] Here's requested history between [2022-08-01 00:00:00] UTC and [2022-08-31 23:59:59] UTC, not-empty candles count: [24]
+      date  time   open   high    low  close  volume
+2022.08.01 04:00 131.01 132.70 130.20 132.04  648608
+2022.08.02 04:00 131.60 132.95 130.51 132.95  567640
+2022.08.03 04:00 132.76 132.91 131.35 132.01  437408
+2022.08.04 04:00 132.36 132.75 130.69 131.53  401974
+2022.08.05 04:00 131.49 132.90 130.58 132.30  307648
+2022.08.08 04:00 132.81 133.74 132.11 132.75  475499
+2022.08.09 04:00 130.89 131.37 129.12 129.49  438811
+2022.08.10 04:00 129.59 131.78 129.24 131.26  671500
+2022.08.11 04:00 131.64 133.23 131.37 132.16  504115
+2022.08.12 04:00 132.57 134.10 131.97 134.00  316447
+2022.08.15 04:00 133.59 135.20 132.23 134.93  334782
+2022.08.16 04:00 134.03 137.37 133.97 137.25  587223
+2022.08.17 04:00 136.86 138.42 136.01 137.67  505083
+2022.08.18 04:00 137.11 139.12 136.84 139.00  524103
+2022.08.19 04:00 138.37 139.34 136.79 138.09  381548
+2022.08.22 04:00 136.82 137.84 135.35 135.66  487278
+2022.08.23 04:00 134.51 136.08 134.47 134.84  339339
+2022.08.24 04:00 134.75 135.08 133.06 133.27  338234
+2022.08.25 04:00 133.33 134.44 133.07 133.99  401394
+2022.08.26 04:00 133.56 135.09 130.02 130.37  691667
+2022.08.29 04:00 130.36 131.42 129.47 130.41  376955
+2022.08.30 04:00 130.31 131.23 129.29 129.60  316821
+2022.08.31 04:00 129.13 130.14 128.41 128.88  399543
+```
+
+</details>
+
+<details>
+  <summary>Command to update only missing values in previous download history file</summary>
+
+```commandline
+$ tksbrokerapi --ticker GAZP --interval day --history 2022-08-15 2022-09-01 --only-missing --output GAZP_day.csv --verbosity 10
+
+TKSBrokerAPI.py     L:3109 DEBUG   [2022-09-04 14:31:27,548] TKSBrokerAPI module started at: [2022-09-04 11:31:27] UTC, it is [2022-09-04 14:31:27] local time
+TKSBrokerAPI.py     L:207  DEBUG   [2022-09-04 14:31:27,549] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:219  DEBUG   [2022-09-04 14:31:27,549] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:249  DEBUG   [2022-09-04 14:31:27,549] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:310  DEBUG   [2022-09-04 14:31:27,583] Local cache with raw instruments data is used: [dump.json]
+TKSBrokerAPI.py     L:311  DEBUG   [2022-09-04 14:31:27,583] Dump file was last modified [2022-09-04 11:08:41] UTC
+TKSBrokerAPI.py     L:137  DEBUG   [2022-09-04 14:31:27,583] Input start day is [2022-08-15] (UTC), end day is [2022-09-01] (UTC)
+TKSBrokerAPI.py     L:175  DEBUG   [2022-09-04 14:31:27,585] Start day converted to UTC ISO format, with Z: [2022-08-15T00:00:00Z], and the end day: [2022-09-01T23:59:59Z]
+TKSBrokerAPI.py     L:2240 DEBUG   [2022-09-04 14:31:27,586] Original requested time period in local time: from [2022-08-15] to [2022-09-01]
+TKSBrokerAPI.py     L:2241 DEBUG   [2022-09-04 14:31:27,586] Requested time period is about from [2022-08-15T00:00:00Z] UTC to [2022-09-01T23:59:59Z] UTC
+TKSBrokerAPI.py     L:2242 DEBUG   [2022-09-04 14:31:27,586] Calculated history length: [18], interval: [day]
+TKSBrokerAPI.py     L:2243 DEBUG   [2022-09-04 14:31:27,586] Data blocks, count: [1], max candles in block: [364]
+TKSBrokerAPI.py     L:2244 DEBUG   [2022-09-04 14:31:27,586] Requesting history candlesticks, ticker: [GAZP], FIGI: [BBG004730RP0]. Wait, please...
+TKSBrokerAPI.py     L:2250 DEBUG   [2022-09-04 14:31:27,586] --only-missing key present, add only last missing candles...
+TKSBrokerAPI.py     L:2251 DEBUG   [2022-09-04 14:31:27,586] History file will be updated: [/Users/tim/projects/TKSBrokerAPI/tksbrokerapi/GAZP_day.csv]
+TKSBrokerAPI.py     L:2276 DEBUG   [2022-09-04 14:31:27,589] [Block #1/1] time period: [2022-08-14T23:59:59Z] UTC - [2022-09-01T23:59:59Z] UTC
+TKSBrokerAPI.py     L:2331 DEBUG   [2022-09-04 14:31:27,704] History will be updated starting from the date: [2022-08-24 07:00:00]
+TKSBrokerAPI.py     L:2341 DEBUG   [2022-09-04 14:31:27,706] Last 3 rows of received history:
+      date  time   open   high    low  close   volume
+2022.08.30 07:00 190.45 204.20 190.45 204.00 11254642
+2022.08.31 07:00 224.40 275.96 224.40 254.90 23933088
+2022.09.01 07:00 258.00 259.85 247.62 249.11  8366161
+TKSBrokerAPI.py     L:2344 INFO    [2022-09-04 14:31:27,707] Here's requested history between [2022-08-15 00:00:00] UTC and [2022-09-01 23:59:59] UTC, not-empty candles count: [11]
+      date  time   open   high    low  close   volume
+2022.08.22 07:00 177.40 182.20 176.88 181.70  2279598
+2022.08.23 07:00 182.39 185.80 182.10 184.30  2693193
+2022.08.24 07:00 184.70 186.66 182.19 182.83  1756229
+2022.08.25 07:00 183.00 184.60 180.80 181.90  1490493
+2022.08.26 07:00 181.70 184.20 180.50 183.62  1301585
+2022.08.27 07:00 183.99 185.24 181.90 183.83    15471
+2022.08.28 07:00 184.57 185.60 183.20 184.07    10622
+2022.08.29 07:00 183.15 190.00 182.65 190.00  3057446
+2022.08.30 07:00 190.45 204.20 190.45 204.00 11254642
+2022.08.31 07:00 224.40 275.96 224.40 254.90 23933088
+2022.09.01 07:00 258.00 259.85 247.62 249.11  8366161
+TKSBrokerAPI.py     L:2352 INFO    [2022-09-04 14:31:27,708] Ticker [GAZP], FIGI [BBG004730RP0], tf: [day], history saved: [GAZP_day.csv]
+TKSBrokerAPI.py     L:3355 DEBUG   [2022-09-04 14:31:27,708] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
+TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:31:27,708] TKSBrokerAPI module work duration: [0:00:00.159508]
+TKSBrokerAPI.py     L:3361 DEBUG   [2022-09-04 14:31:27,708] TKSBrokerAPI module finished: [2022-09-04 11:31:27] UTC, it is [2022-09-04 14:31:27] local time
+```
+
+</details>
+
+<details>
+  <summary>Command to request last 2 days prices by 15 min candles and save it to file</summary>
+
+```commandline
+$ tksbrokerapi -v 10 --history -2 -t GAZP --interval 15min --output GAZP_15min.csv 
+
+TKSBrokerAPI.py     L:3109 DEBUG   [2022-09-04 14:49:45,559] TKSBrokerAPI module started at: [2022-09-04 11:49:45] UTC, it is [2022-09-04 14:49:45] local time
+TKSBrokerAPI.py     L:207  DEBUG   [2022-09-04 14:49:45,559] Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:219  DEBUG   [2022-09-04 14:49:45,559] String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:249  DEBUG   [2022-09-04 14:49:45,559] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:310  DEBUG   [2022-09-04 14:49:45,594] Local cache with raw instruments data is used: [dump.json]
+TKSBrokerAPI.py     L:311  DEBUG   [2022-09-04 14:49:45,594] Dump file was last modified [2022-09-04 11:08:41] UTC
+TKSBrokerAPI.py     L:137  DEBUG   [2022-09-04 14:49:45,594] Input start day is [-2] (UTC), end day is [None] (UTC)
+TKSBrokerAPI.py     L:175  DEBUG   [2022-09-04 14:49:45,594] Start day converted to UTC ISO format, with Z: [2022-09-03T00:00:00Z], and the end day: [2022-09-04T23:59:59Z]
+TKSBrokerAPI.py     L:2240 DEBUG   [2022-09-04 14:49:45,594] Original requested time period in local time: from [-2] to [None]
+TKSBrokerAPI.py     L:2241 DEBUG   [2022-09-04 14:49:45,595] Requested time period is about from [2022-09-03T00:00:00Z] UTC to [2022-09-04T23:59:59Z] UTC
+TKSBrokerAPI.py     L:2242 DEBUG   [2022-09-04 14:49:45,595] Calculated history length: [192], interval: [15min]
+TKSBrokerAPI.py     L:2243 DEBUG   [2022-09-04 14:49:45,595] Data blocks, count: [3], max candles in block: [95]
+TKSBrokerAPI.py     L:2244 DEBUG   [2022-09-04 14:49:45,595] Requesting history candlesticks, ticker: [GAZP], FIGI: [BBG004730RP0]. Wait, please...
+TKSBrokerAPI.py     L:2276 DEBUG   [2022-09-04 14:49:45,595] [Block #1/3] time period: [2022-09-04T00:15:00Z] UTC - [2022-09-05T00:00:00Z] UTC
+TKSBrokerAPI.py     L:2276 DEBUG   [2022-09-04 14:49:45,699] [Block #2/3] time period: [2022-09-03T00:30:00Z] UTC - [2022-09-04T00:15:00Z] UTC
+TKSBrokerAPI.py     L:2276 DEBUG   [2022-09-04 14:49:45,788] [Block #3/3] time period: [2022-09-03T00:00:00Z] UTC - [2022-09-03T00:30:00Z] UTC
+TKSBrokerAPI.py     L:2341 DEBUG   [2022-09-04 14:49:45,871] Last 3 rows of received history:
+      date  time   open   high    low  close  volume
+2022.09.04 11:15 253.27 254.89 252.94 254.45    1159
+2022.09.04 11:30 254.47 254.73 253.18 253.31     800
+2022.09.04 11:45 254.21 254.37 253.20 253.29     121
+TKSBrokerAPI.py     L:2344 INFO    [2022-09-04 14:49:45,875] Here's requested history between [2022-09-03 00:00:00] UTC and [2022-09-04 23:59:59] UTC, not-empty candles count: [56]
+      date  time   open   high    low  close  volume
+2022.09.03 07:00 251.77 255.06 250.86 252.73   10446
+2022.09.03 07:15 252.74 253.95 251.28 252.29    2716
+2022.09.03 07:30 251.28 252.55 249.44 250.88    8297
+2022.09.03 07:45 250.97 252.00 249.69 252.00    3457
+2022.09.03 08:00 252.01 252.66 250.71 251.44    1666
+2022.09.03 08:15 252.46 252.84 251.11 252.59    1725
+2022.09.03 08:30 251.54 253.52 250.79 252.15    2256
+2022.09.03 08:45 252.15 252.76 250.67 252.22    1150
+2022.09.03 09:00 252.22 252.55 250.65 252.55    1286
+2022.09.03 09:15 252.55 253.29 251.16 252.20    1237
+2022.09.03 09:30 251.15 254.48 251.13 253.47    4115
+2022.09.03 09:45 253.49 253.69 251.61 252.78    1341
+2022.09.03 10:00 252.79 253.57 251.80 253.05     878
+2022.09.03 10:15 252.02 253.66 251.87 252.39     901
+2022.09.03 10:30 252.33 253.49 251.97 253.02     734
+2022.09.03 10:45 253.03 253.18 251.30 251.87    1451
+2022.09.03 11:00 251.86 253.32 251.86 253.25     902
+2022.09.03 11:15 251.98 253.53 251.62 253.25    1198
+2022.09.03 11:30 253.26 253.80 252.22 253.61     989
+2022.09.03 11:45 252.59 253.81 252.16 252.19     964
+2022.09.03 12:00 253.24 253.85 251.65 253.49    1698
+2022.09.03 12:15 253.50 254.31 252.13 252.84    1737
+2022.09.03 12:30 253.87 254.64 252.55 254.00    1245
+2022.09.03 12:45 252.97 254.13 252.34 253.48     613
+2022.09.03 13:00 253.49 253.85 252.41 253.85     457
+2022.09.03 13:15 253.85 254.19 252.48 252.48     889
+2022.09.03 13:30 252.47 254.54 252.41 254.19     879
+2022.09.03 13:45 253.16 254.40 252.52 253.93     877
+2022.09.03 14:00 252.90 254.01 252.45 253.67     550
+2022.09.03 14:15 252.64 253.75 252.40 252.40     344
+2022.09.03 14:30 253.43 254.08 252.41 253.69     487
+2022.09.03 14:45 252.66 254.08 252.47 253.51     682
+2022.09.03 15:00 252.48 253.87 252.47 253.87     357
+2022.09.03 15:15 253.88 253.89 252.01 253.60     892
+2022.09.03 15:30 252.57 253.72 252.28 252.39     459
+2022.09.03 15:45 253.49 254.68 252.57 253.20     641
+2022.09.04 07:00 254.21 254.92 253.14 254.31    1669
+2022.09.04 07:15 254.32 254.90 253.20 254.39    1604
+2022.09.04 07:30 253.36 254.80 253.20 253.69    1206
+2022.09.04 07:45 253.69 254.90 253.19 254.48    2156
+2022.09.04 08:00 253.45 254.59 252.48 253.62    1057
+2022.09.04 08:15 252.59 254.98 252.58 254.40    1034
+2022.09.04 08:30 253.37 254.53 251.99 253.81    1133
+2022.09.04 08:45 253.82 254.22 252.55 253.79     824
+2022.09.04 09:00 253.82 254.27 252.81 254.27     674
+2022.09.04 09:15 253.24 254.59 252.98 254.09     481
+2022.09.04 09:30 253.07 254.59 253.07 254.47     671
+2022.09.04 09:45 254.54 255.43 252.95 252.95    1680
+2022.09.04 10:00 252.95 255.14 252.95 253.52     888
+2022.09.04 10:15 254.55 254.60 252.55 253.82     811
+2022.09.04 10:30 252.79 254.31 252.65 254.31     373
+2022.09.04 10:45 253.29 255.36 253.26 254.02    1450
+2022.09.04 11:00 254.02 255.05 253.14 254.30     718
+2022.09.04 11:15 253.27 254.89 252.94 254.45    1159
+2022.09.04 11:30 254.47 254.73 253.18 253.31     800
+2022.09.04 11:45 254.21 254.37 253.20 253.29     121
+TKSBrokerAPI.py     L:2352 INFO    [2022-09-04 14:49:45,876] Ticker [GAZP], FIGI [BBG004730RP0], tf: [15min], history saved: [GAZP_15min.csv]
+TKSBrokerAPI.py     L:3355 DEBUG   [2022-09-04 14:49:45,876] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
+TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module work duration: [0:00:00.316572]
+TKSBrokerAPI.py     L:3361 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module finished: [2022-09-04 11:49:45] UTC, it is [2022-09-04 14:49:45] local time
 ```
 
 </details>
