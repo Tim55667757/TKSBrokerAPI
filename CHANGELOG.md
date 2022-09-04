@@ -40,7 +40,7 @@
 
 ##### Баг-фиксы
 
-* [В работе] [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Добавлена обработка ошибки `raise JSONDecodeError("Expecting value", s, err.value) from None`.
+* [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Добавлена обработка ошибки `raise JSONDecodeError("Expecting value", s, err.value) from None`. Теперь отображается сообщение: `Check you Internet connection! Failed to establish a new connection to broker server!` и выводится путь до файла с дебажными логами.
 * [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Исправлено отображение дробных чисел с первым нулём после десятичной точки, в случаях, когда вместо `1.0` выводилось `1.`.
 
 

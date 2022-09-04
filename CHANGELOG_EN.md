@@ -40,11 +40,11 @@
 
 ##### Bug fixes
 
-* [In progress] [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Error handling added `raise JSONDecodeError("Expecting value", s, err.value) from None`.
+* [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Error handling added `raise JSONDecodeError("Expecting value", s, err.value) from None`. Now the message is showing: `Check you Internet connection! Failed to establish a new connection to broker server!` and the path to the debug log file.
 * [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Fixed display of fractional numbers with the first zero after the decimal point, e.g. `1.` was displayed instead of `1.0`.
 
 
-### [1.2.* (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62) — released
+### [1.2.62 (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62) — released
 
 ##### New features
 
