@@ -979,7 +979,7 @@ class TinkoffBrokerServer:
                     self.iList[iType][instrument]["figi"],
                     self.iList[iType][instrument]["currency"],
                     self.iList[iType][instrument]["lot"],
-                    str(self.iList[iType][instrument]["step"]).rstrip("0"),
+                    str(self.iList[iType][instrument]["step"]).rstrip("0").rstrip(".") if self.iList[iType][instrument]["step"] > 0 else 0,
                 ))
 
         infoText = "".join(info)
