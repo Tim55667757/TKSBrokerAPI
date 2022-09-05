@@ -1213,7 +1213,7 @@ class TinkoffBrokerServer:
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
         rawOrders = self.SendAPIRequest(ordersURL, reqType="POST")["orders"]
 
-        uLogger.debug("[{}] records about pending orders successfully received".format(len(rawOrders)))
+        uLogger.debug("[{}] records about pending orders received".format(len(rawOrders)))
 
         return rawOrders
 
@@ -1230,7 +1230,7 @@ class TinkoffBrokerServer:
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
         rawStopOrders = self.SendAPIRequest(ordersURL, reqType="POST")["stopOrders"]
 
-        uLogger.debug("[{}] records about stop orders successfully received".format(len(rawStopOrders)))
+        uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
 
         return rawStopOrders
 
@@ -1502,7 +1502,14 @@ class TinkoffBrokerServer:
         }
 
         # --- pending orders sector data:
+        uniquePendingOrders = []
+        uniquePendingOrdersFIGIs = []
         for item in view["raw"]["orders"]:
+            if item["figi"] not in uniquePendingOrdersFIGIs:
+                uniquePendingOrdersFIGIs.append(item["figi"])
+                uniquePendingOrders.append(item)
+
+        for item in uniquePendingOrders:
             self.figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
 
@@ -1543,7 +1550,14 @@ class TinkoffBrokerServer:
                 })
 
         # --- stop orders sector data:
+        uniqueStopOrders = []
+        uniqueStopOrdersFIGIs = []
         for item in view["raw"]["stopOrders"]:
+            if item["figi"] not in uniqueStopOrdersFIGIs:
+                uniqueStopOrdersFIGIs.append(item["figi"])
+                uniqueStopOrders.append(item)
+
+        for item in uniqueStopOrders:
             self.figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
 
