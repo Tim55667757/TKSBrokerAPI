@@ -1088,45 +1088,44 @@ class TinkoffBrokerServer:
         if instruments is None or not instruments:
             raise Exception("You must define some of tickers or FIGIs to request it's actual prices!")
 
-        uLogger.debug("Requesting current prices of list of instruments from Tinkoff Broker server...")
-
-        iList = []
+        requestedInstruments = []
         for iName in instruments:
             if iName not in self.aliases.keys():
-                iList.append(iName)
+                if iName not in requestedInstruments:
+                    requestedInstruments.append(iName)
 
             else:
-                iList.append(self.aliases[iName])
+                if iName not in requestedInstruments:
+                    if self.aliases[iName] not in requestedInstruments:
+                        requestedInstruments.append(self.aliases[iName])
 
-        unique = set()  # create list with every figi only one time with the same order position:
-        tempNames = [item for item in iList if not (item in unique or unique.add(item))]
+        uLogger.debug("Requested instruments without duplicates of tickers and FIGIs: {}".format(requestedInstruments))
 
-        uLogger.debug("Ordered input list of instruments without duplicates of names: {}".format(tempNames))
-
-        iList = []  # try to get info about all unique instruments:
-        for iName in tempNames:
+        onlyUniqueFIGIs = []
+        for iName in requestedInstruments:
             self.ticker = iName
-            iData = self.SearchByTicker(requestPrice=True)
+            iData = self.SearchByTicker(requestPrice=False)  # trying to find instrument by ticker
 
             if not iData:
                 self.ticker = ""
                 self.figi = iName
 
-                iData = self.SearchByFIGI(requestPrice=True)
+                iData = self.SearchByFIGI(requestPrice=False)  # trying to find instrument by FIGI
 
                 if not iData:
                     self.figi = ""
                     uLogger.warning("Instrument [{}] not in list of available instruments for current token!".format(iName))
 
-            if iData:
-                isUnique = True
-                for item in iList:
-                    if item["figi"] == iData["figi"] or item["ticker"] == iData["ticker"]:
-                        isUnique = False
-                        break
+            if iData and iData["figi"] not in onlyUniqueFIGIs:
+                onlyUniqueFIGIs.append(iData["figi"])
 
-                if isUnique:
-                    iList.append(iData)
+        uLogger.debug("Unique list of FIGIs: {}".format(onlyUniqueFIGIs))
+        uLogger.debug("Requesting current prices from Tinkoff Broker server...")
+
+        iList = []  # trying to get info and current prices about all unique instruments:
+        for self.figi in onlyUniqueFIGIs:
+            iData = self.SearchByFIGI(requestPrice=True)
+            iList.append(iData)
 
         if showPrices:
             info = [
@@ -1157,7 +1156,7 @@ class TinkoffBrokerServer:
             infoText = "".join(info)
 
             if showPrices:
-                uLogger.info("Only unique instruments are shown:\n{}".format(infoText))
+                uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
 
             if self.pricesFile:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
