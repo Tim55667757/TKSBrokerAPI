@@ -36,7 +36,7 @@
 
 ##### Improvements
 
-* [In progress] [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method.
+* [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method. Now TKSBrokerAPI not request prices for duplicated instruments and saving working time.
 
 ##### Bug fixes
 
