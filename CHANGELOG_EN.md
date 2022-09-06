@@ -16,6 +16,7 @@
 * [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
 * [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
+* [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
 
 ##### Improvements
 
@@ -26,17 +27,17 @@
 * ...
 
 
-### [1.3.* (2022-09-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
+### [1.3.* (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
 
 ##### New features
 
 * [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key. Also, the `--interval` key allows you to specify the time interval for downloading price candles in the OHLCV format. The `--only-missing` key allows you to download only the last candles saved in the file specified via `--output`. The `--csv-sep` key sets the separator between data in csv files. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
-* [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
 * [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
 
 ##### Improvements
 
 * [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method. Now TKSBrokerAPI not request prices for duplicated instruments and saving working time.
+* [#43](https://github.com/Tim55667757/TKSBrokerAPI/issues/43) Added new keys to reduce information in the `Overview()` method: the `--overview-positions` key shows only open positions, without everything else, the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories, the `--overview-orders` shows only section of open limits and stop orders.
 
 ##### Bug fixes
 
