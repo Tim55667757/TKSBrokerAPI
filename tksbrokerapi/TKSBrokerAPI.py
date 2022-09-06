@@ -276,6 +276,18 @@ class TinkoffBrokerServer:
         self.overviewFile = "overview.md"
         """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
 
+        self.overviewDigestFile = "overview-digest.md"
+        """Filename where short digest of the portfolio status will be saved. Default: `overview-digest.md`"""
+
+        self.overviewPositionsFile = "overview-positions.md"
+        """Filename where only open positions, without everything else will be saved. Default: `overview-positions.md`"""
+
+        self.overviewOrdersFile = "overview-orders.md"
+        """Filename where open limits and stop orders will be saved. Default: `overview-orders.md`"""
+
+        self.overviewAnalyticsFile = "overview-analytics.md"
+        """Filename where only the analytics section and the distribution of the portfolio by various categories will be saved. Default: `overview-analytics.md`"""
+
         self.reportFile = "deals.md"
         """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
 
@@ -1234,12 +1246,19 @@ class TinkoffBrokerServer:
 
         return rawStopOrders
 
-    def Overview(self, showStatistics: bool = False) -> dict:
+    def Overview(self, showStatistics: bool = False, details: str = "full") -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for defined accountId.
-        If `overviewFile` is define then also save information to file.
+        If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
+        are defined then also save information to file.
 
         :param showStatistics: if `False` then only dictionary returns, if `True` then show more debug information.
+        :param details: how detailed should the information be? You should specify one of strings:
+                        `full` - shows full available information about portfolio status (by default),
+                        `positions` - shows only open positions,
+                        `digest` - show a short digest of the portfolio status,
+                        `analytics` - shows only the analytics section and the distribution of the portfolio by various categories,
+                        `orders` - shows only sections of open limits and stop orders.
         :return: dictionary with client's raw portfolio and some statistics.
         """
         view = {
@@ -1286,8 +1305,13 @@ class TinkoffBrokerServer:
             }
         }
 
-        if showStatistics:
-            uLogger.debug("Requesting portfolio of a client. Wait, please...")
+        details = details.lower()
+        availableDetails = ["full", "positions", "digest", "analytics", "orders"]
+        if details not in availableDetails:
+            details = "full"
+            uLogger.debug("Requested incorrect details! The `details` must be one of this strings: {}. Details parameter set to `full` be default.".format(availableDetails))
+
+        uLogger.debug("Requesting portfolio of a client. Wait, please...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
@@ -1669,275 +1693,307 @@ class TinkoffBrokerServer:
 
         # --- Prepare text statistics overview in human-readable:
         if showStatistics:
+            # Whatever the value `details`, header not changes:
             info = [
                 "# Client's portfolio\n\n",
-                "* **Actual date:** [{}] (UTC)\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
-                "* **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
-                    "+" if view["stat"]["totalChangesRUB"] > 0 else "",
-                    view["stat"]["totalChangesRUB"],
-                    "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
-                    view["stat"]["totalChangesPercentRUB"],
-                ),
-                "## Open positions\n\n",
-                "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)\n",
-                "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------\n",
-                "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
-                    "{:.2f} ({:.2f}) rub".format(
-                        view["stat"]["availableRUB"],
-                        view["stat"]["blockedRUB"],
-                    )
-                )
+                "* **Actual date:** [{} UTC]\n"
+                "".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
             ]
 
-            def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
-                return [
-                    "|                             |                                 |          |              |              |                     |\n",
-                    "| {:<27} |                                 |          |              |              | {:>19} |\n".format(
-                        noTradeStr if noTradeStr else typeStr,
-                        "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
-                    ),
-                ]
-
-            def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
-                return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {}\n".format(
-                    "{} [{}]".format(data["ticker"], data["figi"]),
-                    "{:.2f} ({:.2f}) {}".format(
-                        data["volume"],
-                        data["blocked"],
-                        data["currency"],
-                    ) if showCurrencyName else "{:.0f} ({:.0f})".format(
-                        data["volume"],
-                        data["blocked"],
-                    ),
-                    "{:.4f}".format(data["lots"]) if showCurrencyName else "{:.0f}".format(data["lots"]),
-                    "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
-                    "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
-                    "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
-                    "{}{:.2f} {} ({}{:.2f}%)".format(
-                        "+" if data["profit"] > 0 else "",
-                        data["profit"], data["baseCurrencyName"],
-                        "+" if data["percentProfit"] > 0 else "",
-                        data["percentProfit"],
-                    ),
-                )
-
-            # --- Show currencies section:
-            if view["stat"]["Currencies"]:
-                info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
-                for item in view["stat"]["Currencies"]:
-                    info.append(_InfoStr(item, showCurrencyName=True))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
-
-            # --- Show shares section:
-            if view["stat"]["Shares"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
-
-                for item in view["stat"]["Shares"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
-
-            # --- Show bonds section:
-            if view["stat"]["Bonds"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="**Bonds:**"))
-
-                for item in view["stat"]["Bonds"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Bonds:** no trades"))
-
-            # --- Show etfs section:
-            if view["stat"]["Etfs"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="**Etfs:**"))
-
-                for item in view["stat"]["Etfs"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Etfs:** no trades"))
-
-            # --- Show futures section:
-            if view["stat"]["Futures"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="**Futures:**"))
-
-                for item in view["stat"]["Futures"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
-
-            # --- Show pending orders section:
-            if view["stat"]["orders"]:
+            if details in ["full", "positions", "digest"]:
                 info.extend([
-                    "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
-                    "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)\n",
-                    "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------\n",
-                ])
-                for item in view["stat"]["orders"]:
-                    info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {}\n".format(
-                        "{} [{}]".format(item["ticker"], item["figi"]),
-                        item["orderID"],
-                        "{} ({})".format(item["lotsRequested"], item["lotsExecuted"]),
-                        "{} {} ({}{:.2f}%)".format(
-                            "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
-                            item["baseCurrencyName"],
-                            "+" if item["percentChanges"] > 0 else "",
-                            float(item["percentChanges"]),
-                        ),
-                        "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                        item["action"],
-                        item["type"],
-                        item["date"],
-                    ))
-
-            else:
-                info.append("\n## Total pending limit-orders: 0\n")
-
-            # --- Show stop orders section:
-            if view["stat"]["stopOrders"]:
-                info.extend([
-                    "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
-                    "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)\n",
-                    "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------\n",
-                ])
-                for item in view["stat"]["stopOrders"]:
-                    info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {}\n".format(
-                        "{} [{}]".format(item["ticker"], item["figi"]),
-                        item["orderID"],
-                        item["lotsRequested"],
-                        "{} {} ({}{:.2f}%)".format(
-                            "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
-                            item["baseCurrencyName"],
-                            "+" if item["percentChanges"] > 0 else "",
-                            float(item["percentChanges"]),
-                        ),
-                        "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                        "{:.2f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
-                        item["action"],
-                        item["type"],
-                        item["expType"],
-                        item["createDate"],
-                        item["expDate"],
-                    ))
-
-            else:
-                info.append("\n## Total stop-orders: 0\n")
-
-            # -- Show analytics section:
-            if view["stat"]["portfolioCostRUB"] > 0:
-                info.extend([
-                    "\n# Analytics\n"
-                    "\n* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                    "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
+                    "* **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                    "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
                         "+" if view["stat"]["totalChangesRUB"] > 0 else "",
                         view["stat"]["totalChangesRUB"],
                         "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
                         view["stat"]["totalChangesPercentRUB"],
                     ),
-                    "\n## Portfolio distribution by assets\n"
-                    "\n| Type       | Uniques | Percent | Current cost\n",
-                    "|------------|---------|---------|-----------------\n",
                 ])
 
-                for key in view["analytics"]["distrByAssets"].keys():
-                    if view["analytics"]["distrByAssets"][key]["cost"] > 0:
-                        info.append("| {:<10} | {:<7} | {:<7} | {:.2f} rub\n".format(
-                            key,
-                            view["analytics"]["distrByAssets"][key]["uniques"],
-                            "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
-                            view["analytics"]["distrByAssets"][key]["cost"],
-                        ))
-
-                maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
+            if details in ["full", "positions"]:
                 info.extend([
-                    "\n## Portfolio distribution by companies\n"
-                    "\n| Company{} | Percent | Current cost\n".format(" " * (maxLenNames - 7)),
-                    "|--------{}-|---------|-----------------\n".format("-" * (maxLenNames - 7)),
+                    "## Open positions\n\n",
+                    "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)\n",
+                    "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------\n",
+                    "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
+                        "{:.2f} ({:.2f}) rub".format(
+                            view["stat"]["availableRUB"],
+                            view["stat"]["blockedRUB"],
+                        )
+                    )
                 ])
 
-                for company in view["analytics"]["distrByCompanies"].keys():
-                    if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
-                        nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "{}{}{}".format(
-                                "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
-                                company,
-                                "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
+                def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
+                    return [
+                        "|                             |                                 |          |              |              |                     |\n",
+                        "| {:<27} |                                 |          |              |              | {:>19} |\n".format(
+                            noTradeStr if noTradeStr else typeStr,
+                            "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
+                        ),
+                    ]
+
+                def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
+                    return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {}\n".format(
+                        "{} [{}]".format(data["ticker"], data["figi"]),
+                        "{:.2f} ({:.2f}) {}".format(
+                            data["volume"],
+                            data["blocked"],
+                            data["currency"],
+                        ) if showCurrencyName else "{:.0f} ({:.0f})".format(
+                            data["volume"],
+                            data["blocked"],
+                        ),
+                        "{:.4f}".format(data["lots"]) if showCurrencyName else "{:.0f}".format(data["lots"]),
+                        "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
+                        "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
+                        "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
+                        "{}{:.2f} {} ({}{:.2f}%)".format(
+                            "+" if data["profit"] > 0 else "",
+                            data["profit"], data["baseCurrencyName"],
+                            "+" if data["percentProfit"] > 0 else "",
+                            data["percentProfit"],
+                        ),
+                    )
+
+                # --- Show currencies section:
+                if view["stat"]["Currencies"]:
+                    info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
+                    for item in view["stat"]["Currencies"]:
+                        info.append(_InfoStr(item, showCurrencyName=True))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
+
+                # --- Show shares section:
+                if view["stat"]["Shares"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
+
+                    for item in view["stat"]["Shares"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
+
+                # --- Show bonds section:
+                if view["stat"]["Bonds"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="**Bonds:**"))
+
+                    for item in view["stat"]["Bonds"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Bonds:** no trades"))
+
+                # --- Show etfs section:
+                if view["stat"]["Etfs"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="**Etfs:**"))
+
+                    for item in view["stat"]["Etfs"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Etfs:** no trades"))
+
+                # --- Show futures section:
+                if view["stat"]["Futures"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="**Futures:**"))
+
+                    for item in view["stat"]["Futures"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
+
+            if details in ["full", "orders"]:
+                # --- Show pending orders section:
+                if view["stat"]["orders"]:
+                    info.extend([
+                        "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
+                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)\n",
+                        "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------\n",
+                    ])
+
+                    for item in view["stat"]["orders"]:
+                        info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {}\n".format(
+                            "{} [{}]".format(item["ticker"], item["figi"]),
+                            item["orderID"],
+                            "{} ({})".format(item["lotsRequested"], item["lotsExecuted"]),
+                            "{} {} ({}{:.2f}%)".format(
+                                "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
+                                item["baseCurrencyName"],
+                                "+" if item["percentChanges"] > 0 else "",
+                                float(item["percentChanges"]),
                             ),
-                            "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
-                            view["analytics"]["distrByCompanies"][company]["cost"],
+                            "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                            item["action"],
+                            item["type"],
+                            item["date"],
                         ))
 
-                maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
-                info.extend([
-                    "\n## Portfolio distribution by sectors\n"
-                    "\n| Sector{} | Percent | Current cost\n".format(" " * (maxLenSectors - 6)),
-                    "|-------{}-|---------|-----------------\n".format("-" * (maxLenSectors - 6)),
-                ])
+                else:
+                    info.append("\n## Total pending limit-orders: 0\n")
 
-                for sector in view["analytics"]["distrBySectors"].keys():
-                    if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
-                        info.append("| {}{} | {:<7} | {:.2f} rub\n".format(
-                            sector,
-                            "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
-                            "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
-                            view["analytics"]["distrBySectors"][sector]["cost"],
-                        ))
+                # --- Show stop orders section:
+                if view["stat"]["stopOrders"]:
+                    info.extend([
+                        "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
+                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)\n",
+                        "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------\n",
+                    ])
 
-                maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
-                info.extend([
-                    "\n## Portfolio distribution by currencies\n"
-                    "\n| Instruments currencies{} | Percent | Current cost\n".format(" " * (maxLenMoney - 22)),
-                    "|-----------------------{}-|---------|-----------------\n".format("-" * (maxLenMoney - 22)),
-                ])
-
-                for curr in view["analytics"]["distrByCurrencies"].keys():
-                    if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
-                        nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "[{}] {}{}".format(
-                                curr,
-                                view["analytics"]["distrByCurrencies"][curr]["name"],
-                                "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
+                    for item in view["stat"]["stopOrders"]:
+                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {}\n".format(
+                            "{} [{}]".format(item["ticker"], item["figi"]),
+                            item["orderID"],
+                            item["lotsRequested"],
+                            "{} {} ({}{:.2f}%)".format(
+                                "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
+                                item["baseCurrencyName"],
+                                "+" if item["percentChanges"] > 0 else "",
+                                float(item["percentChanges"]),
                             ),
-                            "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
-                            view["analytics"]["distrByCurrencies"][curr]["cost"],
+                            "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                            "{:.2f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
+                            item["action"],
+                            item["type"],
+                            item["expType"],
+                            item["createDate"],
+                            item["expDate"],
                         ))
 
-                maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
-                info.extend([
-                    "\n## Portfolio distribution by countries\n"
-                    "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
-                    "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
-                ])
+                else:
+                    info.append("\n## Total stop-orders: 0\n")
 
-                for country in view["analytics"]["distrByCountries"].keys():
-                    if view["analytics"]["distrByCountries"][country]["cost"] > 0:
-                        nameLen = len(country)
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "{}{}".format(
-                                country,
-                                "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
-                            ),
-                            "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
-                            view["analytics"]["distrByCountries"][country]["cost"],
-                        ))
+            if details in ["full", "analytics"]:
+                # -- Show analytics section:
+                if view["stat"]["portfolioCostRUB"] > 0:
+                    info.extend([
+                        "\n# Analytics\n"
+                        "\n* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                        "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
+                            "+" if view["stat"]["totalChangesRUB"] > 0 else "",
+                            view["stat"]["totalChangesRUB"],
+                            "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
+                            view["stat"]["totalChangesPercentRUB"],
+                        ),
+                        "\n## Portfolio distribution by assets\n"
+                        "\n| Type       | Uniques | Percent | Current cost\n",
+                        "|------------|---------|---------|-----------------\n",
+                    ])
+
+                    for key in view["analytics"]["distrByAssets"].keys():
+                        if view["analytics"]["distrByAssets"][key]["cost"] > 0:
+                            info.append("| {:<10} | {:<7} | {:<7} | {:.2f} rub\n".format(
+                                key,
+                                view["analytics"]["distrByAssets"][key]["uniques"],
+                                "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
+                                view["analytics"]["distrByAssets"][key]["cost"],
+                            ))
+
+                    maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by companies\n"
+                        "\n| Company{} | Percent | Current cost\n".format(" " * (maxLenNames - 7)),
+                        "|--------{}-|---------|-----------------\n".format("-" * (maxLenNames - 7)),
+                    ])
+
+                    for company in view["analytics"]["distrByCompanies"].keys():
+                        if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
+                            nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
+                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                                "{}{}{}".format(
+                                    "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
+                                    company,
+                                    "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
+                                view["analytics"]["distrByCompanies"][company]["cost"],
+                            ))
+
+                    maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by sectors\n"
+                        "\n| Sector{} | Percent | Current cost\n".format(" " * (maxLenSectors - 6)),
+                        "|-------{}-|---------|-----------------\n".format("-" * (maxLenSectors - 6)),
+                    ])
+
+                    for sector in view["analytics"]["distrBySectors"].keys():
+                        if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
+                            info.append("| {}{} | {:<7} | {:.2f} rub\n".format(
+                                sector,
+                                "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
+                                "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
+                                view["analytics"]["distrBySectors"][sector]["cost"],
+                            ))
+
+                    maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by currencies\n"
+                        "\n| Instruments currencies{} | Percent | Current cost\n".format(" " * (maxLenMoney - 22)),
+                        "|-----------------------{}-|---------|-----------------\n".format("-" * (maxLenMoney - 22)),
+                    ])
+
+                    for curr in view["analytics"]["distrByCurrencies"].keys():
+                        if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
+                            nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
+                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                                "[{}] {}{}".format(
+                                    curr,
+                                    view["analytics"]["distrByCurrencies"][curr]["name"],
+                                    "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
+                                view["analytics"]["distrByCurrencies"][curr]["cost"],
+                            ))
+
+                    maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
+                    info.extend([
+                        "\n## Portfolio distribution by countries\n"
+                        "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
+                        "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
+                    ])
+
+                    for country in view["analytics"]["distrByCountries"].keys():
+                        if view["analytics"]["distrByCountries"][country]["cost"] > 0:
+                            nameLen = len(country)
+                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                                "{}{}".format(
+                                    country,
+                                    "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
+                                view["analytics"]["distrByCountries"][country]["cost"],
+                            ))
 
             infoText = "".join(info)
 
             if showStatistics:
-                uLogger.info("Statistics of client's portfolio:\n{}".format(infoText))
+                uLogger.info(infoText)
 
-            if self.overviewFile:
-                with open(self.overviewFile, "w", encoding="UTF-8") as fH:
+            if details == "full" and self.overviewFile:
+                filename = self.overviewFile
+
+            elif details == "digest" and self.overviewDigestFile:
+                filename = self.overviewDigestFile
+
+            elif details == "positions" and self.overviewPositionsFile:
+                filename = self.overviewPositionsFile
+
+            elif details == "orders" and self.overviewOrdersFile:
+                filename = self.overviewOrdersFile
+
+            elif details == "analytics" and self.overviewAnalyticsFile:
+                filename = self.overviewAnalyticsFile
+
+            else:
+                filename = ""
+
+            if filename:
+                with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's portfolio is saved to file: [{}]".format(os.path.abspath(self.overviewFile)))
+                uLogger.info("Client's portfolio is saved to file: [{}]".format(os.path.abspath(filename)))
 
         return view
 
@@ -3079,7 +3135,12 @@ def ParseArgs():
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use `--depth` key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
-    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--overview", "-o", action="store_true", help="Action: shows all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--overview-digest", action="store_true", help="Action: shows a short digest of the portfolio status. Also, you can define `--output` key to save this information to file, default: `overview-digest.md`.")
+    parser.add_argument("--overview-positions", action="store_true", help="Action: shows only open positions. Also, you can define `--output` key to save this information to file, default: `overview-positions.md`.")
+    parser.add_argument("--overview-orders", action="store_true", help="Action: shows only sections of open limits and stop orders. Also, you can define `--output` key to save this information to file, default: `overview-orders.md`.")
+    parser.add_argument("--overview-analytics", action="store_true", help="Action: shows only the analytics section and the distribution of the portfolio by various categories. Also, you can define `--output` key to save this information to file, default: `overview-analytics.md`.")
+
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
     parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Also, you can define `--output` key to save history candlesticks to file.")
 
@@ -3194,7 +3255,31 @@ def Main(**kwargs):
             if args.output is not None:
                 server.overviewFile = args.output
 
-            server.Overview(showStatistics=True)
+            server.Overview(showStatistics=True, details="full")
+
+        elif args.overview_digest:
+            if args.output is not None:
+                server.overviewDigestFile = args.output
+
+            server.Overview(showStatistics=True, details="digest")
+
+        elif args.overview_positions:
+            if args.output is not None:
+                server.overviewPositionsFile = args.output
+
+            server.Overview(showStatistics=True, details="positions")
+
+        elif args.overview_orders:
+            if args.output is not None:
+                server.overviewOrdersFile = args.output
+
+            server.Overview(showStatistics=True, details="orders")
+
+        elif args.overview_analytics:
+            if args.output is not None:
+                server.overviewAnalyticsFile = args.output
+
+            server.Overview(showStatistics=True, details="analytics")
 
         elif args.deals is not None:
             if args.output is not None:
