@@ -297,7 +297,7 @@ Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.l
 When you run the program in the console, you can specify many parameters and perform one action. The format of any commands is as follows:
 
 ```commandline
-tksbrokerapi [необязательные ключи и параметры] [одно действие]
+tksbrokerapi [optional keys and parameters] [one action]
 ```
 
 ❗ To execute most commands, you must each time specify your token through the `--token` key and the account ID through the `--account-id` key, or set them once with the `TKS_API_TOKEN` and `TKS_ACCOUNT_ID` environment variables (see section ["Auth"](#Auth)).
@@ -932,7 +932,9 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 #### Get the current portfolio and asset allocation statistics
 
-The `--overview` (`-o`) key is used. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not nesessary to specify it).
+The `--overview` (`-o`) key is used. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not necessary to specify it).
+
+Also, you can use another keys instead of the `--overview` key, since TKSBrokerAPI version 1.3.*: the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-positions` key shows only open positions, without everything else, the `--overview-orders` shows only section of open limits and stop orders, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories. Key `--output` also overrides the output file for them.
 
 <details>
   <summary>Command to show user's portfolio</summary>
