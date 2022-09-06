@@ -517,164 +517,166 @@ class TinkoffBrokerServer:
     @staticmethod
     def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
-        Show information about instrument defined by json and print in Markdown format.
+        Show information about one instrument defined by json data and prints it in Markdown format.
 
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
         :param printInfo: if `True` then also printing information about instrument and its current price.
-        :return: text in Markdown format with information about instrument.
+        :return: multilines text in Markdown format with information about one instrument.
         """
+        splitLine = "|                                                         |                                                         |\n"
         infoText = ""
+
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
                 "# Information is actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
-                "| Parameters                                              | Values\n",
-                "|---------------------------------------------------------|---------------------------------------------------------\n",
-                "| Ticker:                                                 | {}\n".format(iJSON["ticker"]),
-                "| Full name:                                              | {}\n".format(iJSON["name"]),
+                "| Parameters                                              | Values                                                  |\n",
+                "|---------------------------------------------------------|---------------------------------------------------------|\n",
+                "| Ticker:                                                 | {:<55} |\n".format(iJSON["ticker"]),
+                "| Full name:                                              | {:<55} |\n".format(iJSON["name"]),
             ]
 
             if "sector" in iJSON.keys() and iJSON["sector"]:
-                info.append("| Sector:                                                 | {}\n".format(iJSON["sector"]))
+                info.append("| Sector:                                                 | {:<55} |\n".format(iJSON["sector"]))
 
-            info.append("| Country of instrument:                                  | {}{}\n".format(
+            info.append("| Country of instrument:                                  | {:<55} |\n".format("{}{}".format(
                 "({}) ".format(iJSON["countryOfRisk"]) if "countryOfRisk" in iJSON.keys() and iJSON["countryOfRisk"] else "",
                 iJSON["countryOfRiskName"] if "countryOfRiskName" in iJSON.keys() and iJSON["countryOfRiskName"] else "",
-            ))
+            )))
 
             info.extend([
-                "|                                                         |\n",
-                "| FIGI (Financial Instrument Global Identifier):          | {}\n".format(iJSON["figi"]),
-                "| Exchange:                                               | {}\n".format(iJSON["exchange"]),
+                splitLine,
+                "| FIGI (Financial Instrument Global Identifier):          | {:<55} |\n".format(iJSON["figi"]),
+                "| Exchange:                                               | {:<55} |\n".format(iJSON["exchange"]),
             ])
 
             if "isin" in iJSON.keys() and iJSON["isin"]:
-                info.append("| ISIN (International Securities Identification Number):  | {}\n".format(iJSON["isin"]))
+                info.append("| ISIN (International Securities Identification Number):  | {:<55} |\n".format(iJSON["isin"]))
 
             if "classCode" in iJSON.keys():
-                info.append("| Class Code:                                             | {}\n".format(iJSON["classCode"]))
+                info.append("| Class Code:                                             | {:<55} |\n".format(iJSON["classCode"]))
 
             info.extend([
-                "|                                                         |\n",
-                "| Current broker security trading status:                 | {}\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
-                "| Buy operations allowed:                                 | {}\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
-                "| Sale operations allowed:                                | {}\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
-                "| Short positions allowed:                                | {}\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
+                splitLine,
+                "| Current broker security trading status:                 | {:<55} |\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
+                "| Buy operations allowed:                                 | {:<55} |\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
+                "| Sale operations allowed:                                | {:<55} |\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
+                "| Short positions allowed:                                | {:<55} |\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
             ])
 
-            info.append("|                                                         |\n")
+            info.append(splitLine)
 
             if "type" in iJSON.keys() and iJSON["type"]:
-                info.append("| Type of the instrument:                                 | {}\n".format(iJSON["type"]))
+                info.append("| Type of the instrument:                                 | {:<55} |\n".format(iJSON["type"]))
 
             if "futuresType" in iJSON.keys() and iJSON["futuresType"]:
-                info.append("| Futures type:                                           | {}\n".format(iJSON["futuresType"]))
+                info.append("| Futures type:                                           | {:<55} |\n".format(iJSON["futuresType"]))
 
             if "ipoDate" in iJSON.keys() and iJSON["ipoDate"]:
-                info.append("| IPO date:                                               | {}\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
+                info.append("| IPO date:                                               | {:<55} |\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
 
             if "releasedDate" in iJSON.keys() and iJSON["releasedDate"]:
-                info.append("| Released date:                                          | {}\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Released date:                                          | {:<55} |\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
 
             if "rebalancingFreq" in iJSON.keys() and iJSON["rebalancingFreq"]:
-                info.append("| Rebalancing frequency:                                  | {}\n".format(iJSON["rebalancingFreq"]))
+                info.append("| Rebalancing frequency:                                  | {:<55} |\n".format(iJSON["rebalancingFreq"]))
 
             if "focusType" in iJSON.keys() and iJSON["focusType"]:
-                info.append("| Focusing type:                                          | {}\n".format(iJSON["focusType"]))
+                info.append("| Focusing type:                                          | {:<55} |\n".format(iJSON["focusType"]))
 
             if "assetType" in iJSON.keys() and iJSON["assetType"]:
-                info.append("| Asset type:                                             | {}\n".format(iJSON["assetType"]))
+                info.append("| Asset type:                                             | {:<55} |\n".format(iJSON["assetType"]))
 
             if "basicAsset" in iJSON.keys() and iJSON["basicAsset"]:
-                info.append("| Basic asset:                                            | {}\n".format(iJSON["basicAsset"]))
+                info.append("| Basic asset:                                            | {:<55} |\n".format(iJSON["basicAsset"]))
 
             if "basicAssetSize" in iJSON.keys() and iJSON["basicAssetSize"]:
-                info.append("| Basic asset size:                                       | {:.2f}\n".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
+                info.append("| Basic asset size:                                       | {:<55} |\n".format("{:.2f}".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"]))))
 
             if "isoCurrencyName" in iJSON.keys() and iJSON["isoCurrencyName"]:
-                info.append("| ISO currency name:                                      | {}\n".format(iJSON["isoCurrencyName"]))
+                info.append("| ISO currency name:                                      | {:<55} |\n".format(iJSON["isoCurrencyName"]))
 
             if "currency" in iJSON.keys():
-                info.append("| Payment currency:                                       | {}\n".format(iJSON["currency"]))
+                info.append("| Payment currency:                                       | {:<55} |\n".format(iJSON["currency"]))
 
             if "firstTradeDate" in iJSON.keys() and iJSON["firstTradeDate"] != 0:
-                info.append("| First trade date:                                       | {}\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
+                info.append("| First trade date:                                       | {:<55} |\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
 
             if "lastTradeDate" in iJSON.keys() and iJSON["lastTradeDate"] != 0:
-                info.append("| Last trade date:                                        | {}\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Last trade date:                                        | {:<55} |\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
 
             if "expirationDate" in iJSON.keys() and iJSON["expirationDate"] != 0:
-                info.append("| Date of expiration:                                     | {}\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Date of expiration:                                     | {:<55} |\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
 
             if "stateRegDate" in iJSON.keys() and iJSON["stateRegDate"] != 0:
-                info.append("| State registration date:                                | {}\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
+                info.append("| State registration date:                                | {:<55} |\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
 
             if "placementDate" in iJSON.keys() and iJSON["placementDate"] != 0:
-                info.append("| Placement date:                                         | {}\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Placement date:                                         | {:<55} |\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
 
             if "maturityDate" in iJSON.keys() and iJSON["maturityDate"] != 0:
-                info.append("| Maturity date:                                          | {}\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Maturity date:                                          | {:<55} |\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
 
             if "perpetualFlag" in iJSON.keys() and iJSON["perpetualFlag"]:
-                info.append("| Perpetual bond:                                         | Yes\n")
+                info.append("| Perpetual bond:                                         | Yes                                                     |\n")
 
             if "otcFlag" in iJSON.keys() and iJSON["otcFlag"]:
-                info.append("| Over-the-counter (OTC) securities:                      | Yes\n")
+                info.append("| Over-the-counter (OTC) securities:                      | Yes                                                     |\n")
 
             if iJSON["type"] == "Bonds":
-                info.append("| Bond issue (size / plan):                               | {} / {}\n".format(iJSON["issueSize"], iJSON["issueSizePlan"]))
+                info.append("| Bond issue (size / plan):                               | {:<55} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])))
 
-                info.append("| Nominal price (100%):                                   | {:.2f} {}\n".format(
+                info.append("| Nominal price (100%):                                   | {:<55} |\n".format("{:.2f} {}".format(
                     NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
                     iJSON["nominal"]["currency"],
-                ))
+                )))
 
                 if "floatingCouponFlag" in iJSON.keys():
-                    info.append("| Floating coupon:                                        | {}\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
+                    info.append("| Floating coupon:                                        | {:<55} |\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
 
                 if "amortizationFlag" in iJSON.keys():
-                    info.append("| Amortization:                                           | {}\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
+                    info.append("| Amortization:                                           | {:<55} |\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
 
                 if "couponQuantityPerYear" in iJSON.keys() and iJSON["couponQuantityPerYear"]:
-                    info.append("| Number of coupon payments per year:                     | {}\n".format(iJSON["couponQuantityPerYear"]))
+                    info.append("| Number of coupon payments per year:                     | {:<55} |\n".format(iJSON["couponQuantityPerYear"]))
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current ACI (Accrued Interest):                         | {:.2f} {}\n".format(
+                    info.append("| Current ACI (Accrued Interest):                         | {:<55} |\n".format("{:.2f} {}".format(
                         NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
-                    ))
+                    )))
 
             if "currentPrice" in iJSON.keys():
-                info.append("|                                                         |\n")
+                info.append(splitLine)
 
                 info.extend([
-                    "| Previous close price of the instrument:                 | {}{}\n".format(
+                    "| Previous close price of the instrument:                 | {:<55} |\n".format("{}{}".format(
                         "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
                         "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Last deal price of the instrument:                      | {}{}\n".format(
+                    )),
+                    "| Last deal price of the instrument:                      | {:<55} |\n".format("{}{}".format(
                         "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
                         "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Changes between last deal price and last close  %       | {:.2f}%\n".format(iJSON["currentPrice"]["changes"]),
-                    "| Current limit price, min / max:                         | {}{} / {}{}\n".format(
+                    )),
+                    "| Changes between last deal price and last close  %       | {:<55} |\n".format("{:.2f}".format(iJSON["currentPrice"]["changes"])),
+                    "| Current limit price, min / max:                         | {:<55} |\n".format("{}{} / {}{}".format(
                         "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Actual price, sell / buy:                               | {}{} / {}{}\n".format(
+                    )),
+                    "| Actual price, sell / buy:                               | {:<55} |\n".format("{}{} / {}{}".format(
                         "{}".format(iJSON["currentPrice"]["sell"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["sell"] else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["buy"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["buy"] else "N/A",
                         "%" if iJSON["type"] == "Bonds" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
+                    )),
                 ])
 
             if "lot" in iJSON.keys():
-                info.append("| Minimum lot to buy:                                     | {}\n".format(iJSON["lot"]))
+                info.append("| Minimum lot to buy:                                     | {:<55} |\n".format(iJSON["lot"]))
 
             if "step" in iJSON.keys() and iJSON["step"] != 0:
-                info.append("| Minimum price increment (step):                         | {}\n".format(iJSON["step"]))
+                info.append("| Minimum price increment (step):                         | {:<55} |\n".format(iJSON["step"]))
 
             infoText += "".join(info)
 
