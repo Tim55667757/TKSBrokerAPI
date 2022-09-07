@@ -968,15 +968,15 @@ class TinkoffBrokerServer:
 
         info = [
             "# All available instruments from Tinkoff Broker server for current user token\n\n",
-            "* **Actual on date:** [{}] (UTC)\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
         ]
 
         # add instruments count by type:
         for iType in self.iList.keys():
             info.append("* **{}:** [{}]\n".format(iType, len(self.iList[iType])))
 
-        headerLine = "| Ticker       | Full name                                                      | FIGI         | Cur | Lot    | Step\n"
-        splitLine = "|--------------|----------------------------------------------------------------|--------------|-----|--------|---------\n"
+        headerLine = "| Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |\n"
+        splitLine = "|--------------|-----------------------------------------------------------|--------------|-----|---------|------------|\n"
 
         # generating info tables with all instruments by type:
         for iType in self.iList.keys():
@@ -984,16 +984,16 @@ class TinkoffBrokerServer:
 
             for instrument in self.iList[iType].keys():
                 iName = self.iList[iType][instrument]["name"]  # instrument's name
-                if len(iName) > 63:
-                    iName = "{}...".format(iName[:60])  # right trim for a long string
+                if len(iName) > 57:
+                    iName = "{}...".format(iName[:54])  # right trim for a long string
     
-                info.append("| {:<12} | {:<63}| {:<13}| {:<4}| {:<7}| {}\n".format(
+                info.append("| {:<12} | {:<57} | {:<12} | {:<3} | {:<7} | {:<10} |\n".format(
                     self.iList[iType][instrument]["ticker"],
                     iName,
                     self.iList[iType][instrument]["figi"],
                     self.iList[iType][instrument]["currency"],
                     self.iList[iType][instrument]["lot"],
-                    str(self.iList[iType][instrument]["step"]).rstrip("0").rstrip(".") if self.iList[iType][instrument]["step"] > 0 else 0,
+                    "{:.10f}".format(self.iList[iType][instrument]["step"]).rstrip("0").rstrip(".") if self.iList[iType][instrument]["step"] > 0 else 0,
                 ))
 
         infoText = "".join(info)
