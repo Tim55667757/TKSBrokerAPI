@@ -9,19 +9,22 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-09-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+### [1.4.* (2022-09-19)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
 
 ##### New features
 
-* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
 * [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
 * [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
-* [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
+* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
+* [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
+* [In progress] [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--detail-list` key that produces instrument's data similar to `dump.json`, but saved in `xlsx` format.
 
 ##### Improvements
 
 * [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method that implements launching with the `--info` (or `-i`) key. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
+* [In progress] [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
+* [In progress] [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version`.
 
 ##### Bug fixes
 
