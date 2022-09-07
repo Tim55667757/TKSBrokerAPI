@@ -1144,12 +1144,12 @@ class TinkoffBrokerServer:
         if showPrices:
             info = [
                 "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
-                "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr.\n",
-                "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|------\n",
+                "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
+                "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|-------|\n",
             ]
 
             for item in iList:
-                info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {}\n".format(
+                info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {:<5} |\n".format(
                     item["ticker"],
                     item["figi"],
                     item["type"],
