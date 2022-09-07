@@ -2025,8 +2025,8 @@ class TinkoffBrokerServer:
 
         # --- output report in human-readable format:
         if printDeals or self.reportFile:
-            splitLine1 = "|                            |                               |                              |                      |\n"  # Summary section
-            splitLine2 = "|                     |              |              |            |           |                 |            |\n"  # Operations section
+            splitLine1 = "|                            |                               |                              |                      |                        |\n"  # Summary section
+            splitLine2 = "|                     |              |              |            |           |                 |            |                                                                    |\n"  # Operations section
             nextDay = ""
 
             info = ["# Client's operations\n\n* **Period:** from [{}] to [{}]\n\n## Summary (operations executed only)\n\n".format(startDate.split("T")[0], endDate.split("T")[0])]
@@ -2144,14 +2144,14 @@ class TinkoffBrokerServer:
 
                 # --- view "Actions" lines:
                 info.extend([
-                    "| 1                          | 2                             | 3                            | 4                    | 5\n",
-                    "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------\n",
-                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
-                    "|                            |   Buy: {:<22} | {:<28} |                      |\n".format(
+                    "| 1                          | 2                             | 3                            | 4                    | 5                      |\n",
+                    "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|\n",
+                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |                        |\n".format(customStat["opsCount"]),
+                    "|                            |   Buy: {:<22} | {:<28} |                      |                        |\n".format(
                         "{} ({:.1f}%)".format(customStat["buyCount"], 100 * customStat["buyCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, buy: {:<16}".format("{:.2f}".format(customStat["buyTotal"]["rub"])) if customStat["buyTotal"]["rub"] != 0 else "  —",
                     ),
-                    "|                            |   Sell: {:<21} | {:<28} |                      |\n".format(
+                    "|                            |   Sell: {:<21} | {:<28} |                      |                        |\n".format(
                         "{} ({:.1f}%)".format(customStat["sellCount"], 100 * customStat["sellCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, sell: {:<13}".format("+{:.2f}".format(customStat["sellTotal"]["rub"])) if customStat["sellTotal"]["rub"] != 0 else "  —",
                     ),
@@ -2163,10 +2163,10 @@ class TinkoffBrokerServer:
                         continue
 
                     info.extend([
-                        "|                            |                               | {:<28} |                      |\n".format(
+                        "|                            |                               | {:<28} |                      |                        |\n".format(
                             "  {}, buy: {:<16}".format(key, "{:.2f}".format(customStat["buyTotal"][key]) if key and key in customStat["buyTotal"].keys() and customStat["buyTotal"][key] != 0 else 0)
                         ),
-                        "|                            |                               | {:<28} |                      |\n".format(
+                        "|                            |                               | {:<28} |                      |                        |\n".format(
                             "  {}, sell: {:<13}".format(key, "+{:.2f}".format(customStat["sellTotal"][key]) if key and key in customStat["sellTotal"].keys() and customStat["sellTotal"][key] != 0 else 0)
                         ),
                     ])
@@ -2174,7 +2174,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 def _InfoStr(data1: dict, data2: dict, data3: dict, data4: dict, cur: str = "") -> str:
-                    return "|                            | {:<29} | {:<28} | {:<20} | {:<22}\n".format(
+                    return "|                            | {:<29} | {:<28} | {:<20} | {:<22} |\n".format(
                             "  {}: {}{:.2f}".format(cur, "+" if data1[cur] > 0 else "", data1[cur]) if cur and cur in data1.keys() and data1[cur] != 0 else "  —",
                             "  {}: {}{:.2f}".format(cur, "+" if data2[cur] > 0 else "", data2[cur]) if cur and cur in data2.keys() and data2[cur] != 0 else "  —",
                             "  {}: {}{:.2f}".format(cur, "+" if data3[cur] > 0 else "", data3[cur]) if cur and cur in data3.keys() and data3[cur] != 0 else "  —",
@@ -2182,7 +2182,7 @@ class TinkoffBrokerServer:
                     )
 
                 # --- view "Payments" lines:
-                info.append("| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:\n")
+                info.append("| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |\n")
                 paymentsKeys = sorted(list(set(list(customStat["payIn"].keys()) + list(customStat["payOut"].keys()) + list(customStat["divs"].keys()) + list(customStat["coupons"].keys()))))
 
                 for key in paymentsKeys:
@@ -2191,7 +2191,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 # --- view "Commissions and taxes" lines:
-                info.append("| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections:\n")
+                info.append("| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |\n")
                 comKeys = sorted(list(set(list(customStat["brokerCom"].keys()) + list(customStat["serviceCom"].keys()) + list(customStat["marginCom"].keys()) + list(customStat["allTaxes"].keys()))))
 
                 for key in comKeys:
@@ -2201,8 +2201,8 @@ class TinkoffBrokerServer:
 
                 info.extend([
                     "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
-                    "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type\n",
-                    "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------\n",
+                    "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type                                                     |\n",
+                    "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------|\n",
                 ])
 
             else:
@@ -2226,7 +2226,7 @@ class TinkoffBrokerServer:
                     else:
                         nextDay = item["date"].split("T")[0]  # saving current day for splitting
 
-                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
+                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {:<66} |\n".format(
                         item["date"].replace("T", " ").replace("Z", "").split(".")[0],
                         self.figi if self.figi else "—",
                         instrument["ticker"] if instrument else "—",
