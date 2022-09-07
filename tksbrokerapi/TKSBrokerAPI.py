@@ -1716,9 +1716,9 @@ class TinkoffBrokerServer:
             if details in ["full", "positions"]:
                 info.extend([
                     "## Open positions\n\n",
-                    "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)\n",
-                    "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------\n",
-                    "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
+                    "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)                   |\n",
+                    "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|------------------------------|\n",
+                    "| Ruble                       | {:>31} |          |              |              |                     |                              |\n".format(
                         "{:.2f} ({:.2f}) rub".format(
                             view["stat"]["availableRUB"],
                             view["stat"]["blockedRUB"],
@@ -1728,15 +1728,15 @@ class TinkoffBrokerServer:
 
                 def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
                     return [
-                        "|                             |                                 |          |              |              |                     |\n",
-                        "| {:<27} |                                 |          |              |              | {:>19} |\n".format(
+                        "|                             |                                 |          |              |              |                     |                              |\n",
+                        "| {:<27} |                                 |          |              |              | {:>19} |                              |\n".format(
                             noTradeStr if noTradeStr else typeStr,
                             "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
                         ),
                     ]
 
                 def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
-                    return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {}\n".format(
+                    return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {:<28} |\n".format(
                         "{} [{}]".format(data["ticker"], data["figi"]),
                         "{:.2f} ({:.2f}) {}".format(
                             data["volume"],
@@ -1812,12 +1812,12 @@ class TinkoffBrokerServer:
                 if view["stat"]["orders"]:
                     info.extend([
                         "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
-                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)\n",
-                        "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------\n",
+                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)       |\n",
+                        "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|-------------------------|\n",
                     ])
 
                     for item in view["stat"]["orders"]:
-                        info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {}\n".format(
+                        info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {:<23} |\n".format(
                             "{} [{}]".format(item["ticker"], item["figi"]),
                             item["orderID"],
                             "{} ({})".format(item["lotsRequested"], item["lotsExecuted"]),
@@ -1840,12 +1840,12 @@ class TinkoffBrokerServer:
                 if view["stat"]["stopOrders"]:
                     info.extend([
                         "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
-                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)\n",
-                        "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------\n",
+                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
+                        "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------|\n",
                     ])
 
                     for item in view["stat"]["stopOrders"]:
-                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {}\n".format(
+                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
                             "{} [{}]".format(item["ticker"], item["figi"]),
                             item["orderID"],
                             item["lotsRequested"],
@@ -1880,92 +1880,92 @@ class TinkoffBrokerServer:
                             view["stat"]["totalChangesPercentRUB"],
                         ),
                         "\n## Portfolio distribution by assets\n"
-                        "\n| Type       | Uniques | Percent | Current cost\n",
-                        "|------------|---------|---------|-----------------\n",
+                        "\n| Type       | Uniques | Percent | Current cost       |\n",
+                        "|------------|---------|---------|--------------------|\n",
                     ])
 
                     for key in view["analytics"]["distrByAssets"].keys():
                         if view["analytics"]["distrByAssets"][key]["cost"] > 0:
-                            info.append("| {:<10} | {:<7} | {:<7} | {:.2f} rub\n".format(
+                            info.append("| {:<10} | {:<7} | {:<7} | {:<18} |\n".format(
                                 key,
                                 view["analytics"]["distrByAssets"][key]["uniques"],
                                 "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
-                                view["analytics"]["distrByAssets"][key]["cost"],
+                                "{:.2f} rub".format(view["analytics"]["distrByAssets"][key]["cost"]),
                             ))
 
                     maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
                     info.extend([
                         "\n## Portfolio distribution by companies\n"
-                        "\n| Company{} | Percent | Current cost\n".format(" " * (maxLenNames - 7)),
-                        "|--------{}-|---------|-----------------\n".format("-" * (maxLenNames - 7)),
+                        "\n| Company{} | Percent | Current cost       |\n".format(" " * (maxLenNames - 7)),
+                        "|--------{}-|---------|--------------------|\n".format("-" * (maxLenNames - 7)),
                     ])
 
                     for company in view["analytics"]["distrByCompanies"].keys():
                         if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
                             nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
-                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
                                 "{}{}{}".format(
                                     "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
                                     company,
                                     "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
                                 ),
                                 "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
-                                view["analytics"]["distrByCompanies"][company]["cost"],
+                                "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
                             ))
 
                     maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
                     info.extend([
                         "\n## Portfolio distribution by sectors\n"
-                        "\n| Sector{} | Percent | Current cost\n".format(" " * (maxLenSectors - 6)),
-                        "|-------{}-|---------|-----------------\n".format("-" * (maxLenSectors - 6)),
+                        "\n| Sector{} | Percent | Current cost       |\n".format(" " * (maxLenSectors - 6)),
+                        "|-------{}-|---------|--------------------|\n".format("-" * (maxLenSectors - 6)),
                     ])
 
                     for sector in view["analytics"]["distrBySectors"].keys():
                         if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
-                            info.append("| {}{} | {:<7} | {:.2f} rub\n".format(
+                            info.append("| {}{} | {:<7} | {:<18} |\n".format(
                                 sector,
                                 "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
                                 "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
-                                view["analytics"]["distrBySectors"][sector]["cost"],
+                                "{:.2f} rub".format(view["analytics"]["distrBySectors"][sector]["cost"]),
                             ))
 
                     maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
                     info.extend([
                         "\n## Portfolio distribution by currencies\n"
-                        "\n| Instruments currencies{} | Percent | Current cost\n".format(" " * (maxLenMoney - 22)),
-                        "|-----------------------{}-|---------|-----------------\n".format("-" * (maxLenMoney - 22)),
+                        "\n| Instruments currencies{} | Percent | Current cost       |\n".format(" " * (maxLenMoney - 22)),
+                        "|-----------------------{}-|---------|--------------------|\n".format("-" * (maxLenMoney - 22)),
                     ])
 
                     for curr in view["analytics"]["distrByCurrencies"].keys():
                         if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
                             nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
-                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
                                 "[{}] {}{}".format(
                                     curr,
                                     view["analytics"]["distrByCurrencies"][curr]["name"],
                                     "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
                                 ),
                                 "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
-                                view["analytics"]["distrByCurrencies"][curr]["cost"],
+                                "{:.2f} rub".format(view["analytics"]["distrByCurrencies"][curr]["cost"]),
                             ))
 
                     maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
                     info.extend([
                         "\n## Portfolio distribution by countries\n"
-                        "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
-                        "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
+                        "\n| Assets by country{} | Percent | Current cost       |\n".format(" " * (maxLenCountry - 17)),
+                        "|------------------{}-|---------|--------------------|\n".format("-" * (maxLenCountry - 17)),
                     ])
 
                     for country in view["analytics"]["distrByCountries"].keys():
                         if view["analytics"]["distrByCountries"][country]["cost"] > 0:
                             nameLen = len(country)
-                            info.append("| {} | {:<7} | {:.2f} rub\n".format(
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
                                 "{}{}".format(
                                     country,
                                     "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
                                 ),
                                 "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
-                                view["analytics"]["distrByCountries"][country]["cost"],
+                                "{:.2f} rub".format(view["analytics"]["distrByCountries"][country]["cost"]),
                             ))
 
             infoText = "".join(info)
