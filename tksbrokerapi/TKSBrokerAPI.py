@@ -890,10 +890,10 @@ class TinkoffBrokerServer:
                 prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
 
                 # max price of instrument at this time:
-                prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
+                prices["limitUp"] = round(NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]), 6) if "limitUp" in pricesResponse.keys() else None
 
                 # min price of instrument at this time:
-                prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
+                prices["limitDown"] = round(NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]), 6) if "limitDown" in pricesResponse.keys() else None
 
                 # last price of deal with instrument:
                 prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
