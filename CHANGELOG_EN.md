@@ -9,40 +9,45 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-09-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+### [1.4.* (2022-09-19)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
 
 ##### New features
 
 * [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
 * [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
+* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
+* [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
+* [In progress] [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--detail-list` key that produces instrument's data similar to `dump.json`, but saved in `xlsx` format.
 
 ##### Improvements
 
 * [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method that implements launching with the `--info` (or `-i`) key. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
+* [In progress] [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
+* [In progress] [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version`.
 
 ##### Bug fixes
 
 * ...
 
 
-### [1.3.* (2022-08-??)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — preparing for release...
+### [1.3.* (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — released
 
 ##### New features
 
-* [In progress] [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key.
-* [In progress] [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Implemented methods for opening grids of pending limit and stop orders.
-* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
+* [#5](https://github.com/Tim55667757/TKSBrokerAPI/issues/5) Added ability to download price history for an instrument with "only latest" update support, added `--history` key. Also, the `--interval` key allows you to specify the time interval for downloading price candles in the OHLCV format. The `--only-missing` key allows you to download only the last candles saved in the file specified via `--output`. The `--csv-sep` key sets the separator between data in csv files. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
 
 ##### Improvements
 
-* [In progress] [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method.
+* [#17](https://github.com/Tim55667757/TKSBrokerAPI/issues/17) Optimized price request for instruments and removed repeated price requests for the same instrument when launched with the `--prices` key or when calling the `Overview()` method. Now TKSBrokerAPI not request prices for duplicated instruments and saving working time.
+* [#43](https://github.com/Tim55667757/TKSBrokerAPI/issues/43) Added new keys to reduce information in the `Overview()` method: the `--overview-positions` key shows only open positions, without everything else, the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories, the `--overview-orders` shows only section of open limits and stop orders.
+* [#44](https://github.com/Tim55667757/TKSBrokerAPI/issues/44) All markdown-tables are brought to the standard form, including the rendering of the right side of the tables.
 
 ##### Bug fixes
 
-* [In progress] [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Error handling added `raise JSONDecodeError("Expecting value", s, err.value) from None`.
-* [In progress] [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Fixed display of fractional numbers with the first zero after the decimal point, e.g. `1.` was displayed instead of `1.0`.
-* ...
+* [#18](https://github.com/Tim55667757/TKSBrokerAPI/issues/18) Error handling added `raise JSONDecodeError("Expecting value", s, err.value) from None`. Now the message is showing: `Check you Internet connection! Failed to establish a new connection to broker server!` and the path to the debug log file.
+* [#16](https://github.com/Tim55667757/TKSBrokerAPI/issues/16) Fixed display of fractional numbers with the first zero after the decimal point, e.g. `1.` was displayed instead of `1.0`.
+* [#38](https://github.com/Tim55667757/TKSBrokerAPI/issues/38) fixed broken table when ETF requested.
 
 
 ### [1.2.62 (2022-08-23)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.2.62) — released
@@ -120,7 +125,7 @@
 * [#32](https://github.com/Tim55667757/TKSBrokerAPI/issues/32) Fixed a bug with some problems when trying to execute `--close-all orders`. Extra messages, and with them the formatting error, have been removed.
 
 
-## 1.0.1 (2020-05 - 2022-07) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
+## [1.0.1 (2020-05 - 2022-07)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_EN.md#101-2020-05---2022-07--deprecated-version-not-working-with-new-tinkoff-open-api-rest-protocol) — DEPRECATED version, not working with new Tinkoff Open API REST protocol
 
 ##### Retrospective
 

@@ -41,7 +41,6 @@ from time import sleep
 import re
 import json
 import requests
-from urllib.parse import quote
 from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
 
@@ -112,66 +111,68 @@ def FloatToNano(number: float) -> dict:
 
 def GetDatesAsString(start: str = None, end: str = None) -> tuple:
     """
-    If `start=None`, `end=None` then return dates from yesterday to current time.
-    If `start=some_date_1`, `end=None` then return dates from `some_date_1` to current time.
-    If `start=some_date_1`, `end=some_date_2` then return dates from `some_date_1` to `some_date_2`.
-    Start day may be negative integer numbers: `-1`, `-2`, `-3` - how many days ago.
-
-    Also, you can use keywords for start if `dateEnd=None`:
-    `today` (from 00:00:00 to current time),
-    `yesterday` (-1 day from 00:00:00 to 23:59:59),
-    `week` (-7 day from 00:00:00 to current date and time),
-    `month` (-30 day from 00:00:00 to current date and time),
-    `year` (-365 day from 00:00:00 to current date and time),
+    Create tuple of date and time strings with timezone parsed from user-friendly date.
 
     User dates format must be like: `%Y-%m-%d`, e.g. `2020-02-03` (3 Feb, 2020).
 
+    Example input: "2022-06-01" "2022-06-20" -> output: ("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")
+    An error exception will occur if input date has incorrect format.
+
+    If `start=None`, `end=None` then return dates from yesterday to the end of the day.
+    If `start=some_date_1`, `end=None` then return dates from `some_date_1` to the end of the day.
+    If `start=some_date_1`, `end=some_date_2` then return dates from start of `some_date_1` to end of `some_date_2`.
+    Start day may be negative integer numbers: `-1`, `-2`, `-3` - how many days ago.
+
+    Also, you can use keywords for start if `end=None`:
+    `today` (from 00:00:00 to the end of current day),
+    `yesterday` (-1 day from 00:00:00 to 23:59:59),
+    `week` (-7 day from 00:00:00 to the end of current day),
+    `month` (-30 day from 00:00:00 to the end of current day),
+    `year` (-365 day from 00:00:00 to the end of current day),
+
     :return: tuple with 2 strings `(start, end)` dates in UTC ISO time format `%Y-%m-%dT%H:%M:%SZ` for OpenAPI.
-             Example: `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`
+             See date and time format here: `TKSEnums.TKS_DATE_TIME_FORMAT`.
+             Example: `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`. Second string is the end of the last day.
     """
     uLogger.debug("Input start day is [{}] (UTC), end day is [{}] (UTC)".format(start, end))
-    now = datetime.now(tzutc())
+    s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
+    e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
 
-    # showing statistics between start of the current day and current time:
+    # time between start and the end of the current day:
     if start is None or start.lower() == "today":
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        e = now
+        pass
 
     # from start of the last day to the end of the last day:
     elif start.lower() == "yesterday":
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
-        e = now.replace(hour=23, minute=59, second=59, microsecond=0) - timedelta(days=1)
+        s -= timedelta(days=1)
+        e -= timedelta(days=1)
 
-    # week (-7 day from 00:00:00 to current date and time):
+    # week (-7 day from 00:00:00 to the end of the current day):
     elif start.lower() == "week":
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=7)
-        e = now
+        s -= timedelta(days=6)  # +1 current day already taken into account
 
-    # month (-30 day from 00:00:00 to current date and time):
+    # month (-30 day from 00:00:00 to the end of current day):
     elif start.lower() == "month":
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=30)
-        e = now
+        s -= timedelta(days=29)  # +1 current day already taken into account
 
-    # year (-365 day from 00:00:00 to current date and time):
+    # year (-365 day from 00:00:00 to the end of current day):
     elif start.lower() == "year":
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=365)
-        e = now
+        s -= timedelta(days=364)  # +1 current day already taken into account
 
-    # showing statistics from -N days ago to current date and time:
+    # -N days ago to the end of current day:
     elif start.startswith('-') and start[1:].isdigit():
-        s = now.replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=abs(int(start)))
-        e = now
+        s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
 
-    # showing statistics between start day at 00:00:00 and the end day at 23:59:59:
+    # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
     else:
         s = datetime.strptime(start, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
-        e = datetime.strptime(end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else now
+        e = datetime.strptime(end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
 
     # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
-    s = s.strftime("%Y-%m-%dT%H:%M:%SZ")
-    e = e.strftime("%Y-%m-%dT%H:%M:%SZ")
+    s = s.strftime(TKS_DATE_TIME_FORMAT)
+    e = e.strftime(TKS_DATE_TIME_FORMAT)
 
-    uLogger.debug("Tinkoff Open API uses this start day (converted to UTC ISO format, with Z): [{}], and the end day: [{}]".format(s, e))
+    uLogger.debug("Start day converted to UTC ISO format, with Z: [{}], and the end day: [{}]".format(s, e))
 
     return s, e
 
@@ -248,19 +249,20 @@ class TinkoffBrokerServer:
         uLogger.debug("Broker API server: {}".format(self.server))
 
         self.timeout = 15
-        """Server operations timeout in seconds. Default: 15"""
+        """Server operations timeout in seconds. Default: `15`"""
 
         self.headers = {"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {}".format(self.token)}
-        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {token}"}`"""
+        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`"""
 
         self.body = None
         """Request body which send to broker server. Default: `None`"""
 
-        self.historyLength = 24
-        """How many candles returns if candles history request. For example, if `historyInterval="hour"` and `historyLength=24` it means: "give me last 24 hours". Must be >=1. Default: 24"""
+        # remove after implemented: #45 Add selector of file types https://github.com/Tim55667757/TKSBrokerAPI/issues/45
+        # self.outputFileType = None
+        # """Switch of types for output files when `--output` key present. You can choose: `.md`, `.csv` and `.xlsx`. By default: `None`, it mean that default types will be used."""
 
-        self.historyInterval = "hour"
-        """Interval string for Tinkoff API (see: `TKSEnums.TKS_TIMEFRAMES`). Available values are `"1min"`, `"2min"`, `"3min"`, `"5min"`, `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`"""
+        self.historyFile = None
+        """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only pandas dataframe when you request `History()` method."""
 
         self.instrumentsFile = "instruments.md"
         """Filename where full broker's instruments list will be saved. Default: `instruments.md`"""
@@ -274,11 +276,20 @@ class TinkoffBrokerServer:
         self.overviewFile = "overview.md"
         """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
 
+        self.overviewDigestFile = "overview-digest.md"
+        """Filename where short digest of the portfolio status will be saved. Default: `overview-digest.md`"""
+
+        self.overviewPositionsFile = "overview-positions.md"
+        """Filename where only open positions, without everything else will be saved. Default: `overview-positions.md`"""
+
+        self.overviewOrdersFile = "overview-orders.md"
+        """Filename where open limits and stop orders will be saved. Default: `overview-orders.md`"""
+
+        self.overviewAnalyticsFile = "overview-analytics.md"
+        """Filename where only the analytics section and the distribution of the portfolio by various categories will be saved. Default: `overview-analytics.md`"""
+
         self.reportFile = "deals.md"
         """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
-
-        self.historyFile = None
-        """Full path to .csv output file where history candles will be saved. Default: `None`, mean that returns only pandas dataframe."""
 
         self.iListDumpFile = "dump.json"
         """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
@@ -309,7 +320,7 @@ class TinkoffBrokerServer:
                     self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
 
                     uLogger.debug("Local cache with raw instruments data is used: [{}]".format(os.path.abspath(self.iListDumpFile)))
-                    uLogger.debug("Dump file was modified [{}] UTC".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+                    uLogger.debug("Dump file was last modified [{}] UTC".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
 
             else:
                 uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
@@ -407,7 +418,7 @@ class TinkoffBrokerServer:
             responseJSON = self._ParseJSON(response.text)
 
             if errMsg:
-                uLogger.error("Not `oK` status received from broker server!")
+                uLogger.error("Not `oK` status received from broker server! See: https://tinkoff.github.io/investAPI/errors/")
                 uLogger.error("    - message: {}".format(errMsg))
                 # raise Exception("Server returned an error! See full debug log. Also you can set debug=True in SendAPIRequest() and _ParseJSON() methods.")
 
@@ -506,164 +517,166 @@ class TinkoffBrokerServer:
     @staticmethod
     def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
         """
-        Show information about instrument defined by json and print in Markdown format.
+        Show information about one instrument defined by json data and prints it in Markdown format.
 
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
         :param printInfo: if `True` then also printing information about instrument and its current price.
-        :return: text in Markdown format with information about instrument.
+        :return: multilines text in Markdown format with information about one instrument.
         """
+        splitLine = "|                                                         |                                                         |\n"
         infoText = ""
+
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
                 "# Information is actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
-                "| Parameters                                              | Values\n",
-                "|---------------------------------------------------------|---------------------------------------------------------\n",
-                "| Ticker:                                                 | {}\n".format(iJSON["ticker"]),
-                "| Full name:                                              | {}\n".format(iJSON["name"]),
+                "| Parameters                                              | Values                                                  |\n",
+                "|---------------------------------------------------------|---------------------------------------------------------|\n",
+                "| Ticker:                                                 | {:<55} |\n".format(iJSON["ticker"]),
+                "| Full name:                                              | {:<55} |\n".format(iJSON["name"]),
             ]
 
             if "sector" in iJSON.keys() and iJSON["sector"]:
-                info.append("| Sector:                                                 | {}\n".format(iJSON["sector"]))
+                info.append("| Sector:                                                 | {:<55} |\n".format(iJSON["sector"]))
 
-            info.append("| Country of instrument:                                  | {}{}\n".format(
+            info.append("| Country of instrument:                                  | {:<55} |\n".format("{}{}".format(
                 "({}) ".format(iJSON["countryOfRisk"]) if "countryOfRisk" in iJSON.keys() and iJSON["countryOfRisk"] else "",
                 iJSON["countryOfRiskName"] if "countryOfRiskName" in iJSON.keys() and iJSON["countryOfRiskName"] else "",
-            ))
+            )))
 
             info.extend([
-                "|                                                         |\n",
-                "| FIGI (Financial Instrument Global Identifier):          | {}\n".format(iJSON["figi"]),
-                "| Exchange:                                               | {}\n".format(iJSON["exchange"]),
+                splitLine,
+                "| FIGI (Financial Instrument Global Identifier):          | {:<55} |\n".format(iJSON["figi"]),
+                "| Exchange:                                               | {:<55} |\n".format(iJSON["exchange"]),
             ])
 
             if "isin" in iJSON.keys() and iJSON["isin"]:
-                info.append("| ISIN (International Securities Identification Number):  | {}\n".format(iJSON["isin"]))
+                info.append("| ISIN (International Securities Identification Number):  | {:<55} |\n".format(iJSON["isin"]))
 
             if "classCode" in iJSON.keys():
-                info.append("| Class Code:                                             | {}\n".format(iJSON["classCode"]))
+                info.append("| Class Code:                                             | {:<55} |\n".format(iJSON["classCode"]))
 
             info.extend([
-                "|                                                         |\n",
-                "| Current broker security trading status:                 | {}\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
-                "| Buy operations allowed:                                 | {}\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
-                "| Sale operations allowed:                                | {}\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
-                "| Short positions allowed:                                | {}\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
+                splitLine,
+                "| Current broker security trading status:                 | {:<55} |\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
+                "| Buy operations allowed:                                 | {:<55} |\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
+                "| Sale operations allowed:                                | {:<55} |\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
+                "| Short positions allowed:                                | {:<55} |\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
             ])
 
-            info.append("|                                                         |\n")
+            info.append(splitLine)
 
             if "type" in iJSON.keys() and iJSON["type"]:
-                info.append("| Type of the instrument:                                 | {}\n".format(iJSON["type"]))
+                info.append("| Type of the instrument:                                 | {:<55} |\n".format(iJSON["type"]))
 
             if "futuresType" in iJSON.keys() and iJSON["futuresType"]:
-                info.append("| Futures type:                                           | {}\n".format(iJSON["futuresType"]))
+                info.append("| Futures type:                                           | {:<55} |\n".format(iJSON["futuresType"]))
 
             if "ipoDate" in iJSON.keys() and iJSON["ipoDate"]:
-                info.append("| IPO date:                                               | {}\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
+                info.append("| IPO date:                                               | {:<55} |\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
 
             if "releasedDate" in iJSON.keys() and iJSON["releasedDate"]:
-                info.append("| Released date:                                          | {}\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Released date:                                          | {:<55} |\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
 
             if "rebalancingFreq" in iJSON.keys() and iJSON["rebalancingFreq"]:
-                info.append("| Rebalancing frequency:                                  | {}\n".format(iJSON["rebalancingFreq"]))
+                info.append("| Rebalancing frequency:                                  | {:<55} |\n".format(iJSON["rebalancingFreq"]))
 
             if "focusType" in iJSON.keys() and iJSON["focusType"]:
-                info.append("| Focusing type:                                          | {}\n".format(iJSON["focusType"]))
+                info.append("| Focusing type:                                          | {:<55} |\n".format(iJSON["focusType"]))
 
             if "assetType" in iJSON.keys() and iJSON["assetType"]:
-                info.append("| Asset type:                                             | {}\n".format(iJSON["assetType"]))
+                info.append("| Asset type:                                             | {:<55} |\n".format(iJSON["assetType"]))
 
             if "basicAsset" in iJSON.keys() and iJSON["basicAsset"]:
-                info.append("| Basic asset:                                            | {}\n".format(iJSON["basicAsset"]))
+                info.append("| Basic asset:                                            | {:<55} |\n".format(iJSON["basicAsset"]))
 
             if "basicAssetSize" in iJSON.keys() and iJSON["basicAssetSize"]:
-                info.append("| Basic asset size:                                       | {:.2f}\n".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"])))
+                info.append("| Basic asset size:                                       | {:<55} |\n".format("{:.2f}".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"]))))
 
             if "isoCurrencyName" in iJSON.keys() and iJSON["isoCurrencyName"]:
-                info.append("| ISO currency name:                                      | {}\n".format(iJSON["isoCurrencyName"]))
+                info.append("| ISO currency name:                                      | {:<55} |\n".format(iJSON["isoCurrencyName"]))
 
             if "currency" in iJSON.keys():
-                info.append("| Payment currency:                                       | {}\n".format(iJSON["currency"]))
+                info.append("| Payment currency:                                       | {:<55} |\n".format(iJSON["currency"]))
 
             if "firstTradeDate" in iJSON.keys() and iJSON["firstTradeDate"] != 0:
-                info.append("| First trade date:                                       | {}\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
+                info.append("| First trade date:                                       | {:<55} |\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
 
             if "lastTradeDate" in iJSON.keys() and iJSON["lastTradeDate"] != 0:
-                info.append("| Last trade date:                                        | {}\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Last trade date:                                        | {:<55} |\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
 
             if "expirationDate" in iJSON.keys() and iJSON["expirationDate"] != 0:
-                info.append("| Date of expiration:                                     | {}\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Date of expiration:                                     | {:<55} |\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
 
             if "stateRegDate" in iJSON.keys() and iJSON["stateRegDate"] != 0:
-                info.append("| State registration date:                                | {}\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
+                info.append("| State registration date:                                | {:<55} |\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
 
             if "placementDate" in iJSON.keys() and iJSON["placementDate"] != 0:
-                info.append("| Placement date:                                         | {}\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Placement date:                                         | {:<55} |\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
 
             if "maturityDate" in iJSON.keys() and iJSON["maturityDate"] != 0:
-                info.append("| Maturity date:                                          | {}\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Maturity date:                                          | {:<55} |\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
 
             if "perpetualFlag" in iJSON.keys() and iJSON["perpetualFlag"]:
-                info.append("| Perpetual bond:                                         | Yes\n")
+                info.append("| Perpetual bond:                                         | Yes                                                     |\n")
 
             if "otcFlag" in iJSON.keys() and iJSON["otcFlag"]:
-                info.append("| Over-the-counter (OTC) securities:                      | Yes\n")
+                info.append("| Over-the-counter (OTC) securities:                      | Yes                                                     |\n")
 
             if iJSON["type"] == "Bonds":
-                info.append("| Bond issue (size / plan):                               | {} / {}\n".format(iJSON["issueSize"], iJSON["issueSizePlan"]))
+                info.append("| Bond issue (size / plan):                               | {:<55} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])))
 
-                info.append("| Nominal price (100%):                                   | {:.2f} {}\n".format(
+                info.append("| Nominal price (100%):                                   | {:<55} |\n".format("{:.2f} {}".format(
                     NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
                     iJSON["nominal"]["currency"],
-                ))
+                )))
 
                 if "floatingCouponFlag" in iJSON.keys():
-                    info.append("| Floating coupon:                                        | {}\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
+                    info.append("| Floating coupon:                                        | {:<55} |\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
 
                 if "amortizationFlag" in iJSON.keys():
-                    info.append("| Amortization:                                           | {}\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
+                    info.append("| Amortization:                                           | {:<55} |\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
 
                 if "couponQuantityPerYear" in iJSON.keys() and iJSON["couponQuantityPerYear"]:
-                    info.append("| Number of coupon payments per year:                     | {}\n".format(iJSON["couponQuantityPerYear"]))
+                    info.append("| Number of coupon payments per year:                     | {:<55} |\n".format(iJSON["couponQuantityPerYear"]))
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current ACI (Accrued Interest):                         | {:.2f} {}\n".format(
+                    info.append("| Current ACI (Accrued Interest):                         | {:<55} |\n".format("{:.2f} {}".format(
                         NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
-                    ))
+                    )))
 
             if "currentPrice" in iJSON.keys():
-                info.append("|                                                         |\n")
+                info.append(splitLine)
 
                 info.extend([
-                    "| Previous close price of the instrument:                 | {}{}\n".format(
+                    "| Previous close price of the instrument:                 | {:<55} |\n".format("{}{}".format(
                         "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
                         "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Last deal price of the instrument:                      | {}{}\n".format(
+                    )),
+                    "| Last deal price of the instrument:                      | {:<55} |\n".format("{}{}".format(
                         "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
                         "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Changes between last deal price and last close  %       | {:.2f}%\n".format(iJSON["currentPrice"]["changes"]),
-                    "| Current limit price, min / max:                         | {}{} / {}{}\n".format(
+                    )),
+                    "| Changes between last deal price and last close  %       | {:<55} |\n".format("{:.2f}".format(iJSON["currentPrice"]["changes"])),
+                    "| Current limit price, min / max:                         | {:<55} |\n".format("{}{} / {}{}".format(
                         "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
-                    "| Actual price, sell / buy:                               | {}{} / {}{}\n".format(
+                    )),
+                    "| Actual price, sell / buy:                               | {:<55} |\n".format("{}{} / {}{}".format(
                         "{}".format(iJSON["currentPrice"]["sell"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["sell"] else "N/A",
                         "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
                         "{}".format(iJSON["currentPrice"]["buy"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["buy"] else "N/A",
                         "%" if iJSON["type"] == "Bonds" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                    ),
+                    )),
                 ])
 
             if "lot" in iJSON.keys():
-                info.append("| Minimum lot to buy:                                     | {}\n".format(iJSON["lot"]))
+                info.append("| Minimum lot to buy:                                     | {:<55} |\n".format(iJSON["lot"]))
 
             if "step" in iJSON.keys() and iJSON["step"] != 0:
-                info.append("| Minimum price increment (step):                         | {}\n".format(iJSON["step"]))
+                info.append("| Minimum price increment (step):                         | {:<55} |\n".format(iJSON["step"]))
 
             infoText += "".join(info)
 
@@ -877,10 +890,10 @@ class TinkoffBrokerServer:
                 prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
 
                 # max price of instrument at this time:
-                prices["limitUp"] = NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]) if "limitUp" in pricesResponse.keys() else None
+                prices["limitUp"] = round(NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]), 6) if "limitUp" in pricesResponse.keys() else None
 
                 # min price of instrument at this time:
-                prices["limitDown"] = NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]) if "limitDown" in pricesResponse.keys() else None
+                prices["limitDown"] = round(NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]), 6) if "limitDown" in pricesResponse.keys() else None
 
                 # last price of deal with instrument:
                 prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
@@ -955,15 +968,15 @@ class TinkoffBrokerServer:
 
         info = [
             "# All available instruments from Tinkoff Broker server for current user token\n\n",
-            "* **Actual on date:** [{}] (UTC)\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
         ]
 
         # add instruments count by type:
         for iType in self.iList.keys():
             info.append("* **{}:** [{}]\n".format(iType, len(self.iList[iType])))
 
-        headerLine = "| Ticker       | Full name                                                      | FIGI         | Cur | Lot    | Step\n"
-        splitLine = "|--------------|----------------------------------------------------------------|--------------|-----|--------|---------\n"
+        headerLine = "| Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |\n"
+        splitLine = "|--------------|-----------------------------------------------------------|--------------|-----|---------|------------|\n"
 
         # generating info tables with all instruments by type:
         for iType in self.iList.keys():
@@ -971,16 +984,16 @@ class TinkoffBrokerServer:
 
             for instrument in self.iList[iType].keys():
                 iName = self.iList[iType][instrument]["name"]  # instrument's name
-                if len(iName) > 63:
-                    iName = "{}...".format(iName[:60])  # right trim for a long string
+                if len(iName) > 57:
+                    iName = "{}...".format(iName[:54])  # right trim for a long string
     
-                info.append("| {:<12} | {:<63}| {:<13}| {:<4}| {:<7}| {}\n".format(
+                info.append("| {:<12} | {:<57} | {:<12} | {:<3} | {:<7} | {:<10} |\n".format(
                     self.iList[iType][instrument]["ticker"],
                     iName,
                     self.iList[iType][instrument]["figi"],
                     self.iList[iType][instrument]["currency"],
                     self.iList[iType][instrument]["lot"],
-                    str(self.iList[iType][instrument]["step"]).rstrip("0"),
+                    "{:.10f}".format(self.iList[iType][instrument]["step"]).rstrip("0").rstrip(".") if self.iList[iType][instrument]["step"] > 0 else 0,
                 ))
 
         infoText = "".join(info)
@@ -1089,55 +1102,54 @@ class TinkoffBrokerServer:
         if instruments is None or not instruments:
             raise Exception("You must define some of tickers or FIGIs to request it's actual prices!")
 
-        uLogger.debug("Requesting current prices of list of instruments from Tinkoff Broker server...")
-
-        iList = []
+        requestedInstruments = []
         for iName in instruments:
             if iName not in self.aliases.keys():
-                iList.append(iName)
+                if iName not in requestedInstruments:
+                    requestedInstruments.append(iName)
 
             else:
-                iList.append(self.aliases[iName])
+                if iName not in requestedInstruments:
+                    if self.aliases[iName] not in requestedInstruments:
+                        requestedInstruments.append(self.aliases[iName])
 
-        unique = set()  # create list with every figi only one time with the same order position:
-        tempNames = [item for item in iList if not (item in unique or unique.add(item))]
+        uLogger.debug("Requested instruments without duplicates of tickers and FIGIs: {}".format(requestedInstruments))
 
-        uLogger.debug("Ordered input list of instruments without duplicates of names: {}".format(tempNames))
-
-        iList = []  # try to get info about all unique instruments:
-        for iName in tempNames:
+        onlyUniqueFIGIs = []
+        for iName in requestedInstruments:
             self.ticker = iName
-            iData = self.SearchByTicker(requestPrice=True)
+            iData = self.SearchByTicker(requestPrice=False)  # trying to find instrument by ticker
 
             if not iData:
                 self.ticker = ""
                 self.figi = iName
 
-                iData = self.SearchByFIGI(requestPrice=True)
+                iData = self.SearchByFIGI(requestPrice=False)  # trying to find instrument by FIGI
 
                 if not iData:
                     self.figi = ""
                     uLogger.warning("Instrument [{}] not in list of available instruments for current token!".format(iName))
 
-            if iData:
-                isUnique = True
-                for item in iList:
-                    if item["figi"] == iData["figi"] or item["ticker"] == iData["ticker"]:
-                        isUnique = False
-                        break
+            if iData and iData["figi"] not in onlyUniqueFIGIs:
+                onlyUniqueFIGIs.append(iData["figi"])
 
-                if isUnique:
-                    iList.append(iData)
+        uLogger.debug("Unique list of FIGIs: {}".format(onlyUniqueFIGIs))
+        uLogger.debug("Requesting current prices from Tinkoff Broker server...")
+
+        iList = []  # trying to get info and current prices about all unique instruments:
+        for self.figi in onlyUniqueFIGIs:
+            iData = self.SearchByFIGI(requestPrice=True)
+            iList.append(iData)
 
         if showPrices:
             info = [
                 "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
-                "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr.\n",
-                "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|------\n",
+                "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
+                "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|-------|\n",
             ]
 
             for item in iList:
-                info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {}\n".format(
+                info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {:<5} |\n".format(
                     item["ticker"],
                     item["figi"],
                     item["type"],
@@ -1158,7 +1170,7 @@ class TinkoffBrokerServer:
             infoText = "".join(info)
 
             if showPrices:
-                uLogger.info("Only unique instruments are shown:\n{}".format(infoText))
+                uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
 
             if self.pricesFile:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
@@ -1215,7 +1227,7 @@ class TinkoffBrokerServer:
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
         rawOrders = self.SendAPIRequest(ordersURL, reqType="POST")["orders"]
 
-        uLogger.debug("[{}] records about pending orders successfully received".format(len(rawOrders)))
+        uLogger.debug("[{}] records about pending orders received".format(len(rawOrders)))
 
         return rawOrders
 
@@ -1232,16 +1244,23 @@ class TinkoffBrokerServer:
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
         rawStopOrders = self.SendAPIRequest(ordersURL, reqType="POST")["stopOrders"]
 
-        uLogger.debug("[{}] records about stop orders successfully received".format(len(rawStopOrders)))
+        uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
 
         return rawStopOrders
 
-    def Overview(self, showStatistics: bool = False) -> dict:
+    def Overview(self, showStatistics: bool = False, details: str = "full") -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for defined accountId.
-        If `overviewFile` is define then also save information to file.
+        If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
+        are defined then also save information to file.
 
         :param showStatistics: if `False` then only dictionary returns, if `True` then show more debug information.
+        :param details: how detailed should the information be? You should specify one of strings:
+                        `full` - shows full available information about portfolio status (by default),
+                        `positions` - shows only open positions,
+                        `digest` - show a short digest of the portfolio status,
+                        `analytics` - shows only the analytics section and the distribution of the portfolio by various categories,
+                        `orders` - shows only sections of open limits and stop orders.
         :return: dictionary with client's raw portfolio and some statistics.
         """
         view = {
@@ -1288,8 +1307,13 @@ class TinkoffBrokerServer:
             }
         }
 
-        if showStatistics:
-            uLogger.debug("Requesting portfolio of a client. Wait, please...")
+        details = details.lower()
+        availableDetails = ["full", "positions", "digest", "analytics", "orders"]
+        if details not in availableDetails:
+            details = "full"
+            uLogger.debug("Requested incorrect details! The `details` must be one of this strings: {}. Details parameter set to `full` be default.".format(availableDetails))
+
+        uLogger.debug("Requesting portfolio of a client. Wait, please...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
@@ -1504,7 +1528,14 @@ class TinkoffBrokerServer:
         }
 
         # --- pending orders sector data:
+        uniquePendingOrders = []
+        uniquePendingOrdersFIGIs = []
         for item in view["raw"]["orders"]:
+            if item["figi"] not in uniquePendingOrdersFIGIs:
+                uniquePendingOrdersFIGIs.append(item["figi"])
+                uniquePendingOrders.append(item)
+
+        for item in uniquePendingOrders:
             self.figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
 
@@ -1545,7 +1576,14 @@ class TinkoffBrokerServer:
                 })
 
         # --- stop orders sector data:
+        uniqueStopOrders = []
+        uniqueStopOrdersFIGIs = []
         for item in view["raw"]["stopOrders"]:
+            if item["figi"] not in uniqueStopOrdersFIGIs:
+                uniqueStopOrdersFIGIs.append(item["figi"])
+                uniqueStopOrders.append(item)
+
+        for item in uniqueStopOrders:
             self.figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
 
@@ -1657,275 +1695,307 @@ class TinkoffBrokerServer:
 
         # --- Prepare text statistics overview in human-readable:
         if showStatistics:
+            # Whatever the value `details`, header not changes:
             info = [
                 "# Client's portfolio\n\n",
-                "* **Actual date:** [{}] (UTC)\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
-                "* **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
-                    "+" if view["stat"]["totalChangesRUB"] > 0 else "",
-                    view["stat"]["totalChangesRUB"],
-                    "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
-                    view["stat"]["totalChangesPercentRUB"],
-                ),
-                "## Open positions\n\n",
-                "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)\n",
-                "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|----------------------\n",
-                "| Ruble                       | {:>31} |          |              |              |                     |\n".format(
-                    "{:.2f} ({:.2f}) rub".format(
-                        view["stat"]["availableRUB"],
-                        view["stat"]["blockedRUB"],
-                    )
-                )
+                "* **Actual date:** [{} UTC]\n"
+                "".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
             ]
 
-            def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
-                return [
-                    "|                             |                                 |          |              |              |                     |\n",
-                    "| {:<27} |                                 |          |              |              | {:>19} |\n".format(
-                        noTradeStr if noTradeStr else typeStr,
-                        "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
-                    ),
-                ]
-
-            def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
-                return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {}\n".format(
-                    "{} [{}]".format(data["ticker"], data["figi"]),
-                    "{:.2f} ({:.2f}) {}".format(
-                        data["volume"],
-                        data["blocked"],
-                        data["currency"],
-                    ) if showCurrencyName else "{:.0f} ({:.0f})".format(
-                        data["volume"],
-                        data["blocked"],
-                    ),
-                    "{:.4f}".format(data["lots"]) if showCurrencyName else "{:.0f}".format(data["lots"]),
-                    "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
-                    "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
-                    "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
-                    "{}{:.2f} {} ({}{:.2f}%)".format(
-                        "+" if data["profit"] > 0 else "",
-                        data["profit"], data["baseCurrencyName"],
-                        "+" if data["percentProfit"] > 0 else "",
-                        data["percentProfit"],
-                    ),
-                )
-
-            # --- Show currencies section:
-            if view["stat"]["Currencies"]:
-                info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
-                for item in view["stat"]["Currencies"]:
-                    info.append(_InfoStr(item, showCurrencyName=True))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
-
-            # --- Show shares section:
-            if view["stat"]["Shares"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
-
-                for item in view["stat"]["Shares"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
-
-            # --- Show bonds section:
-            if view["stat"]["Bonds"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="**Bonds:**"))
-
-                for item in view["stat"]["Bonds"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Bonds:** no trades"))
-
-            # --- Show etfs section:
-            if view["stat"]["Etfs"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="**Etfs:**"))
-
-                for item in view["stat"]["Etfs"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Etfs:** no trades"))
-
-            # --- Show futures section:
-            if view["stat"]["Futures"]:
-                info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="**Futures:**"))
-
-                for item in view["stat"]["Futures"]:
-                    info.append(_InfoStr(item))
-
-            else:
-                info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
-
-            # --- Show pending orders section:
-            if view["stat"]["orders"]:
+            if details in ["full", "positions", "digest"]:
                 info.extend([
-                    "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
-                    "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)\n",
-                    "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|---------------------\n",
-                ])
-                for item in view["stat"]["orders"]:
-                    info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {}\n".format(
-                        "{} [{}]".format(item["ticker"], item["figi"]),
-                        item["orderID"],
-                        "{} ({})".format(item["lotsRequested"], item["lotsExecuted"]),
-                        "{} {} ({}{:.2f}%)".format(
-                            "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
-                            item["baseCurrencyName"],
-                            "+" if item["percentChanges"] > 0 else "",
-                            float(item["percentChanges"]),
-                        ),
-                        "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                        item["action"],
-                        item["type"],
-                        item["date"],
-                    ))
-
-            else:
-                info.append("\n## Total pending limit-orders: 0\n")
-
-            # --- Show stop orders section:
-            if view["stat"]["stopOrders"]:
-                info.extend([
-                    "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
-                    "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)\n",
-                    "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------\n",
-                ])
-                for item in view["stat"]["stopOrders"]:
-                    info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {}\n".format(
-                        "{} [{}]".format(item["ticker"], item["figi"]),
-                        item["orderID"],
-                        item["lotsRequested"],
-                        "{} {} ({}{:.2f}%)".format(
-                            "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
-                            item["baseCurrencyName"],
-                            "+" if item["percentChanges"] > 0 else "",
-                            float(item["percentChanges"]),
-                        ),
-                        "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                        "{:.2f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
-                        item["action"],
-                        item["type"],
-                        item["expType"],
-                        item["createDate"],
-                        item["expDate"],
-                    ))
-
-            else:
-                info.append("\n## Total stop-orders: 0\n")
-
-            # -- Show analytics section:
-            if view["stat"]["portfolioCostRUB"] > 0:
-                info.extend([
-                    "\n# Analytics\n"
-                    "\n* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                    "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
+                    "* **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                    "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
                         "+" if view["stat"]["totalChangesRUB"] > 0 else "",
                         view["stat"]["totalChangesRUB"],
                         "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
                         view["stat"]["totalChangesPercentRUB"],
                     ),
-                    "\n## Portfolio distribution by assets\n"
-                    "\n| Type       | Uniques | Percent | Current cost\n",
-                    "|------------|---------|---------|-----------------\n",
                 ])
 
-                for key in view["analytics"]["distrByAssets"].keys():
-                    if view["analytics"]["distrByAssets"][key]["cost"] > 0:
-                        info.append("| {:<10} | {:<7} | {:<7} | {:.2f} rub\n".format(
-                            key,
-                            view["analytics"]["distrByAssets"][key]["uniques"],
-                            "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
-                            view["analytics"]["distrByAssets"][key]["cost"],
-                        ))
-
-                maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
+            if details in ["full", "positions"]:
                 info.extend([
-                    "\n## Portfolio distribution by companies\n"
-                    "\n| Company{} | Percent | Current cost\n".format(" " * (maxLenNames - 7)),
-                    "|--------{}-|---------|-----------------\n".format("-" * (maxLenNames - 7)),
+                    "## Open positions\n\n",
+                    "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)                   |\n",
+                    "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|------------------------------|\n",
+                    "| Ruble                       | {:>31} |          |              |              |                     |                              |\n".format(
+                        "{:.2f} ({:.2f}) rub".format(
+                            view["stat"]["availableRUB"],
+                            view["stat"]["blockedRUB"],
+                        )
+                    )
                 ])
 
-                for company in view["analytics"]["distrByCompanies"].keys():
-                    if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
-                        nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "{}{}{}".format(
-                                "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
-                                company,
-                                "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
+                def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
+                    return [
+                        "|                             |                                 |          |              |              |                     |                              |\n",
+                        "| {:<27} |                                 |          |              |              | {:>19} |                              |\n".format(
+                            noTradeStr if noTradeStr else typeStr,
+                            "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
+                        ),
+                    ]
+
+                def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
+                    return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {:<28} |\n".format(
+                        "{} [{}]".format(data["ticker"], data["figi"]),
+                        "{:.2f} ({:.2f}) {}".format(
+                            data["volume"],
+                            data["blocked"],
+                            data["currency"],
+                        ) if showCurrencyName else "{:.0f} ({:.0f})".format(
+                            data["volume"],
+                            data["blocked"],
+                        ),
+                        "{:.4f}".format(data["lots"]) if showCurrencyName else "{:.0f}".format(data["lots"]),
+                        "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
+                        "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
+                        "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
+                        "{}{:.2f} {} ({}{:.2f}%)".format(
+                            "+" if data["profit"] > 0 else "",
+                            data["profit"], data["baseCurrencyName"],
+                            "+" if data["percentProfit"] > 0 else "",
+                            data["percentProfit"],
+                        ),
+                    )
+
+                # --- Show currencies section:
+                if view["stat"]["Currencies"]:
+                    info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
+                    for item in view["stat"]["Currencies"]:
+                        info.append(_InfoStr(item, showCurrencyName=True))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
+
+                # --- Show shares section:
+                if view["stat"]["Shares"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
+
+                    for item in view["stat"]["Shares"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
+
+                # --- Show bonds section:
+                if view["stat"]["Bonds"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="**Bonds:**"))
+
+                    for item in view["stat"]["Bonds"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Bonds:** no trades"))
+
+                # --- Show etfs section:
+                if view["stat"]["Etfs"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="**Etfs:**"))
+
+                    for item in view["stat"]["Etfs"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Etfs:** no trades"))
+
+                # --- Show futures section:
+                if view["stat"]["Futures"]:
+                    info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="**Futures:**"))
+
+                    for item in view["stat"]["Futures"]:
+                        info.append(_InfoStr(item))
+
+                else:
+                    info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
+
+            if details in ["full", "orders"]:
+                # --- Show pending orders section:
+                if view["stat"]["orders"]:
+                    info.extend([
+                        "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
+                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)       |\n",
+                        "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|-------------------------|\n",
+                    ])
+
+                    for item in view["stat"]["orders"]:
+                        info.append("| {:<27} | {:<14} | {:<12} | {:>23} | {:>13} | {:<9} | {:<9} | {:<23} |\n".format(
+                            "{} [{}]".format(item["ticker"], item["figi"]),
+                            item["orderID"],
+                            "{} ({})".format(item["lotsRequested"], item["lotsExecuted"]),
+                            "{} {} ({}{:.2f}%)".format(
+                                "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
+                                item["baseCurrencyName"],
+                                "+" if item["percentChanges"] > 0 else "",
+                                float(item["percentChanges"]),
                             ),
-                            "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
-                            view["analytics"]["distrByCompanies"][company]["cost"],
+                            "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                            item["action"],
+                            item["type"],
+                            item["date"],
                         ))
 
-                maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
-                info.extend([
-                    "\n## Portfolio distribution by sectors\n"
-                    "\n| Sector{} | Percent | Current cost\n".format(" " * (maxLenSectors - 6)),
-                    "|-------{}-|---------|-----------------\n".format("-" * (maxLenSectors - 6)),
-                ])
+                else:
+                    info.append("\n## Total pending limit-orders: 0\n")
 
-                for sector in view["analytics"]["distrBySectors"].keys():
-                    if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
-                        info.append("| {}{} | {:<7} | {:.2f} rub\n".format(
-                            sector,
-                            "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
-                            "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
-                            view["analytics"]["distrBySectors"][sector]["cost"],
-                        ))
+                # --- Show stop orders section:
+                if view["stat"]["stopOrders"]:
+                    info.extend([
+                        "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
+                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
+                        "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------|\n",
+                    ])
 
-                maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
-                info.extend([
-                    "\n## Portfolio distribution by currencies\n"
-                    "\n| Instruments currencies{} | Percent | Current cost\n".format(" " * (maxLenMoney - 22)),
-                    "|-----------------------{}-|---------|-----------------\n".format("-" * (maxLenMoney - 22)),
-                ])
-
-                for curr in view["analytics"]["distrByCurrencies"].keys():
-                    if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
-                        nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "[{}] {}{}".format(
-                                curr,
-                                view["analytics"]["distrByCurrencies"][curr]["name"],
-                                "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
+                    for item in view["stat"]["stopOrders"]:
+                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
+                            "{} [{}]".format(item["ticker"], item["figi"]),
+                            item["orderID"],
+                            item["lotsRequested"],
+                            "{} {} ({}{:.2f}%)".format(
+                                "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
+                                item["baseCurrencyName"],
+                                "+" if item["percentChanges"] > 0 else "",
+                                float(item["percentChanges"]),
                             ),
-                            "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
-                            view["analytics"]["distrByCurrencies"][curr]["cost"],
+                            "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                            "{:.2f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
+                            item["action"],
+                            item["type"],
+                            item["expType"],
+                            item["createDate"],
+                            item["expDate"],
                         ))
 
-                maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
-                info.extend([
-                    "\n## Portfolio distribution by countries\n"
-                    "\n| Assets by country{} | Percent | Current cost\n".format(" " * (maxLenCountry - 17)),
-                    "|------------------{}-|---------|-----------------\n".format("-" * (maxLenCountry - 17)),
-                ])
+                else:
+                    info.append("\n## Total stop-orders: 0\n")
 
-                for country in view["analytics"]["distrByCountries"].keys():
-                    if view["analytics"]["distrByCountries"][country]["cost"] > 0:
-                        nameLen = len(country)
-                        info.append("| {} | {:<7} | {:.2f} rub\n".format(
-                            "{}{}".format(
-                                country,
-                                "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
-                            ),
-                            "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
-                            view["analytics"]["distrByCountries"][country]["cost"],
-                        ))
+            if details in ["full", "analytics"]:
+                # -- Show analytics section:
+                if view["stat"]["portfolioCostRUB"] > 0:
+                    info.extend([
+                        "\n# Analytics\n"
+                        "\n* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                        "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
+                            "+" if view["stat"]["totalChangesRUB"] > 0 else "",
+                            view["stat"]["totalChangesRUB"],
+                            "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
+                            view["stat"]["totalChangesPercentRUB"],
+                        ),
+                        "\n## Portfolio distribution by assets\n"
+                        "\n| Type       | Uniques | Percent | Current cost       |\n",
+                        "|------------|---------|---------|--------------------|\n",
+                    ])
+
+                    for key in view["analytics"]["distrByAssets"].keys():
+                        if view["analytics"]["distrByAssets"][key]["cost"] > 0:
+                            info.append("| {:<10} | {:<7} | {:<7} | {:<18} |\n".format(
+                                key,
+                                view["analytics"]["distrByAssets"][key]["uniques"],
+                                "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
+                                "{:.2f} rub".format(view["analytics"]["distrByAssets"][key]["cost"]),
+                            ))
+
+                    maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by companies\n"
+                        "\n| Company{} | Percent | Current cost       |\n".format(" " * (maxLenNames - 7)),
+                        "|--------{}-|---------|--------------------|\n".format("-" * (maxLenNames - 7)),
+                    ])
+
+                    for company in view["analytics"]["distrByCompanies"].keys():
+                        if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
+                            nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
+                                "{}{}{}".format(
+                                    "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
+                                    company,
+                                    "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
+                                "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
+                            ))
+
+                    maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by sectors\n"
+                        "\n| Sector{} | Percent | Current cost       |\n".format(" " * (maxLenSectors - 6)),
+                        "|-------{}-|---------|--------------------|\n".format("-" * (maxLenSectors - 6)),
+                    ])
+
+                    for sector in view["analytics"]["distrBySectors"].keys():
+                        if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
+                            info.append("| {}{} | {:<7} | {:<18} |\n".format(
+                                sector,
+                                "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
+                                "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
+                                "{:.2f} rub".format(view["analytics"]["distrBySectors"][sector]["cost"]),
+                            ))
+
+                    maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
+                    info.extend([
+                        "\n## Portfolio distribution by currencies\n"
+                        "\n| Instruments currencies{} | Percent | Current cost       |\n".format(" " * (maxLenMoney - 22)),
+                        "|-----------------------{}-|---------|--------------------|\n".format("-" * (maxLenMoney - 22)),
+                    ])
+
+                    for curr in view["analytics"]["distrByCurrencies"].keys():
+                        if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
+                            nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
+                                "[{}] {}{}".format(
+                                    curr,
+                                    view["analytics"]["distrByCurrencies"][curr]["name"],
+                                    "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
+                                "{:.2f} rub".format(view["analytics"]["distrByCurrencies"][curr]["cost"]),
+                            ))
+
+                    maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
+                    info.extend([
+                        "\n## Portfolio distribution by countries\n"
+                        "\n| Assets by country{} | Percent | Current cost       |\n".format(" " * (maxLenCountry - 17)),
+                        "|------------------{}-|---------|--------------------|\n".format("-" * (maxLenCountry - 17)),
+                    ])
+
+                    for country in view["analytics"]["distrByCountries"].keys():
+                        if view["analytics"]["distrByCountries"][country]["cost"] > 0:
+                            nameLen = len(country)
+                            info.append("| {} | {:<7} | {:<18} |\n".format(
+                                "{}{}".format(
+                                    country,
+                                    "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
+                                ),
+                                "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
+                                "{:.2f} rub".format(view["analytics"]["distrByCountries"][country]["cost"]),
+                            ))
 
             infoText = "".join(info)
 
             if showStatistics:
-                uLogger.info("Statistics of client's portfolio:\n{}".format(infoText))
+                uLogger.info(infoText)
 
-            if self.overviewFile:
-                with open(self.overviewFile, "w", encoding="UTF-8") as fH:
+            if details == "full" and self.overviewFile:
+                filename = self.overviewFile
+
+            elif details == "digest" and self.overviewDigestFile:
+                filename = self.overviewDigestFile
+
+            elif details == "positions" and self.overviewPositionsFile:
+                filename = self.overviewPositionsFile
+
+            elif details == "orders" and self.overviewOrdersFile:
+                filename = self.overviewOrdersFile
+
+            elif details == "analytics" and self.overviewAnalyticsFile:
+                filename = self.overviewAnalyticsFile
+
+            else:
+                filename = ""
+
+            if filename:
+                with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's portfolio is saved to file: [{}]".format(os.path.abspath(self.overviewFile)))
+                uLogger.info("Client's portfolio is saved to file: [{}]".format(os.path.abspath(filename)))
 
         return view
 
@@ -1937,7 +2007,7 @@ class TinkoffBrokerServer:
 
         :param start: see docstring in `GetDatesAsString()` method
         :param end: see docstring in `GetDatesAsString()` method
-        :param printDeals: if `True` then also print all records to the console.
+        :param printDeals: if `True` then also prints all records to the console.
         :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
@@ -1955,8 +2025,8 @@ class TinkoffBrokerServer:
 
         # --- output report in human-readable format:
         if printDeals or self.reportFile:
-            splitLine1 = "|                            |                               |                              |                      |\n"  # Summary section
-            splitLine2 = "|                     |              |              |            |           |                 |            |\n"  # Operations section
+            splitLine1 = "|                            |                               |                              |                      |                        |\n"  # Summary section
+            splitLine2 = "|                     |              |              |            |           |                 |            |                                                                    |\n"  # Operations section
             nextDay = ""
 
             info = ["# Client's operations\n\n* **Period:** from [{}] to [{}]\n\n## Summary (operations executed only)\n\n".format(startDate.split("T")[0], endDate.split("T")[0])]
@@ -2074,14 +2144,14 @@ class TinkoffBrokerServer:
 
                 # --- view "Actions" lines:
                 info.extend([
-                    "| 1                          | 2                             | 3                            | 4                    | 5\n",
-                    "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------\n",
-                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |\n".format(customStat["opsCount"]),
-                    "|                            |   Buy: {:<22} | {:<28} |                      |\n".format(
+                    "| 1                          | 2                             | 3                            | 4                    | 5                      |\n",
+                    "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|\n",
+                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |                        |\n".format(customStat["opsCount"]),
+                    "|                            |   Buy: {:<22} | {:<28} |                      |                        |\n".format(
                         "{} ({:.1f}%)".format(customStat["buyCount"], 100 * customStat["buyCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, buy: {:<16}".format("{:.2f}".format(customStat["buyTotal"]["rub"])) if customStat["buyTotal"]["rub"] != 0 else "  —",
                     ),
-                    "|                            |   Sell: {:<21} | {:<28} |                      |\n".format(
+                    "|                            |   Sell: {:<21} | {:<28} |                      |                        |\n".format(
                         "{} ({:.1f}%)".format(customStat["sellCount"], 100 * customStat["sellCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, sell: {:<13}".format("+{:.2f}".format(customStat["sellTotal"]["rub"])) if customStat["sellTotal"]["rub"] != 0 else "  —",
                     ),
@@ -2093,10 +2163,10 @@ class TinkoffBrokerServer:
                         continue
 
                     info.extend([
-                        "|                            |                               | {:<28} |                      |\n".format(
+                        "|                            |                               | {:<28} |                      |                        |\n".format(
                             "  {}, buy: {:<16}".format(key, "{:.2f}".format(customStat["buyTotal"][key]) if key and key in customStat["buyTotal"].keys() and customStat["buyTotal"][key] != 0 else 0)
                         ),
-                        "|                            |                               | {:<28} |                      |\n".format(
+                        "|                            |                               | {:<28} |                      |                        |\n".format(
                             "  {}, sell: {:<13}".format(key, "+{:.2f}".format(customStat["sellTotal"][key]) if key and key in customStat["sellTotal"].keys() and customStat["sellTotal"][key] != 0 else 0)
                         ),
                     ])
@@ -2104,7 +2174,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 def _InfoStr(data1: dict, data2: dict, data3: dict, data4: dict, cur: str = "") -> str:
-                    return "|                            | {:<29} | {:<28} | {:<20} | {:<22}\n".format(
+                    return "|                            | {:<29} | {:<28} | {:<20} | {:<22} |\n".format(
                             "  {}: {}{:.2f}".format(cur, "+" if data1[cur] > 0 else "", data1[cur]) if cur and cur in data1.keys() and data1[cur] != 0 else "  —",
                             "  {}: {}{:.2f}".format(cur, "+" if data2[cur] > 0 else "", data2[cur]) if cur and cur in data2.keys() and data2[cur] != 0 else "  —",
                             "  {}: {}{:.2f}".format(cur, "+" if data3[cur] > 0 else "", data3[cur]) if cur and cur in data3.keys() and data3[cur] != 0 else "  —",
@@ -2112,7 +2182,7 @@ class TinkoffBrokerServer:
                     )
 
                 # --- view "Payments" lines:
-                info.append("| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:\n")
+                info.append("| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |\n")
                 paymentsKeys = sorted(list(set(list(customStat["payIn"].keys()) + list(customStat["payOut"].keys()) + list(customStat["divs"].keys()) + list(customStat["coupons"].keys()))))
 
                 for key in paymentsKeys:
@@ -2121,7 +2191,7 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 # --- view "Commissions and taxes" lines:
-                info.append("| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections:\n")
+                info.append("| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |\n")
                 comKeys = sorted(list(set(list(customStat["brokerCom"].keys()) + list(customStat["serviceCom"].keys()) + list(customStat["marginCom"].keys()) + list(customStat["allTaxes"].keys()))))
 
                 for key in comKeys:
@@ -2131,8 +2201,8 @@ class TinkoffBrokerServer:
 
                 info.extend([
                     "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
-                    "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type\n",
-                    "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------\n",
+                    "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type                                                     |\n",
+                    "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------|\n",
                 ])
 
             else:
@@ -2156,7 +2226,7 @@ class TinkoffBrokerServer:
                     else:
                         nextDay = item["date"].split("T")[0]  # saving current day for splitting
 
-                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {}\n".format(
+                    info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {:<66} |\n".format(
                         item["date"].replace("T", " ").replace("Z", "").split(".")[0],
                         self.figi if self.figi else "—",
                         instrument["ticker"] if instrument else "—",
@@ -2180,167 +2250,183 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
-    def History(self, onlyMissing: bool = False):
+    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False,
+                csvSep: str = ",", printCandles: bool = False,
+                ) -> pd.DataFrame:
         """
-        This method returns last history candles of the current instrument defined by `ticker`.
-        If `historyFile` is not None then method save history to this file, otherwise return only pandas dataframe.
-        `historyLength` define how many candles returns from past to current date.
-        `historyInterval` define candle interval. Available values are strings: `"1min"`, `"2min"`, `"3min"`, `"5min"`,
-        `"10min"`, `"15min"`, `"30min"`, `"hour"`, `"day"`, `"week"`, `"month"`. Default: `"hour"`.
-        Maximum requested history date in the past: `1970.01.02 03:45`
+        This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
 
-        :param onlyMissing: if history file define then add only last missing candles, do not request all history length. False by default.
-                            WARNING! History appends only from last candle to current time with replace last candle! Intervals must be similar!
-        :return: pandas dataframe with prices history. Columns: `date`, `time`, `open`, `high`, `low`, `close`, `volume`.
+        History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`.
+        Warning! Broker server used ISO UTC time by default.
+
+        If `historyFile` is not `None` then method save history to file, otherwise return only pandas dataframe.
+        Also, `historyFile` used to update history with `onlyMissing` parameter.
+
+        :param start: see docstring in `GetDatesAsString()` method.
+        :param end: see docstring in `GetDatesAsString()` method.
+        :param interval: this is a candle interval. Current available values are `"1min"`, `"5min"`, `"15min"`,
+                         `"hour"`, `"day"`. Default: `"hour"`.
+        :param onlyMissing: if `True` then add only last missing candles, do not request all history length from `start`.
+                            False by default. Warning! History appends only from last candle to current time
+                            with always update last candle!
+        :param csvSep: separator if .csv-file is used, `,` by default.
+        :param printCandles: if `True` then also prints pandas dataframe to the console.
+        :return: pandas dataframe with prices history. Headers of columns are defined by default:
+                 `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
+        strStartDate, strEndDate = GetDatesAsString(start, end)  # example: ("2020-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
+        headers = ["date", "time", "open", "high", "low", "close", "volume"]  # sequence and names of column headers
         history = None  # empty pandas object for history
-        # TODO: update history to work with api v2
-        # if self.historyLength < 1:
-        #     raise Exception("History length parameter must be >=1!")
-        #
-        # if self.historyInterval not in TKS_TIMEFRAMES.keys():
-        #     raise Exception("Interval parameter must be string with available values: 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month.")
-        #
-        # if not (self.ticker or self.figi):
-        #     raise Exception("self.ticker or self.figi variables must be defined!")
-        #
-        # if self.ticker and not self.figi:
-        #     instrumentByTicker = self.SearchByTicker(requestPrice=False, debug=False)
-        #     self.figi = instrumentByTicker["figi"] if instrumentByTicker else ""
-        #
-        # endDate = datetime.now(tzutc())  # current time for request history
-        # tempOld = None  # pandas object for old history, if --only-missing key present
-        # lastTime = None  # datetime object of last old candle in file
-        # minStartDate = datetime.strptime("1970.01.02 03:45", "%Y.%m.%d %H:%M").astimezone(tzutc())  # Maximum requested history date in the past
-        #
-        # # get old history saved earlier in file:
-        # if onlyMissing and self.historyFile and os.path.exists(self.historyFile):
-        #     uLogger.debug("--only-missing key present, so auto decreasing --length value...")
-        #     uLogger.debug("Only append missing last history candles at the end of the file [{}]".format(os.path.abspath(self.historyFile)))
-        #
-        #     tempOld = pd.read_csv(self.historyFile, sep=",", header=None, names=["date", "time", "open", "high", "low", "close", "volume"])
-        #
-        #     tempOld["date"] = pd.to_datetime(tempOld["date"])  # load date "as is"
-        #     tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
-        #     tempOld["time"] = pd.to_datetime(tempOld["time"])  # load time "as is"
-        #     tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
-        #
-        #     # get last datetime object from last string in file or minus 1 delta if file is empty:
-        #     if len(tempOld) > 0:
-        #         lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").astimezone(tzutc())
-        #
-        #     else:
-        #         lastTime = endDate - timedelta(minutes=TKS_TIMEFRAMES[self.historyInterval]["minutes"])
-        #         uLogger.warning("No history in file, set last date to request at [{}]".format(lastTime))
-        #
-        #     delta = endDate - lastTime  # current time minus last time in file
-        #     deltaMinutes = delta.days * 1440 + delta.seconds // 60  # minutes between last datetime and current datetime
-        #
-        #     # calculate new (decreased) history length to download:
-        #     self.historyLength = deltaMinutes // TKS_TIMEFRAMES[self.historyInterval]["minutes"]
-        #     if deltaMinutes % TKS_TIMEFRAMES[self.historyInterval]["minutes"] > 0:
-        #         self.historyLength += 1  # to avoid fraction time
-        #
-        #     tempOld = tempOld[:-1]  # always remove last old candle because it may be incompletely at the current time
-        #
-        # if self.figi:
-        #     blocks = 1 if self.historyLength <= TKS_TIMEFRAMES[self.historyInterval]["maxCandles"] else 1 + self.historyLength // TKS_TIMEFRAMES[self.historyInterval]["maxCandles"]
-        #     responseJSONs = []  # raw history blocks
-        #
-        #     uLogger.debug("Request last history from Tinkoff Broker server for ticker [{}], FIGI [{}]...".format(self.ticker, self.figi))
-        #
-        #     uLogger.debug("Requested history length: [{}], interval: [{}]".format(self.historyLength, self.historyInterval))
-        #     uLogger.debug("User requested time period is about from [{}] to [{}]".format(
-        #         (endDate - timedelta(minutes=TKS_TIMEFRAMES[self.historyInterval]["minutes"] * self.historyLength)).strftime("%Y-%m-%d %H:%M:%S"),
-        #         endDate.strftime("%Y-%m-%d %H:%M:%S"),
-        #     ))
-        #
-        #     uLogger.debug("Blocks count: [{}], max candles in block for this interval: [{}]".format(blocks, TKS_TIMEFRAMES[self.historyInterval]["maxCandles"]))
-        #
-        #     oldFlag = False
-        #     for item in range(blocks):
-        #         tail = self.historyLength % TKS_TIMEFRAMES[self.historyInterval]["maxCandles"] if item + 1 == blocks else TKS_TIMEFRAMES[self.historyInterval]["maxCandles"]
-        #         startDate = endDate - timedelta(minutes=TKS_TIMEFRAMES[self.historyInterval]["minutes"] * tail)
-        #
-        #         if startDate < minStartDate:
-        #             startDate = minStartDate  # set minimum date in the past if delta is too long
-        #             uLogger.debug("Date in the past is too old for request. Set start time to [{}]".format(minStartDate.strftime("%Y-%m-%d %H:%M:%S")))
-        #             oldFlag = True
-        #
-        #         uLogger.debug("Block time period: from [{}] to [{}] ({}/{})".format(
-        #             startDate.strftime("%Y-%m-%d %H:%M:%S"),
-        #             endDate.strftime("%Y-%m-%d %H:%M:%S"),
-        #             item + 1,
-        #             blocks,
-        #         ))
-        #
-        #         historyURL = self.server + r"/market/candles?figi={}&from={}&to={}&interval={}".format(
-        #             self.figi,
-        #             quote(startDate.isoformat()),
-        #             quote(endDate.isoformat()),
-        #             self.historyInterval,
-        #         )
-        #         responseJSON = self.SendAPIRequest(historyURL, debug=False)["payload"]["candles"]
-        #
-        #         responseJSONs = responseJSON + responseJSONs  # add more old history behind newest dates
-        #         endDate = startDate
-        #
-        #         if oldFlag: break
-        #
-        #     if responseJSONs:
-        #         tempHistory = pd.DataFrame(
-        #             data={
-        #                 "date": [pd.to_datetime(item["time"]).astimezone(tzutc()) for item in responseJSONs],
-        #                 "time": [pd.to_datetime(item["time"]).astimezone(tzutc()) for item in responseJSONs],
-        #                 "open": [item["o"] for item in responseJSONs],
-        #                 "high": [item["h"] for item in responseJSONs],
-        #                 "low": [item["l"] for item in responseJSONs],
-        #                 "close": [item["c"] for item in responseJSONs],
-        #                 "volume": [item["v"] for item in responseJSONs],
-        #             },
-        #             index=range(len(responseJSONs)),
-        #             columns=["date", "time", "open", "high", "low", "close", "volume"],
-        #         )
-        #         tempHistory["date"] = tempHistory["date"].dt.strftime("%Y.%m.%d")
-        #         tempHistory["time"] = tempHistory["time"].dt.strftime("%H:%M")
-        #
-        #         # append only newest candles to old history if --only-missing key present:
-        #         if onlyMissing and tempOld is not None and lastTime is not None:
-        #             indx = 0  # find start index in given from server tempHistory data:
-        #             for i, item in tempHistory.iterrows():
-        #                 curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").astimezone(tzutc())
-        #                 if curTime == lastTime:
-        #                     uLogger.debug("History candles will be updated starting from the candle with date: [{}]".format(curTime.strftime("%Y-%m-%d %H:%M:%S")))
-        #                     indx = i
-        #                     break
-        #
-        #             history = tempOld.append(tempHistory[indx:], ignore_index=True)
-        #
-        #         else:
-        #             history = tempHistory  # if no --only-missing key then load full data from server
-        #
-        #         uLogger.debug("Showing last 3 rows of candles history:")
-        #         for line in pd.DataFrame.to_string(
-        #                 history[["date", "time", "open", "high", "low", "close", "volume"]][-3:],
-        #                 max_cols=20,
-        #         ).split("\n"):
-        #             uLogger.debug(line)
-        #
-        #     if self.historyFile is not None:
-        #         if history is not None:
-        #             history.to_csv(self.historyFile, sep=",", index=False, header=False)
-        #             uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(
-        #                 self.ticker,
-        #                 self.figi,
-        #                 self.historyInterval,
-        #                 os.path.abspath(self.historyFile),
-        #             ))
-        #
-        #         else:
-        #             uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
-        #
-        #     else:
-        #         uLogger.debug("--output key is not defined. Parsed history file not saved to .csv-file, only pandas dataframe returns.")
+
+        if interval not in TKS_CANDLE_INTERVALS.keys():
+            raise Exception("Interval parameter must be string with current available values: `1min`, `5min`, `15min`, `hour` and `day`.")
+
+        if not (self.ticker or self.figi):
+            raise Exception("Ticker or FIGI must be defined!")
+
+        if self.ticker and not self.figi:
+            instrumentByTicker = self.SearchByTicker(requestPrice=False, debug=False)
+            self.figi = instrumentByTicker["figi"] if instrumentByTicker else ""
+
+        if self.figi and not self.ticker:
+            instrumentByFIGI = self.SearchByFIGI(requestPrice=False, debug=False)
+            self.ticker = instrumentByFIGI["ticker"] if instrumentByFIGI else ""
+
+        dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
+        dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
+        if interval.lower() != "day":
+            dtEnd += timedelta(seconds=1)  # adds 1 sec for requests, because day end returned by `GetDatesAsString()` as 23:59:59
+
+        delta = dtEnd - dtStart  # current UTC time minus last time in file
+        deltaMinutes = delta.days * 1440 + delta.seconds // 60  # minutes between start and end dates
+
+        # calculate history length in candles:
+        length = deltaMinutes // TKS_CANDLE_INTERVALS[interval][1]
+        if deltaMinutes % TKS_CANDLE_INTERVALS[interval][1] > 0:
+            length += 1  # to avoid fraction time
+
+        # calculate data blocks count:
+        blocks = 1 if length < TKS_CANDLE_INTERVALS[interval][2] else 1 + length // TKS_CANDLE_INTERVALS[interval][2]
+
+        uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
+        uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
+        uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
+        uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
+        uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self.ticker, self.figi))
+
+        tempOld = None  # pandas object for old history, if --only-missing key present
+        lastTime = None  # datetime object of last old candle in file
+
+        if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
+            uLogger.debug("--only-missing key present, add only last missing candles...")
+            uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
+
+            tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
+
+            tempOld["date"] = pd.to_datetime(tempOld["date"])  # load date "as is"
+            tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
+            tempOld["time"] = pd.to_datetime(tempOld["time"])  # load time "as is"
+            tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
+
+            # get last datetime object from last string in file or minus 1 delta if file is empty:
+            if len(tempOld) > 0:
+                lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
+
+            else:
+                lastTime = dtEnd - timedelta(days=1)  # history file is empty, so last date set at -1 day
+
+            tempOld = tempOld[:-1]  # always remove last old candle because it may be incompletely at the current time
+
+        responseJSONs = []  # raw history blocks of data
+
+        blockEnd = dtEnd
+        for item in range(blocks):
+            tail = length % TKS_CANDLE_INTERVALS[interval][2] if item + 1 == blocks else TKS_CANDLE_INTERVALS[interval][2]
+            blockStart = blockEnd - timedelta(minutes=TKS_CANDLE_INTERVALS[interval][1] * tail)
+
+            uLogger.debug("[Block #{}/{}] time period: [{}] UTC - [{}] UTC".format(
+                item + 1, blocks, blockStart.strftime(TKS_DATE_TIME_FORMAT), blockEnd.strftime(TKS_DATE_TIME_FORMAT),
+            ))
+
+            if blockStart == blockEnd:
+                uLogger.debug("Skipped this zero-length block...")
+
+            else:
+                # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
+                historyURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles"
+                self.body = str({
+                    "figi": self.figi,
+                    "from": blockStart.strftime(TKS_DATE_TIME_FORMAT),
+                    "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
+                    "interval": TKS_CANDLE_INTERVALS[interval][0]
+                })
+                responseJSON = self.SendAPIRequest(historyURL, reqType="POST", retry=1, pause=1, debug=False)
+
+                if "code" in responseJSON.keys():
+                    uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
+
+                else:
+                    if (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
+                        responseJSON["candles"] = responseJSON["candles"][:-1]  # removes last candle for "yesterday" request
+
+                    responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
+
+            blockEnd = blockStart
+
+        printCount = len(responseJSONs)  # candles to show in console
+        if responseJSONs:
+            tempHistory = pd.DataFrame(
+                data={
+                    "date": [pd.to_datetime(item["time"]).astimezone(tzutc()) for item in responseJSONs],
+                    "time": [pd.to_datetime(item["time"]).astimezone(tzutc()) for item in responseJSONs],
+                    "open": [NanoToFloat(item["open"]["units"], item["open"]["nano"]) for item in responseJSONs],
+                    "high": [NanoToFloat(item["high"]["units"], item["high"]["nano"]) for item in responseJSONs],
+                    "low": [NanoToFloat(item["low"]["units"], item["low"]["nano"]) for item in responseJSONs],
+                    "close": [NanoToFloat(item["close"]["units"], item["close"]["nano"]) for item in responseJSONs],
+                    "volume": [int(item["volume"]) for item in responseJSONs],
+                },
+                index=range(len(responseJSONs)),
+                columns=["date", "time", "open", "high", "low", "close", "volume"],
+            )
+            tempHistory["date"] = tempHistory["date"].dt.strftime("%Y.%m.%d")
+            tempHistory["time"] = tempHistory["time"].dt.strftime("%H:%M")
+
+            # append only newest candles to old history if --only-missing key present:
+            if onlyMissing and tempOld is not None and lastTime is not None:
+                index = 0  # find start index in tempHistory data:
+
+                for i, item in tempHistory.iterrows():
+                    curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
+
+                    if curTime == lastTime:
+                        uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime("%Y-%m-%d %H:%M:%S")))
+                        index = i
+                        printCount = index + 1
+                        break
+
+                history = pd.concat([tempOld, tempHistory[index:]], ignore_index=True)
+
+            else:
+                history = tempHistory  # if no `--only-missing` key then load full data from server
+
+            uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
+
+        if printCandles and history is not None and not history.empty:
+            uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
+                strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
+                pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
+            ))
+
+        if self.historyFile is not None:
+            if history is not None and not history.empty:
+                history.to_csv(self.historyFile, sep=csvSep, index=False, header=None)
+                uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self.ticker, self.figi, interval, os.path.abspath(self.historyFile)))
+
+            else:
+                uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
+
+        else:
+            uLogger.debug("--output key is not defined. Parsed history file not saved to file, only pandas dataframe returns.")
 
         return history
 
@@ -3034,11 +3120,12 @@ def ParseArgs():
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
     parser.add_argument("--no-cancelled", "--no-canceled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
-    parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If None then used default files.")
+    parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If `None` then used default files.")
+    # parser.add_argument("--output-type", type=str, choices=[None, ".md", ".csv", ".xlsx"], default=None, help="Option: replace default type of output files for some commands. You can choose: `.md`, `.csv` and `.xlsx`. If `None` then used default file types.")
 
-    # parser.add_argument("--length", type=int, default=24, help="Option: how many last candles returns for history. Used only with --history key.")
-    # parser.add_argument("--interval", type=str, default="60", help="Option: available values are 1min, 2min, 3min, 5min, 10min, 15min, 30min, hour, day, week, month. Used only with `--history` key. This is time period used in 'interval' api parameter. Default: `--interval=60` that means 60 min for every history candles.")
-    # parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. False by default.")
+    parser.add_argument("--interval", type=str, default="hour", help="Option: available values are `1min`, `5min`, `15min`, `hour` and `day`. Used only with `--history` key. This is time period of one candle. Default: `hour` for every history candles.")
+    parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. `False` by default.")
+    parser.add_argument("--csv-sep", type=str, default=",", help="Option: separator if .csv-file is used, `,` by default.")
 
     parser.add_argument("--debug-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
 
@@ -3047,12 +3134,17 @@ def ParseArgs():
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
-    parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use --depth key. `--ticker` key or `--figi` key must be defined!")
+    parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use `--depth` key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
-    parser.add_argument("--overview", "-o", action="store_true", help="Action: show all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--overview", "-o", action="store_true", help="Action: shows all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
+    parser.add_argument("--overview-digest", action="store_true", help="Action: shows a short digest of the portfolio status. Also, you can define `--output` key to save this information to file, default: `overview-digest.md`.")
+    parser.add_argument("--overview-positions", action="store_true", help="Action: shows only open positions. Also, you can define `--output` key to save this information to file, default: `overview-positions.md`.")
+    parser.add_argument("--overview-orders", action="store_true", help="Action: shows only sections of open limits and stop orders. Also, you can define `--output` key to save this information to file, default: `overview-orders.md`.")
+    parser.add_argument("--overview-analytics", action="store_true", help="Action: shows only the analytics section and the distribution of the portfolio by various categories. Also, you can define `--output` key to save this information to file, default: `overview-analytics.md`.")
+
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
-    # parser.add_argument("--history", action="store_true", help="Action: get last (--length) history candles from past to current time with (--interval) values. Also, you can define `--output` key to save history candles to .csv-file.")
+    parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Also, you can define `--output` key to save history candlesticks to file.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -3165,7 +3257,31 @@ def Main(**kwargs):
             if args.output is not None:
                 server.overviewFile = args.output
 
-            server.Overview(showStatistics=True)
+            server.Overview(showStatistics=True, details="full")
+
+        elif args.overview_digest:
+            if args.output is not None:
+                server.overviewDigestFile = args.output
+
+            server.Overview(showStatistics=True, details="digest")
+
+        elif args.overview_positions:
+            if args.output is not None:
+                server.overviewPositionsFile = args.output
+
+            server.Overview(showStatistics=True, details="positions")
+
+        elif args.overview_orders:
+            if args.output is not None:
+                server.overviewOrdersFile = args.output
+
+            server.Overview(showStatistics=True, details="orders")
+
+        elif args.overview_analytics:
+            if args.output is not None:
+                server.overviewAnalyticsFile = args.output
+
+            server.Overview(showStatistics=True, details="analytics")
 
         elif args.deals is not None:
             if args.output is not None:
@@ -3182,12 +3298,22 @@ def Main(**kwargs):
             else:
                 raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
 
-        # TODO: implement history download and view
-        # elif args.history:
-        #     if args.output is not None:
-        #         server.historyFile = args.output
-        #
-        #     server.History(onlyMissing=args.only_missing)
+        elif args.history is not None:
+            if args.output is not None:
+                server.historyFile = args.output
+
+            if 0 <= len(args.history) < 3:
+                server.History(
+                    start=args.history[0] if len(args.history) >= 1 else None,
+                    end=args.history[1] if len(args.history) == 2 else None,
+                    interval="hour" if args.interval is None or not args.interval else args.interval,
+                    onlyMissing=False if args.only_missing is None or not args.only_missing else args.only_missing,
+                    csvSep="," if args.csv_sep is None or not args.csv_sep else args.csv_sep,
+                    printCandles=True,  # shows all downloaded candles in console
+                )
+
+            else:
+                raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
 
         elif args.trade is not None:
             if 1 <= len(args.trade) <= 5:
@@ -3318,14 +3444,15 @@ def Main(**kwargs):
             raise Exception("There is no command to execute!")
 
     except Exception:
-        exc = tb.format_exc().split("\n")
+        trace = tb.format_exc()
+        for e in ["socket.gaierror", "nodename nor servname provided", "or not known", "NewConnectionError", "[Errno 8]", "Failed to establish a new connection"]:
+            if e in trace:
+                uLogger.error("Check your Internet connection! Failed to establish connection to broker server!")
+                break
 
-        for line in exc:
-            if line:
-                uLogger.debug(line)
-
-        uLogger.debug("Unknown error occurred, open a ticket for this issue, please! https://github.com/Tim55667757/TKSBrokerAPI/issues")
-        exitCode = 255  # unknown error occurred, must be open a ticket for this issue
+        uLogger.debug(trace)
+        uLogger.debug("Please, checks troubleshooting or open a ticket for this issue at https://github.com/Tim55667757/TKSBrokerAPI/issues")
+        exitCode = 255  # an error occurred, must be open a ticket for this issue
 
     finally:
         finish = datetime.now(tzutc())
@@ -3334,7 +3461,9 @@ def Main(**kwargs):
             uLogger.debug("All operations with Tinkoff Server using Open API are finished success (summary code is 0).")
 
         else:
-            uLogger.error("TKSBrokerAPI module returns an error! See full debug log with key in run command `--debug-level 10`. Summary code: {}".format(exitCode))
+            uLogger.error("An issue occurred with TKSBrokerAPI module! See full debug log in [{}] or run TKSBrokerAPI once again with the key `--debug-level 10`. Summary code: {}".format(
+                os.path.abspath(uLog.defaultLogFile), exitCode,
+            ))
 
         uLogger.debug("TKSBrokerAPI module work duration: [{}]".format(finish - start))
         uLogger.debug("TKSBrokerAPI module finished: [{}] UTC, it is [{}] local time".format(

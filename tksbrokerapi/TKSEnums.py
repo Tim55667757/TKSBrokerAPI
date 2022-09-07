@@ -24,6 +24,9 @@ Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui
 # limitations under the License.
 
 
+TKS_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+"""Date and time string format used by Tinkoff Open API. Default: `"%Y-%m-%dT%H:%M:%SZ"`."""
+
 TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
@@ -43,20 +46,15 @@ TKS_TICKERS_OR_FIGI_EXCLUDED = [
     # "ISSUANCEBRUS",  # now available
 ]
 
-TKS_TIMEFRAMES = {
-    "1min": {"minutes": 1, "maxCandles": 1439},  # max count in block for this API request: 1 day (and -1 minute)
-    "2min": {"minutes": 2, "maxCandles": 719},  # max count in block for this API request: 1 day (and -2 minutes)
-    "3min": {"minutes": 3, "maxCandles": 479},  # max count in block for this API request: 1 day (and and -3 minutes)
-    "5min": {"minutes": 5, "maxCandles": 287},  # max count in block for this API request: 1 day (and -5 minutes)
-    "10min": {"minutes": 10, "maxCandles": 143},  # max count in block for this API request: 1 day (and -10 minutes)
-    "15min": {"minutes": 15, "maxCandles": 95},  # max count in block for this API request: 1 day (and -15 minutes)
-    "30min": {"minutes": 30, "maxCandles": 47},  # max count in block for this API request: 1 day (and -30 minutes)
-    "hour": {"minutes": 60, "maxCandles": 167},  # max count in block for this API request: 7 days (and -1 hour)
-    "day": {"minutes": 1440, "maxCandles": 365},  # max count in block for this API request: 1 year
-    "week": {"minutes": 10080, "maxCandles": 104},  # max count in block for this API request: 2 years
-    "month": {"minutes": 43200, "maxCandles": 119},  # max count in block for this API request: 10 years
+TKS_CANDLE_INTERVALS = {  # List values: 1st - Tinkoff API parameter, 2nd - minutes count, 3rd - max candles in block
+    "Undefined": ["CANDLE_INTERVAL_UNSPECIFIED", 0, 0],
+    "1min": ["CANDLE_INTERVAL_1_MIN", 1, 1438],  # max count in API request block: 1 day (1440 min) and -2 minute
+    "5min": ["CANDLE_INTERVAL_5_MIN", 5, 287],  # max count in API request block: 1 day (288 by 5 min) and -5 minute
+    "15min": ["CANDLE_INTERVAL_15_MIN", 15, 95],  # max count in API request block: 1 day (96 by 15 min) and -15 minute
+    "hour": ["CANDLE_INTERVAL_HOUR", 60, 167],  # max count in API request block: 1 week (168 hours) and -1 hour
+    "day": ["CANDLE_INTERVAL_DAY", 1440, 364],  # max count in API request block: 1 year (365 days) and -1 day
 }
-"""How many minutes in interval and maximum count of candles in one history block returns by Tinkoff API in one request.
+"""Candles interval for requesting history data with Tinkoff API. Current available keys are `"1min"`, `"5min"`, `"15min"`, `"hour"`, `"day"`.
 See more: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
 """
 

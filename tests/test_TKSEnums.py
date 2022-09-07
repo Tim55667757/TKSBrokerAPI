@@ -12,10 +12,11 @@ class TestConstantsConsistent:
     @pytest.fixture(scope="function", autouse=True)
     def init(self):
         self.mainConstants = {
+            "TKS_DATE_TIME_FORMAT": "<class 'str'>",
             "TKS_INSTRUMENTS": "<class 'list'>",
             "TKS_TICKER_ALIASES": "<class 'dict'>",
             "TKS_TICKERS_OR_FIGI_EXCLUDED": "<class 'list'>",
-            "TKS_TIMEFRAMES": "<class 'dict'>",
+            "TKS_CANDLE_INTERVALS": "<class 'dict'>",
             "TKS_TRADING_STATUSES": "<class 'dict'>",
             "TKS_OPERATION_TYPES": "<class 'dict'>",
             "TKS_OPERATION_STATES": "<class 'dict'>",
