@@ -932,7 +932,7 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 #### Get the current portfolio and asset allocation statistics
 
-The `--overview` (`-o`) key is used. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not necessary to specify it).
+To view portfolio status and asset allocation statistics (by types, companies, sectors, currencies, and countries), use the `--overview` (`-o`) key. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not necessary to specify it).
 
 Also, you can use another keys instead of the `--overview` key, since TKSBrokerAPI version 1.3.*: the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-positions` key shows only open positions, without everything else, the `--overview-orders` shows only section of open limits and stop orders, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories. Key `--output` also overrides the output file for them.
 
