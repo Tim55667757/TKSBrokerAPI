@@ -288,7 +288,7 @@ There are three options for setting the user account ID:
 
 Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a python script.
 
-❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
+❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
 
 Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called).
 
@@ -366,6 +366,9 @@ options:
                         Option: showing STDOUT messages of minimal debug
                         level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING,
                         40 = ERROR, 50 = CRITICAL. INFO (20) by default.
+  --version, --ver      Action: shows current semantic version, looks like
+                        `major.minor.buildnumber`. If TKSBrokerAPI not installed
+                        via pip, then used local build number `.dev0`.
   --list, -l            Action: get and print all available instruments and
                         some information from broker server. Also, you can
                         define `--output` key to save list of instruments to
@@ -389,6 +392,19 @@ options:
   --overview, -o        Action: show all open positions, orders and some
                         statistics. Also, you can define `--output` key to
                         save this information to file, default: `overview.md`.
+  --overview-digest     Action: shows a short digest of the portfolio status.
+                        Also, you can define `--output` key to save this
+                        information to file, default: `overview-digest.md`.
+  --overview-positions  Action: shows only open positions. Also, you can
+                        define `--output` key to save this information to
+                        file, default: `overview-positions.md`.
+  --overview-orders     Action: shows only sections of open limits and stop
+                        orders. Also, you can define `--output` key to save
+                        orders to file, default: `overview-orders.md`.
+  --overview-analytics  Action: shows only the analytics section and the
+                        distribution of the portfolio by various categories.
+                        Also, you can define `--output` key to save this
+                        information to file, default: `overview-analytics.md`.
   --deals [DEALS ...], -d [DEALS ...]
                         Action: show all deals between two given dates. Start
                         day may be an integer number: -1, -2, -3 days ago.

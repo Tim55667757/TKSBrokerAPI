@@ -22,16 +22,16 @@
 
 ##### Улучшения
 
+* [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI билд-номер теперь печатается в логах, а также отображается по ключу `--version` (или `--ver`).
 * [В работе] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) В метод, реализующий запуск с ключом `--info` (или `-i`), добавлена информация о текущем статусе торгов по запрашиваемому инструменту. Реализован дополнительный метод `GetTradingStatus()`, использующий расширение методов `SearchByTicker()` и `SearchByFIGI()`. Добавлены флаги: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` и `apiTradeAvailableFlag`.
 * [В работе] [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` поле более неактуально из-за использования локального дампа `dump.json`, в котором автоматически обновляется список доступных для торговли инструментов, поэтому поле удалено из класса `TinkoffBrokerServer()`.
-* [В работе] [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI билд-номер теперь печатается в логах, а также отображается по ключу `--version`.
 
 ##### Баг-фиксы
 
 * ...
 
 
-### [1.3.* (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — опубликована
+### [1.3.70 (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.3.70) — опубликована
 
 ##### Новая функциональность
 
