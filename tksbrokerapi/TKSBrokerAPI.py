@@ -33,6 +33,7 @@ Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui
 import sys
 import os
 from argparse import ArgumentParser
+from importlib.metadata import version
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
@@ -58,9 +59,10 @@ uLogger = uLog.UniLogger
 uLogger.level = 10  # debug level by default
 uLogger.handlers[0].level = 20  # info level by default for STDOUT
 
+__version__ = "1.3"  # The "major.minor" version setup here, but build number define at the build-server only
+
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
-uLogger.debug("Host CPU count: [{}]".format(CPU_COUNT))
 
 # --- Main constants:
 
@@ -224,6 +226,12 @@ class TinkoffBrokerServer:
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
             uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable `accountId`")
+
+        self.version = __version__  # duplicate here used TKSBrokerAPI main version
+        """Current TKSBrokerAPI version: major.minor, but the build number define at the build-server only.
+
+        Latest version: https://pypi.org/project/tksbrokerapi/
+        """
 
         self.aliases = TKS_TICKER_ALIASES
         """Some aliases instead official tickers. See `TKSEnums.TKS_TICKER_ALIASES`"""
@@ -3131,6 +3139,8 @@ def ParseArgs():
 
     # --- commands:
 
+    parser.add_argument("--version", "--ver", action="store_true", help="Action: shows current semantic version, looks like `major.minor.buildnumber`. If TKSBrokerAPI not installed via pip, then used local build number `.dev0`.")
+
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
@@ -3140,7 +3150,7 @@ def ParseArgs():
     parser.add_argument("--overview", "-o", action="store_true", help="Action: shows all open positions, orders and some statistics. Also, you can define `--output` key to save this information to file, default: `overview.md`.")
     parser.add_argument("--overview-digest", action="store_true", help="Action: shows a short digest of the portfolio status. Also, you can define `--output` key to save this information to file, default: `overview-digest.md`.")
     parser.add_argument("--overview-positions", action="store_true", help="Action: shows only open positions. Also, you can define `--output` key to save this information to file, default: `overview-positions.md`.")
-    parser.add_argument("--overview-orders", action="store_true", help="Action: shows only sections of open limits and stop orders. Also, you can define `--output` key to save this information to file, default: `overview-orders.md`.")
+    parser.add_argument("--overview-orders", action="store_true", help="Action: shows only sections of open limits and stop orders. Also, you can define `--output` key to save orders to file, default: `overview-orders.md`.")
     parser.add_argument("--overview-analytics", action="store_true", help="Action: shows only the analytics section and the distribution of the portfolio by various categories. Also, you can define `--output` key to save this information to file, default: `overview-analytics.md`.")
 
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
@@ -3182,10 +3192,22 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
+    uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime("%Y-%m-%d %H:%M:%S"),
         start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
     ))
+
+    # trying to calculate full current version:
+    buildVersion = __version__
+    try:
+        v = version("tksbrokerapi")
+        buildVersion = v if v.startswith(buildVersion) else buildVersion + ".dev0"  # set version as major.minor.dev0 if run as local build or local script
+
+    except Exception:
+        buildVersion = __version__ + ".dev0"  # if an errors occurred then also set version as major.minor.dev0
+
+    uLogger.debug("TKSBrokerAPI major.minor.build version used: [{}]".format(buildVersion))
+    uLogger.debug("Host CPU count: [{}]".format(CPU_COUNT))
 
     # Init class for trading with Tinkoff Broker:
     server = TinkoffBrokerServer(
@@ -3219,7 +3241,11 @@ def Main(**kwargs):
 
         # --- do one of commands:
 
-        if args.list:
+        if args.version:
+            print("TKSBrokerAPI {}".format(buildVersion))
+            uLogger.debug("User requested current TKSBrokerAPI major.minor.build version: [{}]".format(buildVersion))
+
+        elif args.list:
             if args.output is not None:
                 server.instrumentsFile = args.output
 
@@ -3440,7 +3466,7 @@ def Main(**kwargs):
             server.CloseAll(*args.close_all)
 
         else:
-            uLogger.error("There is no command to execute! One of the possible commands must be selected. See: `python TKSBrokerAPI.py --help`")
+            uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
             raise Exception("There is no command to execute!")
 
     except Exception:
@@ -3458,15 +3484,15 @@ def Main(**kwargs):
         finish = datetime.now(tzutc())
 
         if exitCode == 0:
-            uLogger.debug("All operations with Tinkoff Server using Open API are finished success (summary code is 0).")
+            uLogger.debug("All operations were finished success (summary code is 0).")
 
         else:
             uLogger.error("An issue occurred with TKSBrokerAPI module! See full debug log in [{}] or run TKSBrokerAPI once again with the key `--debug-level 10`. Summary code: {}".format(
                 os.path.abspath(uLog.defaultLogFile), exitCode,
             ))
 
-        uLogger.debug("TKSBrokerAPI module work duration: [{}]".format(finish - start))
-        uLogger.debug("TKSBrokerAPI module finished: [{}] UTC, it is [{}] local time".format(
+        uLogger.debug(">>> TKSBrokerAPI module work duration: [{}]".format(finish - start))
+        uLogger.debug(">>> TKSBrokerAPI module finished: [{} UTC], it is [{}] local time".format(
             finish.strftime("%Y-%m-%d %H:%M:%S"),
             finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
         ))

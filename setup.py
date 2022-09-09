@@ -6,8 +6,9 @@
 
 from setuptools import setup
 import os
+from tksbrokerapi.TKSBrokerAPI import __version__ as ver
 
-__version__ = "1.3"
+__version__ = ver  # The "major.minor" version gives from TKSBrokerAPI and the build number define at the build-server
 
 devStatus = "4 - Beta"
 
@@ -25,7 +26,7 @@ if "TRAVIS_BUILD_NUMBER" in os.environ and "TRAVIS_BRANCH" in os.environ:
 
 else:
     print("This is local build")
-    __version__ += ".dev0"  # set version as major.minor.localbuild if local build: python setup.py install
+    __version__ += ".dev0"  # set version as major.minor.dev0 if local build used
 
 print("TKSBrokerAPI build version = {}".format(__version__))
 
