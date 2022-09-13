@@ -3209,265 +3209,266 @@ def Main(**kwargs):
     uLogger.debug("TKSBrokerAPI major.minor.build version used: [{}]".format(buildVersion))
     uLogger.debug("Host CPU count: [{}]".format(CPU_COUNT))
 
-    # Init class for trading with Tinkoff Broker:
-    server = TinkoffBrokerServer(
-        token=args.token,
-        accountId=args.account_id,
-        iList=kwargs["instruments"] if kwargs and "instruments" in kwargs.keys() else None,  # re-use iList
-        useCache=not args.no_cache,
-    )
-
     try:
-        # --- set some options:
-
-        if args.ticker:
-            if args.ticker in server.aliasesKeys:
-                server.ticker = server.aliases[args.ticker]  # Replace some tickers with it's aliases
-
-            else:
-                server.ticker = args.ticker
-
-        if args.figi:
-            server.figi = args.figi
-
-        if args.depth is not None:
-            server.depth = args.depth
-
-        # if args.length is not None:
-        #     server.historyLength = args.length
-        #
-        # if args.interval is not None:
-        #     server.historyInterval = args.interval
-
-        # --- do one of commands:
-
         if args.version:
             print("TKSBrokerAPI {}".format(buildVersion))
             uLogger.debug("User requested current TKSBrokerAPI major.minor.build version: [{}]".format(buildVersion))
 
-        elif args.list:
-            if args.output is not None:
-                server.instrumentsFile = args.output
+        else:
+            # Init class for trading with Tinkoff Broker:
+            server = TinkoffBrokerServer(
+                token=args.token,
+                accountId=args.account_id,
+                iList=kwargs["instruments"] if kwargs and "instruments" in kwargs.keys() else None,  # re-use iList
+                useCache=not args.no_cache,
+            )
 
-            server.ShowInstrumentsInfo(showInstruments=True)
-
-        elif args.search:
-            if args.output is not None:
-                server.searchResultsFile = args.output
-
-            server.SearchInstruments(pattern=args.search[0], showResults=True)
-
-        elif args.info:
-            if not (args.ticker or args.figi):
-                raise Exception("`--ticker` key or `--figi` key is required for this operation!")
+            # --- set some options:
 
             if args.ticker:
-                server.SearchByTicker(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by ticker name
+                if args.ticker in server.aliasesKeys:
+                    server.ticker = server.aliases[args.ticker]  # Replace some tickers with it's aliases
+
+                else:
+                    server.ticker = args.ticker
+
+            if args.figi:
+                server.figi = args.figi
+
+            if args.depth is not None:
+                server.depth = args.depth
+
+            # if args.length is not None:
+            #     server.historyLength = args.length
+            #
+            # if args.interval is not None:
+            #     server.historyInterval = args.interval
+
+            # --- do one of commands:
+
+            if args.list:
+                if args.output is not None:
+                    server.instrumentsFile = args.output
+
+                server.ShowInstrumentsInfo(showInstruments=True)
+
+            elif args.search:
+                if args.output is not None:
+                    server.searchResultsFile = args.output
+
+                server.SearchInstruments(pattern=args.search[0], showResults=True)
+
+            elif args.info:
+                if not (args.ticker or args.figi):
+                    raise Exception("`--ticker` key or `--figi` key is required for this operation!")
+
+                if args.ticker:
+                    server.SearchByTicker(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by ticker name
+
+                else:
+                    server.SearchByFIGI(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by FIGI id
+
+            elif args.price:
+                if not (args.ticker or args.figi):
+                    raise Exception("`--ticker` key or `--figi` key is required for this operation!")
+
+                server.GetCurrentPrices(showPrice=True)
+
+            elif args.prices is not None:
+                if args.output is not None:
+                    server.pricesFile = args.output
+
+                server.GetListOfPrices(instruments=args.prices, showPrices=True)  # WARNING: too long wait for a lot of instruments prices
+
+            elif args.overview:
+                if args.output is not None:
+                    server.overviewFile = args.output
+
+                server.Overview(showStatistics=True, details="full")
+
+            elif args.overview_digest:
+                if args.output is not None:
+                    server.overviewDigestFile = args.output
+
+                server.Overview(showStatistics=True, details="digest")
+
+            elif args.overview_positions:
+                if args.output is not None:
+                    server.overviewPositionsFile = args.output
+
+                server.Overview(showStatistics=True, details="positions")
+
+            elif args.overview_orders:
+                if args.output is not None:
+                    server.overviewOrdersFile = args.output
+
+                server.Overview(showStatistics=True, details="orders")
+
+            elif args.overview_analytics:
+                if args.output is not None:
+                    server.overviewAnalyticsFile = args.output
+
+                server.Overview(showStatistics=True, details="analytics")
+
+            elif args.deals is not None:
+                if args.output is not None:
+                    server.reportFile = args.output
+
+                if 0 <= len(args.deals) < 3:
+                    server.Deals(
+                        start=args.deals[0] if len(args.deals) >= 1 else None,
+                        end=args.deals[1] if len(args.deals) == 2 else None,
+                        printDeals=True,  # Always show deals report in console
+                        showCancelled=not args.no_cancelled,  # If --no-cancelled key then remove cancelled operations from the deals report. False by default.
+                    )
+
+                else:
+                    raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+
+            elif args.history is not None:
+                if args.output is not None:
+                    server.historyFile = args.output
+
+                if 0 <= len(args.history) < 3:
+                    server.History(
+                        start=args.history[0] if len(args.history) >= 1 else None,
+                        end=args.history[1] if len(args.history) == 2 else None,
+                        interval="hour" if args.interval is None or not args.interval else args.interval,
+                        onlyMissing=False if args.only_missing is None or not args.only_missing else args.only_missing,
+                        csvSep="," if args.csv_sep is None or not args.csv_sep else args.csv_sep,
+                        printCandles=True,  # shows all downloaded candles in console
+                    )
+
+                else:
+                    raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+
+            elif args.trade is not None:
+                if 1 <= len(args.trade) <= 5:
+                    server.Trade(
+                        operation=args.trade[0],
+                        lots=int(args.trade[1]) if len(args.trade) >= 2 else 1,
+                        tp=float(args.trade[2]) if len(args.trade) >= 3 else 0.,
+                        sl=float(args.trade[3]) if len(args.trade) >= 4 else 0.,
+                        expDate=args.trade[4] if len(args.trade) == 5 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.buy is not None:
+                if 0 <= len(args.buy) <= 4:
+                    server.Buy(
+                        lots=int(args.buy[0]) if len(args.buy) >= 1 else 1,
+                        tp=float(args.buy[1]) if len(args.buy) >= 2 else 0.,
+                        sl=float(args.buy[2]) if len(args.buy) >= 3 else 0.,
+                        expDate=args.buy[3] if len(args.buy) == 4 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 0-4 parameters to open buy position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.sell is not None:
+                if 0 <= len(args.sell) <= 4:
+                    server.Sell(
+                        lots=int(args.sell[0]) if len(args.sell) >= 1 else 1,
+                        tp=float(args.sell[1]) if len(args.sell) >= 2 else 0.,
+                        sl=float(args.sell[2]) if len(args.sell) >= 3 else 0.,
+                        expDate=args.sell[3] if len(args.sell) == 4 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 0-4 parameters to open sell position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.order:
+                if 4 <= len(args.order) <= 7:
+                    server.Order(
+                        operation=args.order[0],
+                        orderType=args.order[1],
+                        lots=int(args.order[2]),
+                        targetPrice=float(args.order[3]),
+                        limitPrice=float(args.order[4]) if len(args.order) >= 5 else 0.,
+                        stopType=args.order[5] if len(args.order) >= 6 else "Limit",
+                        expDate=args.order[6] if len(args.order) == 7 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.buy_limit:
+                server.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
+
+            elif args.sell_limit:
+                server.SellLimit(lots=int(args.sell_limit[0]), targetPrice=args.sell_limit[1])
+
+            elif args.buy_stop:
+                if 2 <= len(args.buy_stop) <= 7:
+                    server.BuyStop(
+                        lots=int(args.buy_stop[0]),
+                        targetPrice=float(args.buy_stop[1]),
+                        limitPrice=float(args.buy_stop[2]) if len(args.buy_stop) >= 3 else 0.,
+                        stopType=args.buy_stop[3] if len(args.buy_stop) >= 4 else "Limit",
+                        expDate=args.buy_stop[4] if len(args.buy_stop) == 5 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 2-5 parameters for buy stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.sell_stop:
+                if 2 <= len(args.sell_stop) <= 7:
+                    server.SellStop(
+                        lots=int(args.sell_stop[0]),
+                        targetPrice=float(args.sell_stop[1]),
+                        limitPrice=float(args.sell_stop[2]) if len(args.sell_stop) >= 3 else 0.,
+                        stopType=args.sell_stop[3] if len(args.sell_stop) >= 4 else "Limit",
+                        expDate=args.sell_stop[4] if len(args.sell_stop) == 5 else "Undefined",
+                    )
+
+                else:
+                    uLogger.error("You must specify 2-5 parameters for sell stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: python TKSBrokerAPI.py --help")
+
+            # elif args.buy_order_grid is not None:
+            #     # update order grid work with api v2
+            #     if len(args.buy_order_grid) == 2:
+            #         orderParams = server.ParseOrderParameters(operation="Buy", **dict(kw.split('=') for kw in args.buy_order_grid))
+            #
+            #         for order in orderParams:
+            #             server.Order(operation="Buy", lots=order["lot"], price=order["price"])
+            #
+            #     else:
+            #         uLogger.error("To open grid of pending BUY limit-orders (below current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
+            #
+            # elif args.sell_order_grid is not None:
+            #     # update order grid work with api v2
+            #     if len(args.sell_order_grid) >= 2:
+            #         orderParams = server.ParseOrderParameters(operation="Sell", **dict(kw.split('=') for kw in args.sell_order_grid))
+            #
+            #         for order in orderParams:
+            #             server.Order(operation="Sell", lots=order["lot"], price=order["price"])
+            #
+            #     else:
+            #         uLogger.error("To open grid of pending SELL limit-orders (above current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
+
+            elif args.close_order is not None:
+                server.CloseOrders(args.close_order)  # close only one order
+
+            elif args.close_orders is not None:
+                server.CloseOrders(args.close_orders)  # close list of orders
+
+            elif args.close_trade:
+                if not args.ticker:
+                    raise Exception("`--ticker` key is required for this operation!")
+
+                server.CloseTrades([args.ticker])  # close only one trade
+
+            elif args.close_trades is not None:
+                server.CloseTrades(args.close_trades)  # close trades for list of tickers
+
+            elif args.close_all is not None:
+                server.CloseAll(*args.close_all)
 
             else:
-                server.SearchByFIGI(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by FIGI id
-
-        elif args.price:
-            if not (args.ticker or args.figi):
-                raise Exception("`--ticker` key or `--figi` key is required for this operation!")
-
-            server.GetCurrentPrices(showPrice=True)
-
-        elif args.prices is not None:
-            if args.output is not None:
-                server.pricesFile = args.output
-
-            server.GetListOfPrices(instruments=args.prices, showPrices=True)  # WARNING: too long wait for a lot of instruments prices
-
-        elif args.overview:
-            if args.output is not None:
-                server.overviewFile = args.output
-
-            server.Overview(showStatistics=True, details="full")
-
-        elif args.overview_digest:
-            if args.output is not None:
-                server.overviewDigestFile = args.output
-
-            server.Overview(showStatistics=True, details="digest")
-
-        elif args.overview_positions:
-            if args.output is not None:
-                server.overviewPositionsFile = args.output
-
-            server.Overview(showStatistics=True, details="positions")
-
-        elif args.overview_orders:
-            if args.output is not None:
-                server.overviewOrdersFile = args.output
-
-            server.Overview(showStatistics=True, details="orders")
-
-        elif args.overview_analytics:
-            if args.output is not None:
-                server.overviewAnalyticsFile = args.output
-
-            server.Overview(showStatistics=True, details="analytics")
-
-        elif args.deals is not None:
-            if args.output is not None:
-                server.reportFile = args.output
-
-            if 0 <= len(args.deals) < 3:
-                server.Deals(
-                    start=args.deals[0] if len(args.deals) >= 1 else None,
-                    end=args.deals[1] if len(args.deals) == 2 else None,
-                    printDeals=True,  # Always show deals report in console
-                    showCancelled=not args.no_cancelled,  # If --no-cancelled key then remove cancelled operations from the deals report. False by default.
-                )
-
-            else:
-                raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
-
-        elif args.history is not None:
-            if args.output is not None:
-                server.historyFile = args.output
-
-            if 0 <= len(args.history) < 3:
-                server.History(
-                    start=args.history[0] if len(args.history) >= 1 else None,
-                    end=args.history[1] if len(args.history) == 2 else None,
-                    interval="hour" if args.interval is None or not args.interval else args.interval,
-                    onlyMissing=False if args.only_missing is None or not args.only_missing else args.only_missing,
-                    csvSep="," if args.csv_sep is None or not args.csv_sep else args.csv_sep,
-                    printCandles=True,  # shows all downloaded candles in console
-                )
-
-            else:
-                raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
-
-        elif args.trade is not None:
-            if 1 <= len(args.trade) <= 5:
-                server.Trade(
-                    operation=args.trade[0],
-                    lots=int(args.trade[1]) if len(args.trade) >= 2 else 1,
-                    tp=float(args.trade[2]) if len(args.trade) >= 3 else 0.,
-                    sl=float(args.trade[3]) if len(args.trade) >= 4 else 0.,
-                    expDate=args.trade[4] if len(args.trade) == 5 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.buy is not None:
-            if 0 <= len(args.buy) <= 4:
-                server.Buy(
-                    lots=int(args.buy[0]) if len(args.buy) >= 1 else 1,
-                    tp=float(args.buy[1]) if len(args.buy) >= 2 else 0.,
-                    sl=float(args.buy[2]) if len(args.buy) >= 3 else 0.,
-                    expDate=args.buy[3] if len(args.buy) == 4 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 0-4 parameters to open buy position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.sell is not None:
-            if 0 <= len(args.sell) <= 4:
-                server.Sell(
-                    lots=int(args.sell[0]) if len(args.sell) >= 1 else 1,
-                    tp=float(args.sell[1]) if len(args.sell) >= 2 else 0.,
-                    sl=float(args.sell[2]) if len(args.sell) >= 3 else 0.,
-                    expDate=args.sell[3] if len(args.sell) == 4 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 0-4 parameters to open sell position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.order:
-            if 4 <= len(args.order) <= 7:
-                server.Order(
-                    operation=args.order[0],
-                    orderType=args.order[1],
-                    lots=int(args.order[2]),
-                    targetPrice=float(args.order[3]),
-                    limitPrice=float(args.order[4]) if len(args.order) >= 5 else 0.,
-                    stopType=args.order[5] if len(args.order) >= 6 else "Limit",
-                    expDate=args.order[6] if len(args.order) == 7 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.buy_limit:
-            server.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
-
-        elif args.sell_limit:
-            server.SellLimit(lots=int(args.sell_limit[0]), targetPrice=args.sell_limit[1])
-
-        elif args.buy_stop:
-            if 2 <= len(args.buy_stop) <= 7:
-                server.BuyStop(
-                    lots=int(args.buy_stop[0]),
-                    targetPrice=float(args.buy_stop[1]),
-                    limitPrice=float(args.buy_stop[2]) if len(args.buy_stop) >= 3 else 0.,
-                    stopType=args.buy_stop[3] if len(args.buy_stop) >= 4 else "Limit",
-                    expDate=args.buy_stop[4] if len(args.buy_stop) == 5 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 2-5 parameters for buy stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.sell_stop:
-            if 2 <= len(args.sell_stop) <= 7:
-                server.SellStop(
-                    lots=int(args.sell_stop[0]),
-                    targetPrice=float(args.sell_stop[1]),
-                    limitPrice=float(args.sell_stop[2]) if len(args.sell_stop) >= 3 else 0.,
-                    stopType=args.sell_stop[3] if len(args.sell_stop) >= 4 else "Limit",
-                    expDate=args.sell_stop[4] if len(args.sell_stop) == 5 else "Undefined",
-                )
-
-            else:
-                uLogger.error("You must specify 2-5 parameters for sell stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: python TKSBrokerAPI.py --help")
-
-        # elif args.buy_order_grid is not None:
-        #     # TODO: update order grid work with api v2
-        #     if len(args.buy_order_grid) == 2:
-        #         orderParams = server.ParseOrderParameters(operation="Buy", **dict(kw.split('=') for kw in args.buy_order_grid))
-        #
-        #         for order in orderParams:
-        #             server.Order(operation="Buy", lots=order["lot"], price=order["price"])
-        #
-        #     else:
-        #         uLogger.error("To open grid of pending BUY limit-orders (below current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
-        #
-        # elif args.sell_order_grid is not None:
-        #     # TODO: update order grid work with api v2
-        #     if len(args.sell_order_grid) >= 2:
-        #         orderParams = server.ParseOrderParameters(operation="Sell", **dict(kw.split('=') for kw in args.sell_order_grid))
-        #
-        #         for order in orderParams:
-        #             server.Order(operation="Sell", lots=order["lot"], price=order["price"])
-        #
-        #     else:
-        #         uLogger.error("To open grid of pending SELL limit-orders (above current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
-
-        elif args.close_order is not None:
-            server.CloseOrders(args.close_order)  # close only one order
-
-        elif args.close_orders is not None:
-            server.CloseOrders(args.close_orders)  # close list of orders
-
-        elif args.close_trade:
-            if not args.ticker:
-                raise Exception("`--ticker` key is required for this operation!")
-
-            server.CloseTrades([args.ticker])  # close only one trade
-
-        elif args.close_trades is not None:
-            server.CloseTrades(args.close_trades)  # close trades for list of tickers
-
-        elif args.close_all is not None:
-            server.CloseAll(*args.close_all)
-
-        else:
-            uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
-            raise Exception("There is no command to execute!")
+                uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
+                raise Exception("There is no command to execute!")
 
     except Exception:
         trace = tb.format_exc()
