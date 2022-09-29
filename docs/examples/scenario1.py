@@ -96,8 +96,6 @@ VOLUME_DIFF = 0.1  # Enough volumes difference to open position, 10% by default
 trader = TinkoffBrokerServer(
     token="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
     accountId="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
-    iList=None,  # Do not use previous saved dictionaries with instruments from broker server
-    useCache=True,  # Use auto-updated local cache from `dump.json`
 )
 
 
