@@ -5,7 +5,7 @@
 import pytest
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
-import json
+from pathlib import Path
 from tksbrokerapi import TKSBrokerAPI
 
 
@@ -18,12 +18,12 @@ class TestTKSBrokerAPIMethods:
         TKSBrokerAPI.uLogger.handlers[1].level = 50  # Disable debug logging for log.txt
 
         # set up default parameters:
-        self.testIList = json.load(open("./tests/InstrumentsDump.json", mode="r", encoding="UTF-8"))
+        Path("./tests/InstrumentsDump.json").touch()  # "touching" file to avoid updating by "file outdated" trigger
         self.server = TKSBrokerAPI.TinkoffBrokerServer(
             token="TKSBrokerAPI_unittest_fake_token",
-            iList=self.testIList,
             accountId="TKSBrokerAPI_unittest_fake_accountId",
-            useCache=False,
+            useCache=True,
+            defaultCache="./tests/InstrumentsDump.json",
         )
 
     def test_NanoToFloatCheckType(self):
