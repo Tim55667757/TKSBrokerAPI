@@ -187,21 +187,17 @@ class TinkoffBrokerServer:
 
     About `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, accountId: str = None, iList: dict = None, useCache: bool = True) -> None:
+    def __init__(self, token: str, accountId: str = None, useCache: bool = True, defaultCache: str = "dump.json") -> None:
         """
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
         :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
-        :param iList: dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server.
-                      At first time, when class init, `Listing()` method auto-update this variable, or you can use dump file.
-                      For future use, you can save this variable and use as `iList` to avoid permanent downloads
-                      from the server. Also, you can try `DumpInstruments()` method.
-        :param useCache: use default cache file `dump.json` with raw data to use instead of `iList` if `iList` set as `None`.
+        :param useCache: use default cache file with raw data to use instead of `iList`.
                          True by default. Cache is auto-update if new day has come.
-                         If `iList` is not `None` then it value has higher priority than `dump.json` and `useCache`.
                          If you don't want to use cache and always updates raw data then set `useCache=False`.
+        :param defaultCache: path to default cache file. `dump.json` by default.
         """
         if token is None or not token:
             try:
@@ -299,22 +295,17 @@ class TinkoffBrokerServer:
         self.reportFile = "deals.md"
         """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
 
-        self.iListDumpFile = "dump.json"
+        self.iListDumpFile = "dump.json" if defaultCache is None or not isinstance(defaultCache, str) or not defaultCache else defaultCache
         """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
 
-        self.iList = None  # init iList
-        """Dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server. Auto-updating.
+        self.iList = None  # init iList for raw instruments data
+        """Dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server. Auto-updating and saving dump to the `iListDumpFile`.
         
         See also: `Listing()` and `DumpInstruments()`.
         """
 
-        # try to re-use raw instruments data saved as `iList` or try to load it from the dump file:
-        if iList is not None and isinstance(iList, dict):
-            uLogger.debug("Instruments raw data set up from given `iList` variable. Dump file not updated.")
-
-            self.iList = iList  # only used given iList, dump not updated
-
-        elif useCache:
+        # trying to re-load raw instruments data from file `iListDumpFile` or try to update it from server:
+        if useCache:
             if os.path.exists(self.iListDumpFile):
                 dumpTime = datetime.fromtimestamp(os.path.getmtime(self.iListDumpFile)).astimezone(tzutc())  # dump modification date and time
                 curTime = datetime.now(tzutc())
@@ -336,7 +327,7 @@ class TinkoffBrokerServer:
 
         else:
             self.iList = self.Listing()  # request new raw instruments data from broker server
-            self.DumpInstruments(forceUpdate=False)  # save updated info to default dump file
+            self.DumpInstruments(forceUpdate=False)  # save raw instrument's data to default dump file `iListDumpFile`
 
     @staticmethod
     def _ParseJSON(rawData="{}", debug: bool = False) -> dict:
@@ -3219,7 +3210,6 @@ def Main(**kwargs):
             server = TinkoffBrokerServer(
                 token=args.token,
                 accountId=args.account_id,
-                iList=kwargs["instruments"] if kwargs and "instruments" in kwargs.keys() else None,  # re-use iList
                 useCache=not args.no_cache,
             )
 
