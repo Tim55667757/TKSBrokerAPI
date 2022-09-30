@@ -71,7 +71,7 @@ from dateutil.tz import tzlocal, tzutc
 from math import ceil
 from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations
 
-uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log
+uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
 uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
 
 start = datetime.now(tzutc())
@@ -141,13 +141,13 @@ for ticker in TICKERS_LIST_FOR_TRADING:
         #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
         #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
 
-        # Checks if instrument is in portfolio:
+        # Checks if instrument (defined by it's `ticker`) is in portfolio:
         isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
         if not isInPortfolio:
             uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
-            # Getting instrument's data and it currency:
+            # Getting instrument's data and its currency:
             rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
             iCurr = rawIData["currency"]  # currency of current instrument
 
