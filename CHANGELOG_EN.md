@@ -23,8 +23,8 @@
 ##### Improvements
 
 * [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version` (or `--ver`).
+* [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
 * [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method that implements launching with the `--info` (or `-i`) key. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
-* [In progress] [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
 
 ##### Bug fixes
 
