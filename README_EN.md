@@ -1962,7 +1962,7 @@ In this documentation, we do not want to focus on specific trading scenarios, bu
    - if the current price is 2.5% already higher than the average position price, then place pending limit order with all volumes 0.1% higher than the current price so that the position is closed with a profit with a high probability during the current session.
 - request the current user's portfolio after all trades and show changes.
 
-To understand the example, just save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)).
+To understand the example, just save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)). Most of the code is commented in detail and links to the relevant API methods are given.
 
 <details>
   <summary>Example of trading script in python using TKSBrokerAPI</summary>
