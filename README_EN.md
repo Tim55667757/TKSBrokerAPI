@@ -1945,9 +1945,18 @@ TKSBrokerAPI.py     L:3361 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module
 
 Full documentation of all available properties and methods of the `TKSBrokerAPI.TinkoffBrokerServer()` class can be found [by the link](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html). You can also see the correspondence between keys and methods in the ["Key features"](#Key-features) section.
 
-Using the TKSBrokerAPI module, you can implement any trading scenario in Python. Many different system used for making trading decisions about buying or selling (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an intermediary between the code with the trading logic and the infrastructure of the Tinkoff Investments broker, as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
+Using the TKSBrokerAPI module, you can implement any trading scenario in Python. Many different system used for making trading decisions about buying or selling (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker, as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
 
 ❗ **Important note**: the TKSBrokerAPI module is not intended for high-frequency (HFT) trading, due to the system of dynamic limit generation for TINKOFF INVEST API users (for more details [see the link](https://tinkoff.github.io/investAPI/limits/)). On average, this is 50-300 requests per second, depending on their type, which is very low for the requirements for HFT speeds (there are [several recommendations](https://tinkoff.github.io/investAPI/speedup/) to speed up execution orders). However, you can use it to automate your intraday, short, medium and long term trading strategies.
+
+![](./docs/media/TKSBrokerAPI-flow.png)
+
+The development scheme with TKSBrokerAPI is very simple:
+1. You come up with an ingenious trading algorithm.
+2. Write it down step by step in the form of some kind of plan or trading scenario.
+3. Automate scenario as a Python script using TKSBrokerAPI.
+4. TKSBrokerAPI takes care of all the work with the Tinkoff Investments broker infrastructure.
+5. Profit!
 
 #### Abstract scenario implementation example
 
