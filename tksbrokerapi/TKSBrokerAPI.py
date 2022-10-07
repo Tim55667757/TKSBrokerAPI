@@ -230,78 +230,141 @@ class TinkoffBrokerServer:
         """
 
         self.aliases = TKS_TICKER_ALIASES
-        """Some aliases instead official tickers. See `TKSEnums.TKS_TICKER_ALIASES`"""
+        """Some aliases instead official tickers.
+
+        See also: `TKSEnums.TKS_TICKER_ALIASES`
+        """
 
         self.aliasesKeys = self.aliases.keys()  # re-calc only first time at class init
         self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
         self.ticker = ""
-        """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`."""
+        """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
+
+        See also: `SearchByTicker()`, `SearchInstruments()`.
+        """
 
         self.figi = ""
-        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`"""
+        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`.
+
+        See also: `SearchByFIGI()`, `SearchInstruments()`.
+        """
 
         self.depth = 1
-        """Depth of Market (DOM) can be >= 1. Default: 1. It used with `--price` key to showing DOM with current prices for givens ticker or FIGI."""
+        """Depth of Market (DOM) can be >= 1. Default: 1. It used with `--price` key to showing DOM with current prices for givens ticker or FIGI.
+
+        See also: `GetCurrentPrices()`.
+        """
 
         self.server = r"https://invest-public-api.tinkoff.ru/rest"
         """Tinkoff REST API server for real trade operations. Default: https://invest-public-api.tinkoff.ru/rest
 
-        See also: https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1
+        See also: API method https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1 and `SendAPIRequest()`.
         """
 
         uLogger.debug("Broker API server: {}".format(self.server))
 
         self.timeout = 15
-        """Server operations timeout in seconds. Default: `15`"""
+        """Server operations timeout in seconds. Default: `15`.
+
+        See also: `SendAPIRequest()`.
+        """
 
         self.headers = {"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {}".format(self.token)}
-        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`"""
+        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`.
+
+        See also: `SendAPIRequest()`.
+        """
 
         self.body = None
-        """Request body which send to broker server. Default: `None`"""
+        """Request body which send to broker server. Default: `None`.
+
+        See also: `SendAPIRequest()`.
+        """
 
         # remove after implemented: #45 Add selector of file types https://github.com/Tim55667757/TKSBrokerAPI/issues/45
         # self.outputFileType = None
-        # """Switch of types for output files when `--output` key present. You can choose: `.md`, `.csv` and `.xlsx`. By default: `None`, it mean that default types will be used."""
+        # """Switch of types for output files when `--output` key present. You can choose: `.md`, `.csv` and `.xlsx`. By default: `None`, it mean that default types will be used.
+        #
+        # See also:
+        # """
 
         self.historyFile = None
-        """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only pandas dataframe when you request `History()` method."""
+        """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only pandas dataframe.
+
+        See also: `History()`.
+        """
 
         self.instrumentsFile = "instruments.md"
-        """Filename where full broker's instruments list will be saved. Default: `instruments.md`"""
+        """Filename where full available to user instruments list will be saved. Default: `instruments.md`.
+
+        See also: `ShowInstrumentsInfo()`.
+        """
 
         self.searchResultsFile = "search-results.md"
-        """Filename with all found instruments searched by part of its ticker, FIGI or name. Default: `search-results.md`"""
+        """Filename with all found instruments searched by part of its ticker, FIGI or name. Default: `search-results.md`.
+
+        See also: `SearchInstruments()`.
+        """
 
         self.pricesFile = "prices.md"
-        """Filename where prices of selected instruments will be saved. Default: `prices.md`"""
+        """Filename where prices of selected instruments will be saved. Default: `prices.md`.
+
+        See also: `GetListOfPrices()`.
+        """
 
         self.overviewFile = "overview.md"
-        """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`"""
+        """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`.
+
+        See also: `Overview()`, `RequestPortfolio()`, `RequestPositions()`, `RequestPendingOrders()` and `RequestStopOrders()`.
+        """
 
         self.overviewDigestFile = "overview-digest.md"
-        """Filename where short digest of the portfolio status will be saved. Default: `overview-digest.md`"""
+        """Filename where short digest of the portfolio status will be saved. Default: `overview-digest.md`.
+
+        See also: `Overview()` with parameter `details="digest"`.
+        """
 
         self.overviewPositionsFile = "overview-positions.md"
-        """Filename where only open positions, without everything else will be saved. Default: `overview-positions.md`"""
+        """Filename where only open positions, without everything else will be saved. Default: `overview-positions.md`.
+
+        See also: `Overview()` with parameter `details="positions"`.
+        """
 
         self.overviewOrdersFile = "overview-orders.md"
-        """Filename where open limits and stop orders will be saved. Default: `overview-orders.md`"""
+        """Filename where open limits and stop orders will be saved. Default: `overview-orders.md`.
+
+        See also: `Overview()` with parameter `details="orders"`.
+        """
 
         self.overviewAnalyticsFile = "overview-analytics.md"
-        """Filename where only the analytics section and the distribution of the portfolio by various categories will be saved. Default: `overview-analytics.md`"""
+        """Filename where only the analytics section and the distribution of the portfolio by various categories will be saved. Default: `overview-analytics.md`.
+
+        See also: `Overview()` with parameter `details="analytics"`.
+        """
 
         self.reportFile = "deals.md"
-        """Filename where history of deals and trade statistics will be saved. Default: `deals.md`"""
+        """Filename where history of deals and trade statistics will be saved. Default: `deals.md`.
+
+        See also: `Deals()`.
+        """
+
+        self.withdrawalLimitsFile = "limits.md"
+        """Filename where table of funds available for withdrawal will be saved. Default: `limits.md`.
+
+        See also: `RequestLimits()` and `OverviewLimits()`.
+        """
 
         self.iListDumpFile = "dump.json" if defaultCache is None or not isinstance(defaultCache, str) or not defaultCache else defaultCache
-        """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`"""
+        """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`.
+
+        See also: `DumpInstruments()`.
+        """
 
         self.iList = None  # init iList for raw instruments data
         """Dictionary with raw data about shares, currencies, bonds, etfs and futures from broker server. Auto-updating and saving dump to the `iListDumpFile`.
         
-        See also: `Listing()` and `DumpInstruments()`.
+        See also: `Listing()`, `DumpInstruments()`.
         """
 
         # trying to re-load raw instruments data from file `iListDumpFile` or try to update it from server:
@@ -956,7 +1019,7 @@ class TinkoffBrokerServer:
 
     def ShowInstrumentsInfo(self, showInstruments: bool = False) -> str:
         """
-        This method get and show information about all available broker instruments.
+        This method get and show information about all available broker instruments for current user account.
         If `instrumentsFile` string is not empty then also save information to this file.
 
         :param showInstruments: if `True` then print results to console, if `False` - print only to file.
@@ -1994,7 +2057,7 @@ class TinkoffBrokerServer:
                 with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's portfolio is saved to file: [{}]".format(os.path.abspath(filename)))
+                uLogger.info("Client's portfolio was saved to file: [{}]".format(os.path.abspath(filename)))
 
         return view
 
@@ -3086,6 +3149,91 @@ class TinkoffBrokerServer:
 
         return result
 
+    def RequestLimits(self) -> dict:
+        """
+        Method for obtaining the available funds for withdrawal. See also REST API for limits:
+        https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetWithdrawLimits
+
+        :return: dict with raw parsed data from server that contains free funds for withdrawal. Example of dict:
+                 `{"money": [{"currency": "rub", "units": "100", "nano": 290000000}, {...}], "blocked": [...], "blockedGuarantee": [...]}`
+                 Here `money` is an array of portfolio currency positions, `blocked` is an array of blocked currency
+                 positions of the portfolio and `blockedGuarantee` is locked money under collateral for futures.
+        """
+        uLogger.debug("Requesting current available funds for withdrawal. Wait, please...")
+
+        self.body = str({"accountId": self.accountId})
+        portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits"
+        rawLimits = self.SendAPIRequest(portfolioURL, reqType="POST")
+
+        uLogger.debug("Records about available funds for withdrawal successfully received")
+
+        return rawLimits
+
+    def OverviewLimits(self, showLimits: bool = False) -> dict:
+        """
+        Method for parsing and show table with available funds for withdrawal. See also: `RequestLimits()`.
+
+        :param showLimits: if `False` then only dictionary returns, if `True` then also print withdrawal limits to log.
+        :return: dict with raw parsed data from server and some statistics about it.
+        """
+        rawLimits = self.RequestLimits()  # raw response with current available funds for withdrawal
+
+        view = {
+            "rawLimits": rawLimits,
+            "limits": {  # parsed data for every currency:
+                "money": {  # this is an array of portfolio currency positions
+                    item["currency"]: NanoToFloat(item["units"], item["nano"]) for item in rawLimits["money"]
+                },
+                "blocked": {  # this is an array of blocked currency
+                    item["currency"]: NanoToFloat(item["units"], item["nano"]) for item in rawLimits["blocked"]
+                },
+                "blockedGuarantee": {  # this is locked money under collateral for futures
+                    item["currency"]: NanoToFloat(item["units"], item["nano"]) for item in rawLimits["blockedGuarantee"]
+                },
+            },
+        }
+
+        # --- Prepare text table with limits in human-readable format:
+        if showLimits:
+            info = [
+                "# Withdrawal limits\n\n",
+                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
+                "\n| Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |\n",
+                "|------------|---------------|--------------------------|-------------------|-------------------|\n",
+            ]
+
+            for curr in view["limits"]["money"].keys():
+                blocked = view["limits"]["blocked"][curr] if curr in view["limits"]["blocked"].keys() else 0
+                blockedGuarantee = view["limits"]["blockedGuarantee"][curr] if curr in view["limits"]["blockedGuarantee"].keys() else 0
+                availableMoney = view["limits"]["money"][curr] - (blocked + blockedGuarantee)
+
+                infoStr = "| {:<10} | {:<13} | {:<24} | {:<17} | {:<17} |\n".format(
+                    "[{}]".format(curr),
+                    "{:.2f}".format(view["limits"]["money"][curr]),
+                    "{:.2f}".format(availableMoney),
+                    "{:.2f}".format(view["limits"]["blocked"][curr]) if curr in view["limits"]["blocked"].keys() else "—",
+                    "{:.2f}".format(view["limits"]["blockedGuarantee"][curr]) if curr in view["limits"]["blockedGuarantee"].keys() else "—",
+                )
+
+                if curr == "rub":
+                    info.insert(4, infoStr)  # insert at first position in table and after headers
+
+                else:
+                    info.append(infoStr)
+
+            infoText = "".join(info)
+
+            if showLimits:
+                uLogger.info(infoText)
+
+            if self.withdrawalLimitsFile:
+                with open(self.withdrawalLimitsFile, "w", encoding="UTF-8") as fH:
+                    fH.write(infoText)
+
+                uLogger.info("Client's withdrawal limits was saved to file: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
+
+        return view
+
 
 class Args:
     """
@@ -3164,6 +3312,8 @@ def ParseArgs():
     parser.add_argument("--close-trade", "--cancel-trade", action="store_true", help="Action: close only one position for instrument defined by `--ticker` key, including for currencies tickers.")
     parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers, including for currencies tickers.")
     parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations.")
+
+    parser.add_argument("--limits", action="store_true", help="Action: show table of funds available for withdrawal.")
 
     cmdArgs = parser.parse_args()
     return cmdArgs
@@ -3455,6 +3605,12 @@ def Main(**kwargs):
 
             elif args.close_all is not None:
                 server.CloseAll(*args.close_all)
+
+            elif args.limits:
+                if args.output is not None:
+                    server.withdrawalLimitsFile = args.output
+
+                server.OverviewLimits(showLimits=True)
 
             else:
                 uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
