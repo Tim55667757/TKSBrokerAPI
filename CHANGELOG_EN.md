@@ -13,10 +13,10 @@
 
 ##### New features
 
+* [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) Implemented methods: `RequestLimits()` to request raw data on user withdrawal limits, `OverviewLimits()` to display table data, and the `--limits` key to request and print limits in the console.
 * [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
 * [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
-* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
 * [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
 * [In progress] [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--detail-list` key that produces instrument's data similar to `dump.json`, but saved in `xlsx` format.
 
