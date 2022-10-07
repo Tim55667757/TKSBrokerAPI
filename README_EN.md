@@ -45,6 +45,7 @@
      - [Open a pending limit or stop order](#Open-a-pending-limit-or-stop-order)
      - [Cancel orders and close positions](#Cancel-orders-and-close-positions)
      - [Download historical data in OHLCV-candles format](#Download-historical-data-in-OHLCV-candles-format)
+     - [Find out the balance of funds available for withdrawal](#Find-out-the-balance-of-funds-available-for-withdrawal)
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
 
@@ -234,6 +235,9 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Cancel all previously opened orders and close current positions for all instruments at once, except for blocked volumes and positions for currencies, which must be closed manually;
   - key `--close-all`, you can also specify orders, asset type or specify several keywords after the key `--close-all` separated by a space: `orders`, `shares`, `bonds`, `etfs` or `futures`;
   - API-methods: [`CloseAll()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAll), [`CloseAllOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllOrders) and [`CloseAllTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllTrades).
+- Receive user limits on funds available for withdrawal;
+  - key `--limits`;
+  - API-methods: [`RequestLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestLimits) and [`OverviewLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewLimits).
 
 
 ## Setup
@@ -1713,7 +1717,7 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Download historical data in OHLCV-candles format
 
-Since TKSBrokerAPI v.1.3.* you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
+Since TKSBrokerAPI v1.3.* you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
 
 History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
 
@@ -1937,6 +1941,42 @@ TKSBrokerAPI.py     L:2352 INFO    [2022-09-04 14:49:45,876] Ticker [GAZP], FIGI
 TKSBrokerAPI.py     L:3355 DEBUG   [2022-09-04 14:49:45,876] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
 TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module work duration: [0:00:00.316572]
 TKSBrokerAPI.py     L:3361 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module finished: [2022-09-04 11:49:45] UTC, it is [2022-09-04 14:49:45] local time
+```
+
+</details>
+
+#### Find out the balance of funds available for withdrawal
+
+Starting with TKSBrokerAPI v1.4.*, the `--limits` key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used.
+
+In the table, the columns mean:
+- `Currencies` — the currency available in the user's portfolio;
+- `Total` — the total amount of funds in the specified currency;
+- `Available for withdrawal` — how much is available for withdrawal in the specified currency;
+- `Blocked for trade` — the amount of funds in the specified currency that are blocked for trading, for example, to secure transactions on placed limit orders;
+- `Futures guarantee` — the amount of funds in the specified currency that are blocked to secure futures transactions.
+
+<details>
+  <summary>Command to query available balance for withdrawal</summary>
+
+```commandline
+$ tksbrokerapi --limits --output my-limits.md
+
+TKSBrokerAPI.py     L:3227 INFO    [2022-10-07 16:59:56,795] # Withdrawal limits
+
+* **Actual date:** [2022-10-07 13:59:56 UTC]
+
+| Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |
+|------------|---------------|--------------------------|-------------------|-------------------|
+| [rub]      | 2136.61       | 1135.25                  | 1001.36           | —                 |
+| [eur]      | 0.29          | 0.29                     | —                 | —                 |
+| [cny]      | 1.42          | 1.42                     | —                 | —                 |
+| [chf]      | 1.00          | 1.00                     | —                 | —                 |
+| [try]      | 10.00         | 10.00                    | —                 | —                 |
+| [usd]      | 0.68          | 0.68                     | —                 | —                 |
+| [hkd]      | 2.41          | 2.41                     | —                 | —                 |
+
+TKSBrokerAPI.py     L:3233 INFO    [2022-10-07 16:59:56,797] Client's withdrawal limits was saved to file: [my-limits.md]
 ```
 
 </details>
