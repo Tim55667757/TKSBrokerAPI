@@ -503,6 +503,7 @@ options:
                         `etfs` and `futures`, but not `currencies`. Currency
                         positions you must closes manually using `--buy`,
                         `--sell`, `--close-trade` or `--close-trades` operations.
+  --limits              Action: show table of funds available for withdrawal.
 ```
 
 </details>

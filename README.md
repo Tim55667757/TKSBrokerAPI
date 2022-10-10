@@ -502,6 +502,7 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examp
                         `etfs` или `futures`, но нельзя использовать `currencies`. Валютные
                         позиции при необходимости вы должны закрыть вручную, используя ключи
                         `--buy`, `--sell`, `--close-trade` или `--close-trades`.
+  --limits              Команда: показать таблицу доступных для вывода средств в различных валютах.
 ```
 
 </details>
