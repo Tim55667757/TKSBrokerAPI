@@ -42,22 +42,27 @@ from time import sleep
 import re
 import json
 import requests
+import traceback as tb
+from typing import Union
+
 from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
-
 import pandas as pd
 
-import UniLogger as uLog
-import traceback as tb
+from TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
 
-from TKSEnums import *  # a lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
+from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data. See docs here: https://github.com/Tim55667757/PriceGenerator
+from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
+
+import UniLogger as uLog  # Logger for TKSBrokerAPI
 
 
 # --- Common technical parameters:
 
-uLogger = uLog.UniLogger
-uLogger.level = 10  # debug level by default
-uLogger.handlers[0].level = 20  # info level by default for STDOUT
+PGDisLog(uLogger.handlers[0])  # Disable 3-rd party logging from PriceGenerator
+uLogger = uLog.UniLogger  # init logger for TKSBrokerAPI
+uLogger.level = 10  # debug level by default for TKSBrokerAPI module
+uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerAPI module
 
 __version__ = "1.3"  # The "major.minor" version setup here, but build number define at the build-server only
 
@@ -1048,7 +1053,7 @@ class TinkoffBrokerServer:
                 iName = self.iList[iType][instrument]["name"]  # instrument's name
                 if len(iName) > 57:
                     iName = "{}...".format(iName[:54])  # right trim for a long string
-    
+
                 info.append("| {:<12} | {:<57} | {:<12} | {:<3} | {:<7} | {:<10} |\n".format(
                     self.iList[iType][instrument]["ticker"],
                     iName,
@@ -2473,11 +2478,15 @@ class TinkoffBrokerServer:
 
             uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
 
-        if printCandles and history is not None and not history.empty:
-            uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
-                strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
-                pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
-            ))
+        if history is not None and not history.empty:
+            if printCandles:
+                uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
+                    strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
+                    pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
+                ))
+
+        else:
+            uLogger.warning("Received an empty candles history!")
 
         if self.historyFile is not None:
             if history is not None and not history.empty:
@@ -2491,6 +2500,57 @@ class TinkoffBrokerServer:
             uLogger.debug("--output key is not defined. Parsed history file not saved to file, only pandas dataframe returns.")
 
         return history
+
+    @staticmethod
+    def LoadHistory(filePath: str) -> pd.DataFrame:
+        """
+        Load candles history from .csv-file and return pandas dataframe object.
+
+        :param filePath: path to .csv-file to open.
+        """
+        priceModel = PriceGenerator()  # init PriceGenerator object to work with candles data
+        loadedHistory = None  # init candles data object
+
+        uLogger.debug("Loading candles history with PriceGenerator module. Wait, please...")
+
+        if os.path.exists(filePath):
+            loadedHistory = priceModel.LoadFromFile(filePath)  # load data and get chain of candles as pandas dataframe
+            tfStr = priceModel.FormattedDelta(
+                priceModel.timeframe,
+                "{days} days {hours}h {minutes}m {seconds}s",
+            ) if priceModel.timeframe >= timedelta(days=1) else priceModel.FormattedDelta(
+                priceModel.timeframe,
+                "{hours}h {minutes}m {seconds}s",
+            )
+
+            if loadedHistory is not None and not loadedHistory.empty:
+                uLogger.info("Rows count loaded: [{}], detected timeframe of candles: [{}]. Showing some last rows:\n{}".format(
+                    len(loadedHistory),
+                    tfStr,
+                    pd.DataFrame.to_string(loadedHistory[-10:], max_cols=20)),
+                )
+
+            else:
+                uLogger.warning("It was loaded an empty history! Path: [{}]".format(os.path.abspath(filePath)))
+
+        else:
+            uLogger.error("File with candles history does not exist! Check the path: [{}]".format(filePath))
+
+        return loadedHistory
+
+    @staticmethod
+    def ShowHistoryChart(candles: Union[str, pd.DataFrame] = None, interact: bool = True, openInBrowser: bool = False) -> None:
+        """
+        Render an HTML-file with interact or non-interact candlesticks chart.
+
+        :param candles: string to csv-file with candles in OHLCV-model or like Pandas Dataframe object.
+        :param interact: if True then chain of candlesticks will render as interactive Bokeh chart.
+                         See examples: https://github.com/Tim55667757/PriceGenerator#overriding-parameters
+                         If False then chain of candlesticks will render as not interactive Google Candlestick chart.
+                         See examples: https://github.com/Tim55667757/PriceGenerator#statistics-and-chart-on-a-simple-template
+        :param openInBrowser: if True then immediately open chart in default browser, otherwise only html-file rendered.
+        """
+        pass
 
     def Trade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
@@ -3293,7 +3353,9 @@ def ParseArgs():
     parser.add_argument("--overview-analytics", action="store_true", help="Action: shows only the analytics section and the distribution of the portfolio by various categories. Also, you can define `--output` key to save this information to file, default: `overview-analytics.md`.")
 
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
-    parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Also, you can define `--output` key to save history candlesticks to file.")
+    parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. This action may be used together with the `--render-chart` key. Also, you can define `--output` key to save history candlesticks to file.")
+    parser.add_argument("--load-history", type=str, nargs=1, help="Action: try to load history candles from given .csv-file as a Pandas Dataframe and print it in to the console. This action may be used together with the `--render-chart` key.")
+    parser.add_argument("--render-chart", type=str, nargs=1, help="Action: render candlesticks chart. This key may only used with `--history` or `--load-history` together. Action has 1 parameter with two possible string values: `interact` (`i`) or `non-interact` (`ni`).")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -3481,6 +3543,9 @@ def Main(**kwargs):
 
                 else:
                     raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+
+            elif args.load_history is not None:
+                server.LoadHistory(filePath=args.load_history[0])
 
             elif args.trade is not None:
                 if 1 <= len(args.trade) <= 5:
