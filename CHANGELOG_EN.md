@@ -14,7 +14,7 @@
 ##### New features
 
 * [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) Implemented methods: `RequestLimits()` to request raw data on user withdrawal limits, `OverviewLimits()` to display table data, and the `--limits` key to request and print limits in the console.
-* [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
+* [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and rendering interactive or static charts using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library. Similarly, you can build charts for previously saved csv-files with the candles history. To do this, you need to specify the `--render-chart` key with the new key for loading data from file: `--load-history`.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
 * [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
 * [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
@@ -28,7 +28,7 @@
 
 ##### Bug fixes
 
-* ...
+* Bug fix with `NoneType object has no attribute ...` if `--history` key used without any variables.
 
 
 ### [1.3.70 (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.3.70) — released
