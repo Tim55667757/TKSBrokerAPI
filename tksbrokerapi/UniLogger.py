@@ -5,6 +5,8 @@
 """
 This module init standard python logging system with some of pre-defined parameters,
 e.g. debug level for log-file, info level for console, log-rotate and so on.
+
+Current internal logger name for TKSBrokerAPI module is `TKSBrokerAPI-UniLogger`.
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
