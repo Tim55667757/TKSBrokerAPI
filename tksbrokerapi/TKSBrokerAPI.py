@@ -2360,7 +2360,8 @@ class TinkoffBrokerServer:
         history = None  # empty pandas object for history
 
         if interval not in TKS_CANDLE_INTERVALS.keys():
-            raise Exception("Interval parameter must be string with current available values: `1min`, `5min`, `15min`, `hour` and `day`.")
+            uLogger.error("Interval parameter must be string with current available values: `1min`, `5min`, `15min`, `hour` and `day`.")
+            raise Exception("Incorrect value")
 
         if not (self.ticker or self.figi):
             raise Exception("Ticker or FIGI must be defined!")
@@ -2447,7 +2448,7 @@ class TinkoffBrokerServer:
                     uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
 
                 else:
-                    if (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
+                    if start is not None and (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
                         responseJSON["candles"] = responseJSON["candles"][:-1]  # removes last candle for "yesterday" request
 
                     responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
@@ -2529,6 +2530,7 @@ class TinkoffBrokerServer:
 
         if os.path.exists(filePath):
             loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as pandas dataframe
+
             tfStr = self.priceModel.FormattedDelta(
                 self.priceModel.timeframe,
                 "{days} days {hours}h {minutes}m {seconds}s",
@@ -2574,6 +2576,8 @@ class TinkoffBrokerServer:
 
         elif isinstance(candles, pd.DataFrame):
             self.priceModel.prices = candles  # set candles chain from variable
+            if "datetime" not in candles.columns:
+                self.priceModel.prices["datetime"] = pd.to_datetime(candles.date + ' ' + candles.time, utc=True)  # PriceGenerator uses "datetime" column with date and time
 
         else:
             uLogger.error("`candles` variable must be path string to the csv-file with candles in OHLCV-model or like Pandas Dataframe object!")
@@ -3571,7 +3575,7 @@ def Main(**kwargs):
                     server.historyFile = args.output
 
                 if 0 <= len(args.history) < 3:
-                    server.History(
+                    dataReceived = server.History(
                         start=args.history[0] if len(args.history) >= 1 else None,
                         end=args.history[1] if len(args.history) == 2 else None,
                         interval="hour" if args.interval is None or not args.interval else args.interval,
@@ -3580,13 +3584,24 @@ def Main(**kwargs):
                         printCandles=True,  # shows all downloaded candles in console
                     )
 
+                    if args.render_chart is not None and dataReceived is not None:
+                        iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
+                        server.htmlHistoryFile = args.output if args.output is not None else "index.html"
+
+                        server.ShowHistoryChart(
+                            candles=dataReceived,
+                            interact=iChart,
+                            openInBrowser=False,  # False by default, to avoid issues with `permissions denied` to html-file.
+                        )
+
                 else:
-                    raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    uLogger.error("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    raise Exception("Incorrect value")
 
             elif args.load_history is not None:
                 histData = server.LoadHistory(filePath=args.load_history)  # load data from file and show history in console
 
-                if args.render_chart is not None:
+                if args.render_chart is not None and histData is not None:
                     iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
                     server.htmlHistoryFile = args.output if args.output is not None else "index.html"
 
