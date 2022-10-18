@@ -238,6 +238,9 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Receive user limits on funds available for withdrawal;
   - key `--limits`;
   - API-methods: [`RequestLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestLimits) and [`OverviewLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewLimits).
+- Build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library), the price source can be either data downloaded from the server or previously saved files in csv-format;
+  - common key `--render-chart`, which must be used with one of the keys `--history` (loads data from server) or `--load-history` (loads data from csv-file);
+  - API-methods: [`ShowHistoryChart()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowHistoryChart), [`History()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.History) and [`LoadHistory()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.LoadHistory).
 
 
 ## Setup
@@ -365,7 +368,7 @@ options:
   --only-missing        Option: if history file define by `--output` key then
                         add only last missing candles, do not request all
                         history length. `False` by default.
-  --csv-sep CSV_SEP     Option: separator if .csv-file is used, `,` by default.
+  --csv-sep CSV_SEP     Option: separator if csv-file is used, `,` by default.
   --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
                         Option: showing STDOUT messages of minimal debug
                         level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING,
@@ -424,8 +427,19 @@ options:
                         instrument defined by `--ticker` or `--figi` (FIGI id)
                         keys. History returned between two given dates:
                         `start` and `end`. Minimum requested date in the past
-                        is `1970-01-01`. Also, you can define `--output` key
-                        to save history candlesticks to file.
+                        is `1970-01-01`. This action may be used together with
+                        the `--render-chart` key. Also, you can define
+                        `--output` key to save history candlesticks to file.
+  --load-history LOAD_HISTORY
+                        Action: try to load history candles from given csv-
+                        file as a Pandas Dataframe and print it in to the
+                        console. This action may be used together with the
+                        `--render-chart` key.
+  --render-chart RENDER_CHART
+                        Action: render candlesticks chart. This key may only
+                        used with `--history` or `--load-history` together.
+                        Action has 1 parameter with two possible string
+                        values: `interact` (`i`) or `non-interact` (`ni`).
   --trade [TRADE ...]   Action: universal action to open market position for
                         defined ticker or FIGI. You must specify 1-5
                         parameters: [direction `Buy` or `Sell`] [lots, >= 1]
@@ -1720,7 +1734,15 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 Since TKSBrokerAPI v1.3.* you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
 
-History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. Warning! Broker server use ISO UTC time by default.
+History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. **Warning!** Broker server use ISO UTC time by default.
+
+Since TKSBrokerAPI v1.4.* you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
+
+The generated graphs of various types will look like below (see also real examples under the spoilers). By default, they are saved to the `index.html` file. The charts additionally display some statistical values and indicators, however, they are presented only for a quick review of the price behavior in a given range. To conduct full analytical research and technical analysis, it is recommended to use other professional tools.
+
+| Interactive chart                                                                            | Static chart                                                                                        |
+|----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| ![](https://github.com/Tim55667757/PriceGenerator/blob/master/media/index.html.png?raw=true) | ![](https://github.com/Tim55667757/PriceGenerator/blob/master/media/index_google.html.png?raw=true) |
 
 <details>
   <summary>Command to request today's history by hour candles</summary>
@@ -1942,6 +1964,83 @@ TKSBrokerAPI.py     L:2352 INFO    [2022-09-04 14:49:45,876] Ticker [GAZP], FIGI
 TKSBrokerAPI.py     L:3355 DEBUG   [2022-09-04 14:49:45,876] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
 TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module work duration: [0:00:00.316572]
 TKSBrokerAPI.py     L:3361 DEBUG   [2022-09-04 14:49:45,876] TKSBrokerAPI module finished: [2022-09-04 11:49:45] UTC, it is [2022-09-04 14:49:45] local time
+```
+
+</details>
+
+<details>
+  <summary>Command for downloading candles from the server and drawing a non-interactive price chart</summary>
+
+An example of uploaded data can be found in the file [./docs/media/GAZP_hour.csv](./docs/media/GAZP_hour.csv), and the generated chart in the file [./docs/media/index_GAZP_google_chart.html](./docs/media/index_GAZP_google_chart.html).
+
+![](./docs/media/index_GAZP_google_chart.png)
+
+```commandline
+$ tksbrokerapi -t GAZP --history 2022-10-15 2022-10-17 --output GAZP_hour.csv --render-chart ni
+
+TKSBrokerAPI.py     L:2498 INFO    [2022-10-18 15:23:35,398] Here's requested history between [2022-10-15 00:00:00] UTC and [2022-10-17 23:59:59] UTC, not-empty candles count: [32]
+      date  time   open   high    low  close  volume
+2022.10.15 07:00 159.86 160.48 159.21 160.47    1758
+2022.10.15 08:00 160.48 160.97 159.46 160.18    3365
+2022.10.15 09:00 160.82 160.88 159.78 160.77    2009
+2022.10.15 10:00 160.78 160.98 160.01 160.70    2134
+2022.10.15 11:00 160.70 161.27 160.00 161.16    2585
+2022.10.15 12:00 160.51 161.34 160.10 160.80    2093
+2022.10.15 13:00 160.14 161.16 160.14 160.46    1533
+2022.10.15 14:00 161.12 161.98 160.34 161.54    2148
+2022.10.15 15:00 160.88 161.75 160.57 161.59    1928
+2022.10.16 07:00 161.59 161.84 160.69 161.69    3488
+2022.10.16 08:00 161.04 162.08 160.72 161.61    3962
+2022.10.16 09:00 161.62 162.06 160.56 161.57    2765
+2022.10.16 10:00 161.57 161.81 160.69 161.52    3077
+2022.10.16 11:00 161.52 161.53 159.74 161.10    2734
+2022.10.16 12:00 161.10 162.58 159.64 161.17    5346
+2022.10.16 13:00 160.52 161.22 160.22 161.08    1224
+2022.10.16 14:00 161.08 161.93 160.44 161.44    2177
+2022.10.16 15:00 161.44 161.80 160.53 161.43    3466
+2022.10.17 07:00 159.95 162.22 159.60 161.49  624146
+2022.10.17 08:00 161.49 161.80 161.00 161.36  234108
+2022.10.17 09:00 161.36 161.80 160.80 161.35  196364
+2022.10.17 10:00 161.39 162.87 161.28 162.87  308556
+2022.10.17 11:00 162.83 163.80 162.53 162.88  585629
+2022.10.17 12:00 162.85 163.37 162.56 162.66   96384
+2022.10.17 13:00 162.66 163.19 162.55 163.01  120077
+2022.10.17 14:00 163.01 163.16 162.03 162.40  161475
+2022.10.17 15:00 162.41 162.58 162.05 162.50  121233
+2022.10.17 16:00 162.50 162.66 161.52 162.31   93136
+2022.10.17 17:00 162.31 162.50 162.25 162.40   30276
+2022.10.17 18:00 162.40 162.82 162.30 162.70   34175
+2022.10.17 19:00 162.72 162.81 162.50 162.79   25063
+2022.10.17 20:00 162.78 163.30 162.78 163.24   48092
+TKSBrokerAPI.py     L:2509 INFO    [2022-10-18 15:23:35,401] Ticker [GAZP], FIGI [BBG004730RP0], tf: [hour], history saved: [GAZP_hour.csv]
+TKSBrokerAPI.py     L:2601 INFO    [2022-10-18 15:23:35,418] Rendered candles chart: [index.html]
+```
+
+</details>
+
+<details>
+  <summary>Command for loading the history of candles from a file and drawing an interactive price chart</summary>
+
+An example of uploaded data can be found in the file [./docs/media/POSI_15min.csv](./docs/media/POSI_15min.csv), and the generated chart in the file [./docs/media/index_POSI_bokeh_chart.html](./docs/media/index_POSI_bokeh_chart.html).
+
+![](./docs/media/index_POSI_bokeh_chart.png)
+
+```commandline
+$ tksbrokerapi --load-history POSI_15min.csv --render-chart i
+
+TKSBrokerAPI.py     L:2543 INFO    [2022-10-18 15:40:40,154] Rows count loaded: [36], detected timeframe of candles: [0h 15m 0s]. Showing some last rows:
+              datetime    open    high     low   close  volume
+26 2022-10-17 13:30:00  1084.4  1084.8  1080.4  1084.4    2487
+27 2022-10-17 13:45:00  1084.2  1088.0  1080.6  1088.0    2422
+28 2022-10-17 14:00:00  1088.0  1090.0  1086.2  1088.4    2781
+29 2022-10-17 14:15:00  1088.8  1089.6  1083.0  1087.8    1723
+30 2022-10-17 14:30:00  1087.6  1089.0  1086.4  1087.6     710
+31 2022-10-17 14:45:00  1087.8  1088.4  1086.8  1087.8     603
+32 2022-10-17 15:00:00  1087.8  1092.0  1087.0  1092.0    1749
+33 2022-10-17 15:15:00  1091.0  1096.6  1089.0  1095.8    3614
+34 2022-10-17 15:30:00  1095.8  1096.2  1088.0  1092.6    3429
+35 2022-10-17 15:45:00  1094.2  1094.2  1094.2  1094.2     453
+TKSBrokerAPI.py     L:2601 INFO    [2022-10-18 15:40:40,565] Rendered candles chart: [index.html]
 ```
 
 </details>
