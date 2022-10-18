@@ -2573,15 +2573,20 @@ class TinkoffBrokerServer:
         """
         if isinstance(candles, str):
             self.priceModel.prices = self.LoadHistory(filePath=candles)  # load candles chain from file
+            self.priceModel.ticker = os.path.basename(candles)  # use filename as ticker name in PriceGenerator
 
         elif isinstance(candles, pd.DataFrame):
             self.priceModel.prices = candles  # set candles chain from variable
+            self.priceModel.ticker = self.ticker  # use current TKSBrokerAPI ticker as ticker name in PriceGenerator
+
             if "datetime" not in candles.columns:
                 self.priceModel.prices["datetime"] = pd.to_datetime(candles.date + ' ' + candles.time, utc=True)  # PriceGenerator uses "datetime" column with date and time
 
         else:
             uLogger.error("`candles` variable must be path string to the csv-file with candles in OHLCV-model or like Pandas Dataframe object!")
             raise Exception("Incorrect value")
+
+        self.priceModel.horizon = len(self.priceModel.prices)  # use length of candles data as horizon in PriceGenerator
 
         if interact:
             uLogger.debug("Rendering interactive candles chart. Wait, please...")
@@ -3398,7 +3403,7 @@ def ParseArgs():
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
     parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. This action may be used together with the `--render-chart` key. Also, you can define `--output` key to save history candlesticks to file.")
     parser.add_argument("--load-history", type=str, help="Action: try to load history candles from given csv-file as a Pandas Dataframe and print it in to the console. This action may be used together with the `--render-chart` key.")
-    parser.add_argument("--render-chart", type=str, help="Action: render candlesticks chart. This key may only used with `--history` or `--load-history` together. Action has 1 parameter with two possible string values: `interact` (`i`) or `non-interact` (`ni`). Also, you can define `--output` key to save chart to file, default: `index.html`.")
+    parser.add_argument("--render-chart", type=str, help="Action: render candlesticks chart. This key may only used with `--history` or `--load-history` together. Action has 1 parameter with two possible string values: `interact` (`i`) or `non-interact` (`ni`).")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -3586,7 +3591,6 @@ def Main(**kwargs):
 
                     if args.render_chart is not None and dataReceived is not None:
                         iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
-                        server.htmlHistoryFile = args.output if args.output is not None else "index.html"
 
                         server.ShowHistoryChart(
                             candles=dataReceived,
@@ -3603,7 +3607,7 @@ def Main(**kwargs):
 
                 if args.render_chart is not None and histData is not None:
                     iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
-                    server.htmlHistoryFile = args.output if args.output is not None else "index.html"
+                    server.ticker = os.path.basename(args.load_history)  # use filename as ticker name for PriceGenerator's chart
 
                     server.ShowHistoryChart(
                         candles=histData,
@@ -3743,7 +3747,7 @@ def Main(**kwargs):
 
             else:
                 uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
-                raise Exception("There is no command to execute!")
+                raise Exception("There is no command to execute")
 
     except Exception:
         trace = tb.format_exc()
