@@ -540,7 +540,7 @@ class TinkoffBrokerServer:
 
         :return: Dictionary with all available broker instruments: currencies, shares, bonds, etfs and futures.
         """
-        uLogger.debug("Requesting all available instruments from broker for current user token. Wait, please...")
+        uLogger.debug("Requesting all available instruments for current account. Wait, please...")
         uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
 
         # this parameters insert to requests: https://tinkoff.github.io/investAPI/swagger-ui/#/InstrumentsService
@@ -571,27 +571,72 @@ class TinkoffBrokerServer:
 
         return iList
 
+    def DumpInstrumentsAsXLSX(self, forceUpdate: bool = False) -> None:
+        """
+        Creates XLSX-formatted dump file with raw data of instruments to further used by data scientists or stock analytics.
+
+        See also: `DumpInstruments()`, `Listing()`.
+
+        :param forceUpdate: if `True` then at first updates data with `Listing()` method,
+                            otherwise just saves exist `iList` as XLSX-file (default: `dump.xlsx`) .
+        """
+        if self.iListDumpFile is None or not self.iListDumpFile:
+            uLogger.error("Output name of dump file must be defined!")
+            raise Exception("Incorrect value")
+
+        if not self.iList or forceUpdate:
+            self.iList = self.Listing()
+
+        xlsxDumpFile = self.iListDumpFile.replace(".json", ".xlsx") if self.iListDumpFile.endswith(".json") else self.iListDumpFile + ".xlsx"
+
+        # Save as XLSX with separated sheets for every type of instruments:
+        with pd.ExcelWriter(
+                path=xlsxDumpFile,
+                date_format=TKS_DATE_TIME_FORMAT.split("T")[0],
+                datetime_format=TKS_DATE_TIME_FORMAT,
+                mode="w",
+        ) as writer:
+            for iType in TKS_INSTRUMENTS:
+                df = pd.DataFrame.from_dict(data=self.iList[iType], orient="index")  # generate pandas object from self.iList dictionary
+                df = df[sorted(df)]  # sorted by column names
+                df = df.applymap(
+                    lambda item: NanoToFloat(item["units"], item["nano"]) if isinstance(item, dict) and "units" in item.keys() and "nano" in item.keys() else item,
+                    na_action="ignore",
+                )  # converting numbers from nano-type to float in every cell
+                df.to_excel(
+                    writer,
+                    sheet_name=iType,
+                    encoding="UTF-8",
+                    freeze_panes=(1, 1),
+                )  # saving as XLSX-file with freeze first row and column as headers
+
+        uLogger.info("XLSX-file for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxDumpFile)))
+
     def DumpInstruments(self, forceUpdate: bool = True) -> str:
         """
         Receives and returns actual raw data about shares, currencies, bonds, etfs and futures from broker server
         using `Listing()` method. If `iListDumpFile` string is not empty then also save information to this file.
 
-        :param forceUpdate: if `True` then at first updates data with `Listing()` method, otherwise just saves exist `iList`.
-        :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` file.
+        See also: `DumpInstrumentsAsXLSX()`, `Listing()`.
+
+        :param forceUpdate: if `True` then at first updates data with `Listing()` method,
+                            otherwise just saves exist `iList` as JSON-file (default: `dump.json`).
+        :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` JSON-file.
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
-            raise Exception("Output name of dump file must be defined!")
+            uLogger.error("Output name of dump file must be defined!")
+            raise Exception("Incorrect value")
 
         if not self.iList or forceUpdate:
             self.iList = self.Listing()
 
-        dump = json.dumps(self.iList, indent=4, sort_keys=False)
+        jsonDump = json.dumps(self.iList, indent=4, sort_keys=False)  # create JSON object as string
         with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
-            fH.write(dump)
+            fH.write(jsonDump)
 
-        uLogger.info("Instruments raw data were cached for future used: [{}]".format(os.path.abspath(self.iListDumpFile)))
+        uLogger.info("Raw instruments data in JSON format were cached: [{}]".format(os.path.abspath(self.iListDumpFile)))
 
-        return dump
+        return jsonDump
 
     @staticmethod
     def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
@@ -3376,7 +3421,6 @@ def ParseArgs():
     parser.add_argument("--no-cancelled", "--no-canceled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If `None` then used default files.")
-    # parser.add_argument("--output-type", type=str, choices=[None, ".md", ".csv", ".xlsx"], default=None, help="Option: replace default type of output files for some commands. You can choose: `.md`, `.csv` and `.xlsx`. If `None` then used default file types.")
 
     parser.add_argument("--interval", type=str, default="hour", help="Option: available values are `1min`, `5min`, `15min`, `hour` and `day`. Used only with `--history` key. This is time period of one candle. Default: `hour` for every history candles.")
     parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. `False` by default.")
@@ -3389,6 +3433,7 @@ def ParseArgs():
     parser.add_argument("--version", "--ver", action="store_true", help="Action: shows current semantic version, looks like `major.minor.buildnumber`. If TKSBrokerAPI not installed via pip, then used local build number `.dev0`.")
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
+    parser.add_argument("--list-xlsx", "-x", action="store_true", help="Action: get all available instruments from server for current account and save raw data into xlsx-file to further used by data scientists or stock analytics, default: `dump.xlsx`.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use `--depth` key. `--ticker` key or `--figi` key must be defined!")
@@ -3501,6 +3546,9 @@ def Main(**kwargs):
                     server.instrumentsFile = args.output
 
                 server.ShowInstrumentsInfo(showInstruments=True)
+
+            elif args.list_xlsx:
+                server.DumpInstrumentsAsXLSX(forceUpdate=False)
 
             elif args.search:
                 if args.output is not None:
