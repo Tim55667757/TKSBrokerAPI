@@ -210,7 +210,8 @@ class TinkoffBrokerServer:
                 uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
 
             except KeyError:
-                raise Exception("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
+                uLogger.error("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
+                raise Exception("Token required")
 
         else:
             self.token = token  # highly priority than environment variable 'TKS_API_TOKEN'
@@ -435,7 +436,7 @@ class TinkoffBrokerServer:
         """
         Send GET or POST request to broker server and receive JSON object.
 
-        self.header: must be define with dictionary of headers.
+        self.header: must be defining with dictionary of headers.
         self.body: if define then used as request body. None by default.
         self.timeout: global request timeout, 15 seconds by default.
         :param url: url with REST request.
@@ -446,7 +447,8 @@ class TinkoffBrokerServer:
         :return: response JSON (dictionary) from broker.
         """
         if reqType not in ("GET", "POST"):
-            raise Exception("You can define request type: 'GET' or 'POST'!")
+            uLogger.error("You can define request type: 'GET' or 'POST'!")
+            raise Exception("Incorrect value")
 
         if debug:
             uLogger.debug("Request parameters:")
@@ -499,7 +501,6 @@ class TinkoffBrokerServer:
             if errMsg:
                 uLogger.error("Not `oK` status received from broker server! See: https://tinkoff.github.io/investAPI/errors/")
                 uLogger.error("    - message: {}".format(errMsg))
-                # raise Exception("Server returned an error! See full debug log. Also you can set debug=True in SendAPIRequest() and _ParseJSON() methods.")
 
         return responseJSON
 
@@ -582,7 +583,7 @@ class TinkoffBrokerServer:
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
             uLogger.error("Output name of dump file must be defined!")
-            raise Exception("Incorrect value")
+            raise Exception("Filename required")
 
         if not self.iList or forceUpdate:
             self.iList = self.Listing()
@@ -625,7 +626,7 @@ class TinkoffBrokerServer:
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
             uLogger.error("Output name of dump file must be defined!")
-            raise Exception("Incorrect value")
+            raise Exception("Filename required")
 
         if not self.iList or forceUpdate:
             self.iList = self.Listing()
@@ -982,10 +983,12 @@ class TinkoffBrokerServer:
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
         if self.depth < 1:
-            raise Exception("Depth of Market (DOM) must be >=1!")
+            uLogger.error("Depth of Market (DOM) must be >=1!")
+            raise Exception("Incorrect value")
 
         if not (self.ticker or self.figi):
-            raise Exception("self.ticker or self.figi variables must be defined!")
+            uLogger.error("self.ticker or self.figi variables must be defined!")
+            raise Exception("Ticker or FIGI required")
 
         if self.ticker and not self.figi:
             instrumentByTicker = self.SearchByTicker(requestPrice=False)  # WARNING! requestPrice=False to avoid recursion!
@@ -1224,7 +1227,8 @@ class TinkoffBrokerServer:
                  One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
         if instruments is None or not instruments:
-            raise Exception("You must define some of tickers or FIGIs to request it's actual prices!")
+            uLogger.error("You must define some of tickers or FIGIs to request it's actual prices!")
+            raise Exception("Ticker or FIGI required")
 
         requestedInstruments = []
         for iName in instruments:
@@ -2409,7 +2413,8 @@ class TinkoffBrokerServer:
             raise Exception("Incorrect value")
 
         if not (self.ticker or self.figi):
-            raise Exception("Ticker or FIGI must be defined!")
+            uLogger.error("Ticker or FIGI must be defined!")
+            raise Exception("Ticker or FIGI required")
 
         if self.ticker and not self.figi:
             instrumentByTicker = self.SearchByTicker(requestPrice=False, debug=False)
@@ -2661,7 +2666,8 @@ class TinkoffBrokerServer:
         :return: JSON with response from broker server.
         """
         if operation is None or not operation or operation not in ("Buy", "Sell"):
-            raise Exception("You must define operation type only one of them: `Buy` or `Sell`!")
+            uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
+            raise Exception("Incorrect value")
 
         if lots is None or lots < 1:
             uLogger.warning("You must define trade volume > 0: integer count of lots! For current operation lots reset to 1.")
@@ -2677,7 +2683,8 @@ class TinkoffBrokerServer:
             expDate = "Undefined"
 
         if not (self.ticker or self.figi):
-            raise Exception("`self.ticker` or `self.figi` variables must be defined!")
+            uLogger.error("Ticker or FIGI must be defined!")
+            raise Exception("Ticker or FIGI required")
 
         instrument = self.SearchByTicker(requestPrice=True, debug=False) if self.ticker else self.SearchByFIGI(requestPrice=True, debug=False)
         self.ticker = instrument["ticker"]
@@ -2865,16 +2872,20 @@ class TinkoffBrokerServer:
         :return: JSON with response from broker server.
         """
         if operation is None or not operation or operation not in ("Buy", "Sell"):
-            raise Exception("You must define operation type only one of them: `Buy` or `Sell`!")
+            uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
+            raise Exception("Incorrect value")
 
         if orderType is None or not orderType or orderType not in ("Limit", "Stop"):
-            raise Exception("You must define order type only one of them: `Limit` or `Stop`!")
+            uLogger.error("You must define order type only one of them: `Limit` or `Stop`!")
+            raise Exception("Incorrect value")
 
         if lots is None or lots < 1:
-            raise Exception("You must define trade volume > 0: integer count of lots!")
+            uLogger.error("You must define trade volume > 0: integer count of lots!")
+            raise Exception("Incorrect value")
 
         if targetPrice is None or targetPrice <= 0:
-            raise Exception("Target price for limit-order must be greater than 0!")
+            uLogger.error("Target price for limit-order must be greater than 0!")
+            raise Exception("Incorrect value")
 
         if limitPrice is None or limitPrice <= 0:
             limitPrice = targetPrice
@@ -2886,7 +2897,8 @@ class TinkoffBrokerServer:
             expDate = "Undefined"
 
         if not (self.ticker or self.figi):
-            raise Exception("`self.ticker` or `self.figi` variables must be defined!")
+            uLogger.error("Tocker or FIGI must be defined!")
+            raise Exception("Ticker or FIGI required")
 
         response = {}
         instrument = self.SearchByTicker(requestPrice=True, debug=False) if self.ticker else self.SearchByFIGI(requestPrice=True, debug=False)
@@ -3190,7 +3202,8 @@ class TinkoffBrokerServer:
         # uLogger.debug("Input parameters: {}".format(inputParameters))
         #
         # if operation is None or not operation or operation not in ("Buy", "Sell"):
-        #     raise Exception("You must define operation type: 'Buy' or 'Sell'!")
+        #     uLogger.error("You must define operation type: 'Buy' or 'Sell'!")
+        #     raise Exception("Incorrect value")
         #
         # if "l" in inputParameters.keys():
         #     inputParameters["lots"] = inputParameters.pop("l")
@@ -3199,13 +3212,15 @@ class TinkoffBrokerServer:
         #     inputParameters["prices"] = inputParameters.pop("p")
         #
         # if "lots" not in inputParameters.keys() or "prices" not in inputParameters.keys():
-        #     raise Exception("Both of 'lots' and 'prices' keys must be define to open grid orders!")
+        #     uLogger.error("Both of 'lots' and 'prices' keys must be define to open grid orders!")
+        #     raise Exception("Incorrect value")
         #
         # lots = [int(item.strip()) for item in inputParameters["lots"].split(",")]
         # prices = [float(item.strip()) for item in inputParameters["prices"].split(",")]
         #
         # if len(lots) != len(prices):
-        #     raise Exception("'lots' and 'prices' lists must have equal length of values!")
+        #     uLogger.error("'lots' and 'prices' lists must have equal length of values!")
+        #     raise Exception("Incorrect value")
         #
         # uLogger.debug("Extracted parameters for orders:")
         # uLogger.debug("lots = {}".format(lots))
@@ -3558,7 +3573,8 @@ def Main(**kwargs):
 
             elif args.info:
                 if not (args.ticker or args.figi):
-                    raise Exception("`--ticker` key or `--figi` key is required for this operation!")
+                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    raise Exception("Ticker or FIGI required")
 
                 if args.ticker:
                     server.SearchByTicker(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by ticker name
@@ -3568,7 +3584,8 @@ def Main(**kwargs):
 
             elif args.price:
                 if not (args.ticker or args.figi):
-                    raise Exception("`--ticker` key or `--figi` key is required for this operation!")
+                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    raise Exception("Ticker or FIGI required")
 
                 server.GetCurrentPrices(showPrice=True)
 
@@ -3621,7 +3638,8 @@ def Main(**kwargs):
                     )
 
                 else:
-                    raise Exception("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    uLogger.error("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    raise Exception("Incorrect value")
 
             elif args.history is not None:
                 if args.output is not None:
@@ -3777,7 +3795,8 @@ def Main(**kwargs):
 
             elif args.close_trade:
                 if not args.ticker:
-                    raise Exception("`--ticker` key is required for this operation!")
+                    uLogger.error("`--ticker` key is required for this operation!")
+                    raise Exception("Ticker required")
 
                 server.CloseTrades([args.ticker])  # close only one trade
 
