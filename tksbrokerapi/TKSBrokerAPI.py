@@ -6,9 +6,9 @@
 It can view history, orders and market information. Also, you can open orders and trades.
 
 If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
-**See examples**: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+**See examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 
-**Used constants are in the TKSEnums module**: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
+**Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 
 About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
 
@@ -197,7 +197,7 @@ class TinkoffBrokerServer:
         Main class init.
 
         :param token: Bearer token for Tinkoff Invest API. It can be set from environment variable `TKS_API_TOKEN`.
-        :param accountId: string with user's numeric account ID in Tinkoff Broker. It can be found in broker's reports.
+        :param accountId: string with numeric user account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
         :param useCache: use default cache file with raw data to use instead of `iList`.
                          True by default. Cache is auto-update if new day has come.
@@ -207,7 +207,7 @@ class TinkoffBrokerServer:
         if token is None or not token:
             try:
                 self.token = r"{}".format(os.environ["TKS_API_TOKEN"])
-                uLogger.debug("Bearer token for Tinkoff OpenApi set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
+                uLogger.debug("Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
 
             except KeyError:
                 uLogger.error("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
@@ -215,19 +215,19 @@ class TinkoffBrokerServer:
 
         else:
             self.token = token  # highly priority than environment variable 'TKS_API_TOKEN'
-            uLogger.debug("Bearer token for Tinkoff OpenApi set up from class variable `token`")
+            uLogger.debug("Bearer token for Tinkoff OpenAPI set up from class variable `token`")
 
         if accountId is None or not accountId:
             try:
                 self.accountId = r"{}".format(os.environ["TKS_ACCOUNT_ID"])
-                uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from environment variable `TKS_ACCOUNT_ID`")
+                uLogger.debug("Main account ID [{}] set up from environment variable `TKS_ACCOUNT_ID`".format(self.accountId))
 
             except KeyError:
                 uLogger.warning("`--account-id` key or environment variable `TKS_ACCOUNT_ID` undefined! Some of operations may be unavailable (overview, trading etc).")
 
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
-            uLogger.debug("String with user's numeric account ID in Tinkoff Broker set up from class variable `accountId`")
+            uLogger.debug("Main account ID [{}] set up from class variable `accountId`".format(self.accountId))
 
         self.version = __version__  # duplicate here used TKSBrokerAPI main version
         """Current TKSBrokerAPI version: major.minor, but the build number define at the build-server only.
@@ -242,7 +242,8 @@ class TinkoffBrokerServer:
         """
 
         self.aliasesKeys = self.aliases.keys()  # re-calc only first time at class init
-        self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
+
+        self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of the tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
         self.ticker = ""
         """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
@@ -364,7 +365,19 @@ class TinkoffBrokerServer:
         self.withdrawalLimitsFile = "limits.md"
         """Filename where table of funds available for withdrawal will be saved. Default: `limits.md`.
 
-        See also: `RequestLimits()` and `OverviewLimits()`.
+        See also: `OverviewLimits()` and `RequestLimits()`.
+        """
+
+        self.userInfoFile = "user-info.md"
+        """Filename where all available user's data (`accountId`s, common user information, margin status and tariff connections limit) will be saved. Default: `user-info.md`.
+
+        See also: `OverviewUserInfo()`, `RequestAccounts()`, `RequestUserInfo()`, `RequestMarginStatus()` and `RequestTariffLimits()`.
+        """
+
+        self.userAccountsFile = "accounts.md"
+        """Filename where simple table with all available user accounts (`accountId`s) will be saved. Default: `accounts.md`.
+
+        See also: `OverviewAccounts()`, `RequestAccounts()`.
         """
 
         self.iListDumpFile = "dump.json" if defaultCache is None or not isinstance(defaultCache, str) or not defaultCache else defaultCache
@@ -386,7 +399,7 @@ class TinkoffBrokerServer:
                 curTime = datetime.now(tzutc())
 
                 if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
-                    uLogger.warning("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+                    uLogger.warning("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
                     self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump file
 
@@ -394,7 +407,7 @@ class TinkoffBrokerServer:
                     self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
 
                     uLogger.debug("Local cache with raw instruments data is used: [{}]".format(os.path.abspath(self.iListDumpFile)))
-                    uLogger.debug("Dump file was last modified [{}] UTC".format(dumpTime.strftime("%Y-%m-%d %H:%M:%S")))
+                    uLogger.debug("Dump file was last modified [{}] UTC".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
             else:
                 uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
@@ -441,9 +454,9 @@ class TinkoffBrokerServer:
         self.timeout: global request timeout, 15 seconds by default.
         :param url: url with REST request.
         :param reqType: send "GET" or "POST" request. "GET" by default.
-        :param retry: how many times retry after first request if an error occurred.
+        :param retry: how many times retry after first request if an 5xx server errors occurred.
         :param pause: sleep time in seconds between retries.
-        :param debug: if `True` then print more debug information.
+        :param debug: if `True` then print more debug information, e.g. request and response parameters, headers etc.
         :return: response JSON (dictionary) from broker.
         """
         if reqType not in ("GET", "POST"):
@@ -485,11 +498,17 @@ class TinkoffBrokerServer:
                     uLogger.debug("    - status code: {}".format(response.status_code))
                     uLogger.debug("    - reason: {}".format(response.reason))
                     uLogger.debug("    - body length: {}".format(len(response.text)))
+                    uLogger.debug("    - headers: {}".format(response.headers))
 
                 # Error status codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-                if 400 <= response.status_code < 600:
-                    errMsg = "[{}] {}".format(response.status_code, response.text)
-                    uLogger.debug("    - not oK status code received: {}".format(errMsg))
+                if 400 <= response.status_code < 500:
+                    msg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+                    uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
+                    counter = retry + 1
+
+                if 500 <= response.status_code < 600:
+                    errMsg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+                    uLogger.debug("    - not oK, {}".format(errMsg))
                     counter += 1
 
                     if counter <= retry:
@@ -499,8 +518,8 @@ class TinkoffBrokerServer:
             responseJSON = self._ParseJSON(response.text)
 
             if errMsg:
-                uLogger.error("Not `oK` status received from broker server! See: https://tinkoff.github.io/investAPI/errors/")
-                uLogger.error("    - message: {}".format(errMsg))
+                uLogger.error("Server returns not `oK` status! See: https://tinkoff.github.io/investAPI/errors/")
+                uLogger.error("    - not oK, {}".format(errMsg))
 
         return responseJSON
 
@@ -635,7 +654,7 @@ class TinkoffBrokerServer:
         with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
             fH.write(jsonDump)
 
-        uLogger.info("Raw instruments data in JSON format were cached: [{}]".format(os.path.abspath(self.iListDumpFile)))
+        uLogger.info("New cache of instruments data was created: [{}]".format(os.path.abspath(self.iListDumpFile)))
 
         return jsonDump
 
@@ -1036,7 +1055,7 @@ class TinkoffBrokerServer:
                 if prices["buy"] or prices["sell"]:
                     info = [
                         "Orders book actual at [{}] (UTC)\nTicker: [{}], FIGI: [{}], Depth of Market: [{}]\n".format(
-                            datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S"),
+                            datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
                             self.ticker,
                             self.figi,
                             self.depth,
@@ -1297,8 +1316,7 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            if showPrices:
-                uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
+            uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
 
             if self.pricesFile:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
@@ -1310,11 +1328,15 @@ class TinkoffBrokerServer:
 
     def RequestPortfolio(self) -> dict:
         """
-        Requesting current actual user's portfolio.
+        Requesting actual user's portfolio for current `accountId`.
         REST API for user portfolio: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPortfolio
 
         :return: dictionary with user's portfolio.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         uLogger.debug("Requesting current actual user's portfolio. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
@@ -1327,11 +1349,15 @@ class TinkoffBrokerServer:
 
     def RequestPositions(self) -> dict:
         """
-        Requesting current open positions in currencies and instruments.
+        Requesting open positions by currencies and instruments for current `accountId`.
         REST API for open positions: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPositions
 
         :return: dictionary with open positions by instruments.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         uLogger.debug("Requesting current open positions in currencies and instruments. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
@@ -1344,11 +1370,15 @@ class TinkoffBrokerServer:
 
     def RequestPendingOrders(self) -> list:
         """
-        Requesting current actual pending orders.
+        Requesting current actual pending orders for current `accountId`.
         REST API for pending (market) orders: https://tinkoff.github.io/investAPI/swagger-ui/#/OrdersService/OrdersService_GetOrders
 
         :return: list of dictionaries with pending orders.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         uLogger.debug("Requesting current actual pending orders. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
@@ -1361,11 +1391,15 @@ class TinkoffBrokerServer:
 
     def RequestStopOrders(self) -> list:
         """
-        Requesting current actual stop orders.
+        Requesting current actual stop orders for current `accountId`.
         REST API for opened stop-orders: https://tinkoff.github.io/investAPI/swagger-ui/#/StopOrdersService/StopOrdersService_GetStopOrders
 
         :return: list of dictionaries with stop orders.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         uLogger.debug("Requesting current actual stop orders. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
@@ -1378,7 +1412,7 @@ class TinkoffBrokerServer:
 
     def Overview(self, showStatistics: bool = False, details: str = "full") -> dict:
         """
-        Get portfolio: all open positions, orders and some statistics for defined accountId.
+        Get portfolio: all open positions, orders and some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
         are defined then also save information to file.
 
@@ -1391,6 +1425,10 @@ class TinkoffBrokerServer:
                         `orders` - shows only sections of open limits and stop orders.
         :return: dictionary with client's raw portfolio and some statistics.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         view = {
             "raw": {  # --- raw portfolio responses from broker with user portfolio data:
                 "headers": {},  # list of dictionaries, response headers without "positions" section
@@ -1826,8 +1864,8 @@ class TinkoffBrokerServer:
             # Whatever the value `details`, header not changes:
             info = [
                 "# Client's portfolio\n\n",
-                "* **Actual date:** [{} UTC]\n"
-                "".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
+                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "* **Account ID:** [{}]\n".format(self.accountId),
             ]
 
             if details in ["full", "positions", "digest"]:
@@ -2098,8 +2136,7 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            if showStatistics:
-                uLogger.info(infoText)
+            uLogger.info(infoText)
 
             if details == "full" and self.overviewFile:
                 filename = self.overviewFile
@@ -2129,7 +2166,7 @@ class TinkoffBrokerServer:
 
     def Deals(self, start: str = None, end: str = None, printDeals: bool = False, showCancelled: bool = True) -> tuple:
         """
-        Returns history operations between two given dates.
+        Returns history operations between two given dates for current `accountId`.
         If `reportFile` string is not empty then also save human-readable report.
         Shows some statistical data of closed positions.
 
@@ -2141,6 +2178,10 @@ class TinkoffBrokerServer:
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         startDate, endDate = GetDatesAsString(start, end)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
 
         uLogger.debug("Requesting history of a client's operations. Wait, please...")
@@ -2378,9 +2419,7 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
-    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False,
-                csvSep: str = ",", printCandles: bool = False,
-                ) -> pd.DataFrame:
+    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", printCandles: bool = False) -> pd.DataFrame:
         """
         This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
 
@@ -2531,7 +2570,7 @@ class TinkoffBrokerServer:
                     curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
 
                     if curTime == lastTime:
-                        uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime("%Y-%m-%d %H:%M:%S")))
+                        uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
                         index = i
                         printCount = index + 1
                         break
@@ -2652,8 +2691,8 @@ class TinkoffBrokerServer:
 
     def Trade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
-        Universal method to create market order and make deal at the current price. Returns JSON data with response.
-        If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
+        Universal method to create market order and make deal at the current price for current `accountId`. Returns JSON data with response.
+        If `tp` or `sl` > 0, then in additional will open stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
         See also: `Order()` docstring. More simple methods than `Trade()` are `Buy()` and `Sell()`.
 
@@ -2665,6 +2704,10 @@ class TinkoffBrokerServer:
                         it is a string with format `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         if operation is None or not operation or operation not in ("Buy", "Sell"):
             uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
             raise Exception("Incorrect value")
@@ -2841,7 +2884,7 @@ class TinkoffBrokerServer:
 
     def Order(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
-        Universal method to create market or limit orders with all available parameters.
+        Universal method to create market or limit orders with all available parameters for current `accountId`.
         See more simple methods: `BuyLimit()`, `BuyStop()`, `SellLimit()`, `SellStop()`.
 
         If orderType is "Limit" then create pending limit-order below current price if operation is "Buy" and above
@@ -2871,6 +2914,10 @@ class TinkoffBrokerServer:
                         A limit order has no expiration date, it lasts until the end of the trading day.
         :return: JSON with response from broker server.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         if operation is None or not operation or operation not in ("Buy", "Sell"):
             uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
             raise Exception("Incorrect value")
@@ -2958,7 +3005,7 @@ class TinkoffBrokerServer:
                 ))
 
             openOrderURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/PostStopOrder"
-            expDateUTC = "" if expDate == "Undefined" else datetime.strptime(expDate, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tzlocal()).astimezone(tzutc()).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            expDateUTC = "" if expDate == "Undefined" else datetime.strptime(expDate, TKS_PRINT_DATE_TIME_FORMAT).replace(tzinfo=tzlocal()).astimezone(tzutc()).strftime(TKS_DATE_TIME_FORMAT_EXT)
             stopOrderType = "STOP_ORDER_TYPE_STOP_LOSS" if stopType == "SL" else "STOP_ORDER_TYPE_TAKE_PROFIT" if stopType == "TP" else "STOP_ORDER_TYPE_STOP_LIMIT"
 
             body = {
@@ -2981,14 +3028,14 @@ class TinkoffBrokerServer:
             if "stopOrderId" in response.keys():
                 uLogger.info(
                     "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and expiration date in UTC [{}]".format(
-                    response["stopOrderId"],
-                    self.ticker, self.figi,
-                    operation, lots,
-                    targetPrice, instrument["currency"],
-                    limitPrice, instrument["currency"],
-                    TKS_STOP_ORDER_TYPES[stopOrderType],
-                    datetime.strptime(expDateUTC, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()).astimezone(tzutc()).strftime("%Y-%m-%d %H:%M:%S") if expDateUTC else TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED"],
-                ))
+                        response["stopOrderId"],
+                        self.ticker, self.figi,
+                        operation, lots,
+                        targetPrice, instrument["currency"],
+                        limitPrice, instrument["currency"],
+                        TKS_STOP_ORDER_TYPES[stopOrderType],
+                        datetime.strptime(expDateUTC, TKS_DATE_TIME_FORMAT_EXT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT) if expDateUTC else TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED"],
+                    ))
 
                 if "lastPrice" in instrument["currentPrice"].keys() and instrument["currentPrice"]["lastPrice"]:
                     if operation == "Buy" and targetPrice < instrument["currentPrice"]["lastPrice"] and stopType != "TP":
@@ -3076,13 +3123,17 @@ class TinkoffBrokerServer:
 
     def CloseOrders(self, orderIDs: list, allOrdersIDs: list = None, allStopOrdersIDs: list = None) -> None:
         """
-        Cancel order or list of orders by its `orderId` or `stopOrderId`.
+        Cancel order or list of orders by its `orderId` or `stopOrderId` for current `accountId`.
 
         :param orderIDs: list of integers with `orderId` or `stopOrderId`.
         :param allOrdersIDs: pre-received lists of all active pending orders.
                              This avoids unnecessary downloading data from the server.
         :param allStopOrdersIDs: pre-received lists of all active stop orders.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         if orderIDs:
             if allOrdersIDs is None or not allOrdersIDs:
                 rawOrders = self.RequestPendingOrders()
@@ -3319,14 +3370,21 @@ class TinkoffBrokerServer:
 
     def RequestLimits(self) -> dict:
         """
-        Method for obtaining the available funds for withdrawal. See also REST API for limits:
-        https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetWithdrawLimits
+        Method for obtaining the available funds for withdrawal for current `accountId`.
 
-        :return: dict with raw parsed data from server that contains free funds for withdrawal. Example of dict:
-                 `{"money": [{"currency": "rub", "units": "100", "nano": 290000000}, {...}], "blocked": [...], "blockedGuarantee": [...]}`
+        See also:
+        - REST API for limits: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetWithdrawLimits
+        - `OverviewLimits()` method
+
+        :return: dict with raw data from server that contains free funds for withdrawal. Example of dict:
+                 `{"money": [{"currency": "rub", "units": "100", "nano": 290000000}, {...}], "blocked": [...], "blockedGuarantee": [...]}`.
                  Here `money` is an array of portfolio currency positions, `blocked` is an array of blocked currency
                  positions of the portfolio and `blockedGuarantee` is locked money under collateral for futures.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         uLogger.debug("Requesting current available funds for withdrawal. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
@@ -3339,11 +3397,17 @@ class TinkoffBrokerServer:
 
     def OverviewLimits(self, showLimits: bool = False) -> dict:
         """
-        Method for parsing and show table with available funds for withdrawal. See also: `RequestLimits()`.
+        Method for parsing and show table with available funds for withdrawal for current `accountId`.
+
+        See also: `RequestLimits()`.
 
         :param showLimits: if `False` then only dictionary returns, if `True` then also print withdrawal limits to log.
-        :return: dict with raw parsed data from server and some statistics about it.
+        :return: dict with raw parsed data from server and some calculated statistics about it.
         """
+        if self.accountId is None or not self.accountId:
+            uLogger.error("Variable `accountId` must be defined for using this method!")
+            raise Exception("Account ID required")
+
         rawLimits = self.RequestLimits()  # raw response with current available funds for withdrawal
 
         view = {
@@ -3365,7 +3429,8 @@ class TinkoffBrokerServer:
         if showLimits:
             info = [
                 "# Withdrawal limits\n\n",
-                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M:%S")),
+                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "* **Account ID:** [{}]\n".format(self.accountId),
                 "\n| Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |\n",
                 "|------------|---------------|--------------------------|-------------------|-------------------|\n",
             ]
@@ -3384,21 +3449,359 @@ class TinkoffBrokerServer:
                 )
 
                 if curr == "rub":
-                    info.insert(4, infoStr)  # insert at first position in table and after headers
+                    info.insert(5, infoStr)  # insert at first position in table and after headers
 
                 else:
                     info.append(infoStr)
 
             infoText = "".join(info)
 
-            if showLimits:
-                uLogger.info(infoText)
+            uLogger.info(infoText)
 
             if self.withdrawalLimitsFile:
                 with open(self.withdrawalLimitsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
                 uLogger.info("Client's withdrawal limits was saved to file: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
+
+        return view
+
+    def RequestAccounts(self) -> dict:
+        """
+        Method for requesting all brokerage accounts (`accountId`s) of current user detected by `token`.
+
+        See also:
+        - REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/UsersService/UsersService_GetAccounts
+        - What does account fields mean: https://tinkoff.github.io/investAPI/users/#account
+        - `OverviewUserInfo()` method
+
+        :return: dict with raw data from server that contains accounts info. Example of dict:
+                 `{"accounts": [{"id": "20000xxxxx", "type": "ACCOUNT_TYPE_TINKOFF", "name": "TKSBrokerAPI account",
+                   "status": "ACCOUNT_STATUS_OPEN", "openedDate": "2018-05-23T00:00:00Z",
+                   "closedDate": "1970-01-01T00:00:00Z", "accessLevel": "ACCOUNT_ACCESS_LEVEL_FULL_ACCESS"}, ...]}`.
+                 If `closedDate="1970-01-01T00:00:00Z"` it means that account is active now.
+        """
+        uLogger.debug("Requesting all brokerage accounts of current user detected by its token. Wait, please...")
+
+        self.body = str({})
+        portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts"
+        rawAccounts = self.SendAPIRequest(portfolioURL, reqType="POST")
+
+        uLogger.debug("Records about available accounts successfully received")
+
+        return rawAccounts
+
+    def RequestUserInfo(self) -> dict:
+        """
+        Method for requesting common user's information.
+
+        See also:
+        - REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/UsersService/UsersService_GetInfo
+        - What does user info fields mean: https://tinkoff.github.io/investAPI/users/#getinforequest
+        - What does `qualified_for_work_with` field mean: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with
+        - `OverviewUserInfo()` method
+
+        :return: dict with raw data from server that contains user's information. Example of dict:
+                 `{"premStatus": true, "qualStatus": false, "qualifiedForWorkWith": ["bond", "foreign_shares", "leverage",
+                   "russian_shares", "structured_income_bonds"], "tariff": "premium"}`.
+        """
+        uLogger.debug("Requesting common user's information. Wait, please...")
+
+        self.body = str({})
+        portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetInfo"
+        rawUserInfo = self.SendAPIRequest(portfolioURL, reqType="POST")
+
+        uLogger.debug("Records about current user successfully received")
+
+        return rawUserInfo
+
+    def RequestMarginStatus(self, accountId: str = None) -> dict:
+        """
+        Method for requesting margin calculation for defined account ID.
+
+        See also:
+        - REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/UsersService/UsersService_GetMarginAttributes
+        - What does margin fields mean: https://tinkoff.github.io/investAPI/users/#getmarginattributesresponse
+        - `OverviewUserInfo()` method
+
+        :param accountId: string with numeric account ID. If `None`, then used class field `accountId`.
+        :return: dict with raw data from server that contains margin calculation. If margin is disabled then returns empty dict.
+                 Example of responses:
+                 status code 400: `{"code": 3, "message": "account margin status is disabled", "description": "30051" }`, returns: `{}`.
+                 status code 200: `{"liquidPortfolio": {"currency": "rub", "units": "7175", "nano": 560000000},
+                                    "startingMargin": {"currency": "rub", "units": "6311", "nano": 840000000},
+                                    "minimalMargin": {"currency": "rub", "units": "3155", "nano": 920000000},
+                                    "fundsSufficiencyLevel": {"units": "1", "nano": 280000000},
+                                    "amountOfMissingFunds": {"currency": "rub", "units": "-863", "nano": -720000000}}`.
+        """
+        if accountId is None or not accountId:
+            if self.accountId is None or not self.accountId:
+                uLogger.error("Variable `accountId` must be defined for using this method!")
+                raise Exception("Account ID required")
+
+            else:
+                accountId = self.accountId  # use `self.accountId` (main ID) by default
+
+        uLogger.debug("Requesting margin calculation for accountId [{}]. Wait, please...".format(accountId))
+
+        self.body = str({"accountId": accountId})
+        portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetMarginAttributes"
+        rawMargin = self.SendAPIRequest(portfolioURL, reqType="POST")
+
+        if rawMargin == {"code": 3, "message": "account margin status is disabled", "description": "30051"}:
+            uLogger.debug("Server response: margin status is disabled for current accountId [{}]".format(accountId))
+            rawMargin = {}
+
+        else:
+            uLogger.debug("Records with margin calculation for accountId [{}] successfully received".format(accountId))
+
+        return rawMargin
+
+    def RequestTariffLimits(self) -> dict:
+        """
+        Method for requesting limits of current tariff (connections, API methods etc.) of current user detected by `token`.
+
+        See also:
+        - REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/UsersService/UsersService_GetUserTariff
+        - What does fields in tariff mean: https://tinkoff.github.io/investAPI/users/#getusertariffrequest
+        - Unary limit: https://tinkoff.github.io/investAPI/users/#unarylimit
+        - Stream limit: https://tinkoff.github.io/investAPI/users/#streamlimit
+        - `OverviewUserInfo()` method
+
+        :return: dict with raw data from server that contains limits of current tariff. Example of dict:
+                 `{"unaryLimits": [{"limitPerMinute": 0, "methods": ["methods", "methods"]}, ...],
+                   "streamLimits": [{"streams": ["streams", "streams"], "limit": 6}, ...]}`.
+        """
+        uLogger.debug("Requesting limits of current tariff. Wait, please...")
+
+        self.body = str({})
+        portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetUserTariff"
+        rawTariffLimits = self.SendAPIRequest(portfolioURL, reqType="POST")
+
+        uLogger.debug("Records with limits of current tariff successfully received")
+
+        return rawTariffLimits
+
+    def OverviewAccounts(self, showAccounts: bool = False) -> dict:
+        """
+        Method for parsing and show simple table with all available user accounts.
+
+        See also: `RequestAccounts()` and `OverviewUserInfo()` methods.
+
+        :param showAccounts: if `False` then only dictionary with accounts data returns, if `True` then also print it to log.
+        :return: dict with parsed accounts data received from `RequestAccounts()` method. Example of dict:
+                 `view = {"rawAccounts": {rawAccounts from RequestAccounts() method...},
+                          "stat": {"accountId string": {"type": "Tinkoff brokerage account", "name": "Test - 1",
+                                                        "status": "Opened and active account", "opened": "2018-05-23 00:00:00",
+                                                        "closed": "—", "access": "Full access" }, ...}}`
+        """
+        rawAccounts = self.RequestAccounts()  # Raw responses with accounts
+
+        # This is an array of dict with user accounts, its `accountId`s and some parsed data:
+        accounts = {
+            item["id"]: {
+                "type": TKS_ACCOUNT_TYPES[item["type"]],
+                "name": item["name"],
+                "status": TKS_ACCOUNT_STATUSES[item["status"]],
+                "opened": datetime.strptime(item["openedDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
+                "closed": datetime.strptime(item["closedDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT) if item["closedDate"] != "1970-01-01T00:00:00Z" else "—",
+                "access": TKS_ACCESS_LEVELS[item["accessLevel"]],
+            } for item in rawAccounts["accounts"]
+        }
+
+        # Raw and parsed data with some fields replaced in "stat" section:
+        view = {
+            "rawAccounts": rawAccounts,
+            "stat": accounts,
+        }
+
+        # --- Prepare simple text table with only accounts data in human-readable format:
+        if showAccounts:
+            info = [
+                "# User accounts\n\n",
+                "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "| Account ID   | Type                      | Status                    | Name                           |\n",
+                "|--------------|---------------------------|---------------------------|--------------------------------|\n",
+            ]
+
+            for account in view["stat"].keys():
+                info.extend([
+                    "| {:<12} | {:<25} | {:<25} | {:<30} |\n".format(
+                        account,
+                        view["stat"][account]["type"],
+                        view["stat"][account]["status"],
+                        view["stat"][account]["name"],
+                    )
+                ])
+
+            infoText = "".join(info)
+
+            uLogger.info(infoText)
+
+            if self.userAccountsFile:
+                with open(self.userAccountsFile, "w", encoding="UTF-8") as fH:
+                    fH.write(infoText)
+
+                uLogger.info("User accounts were saved to file: [{}]".format(os.path.abspath(self.userAccountsFile)))
+
+        return view
+
+    def OverviewUserInfo(self, showInfo: bool = False) -> dict:
+        """
+        Method for parsing and show all available user's data (`accountId`s, common user information, margin status and tariff connections limit).
+
+        See also: `OverviewAccounts()`, `RequestAccounts()`, `RequestUserInfo()`, `RequestMarginStatus()` and `RequestTariffLimits()` methods.
+
+        :param showInfo: if `False` then only dictionary returns, if `True` then also print user's data to log.
+        :return: dict with raw parsed data from server and some calculated statistics about it.
+        """
+        rawUserInfo = self.RequestUserInfo()  # Raw response with common user info
+        overviewAccount = self.OverviewAccounts(showAccounts=False)  # Raw and parsed accounts data
+        rawAccounts = overviewAccount["rawAccounts"]  # Raw response with user accounts data
+        accounts = overviewAccount["stat"]  # Dict with only statistics about user accounts
+        rawMargins = {account: self.RequestMarginStatus(accountId=account) for account in accounts.keys()}  # Raw response with margin calculation for every account ID
+        rawTariffLimits = self.RequestTariffLimits()  # Raw response with limits of current tariff
+
+        # This is dict with parsed common user data:
+        userInfo = {
+            "premium": "Yes" if rawUserInfo["premStatus"] else "No",
+            "qualified": "Yes" if rawUserInfo["qualStatus"] else "No",
+            "allowed": [TKS_QUALIFIED_TYPES[item] for item in rawUserInfo["qualifiedForWorkWith"]],
+            "tariff": rawUserInfo["tariff"],
+        }
+
+        # This is an array of dict with parsed margin statuses for every account IDs:
+        margins = {}
+        for accountId in accounts.keys():
+            if rawMargins[accountId]:
+                margins[accountId] = {
+                    "currency": rawMargins[accountId]["liquidPortfolio"]["currency"],
+                    "liquid": NanoToFloat(rawMargins[accountId]["liquidPortfolio"]["units"], rawMargins[accountId]["liquidPortfolio"]["nano"]),
+                    "start": NanoToFloat(rawMargins[accountId]["startingMargin"]["units"], rawMargins[accountId]["startingMargin"]["nano"]),
+                    "min": NanoToFloat(rawMargins[accountId]["minimalMargin"]["units"], rawMargins[accountId]["minimalMargin"]["nano"]),
+                    "level": NanoToFloat(rawMargins[accountId]["fundsSufficiencyLevel"]["units"], rawMargins[accountId]["fundsSufficiencyLevel"]["nano"]),
+                    "missing": NanoToFloat(rawMargins[accountId]["amountOfMissingFunds"]["units"], rawMargins[accountId]["amountOfMissingFunds"]["nano"]),
+                }
+
+            else:
+                margins[accountId] = {}  # Server response: margin status is disabled for current accountId
+
+        unary = {}  # unary-connection limits
+        for item in rawTariffLimits["unaryLimits"]:
+            if item["limitPerMinute"] in unary.keys():
+                unary[item["limitPerMinute"]].extend(item["methods"])
+
+            else:
+                unary[item["limitPerMinute"]] = item["methods"]
+
+        stream = {}  # stream-connection limits
+        for item in rawTariffLimits["streamLimits"]:
+            if item["limit"] in stream.keys():
+                stream[item["limit"]].extend(item["streams"])
+
+            else:
+                stream[item["limit"]] = item["streams"]
+
+        # This is dict with parsed limits of current tariff (connections, API methods etc.):
+        limits = {
+            "unary": unary,
+            "stream": stream,
+        }
+
+        # Raw and parsed data as an output result:
+        view = {
+            "rawUserInfo": rawUserInfo,
+            "rawAccounts": rawAccounts,
+            "rawMargins": rawMargins,
+            "rawTariffLimits": rawTariffLimits,
+            "stat": {
+                "userInfo": userInfo,
+                "accounts": accounts,
+                "margins": margins,
+                "limits": limits,
+            },
+        }
+
+        # --- Prepare text table with user information in human-readable format:
+        if showInfo:
+            info = [
+                "# Full user information\n\n",
+                "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "## Common information\n\n",
+                "* **Qualified user:** {}\n".format(view["stat"]["userInfo"]["qualified"]),
+                "* **Tariff name:** {}\n".format(view["stat"]["userInfo"]["tariff"]),
+                "* **Premium user:** {}\n".format(view["stat"]["userInfo"]["premium"]),
+                "* **Allowed to work with instruments:**\n{}\n".format("".join(["  - {}\n".format(item) for item in view["stat"]["userInfo"]["allowed"]])),
+                "\n## User accounts\n\n",
+            ]
+
+            for account in view["stat"]["accounts"].keys():
+                info.extend([
+                    "### ID: [{}]\n\n".format(account),
+                    "| Parameters           | Values                                                       |\n",
+                    "|----------------------|--------------------------------------------------------------|\n",
+                    "| Account type:        | {:<60} |\n".format(view["stat"]["accounts"][account]["type"]),
+                    "| Account name:        | {:<60} |\n".format(view["stat"]["accounts"][account]["name"]),
+                    "| Account status:      | {:<60} |\n".format(view["stat"]["accounts"][account]["status"]),
+                    "| Access level:        | {:<60} |\n".format(view["stat"]["accounts"][account]["access"]),
+                    "| Date opened:         | {:<60} |\n".format(view["stat"]["accounts"][account]["opened"]),
+                    "| Date closed:         | {:<60} |\n".format(view["stat"]["accounts"][account]["closed"]),
+                ])
+
+                if margins[account]:
+                    info.extend([
+                        "| Margin status:       | Enabled                                                      |\n",
+                        "| - Liquid portfolio:  | {:<60} |\n".format("{} {}".format(margins[account]["liquid"], margins[account]["currency"])),
+                        "| - Margin starting:   | {:<60} |\n".format("{} {}".format(margins[account]["start"], margins[account]["currency"])),
+                        "| - Margin minimum:    | {:<60} |\n".format("{} {}".format(margins[account]["min"], margins[account]["currency"])),
+                        "| - Sufficiency level: | {:<60} |\n".format("{:.2f} ({:.2f}%)".format(margins[account]["level"], margins[account]["level"] * 100)),
+                        "| - Missing funds:     | {:<60} |\n\n".format("{} {}".format(margins[account]["missing"], margins[account]["currency"])),
+                    ])
+
+                else:
+                    info.append("| Margin status:       | Disabled                                                     |\n\n")
+
+            info.extend([
+                "\n## Current user tariff limits\n",
+                "\nSee also:\n",
+                "* Tinkoff limit policy: https://tinkoff.github.io/investAPI/limits/\n",
+                "* Tinkoff Invest API: https://tinkoff.github.io/investAPI/\n",
+                "  - More about REST API requests: https://tinkoff.github.io/investAPI/swagger-ui/\n",
+                "  - More about gRPC requests for stream connections: https://tinkoff.github.io/investAPI/grpc/\n",
+                "\n### Unary limits\n",
+            ])
+
+            if unary:
+                for key, values in sorted(unary.items()):
+                    info.append("\n* Max requests per minute: {}\n".format(key))
+
+                    for value in values:
+                        info.append("  - {}\n".format(value))
+
+            else:
+                info.append("\nNot available\n")
+
+            info.append("\n### Stream limits\n")
+
+            if stream:
+                for key, values in sorted(stream.items()):
+                    info.append("\n* Max stream connections: {}\n".format(key))
+
+                    for value in values:
+                        info.append("  - {}\n".format(value))
+
+            else:
+                info.append("\nNot available\n")
+
+            infoText = "".join(info)
+
+            uLogger.info(infoText)
+
+            if self.userInfoFile:
+                with open(self.userInfoFile, "w", encoding="UTF-8") as fH:
+                    fH.write(infoText)
+
+                uLogger.info("User data was saved to file: [{}]".format(os.path.abspath(self.userInfoFile)))
 
         return view
 
@@ -3483,7 +3886,9 @@ def ParseArgs():
     parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers, including for currencies tickers.")
     parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations.")
 
-    parser.add_argument("--limits", action="store_true", help="Action: show table of funds available for withdrawal.")
+    parser.add_argument("--limits", "--withdrawal-limits", "-w", action="store_true", help="Action: show table of funds available for withdrawal for current `accountId`. You can change `accountId` with the key `--account-id`. Also, you can define `--output` key to save this information to file, default: `limits.md`.")
+    parser.add_argument("--user-info", "-u", action="store_true", help="Action: show all available user's data (`accountId`s, common user information, margin status and tariff connections limit). Also, you can define `--output` key to save this information to file, default: `user-info.md`.")
+    parser.add_argument("--account", "--accounts", "-a", action="store_true", help="Action: show simple table with all available user accounts. Also, you can define `--output` key to save this information to file, default: `accounts.md`.")
 
     cmdArgs = parser.parse_args()
     return cmdArgs
@@ -3504,8 +3909,8 @@ def Main(**kwargs):
     exitCode = 0
     start = datetime.now(tzutc())
     uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
-        start.strftime("%Y-%m-%d %H:%M:%S"),
-        start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
+        start.strftime(TKS_PRINT_DATE_TIME_FORMAT),
+        start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
     ))
 
     # trying to calculate full current version:
@@ -3547,12 +3952,6 @@ def Main(**kwargs):
 
             if args.depth is not None:
                 server.depth = args.depth
-
-            # if args.length is not None:
-            #     server.historyLength = args.length
-            #
-            # if args.interval is not None:
-            #     server.historyInterval = args.interval
 
             # --- do one of commands:
 
@@ -3812,6 +4211,18 @@ def Main(**kwargs):
 
                 server.OverviewLimits(showLimits=True)
 
+            elif args.user_info:
+                if args.output is not None:
+                    server.userInfoFile = args.output
+
+                server.OverviewUserInfo(showInfo=True)
+
+            elif args.account:
+                if args.output is not None:
+                    server.userAccountsFile = args.output
+
+                server.OverviewAccounts(showAccounts=True)
+
             else:
                 uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
                 raise Exception("There is no command to execute")
@@ -3840,8 +4251,8 @@ def Main(**kwargs):
 
         uLogger.debug(">>> TKSBrokerAPI module work duration: [{}]".format(finish - start))
         uLogger.debug(">>> TKSBrokerAPI module finished: [{} UTC], it is [{}] local time".format(
-            finish.strftime("%Y-%m-%d %H:%M:%S"),
-            finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
+            finish.strftime(TKS_PRINT_DATE_TIME_FORMAT),
+            finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
         ))
 
         if not kwargs:

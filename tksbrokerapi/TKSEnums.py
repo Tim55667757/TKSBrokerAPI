@@ -27,6 +27,12 @@ Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui
 TKS_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 """Date and time string format used by Tinkoff Open API. Default: `"%Y-%m-%dT%H:%M:%SZ"`."""
 
+TKS_DATE_TIME_FORMAT_EXT = "%Y-%m-%dT%H:%M:%S.%fZ"
+"""Extended date and time string format used by Tinkoff Open API. Default: `"%Y-%m-%dT%H:%M:%S.%fZ"`."""
+
+TKS_PRINT_DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+"""Human-readable format of date and time string. Default: `"%Y-%m-%d %H:%M:%S"`."""
+
 TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
@@ -58,6 +64,45 @@ TKS_CANDLE_INTERVALS = {  # List values: 1st - Tinkoff API parameter, 2nd - minu
 See more: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
 """
 
+TKS_ACCOUNT_STATUSES = {
+    "ACCOUNT_STATUS_UNSPECIFIED": "Account status undefined",
+    "ACCOUNT_STATUS_NEW": "New, open in progress...",
+    "ACCOUNT_STATUS_OPEN": "Opened and active account",
+    "ACCOUNT_STATUS_CLOSED": "Closed account",
+}
+"""Account status enums: https://tinkoff.github.io/investAPI/users/#accountstatus"""
+
+TKS_ACCOUNT_TYPES = {
+    "ACCOUNT_TYPE_UNSPECIFIED": "Account type undefined",
+    "ACCOUNT_TYPE_TINKOFF": "Tinkoff brokerage account",
+    "ACCOUNT_TYPE_TINKOFF_IIS": "IIS account",
+    "ACCOUNT_TYPE_INVEST_BOX": "Investment \"piggy bank\"",
+}
+"""Account type enums: https://tinkoff.github.io/investAPI/users/#accounttype"""
+
+TKS_ACCESS_LEVELS = {
+    "ACCOUNT_ACCESS_LEVEL_UNSPECIFIED": "Access level undefined",
+    "ACCOUNT_ACCESS_LEVEL_FULL_ACCESS": "Full access",
+    "ACCOUNT_ACCESS_LEVEL_READ_ONLY": "Read-only access",
+    "ACCOUNT_ACCESS_LEVEL_NO_ACCESS": "No access",
+}
+"""Access level enums: https://tinkoff.github.io/investAPI/users/#accesslevel"""
+
+TKS_QUALIFIED_TYPES = {
+    "derivative": "Futures and Options",
+    "structured_bonds": "Structured bonds",
+    "closed_fund": "Closed-ended funds",
+    "bond": "Bonds with low rating",
+    "structured_income_bonds": "Structured income bonds",
+    "foreign_shares": "Foreign shares not included in the exchange quotation lists",
+    "foreign_etf": "Foreign ETF",
+    "foreign_bond": "Euro-bonds",
+    "russian_shares": "Russian shares not included in quotation lists",
+    "leverage": "Margin trading, unsecured leveraged trades",
+    "repo": "REPO agreements",
+}
+"""Values of `qualified_for_work_with` field: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with"""
+
 TKS_TRADING_STATUSES = {
     "SECURITY_TRADING_STATUS_UNSPECIFIED": "Trading status undefined",
     "SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING": "Not available for trading",
@@ -77,7 +122,7 @@ TKS_TRADING_STATUSES = {
     "SECURITY_TRADING_STATUS_DEALER_BREAK_IN_TRADING": "Break in trading in the broker's internal liquidity mode",
     "SECURITY_TRADING_STATUS_DEALER_NOT_AVAILABLE_FOR_TRADING": "Broker's internal liquidity mode is not available",
 }
-"""Security Trading Status enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/orders/#securitytradingstatus"""
+"""Security Trading Status enums: https://tinkoff.github.io/investAPI/orders/#securitytradingstatus"""
 
 TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_UNSPECIFIED": "The operation type is not defined",
@@ -126,35 +171,35 @@ TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_DIV_EXT": "Payout dividends to the card",
     "OPERATION_TYPE_TAX_CORRECTION_COUPON": "Coupon tax correction",
 }
-"""Operation type enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/operations/#operationtype"""
+"""Operation type enums: https://tinkoff.github.io/investAPI/operations/#operationtype"""
 
 TKS_OPERATION_STATES = {
     "OPERATION_STATE_UNSPECIFIED": "! Unknown",
     "OPERATION_STATE_EXECUTED": "√ Executed",
     "OPERATION_STATE_CANCELED": "× Canceled",
 }
-"""Operation state enums  in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/operations/#operationstate"""
+"""Operation state enums: https://tinkoff.github.io/investAPI/operations/#operationstate"""
 
 TKS_ORDER_DIRECTIONS = {
     "ORDER_DIRECTION_UNSPECIFIED": "Undefined",
     "ORDER_DIRECTION_BUY": "↑ Buy",
     "ORDER_DIRECTION_SELL": "↓ Sell",
 }
-"""Order direction enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/orders/#orderdirection"""
+"""Order direction enums: https://tinkoff.github.io/investAPI/orders/#orderdirection"""
 
 TKS_STOP_ORDER_DIRECTIONS = {
     "STOP_ORDER_DIRECTION_UNSPECIFIED": "Undefined",
     "STOP_ORDER_DIRECTION_BUY": "↑ Buy",
     "STOP_ORDER_DIRECTION_SELL": "↓ Sell",
 }
-"""Stop-order direction enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection"""
+"""Stop-order direction enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection"""
 
 TKS_ORDER_TYPES = {
     "ORDER_TYPE_UNSPECIFIED": "Undefined",
     "ORDER_TYPE_LIMIT": "Limit",
     "ORDER_TYPE_MARKET": "Market",
 }
-"""Order type enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/orders/#ordertype"""
+"""Order type enums: https://tinkoff.github.io/investAPI/orders/#ordertype"""
 
 TKS_STOP_ORDER_TYPES = {
     "STOP_ORDER_TYPE_UNSPECIFIED": "Undefined",
@@ -162,7 +207,7 @@ TKS_STOP_ORDER_TYPES = {
     "STOP_ORDER_TYPE_STOP_LOSS": "Stop loss",
     "STOP_ORDER_TYPE_STOP_LIMIT": "Stop limit",
 }
-"""Stop-order type enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/stoporders/#stopordertype"""
+"""Stop-order type enums: https://tinkoff.github.io/investAPI/stoporders/#stopordertype"""
 
 TKS_ORDER_STATES = {
     "EXECUTION_REPORT_STATUS_UNSPECIFIED": "! Unknown",
@@ -172,11 +217,11 @@ TKS_ORDER_STATES = {
     "EXECUTION_REPORT_STATUS_NEW": "New order",
     "EXECUTION_REPORT_STATUS_PARTIALLYFILL": "Partially filled",
 }
-"""Order status enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus"""
+"""Order status enums: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus"""
 
 TKS_STOP_ORDER_EXPIRATION_TYPES = {
     "STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED": "Undefined",
     "STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_CANCEL": "Until cancel",
     "STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_DATE": "Until date",
 }
-"""Expiration type of stop-orders enums in Tinkoff Broker OpenAPI: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype"""
+"""Expiration type of stop-orders enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype"""
