@@ -46,6 +46,7 @@
      - [Cancel orders and close positions](#Cancel-orders-and-close-positions)
      - [Download historical data in OHLCV-candles format](#Download-historical-data-in-OHLCV-candles-format)
      - [Find out the balance of funds available for withdrawal](#Find-out-the-balance-of-funds-available-for-withdrawal)
+     - [Get user and account information](#Get-user-and-account-information)
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
 
@@ -68,6 +69,7 @@ TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of clien
 # Client's portfolio
 
 * **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Account ID:** [**********]
 * **Portfolio cost:** 405705.77 RUB
 * **Changes:** +2098.76 RUB (+0.52%)
 
@@ -236,11 +238,14 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
   - key `--close-all`, you can also specify orders, asset type or specify several keywords after the key `--close-all` separated by a space: `orders`, `shares`, `bonds`, `etfs` or `futures`;
   - API-methods: [`CloseAll()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAll), [`CloseAllOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllOrders) and [`CloseAllTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllTrades).
 - Receive user limits on funds available for withdrawal;
-  - key `--limits`;
+  - key `--limits` (`--withdrawal-limits`, `-w`);
   - API-methods: [`RequestLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestLimits) and [`OverviewLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewLimits).
 - Build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library), the price source can be either data downloaded from the server or previously saved files in csv-format;
   - common key `--render-chart`, which must be used with one of the keys `--history` (loads data from server) or `--load-history` (loads data from csv-file);
   - API-methods: [`ShowHistoryChart()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowHistoryChart), [`History()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.History) and [`LoadHistory()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.LoadHistory).
+- Request general information about the user, a list of accounts (including the `accountId`s), available funds for margin trading and connection limits for the current tariff;
+  - common key `--user-info` (`-u`) to request general information or key `--account` (`--accounts`, `-a`) to request list of accounts;
+  - API-methods: [`RequestAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestAccounts), [`RequestUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestUserInfo), [`RequestMarginStatus()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestMarginStatus), [`RequestTariffLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestTariffLimits), [`OverviewUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewUserInfo) and [`OverviewAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewAccounts).
 
 
 ## Setup
@@ -282,7 +287,11 @@ The TKSBrokerAPI module takes care of all the work with tokens. There are three 
 
 ### User account ID
 
-The second important parameter for the operation of TKSBrokerAPI is the numeric identifier of the user's account. It is not mandatory, but without specifying it, it will be impossible to perform many operations through the API that are logically tied to a specific user (view a portfolio on a brokerage account, perform trading operations, and many others). You can find this number in any brokerage report, which can be ordered either from the Tinkoff Investments mobile application or in your account on their website. Usually the user account ID is located at the top, in the "header" of reports. You can also requested this number from the Tinkoff Investments technical support chat.
+The second important parameter for the operation of TKSBrokerAPI is the user's account ID. It is not mandatory, but without specifying it, it will be impossible to perform many operations through the API (view a portfolio on a brokerage account, perform trading operations, view withdrawal limits and many others).
+
+You can find this number in any brokerage report, which can be ordered either from the Tinkoff Investments mobile application or in your account on their website. Usually the user account ID is located at the top, in the "header" of reports. You can also request this number from the Tinkoff Investments technical support chat.
+
+But the easiest way is to use the `--user-info` key and TKSBrokerAPI will show you a list of all available user accounts and their IDs (the token must be set, see section ["Get user and account information"](#Get-user-and-account-information)).
 
 There are three options for setting the user account ID:
 
@@ -521,7 +530,20 @@ options:
                         `etfs` and `futures`, but not `currencies`. Currency
                         positions you must closes manually using `--buy`,
                         `--sell`, `--close-trade` or `--close-trades` operations.
-  --limits              Action: show table of funds available for withdrawal.
+  --limits, --withdrawal-limits, -w
+                        Action: show table of funds available for withdrawal
+                        for current `accountId`. You can change `accountId`
+                        with the key `--account-id`. Also, you can define
+                        `--output` key to save this information to file,
+                        default: `limits.md`.
+  --user-info, -u       Action: show all available user's data (`accountId`s,
+                        common user information, margin status and tariff
+                        connections limit). Also, you can define `--output`
+                        key to save this information to file, default: `user-info.md`.
+  --account, --accounts, -a
+                        Action: show simple table with all available user
+                        accounts. Also, you can define `--output` key to save
+                        this information to file, default: `accounts.md`.
 ```
 
 </details>
@@ -1034,6 +1056,7 @@ TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of clien
 # Client's portfolio
 
 * **Actual date:** [2022-08-10 19:06:27] (UTC)
+* **Account ID:** [**********]
 * **Portfolio cost:** 405705.77 RUB
 * **Changes:** +2098.76 RUB (+0.52%)
 
@@ -1796,7 +1819,7 @@ TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting availabl
 TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Bonds] list. Wait, please...
 TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Etfs] list. Wait, please...
 TKSBrokerAPI.py     L:430  DEBUG   [2022-09-04 14:08:40,479] Requesting available [Futures] list. Wait, please...
-TKSBrokerAPI.py     L:501  INFO    [2022-09-04 14:08:41,919] Instruments raw data were cached for future used: [dump.json]
+TKSBrokerAPI.py     L:501  INFO    [2022-09-04 14:08:41,919] New cache of instruments data was created: [dump.json]
 TKSBrokerAPI.py     L:137  DEBUG   [2022-09-04 14:08:41,919] Input start day is [today] (UTC), end day is [None] (UTC)
 TKSBrokerAPI.py     L:175  DEBUG   [2022-09-04 14:08:41,919] Start day converted to UTC ISO format, with Z: [2022-09-04T00:00:00Z], and the end day: [2022-09-04T23:59:59Z]
 TKSBrokerAPI.py     L:2239 DEBUG   [2022-09-04 14:08:41,920] Original requested time period in local time: from [today] to [None]
@@ -2081,7 +2104,7 @@ TKSBrokerAPI.py     L:2601 INFO    [2022-10-18 15:40:40,565] Rendered candles ch
 
 #### Find out the balance of funds available for withdrawal
 
-Starting with TKSBrokerAPI v1.4.*, the `--limits` key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used.
+Starting with TKSBrokerAPI v1.4.*, the `--limits` (`--withdrawal-limits`, `-w`) key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used. You can also use `--account-id` key to find out the available limits for a specific user account. You can get all `accountId` of a user using the keys `--user-info` or `--accounts` (see: ["Get user and account information"](#Get-user-and-account-information))
 
 In the table, the columns mean:
 - `Currencies` — the currency available in the user's portfolio;
@@ -2099,6 +2122,7 @@ $ tksbrokerapi --limits --output my-limits.md
 TKSBrokerAPI.py     L:3227 INFO    [2022-10-07 16:59:56,795] # Withdrawal limits
 
 * **Actual date:** [2022-10-07 13:59:56 UTC]
+* **Account ID:** [**********]
 
 | Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |
 |------------|---------------|--------------------------|-------------------|-------------------|
@@ -2111,6 +2135,216 @@ TKSBrokerAPI.py     L:3227 INFO    [2022-10-07 16:59:56,795] # Withdrawal limits
 | [hkd]      | 2.41          | 2.41                     | —                 | —                 |
 
 TKSBrokerAPI.py     L:3233 INFO    [2022-10-07 16:59:56,797] Client's withdrawal limits was saved to file: [my-limits.md]
+```
+
+</details>
+
+#### Get user and account information
+
+TKSBrokerAPI v1.4.* contains a new console command `--user-info` (`-u`). It allows you to find out general information about the user, a list of accounts, available funds for margin trading and connection limits via API for the current tariff. It is also possible to find out the `accountId`s of all accounts, even if they are not opened yet.
+
+The `accountId` parameter (also, `Account ID`, `ID` or `--account-id`) is a string with the ID of a particular account and must be specified for any trading operations (see the ["User account ID"](#User-account-ID) section).
+
+To execute the `--user-info` command via TKSBrokerAPI, it is sufficient that any user token be specified (see the ["Token"](#Token) section). Also, if the `--output` key is present, then all information will be saved to the specified file, or the default file `user-info.md` will be used.
+
+In the [main user information section](https://tinkoff.github.io/investAPI/users/#getinforesponse) parameters mean:
+- `Qualified user` — a sign of a qualified investor;
+- `Tariff name` — user's tariff name;
+- `Premium user` — a sign of a premium client;
+- `Allowed to work with instruments` — [a set of instruments and features](https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with) with which the user can work (depends on the tests passed in the Tinkoff Investments application).
+
+In the [user accounts section](https://tinkoff.github.io/investAPI/users/#account) parameters mean:
+- `ID` — user account identifier;
+- `Account type` — [type of account](https://tinkoff.github.io/investAPI/users/#accounttype): Tinkoff brokerage account, IIS account or Investment "piggy bank";
+- `Account name` — account name that can be changed on the website or in the Tinkoff Investments app;
+- `Account status` — [current state of account](https://tinkoff.github.io/investAPI/users/#accountstatus): new (in the process of opening), open and active or closed account;
+- `Access level` — [access level of current token](https://tinkoff.github.io/investAPI/users/#accesslevel) under which requests are made through TKSBrokerAPI to the account: full access, read only or no access;
+- `Date opened` — account opening date (UTC);
+- `Date closed` — account closing date (UTC) or a dash if it is active;
+- `Margin status` — [margin attributes](https://tinkoff.github.io/investAPI/users/#getmarginattributesresponse) if trading using leverage is allowed for this account:
+  - `Liquid portfolio` — liquid portfolio value ([more](https://www.tinkoff.ru/invest/account/help/margin/about/#q4)),
+  - `Margin starting` — initial margin to ensure the completion of a new transaction ([more](https://www.tinkoff.ru/invest/account/help/margin/about/#q6)),
+  - `Margin minimum` — minimum margin to maintain positions that are already open ([more](https://www.tinkoff.ru/invest/account/help/margin/about/#q6)),
+  - `Sufficiency level` — the level of sufficiency of funds, calculated as the ratio of the value of the liquid portfolio to the initial margin,
+  - `Missing funds` — the amount of missing funds, calculated as the difference between the starting margin and the liquid value of the portfolio.
+
+In the [tariff limit section](https://tinkoff.github.io/investAPI/limits/) parameters mean:
+- `Unary limits` — maximum [number of unary requests](https://tinkoff.github.io/investAPI/users/#unarylimit) per minute;
+- `Stream limits` — maximum [number of stream connections](https://tinkoff.github.io/investAPI/users/#streamlimit).
+
+If you need to know only user accounts, without other details, then you can use the `--account` key (`--accounts`, `-a`). It will show a simple table with all available `accountId` of the user (by default the table will be saved to `accounts.md` file or override it with the `--output` key).
+
+<details>
+  <summary>Command to request all user data and limits</summary>
+
+```commandline
+$ tksbrokerapi --user-info --output user-account-info.md
+
+TKSBrokerAPI.py     L:3798 INFO    [2022-10-25 01:04:57,536] # Full user information
+
+* **Actual date:** [2022-10-24 22:04:57 UTC]
+
+## Common information
+
+* **Qualified user:** No
+* **Tariff name:** premium
+* **Premium user:** Yes
+* **Allowed to work with instruments:**
+  - Bonds with low rating
+  - Foreign shares not included in the exchange quotation lists
+  - Margin trading, unsecured leveraged trades
+  - Russian shares not included in quotation lists
+  - Structured income bonds
+
+
+## User accounts
+
+### ID: [**********]
+
+| Parameters           | Values                                                       |
+|----------------------|--------------------------------------------------------------|
+| Account type:        | Tinkoff brokerage account                                    |
+| Account name:        | Testing - **********                                         |
+| Account status:      | Opened and active account                                    |
+| Access level:        | Full access                                                  |
+| Date opened:         | 2018-05-23 00:00:00                                          |
+| Date closed:         | —                                                            |
+| Margin status:       | Enabled                                                      |
+| - Liquid portfolio:  | 74950.81 rub                                                 |
+| - Margin starting:   | 72450.45 rub                                                 |
+| - Margin minimum:    | 36220.73 rub                                                 |
+| - Sufficiency level: | 1.07 (107.00%)                                               |
+| - Missing funds:     | -2500.36 rub                                                 |
+
+### ID: [**********]
+
+| Parameters           | Values                                                       |
+|----------------------|--------------------------------------------------------------|
+| Account type:        | Tinkoff brokerage account                                    |
+| Account name:        | Personal - **********                                        |
+| Account status:      | Opened and active account                                    |
+| Access level:        | Full access                                                  |
+| Date opened:         | 2022-08-10 00:00:00                                          |
+| Date closed:         | —                                                            |
+| Margin status:       | Disabled                                                     |
+
+
+## Current user tariff limits
+
+See also:
+* Tinkoff limit policy: https://tinkoff.github.io/investAPI/limits/
+* Tinkoff Invest API: https://tinkoff.github.io/investAPI/
+  - More about REST API requests: https://tinkoff.github.io/investAPI/swagger-ui/
+  - More about gRPC requests for stream connections: https://tinkoff.github.io/investAPI/grpc/
+
+### Unary limits
+
+* Max requests per minute: 5
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetBrokerReport
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetDividendsForeignIssuer
+
+* Max requests per minute: 50
+  - tinkoff.public.invest.api.contract.v1.StopOrdersService/CancelStopOrder
+  - tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders
+  - tinkoff.public.invest.api.contract.v1.StopOrdersService/PostStopOrder
+
+* Max requests per minute: 60
+  - tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders
+
+* Max requests per minute: 100
+  - tinkoff.public.invest.api.contract.v1.OrdersService/CancelOrder
+  - tinkoff.public.invest.api.contract.v1.OrdersService/GetOrderState
+  - tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder
+  - tinkoff.public.invest.api.contract.v1.OrdersService/ReplaceOrder
+  - tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts
+  - tinkoff.public.invest.api.contract.v1.UsersService/GetInfo
+  - tinkoff.public.invest.api.contract.v1.UsersService/GetMarginAttributes
+  - tinkoff.public.invest.api.contract.v1.UsersService/GetUserTariff
+
+* Max requests per minute: 200
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/BondBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Bonds
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/CurrencyBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/EditFavorites
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/EtfBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Etfs
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/FindInstrument
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/FutureBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Futures
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAccruedInterests
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssetBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetAssets
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBrandBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBrands
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetCountries
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetDividends
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetFavorites
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetFuturesMargin
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/GetInstrumentBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/OptionBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Options
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/ShareBy
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/Shares
+  - tinkoff.public.invest.api.contract.v1.InstrumentsService/TradingSchedules
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetOperations
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetOperationsByCursor
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetPortfolio
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetPositions
+  - tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits
+  - tinkoff.public.invest.api.contract.v1.SandboxService/CancelSandboxOrder
+  - tinkoff.public.invest.api.contract.v1.SandboxService/CloseSandboxAccount
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxAccounts
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOperations
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOrderState
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxOrders
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxPortfolio
+  - tinkoff.public.invest.api.contract.v1.SandboxService/GetSandboxPositions
+  - tinkoff.public.invest.api.contract.v1.SandboxService/OpenSandboxAccount
+  - tinkoff.public.invest.api.contract.v1.SandboxService/PostSandboxOrder
+  - tinkoff.public.invest.api.contract.v1.SandboxService/SandboxPayIn
+
+* Max requests per minute: 300
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetClosePrices
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetLastPrices
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetLastTrades
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook
+  - tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus
+
+### Stream limits
+
+* Max stream connections: 2
+  - tinkoff.public.invest.api.contract.v1.OrdersStreamService/TradesStream
+  - tinkoff.public.invest.api.contract.v1.OperationsStreamService/PortfolioStream
+  - tinkoff.public.invest.api.contract.v1.OperationsStreamService/PositionsStream
+
+* Max stream connections: 6
+  - tinkoff.public.invest.api.contract.v1.MarketDataStreamService/MarketDataStream
+
+TKSBrokerAPI.py     L:3804 INFO    [2022-10-25 01:04:57,541] User data was saved to file: [user-account-info.md]
+```
+
+</details>
+
+<details>
+  <summary>Command to request short accounts info</summary>
+
+```commandline
+$ tksbrokerapi --accounts --output user-accounts.md
+
+TKSBrokerAPI.py     L:3635 INFO    [2022-10-24 00:09:47,101] # User accounts
+
+* **Actual date:** [2022-10-23 21:09:47 UTC]
+
+| Account ID   | Type                      | Status                    | Name                           |
+|--------------|---------------------------|---------------------------|--------------------------------|
+| **********   | Tinkoff brokerage account | Opened and active account | Testing - **********           |
+| **********   | Tinkoff brokerage account | Opened and active account | Personal - **********          |
+| **********   | Tinkoff brokerage account | New, open in progress...  | Account **********             |
+
+TKSBrokerAPI.py     L:3641 INFO    [2022-10-24 00:09:47,102] User accounts were saved to file: [user-accounts.md]
 ```
 
 </details>
