@@ -289,13 +289,6 @@ class TinkoffBrokerServer:
         See also: `SendAPIRequest()`.
         """
 
-        # remove after implemented: #45 Add selector of file types https://github.com/Tim55667757/TKSBrokerAPI/issues/45
-        # self.outputFileType = None
-        # """Switch of types for output files when `--output` key present. You can choose: `.md`, `.csv` and `.xlsx`. By default: `None`, it mean that default types will be used.
-        #
-        # See also:
-        # """
-
         self.historyFile = None
         """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only pandas dataframe.
 
