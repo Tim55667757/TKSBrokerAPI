@@ -18,7 +18,6 @@
 * [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--list-xlsx` key (or `-x`) that returned raw instruments data for current account similar to `dump.json`, but saved in XLSX format to further used by data scientists or stock analytics, `dump.xlsx` by default. Also, `DumpInstrumentsAsXLSX()` method that converts raw instruments data to XLSX format was developed.
 * [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` (`-u`) key has been added, which displays data associated with the account linked to the current token: available information about the user and his accounts, rights to operations, limits for margin trading. Also added the `--account` (`--accounts`, `-a`) key, which displays a simple table containing only user accounts.
 * [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
-* [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
 
 ##### Improvements
 
