@@ -2792,22 +2792,22 @@ class TinkoffBrokerServer:
         """
         return self.Trade(operation="Sell", lots=lots, tp=tp, sl=sl, expDate=expDate)
 
-    def CloseTrades(self, tickers: list, overview: dict = None) -> None:
+    def CloseTrades(self, tickers: list, portfolio: dict = None) -> None:
         """
         Close position of given instruments.
 
         :param tickers: tickers list of instruments that must be closed.
-        :param overview: pre-received dictionary with open trades, returned by `Overview()` method.
+        :param portfolio: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
         if not tickers:
             uLogger.info("Tickers list is empty, nothing to close.")
 
         else:
-            if overview is None or not overview:
-                overview = self.Overview(show=False)
+            if portfolio is None or not portfolio:
+                portfolio = self.Overview(show=False)
 
-            allOpenedTickers = [item["ticker"] for iType in TKS_INSTRUMENTS for item in overview["stat"][iType]]
+            allOpenedTickers = [item["ticker"] for iType in TKS_INSTRUMENTS for item in portfolio["stat"][iType]]
             uLogger.debug("All opened instruments by it's tickers names: {}".format(allOpenedTickers))
 
             for ticker in tickers:
@@ -2821,7 +2821,7 @@ class TinkoffBrokerServer:
                     if instrument:
                         break
 
-                    for item in overview["stat"][iType]:
+                    for item in portfolio["stat"][iType]:
                         if item["ticker"] == ticker:
                             instrument = item
                             break
@@ -2853,26 +2853,26 @@ class TinkoffBrokerServer:
                     else:
                         uLogger.warning("There are no available lots for instrument [{}] to closing trade at this moment! Try again later or cancel some orders.".format(self.ticker))
 
-    def CloseAllTrades(self, iType: str, overview: dict = None) -> None:
+    def CloseAllTrades(self, iType: str, portfolio: dict = None) -> None:
         """
         Close all positions of given instruments with defined type.
 
         :param iType: type of the instruments that be closed, it must be one of supported types in TKS_INSTRUMENTS list.
-        :param overview: pre-received dictionary with open trades, returned by `Overview()` method.
+        :param portfolio: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
         if iType not in TKS_INSTRUMENTS:
             uLogger.warning("Type of the instrument must be one of supported types: {}. Given: [{}]".format(", ".join(TKS_INSTRUMENTS), iType))
 
         else:
-            if overview is None or not overview:
-                overview = self.Overview(show=False)
+            if portfolio is None or not portfolio:
+                portfolio = self.Overview(show=False)
 
-            tickers = [item["ticker"] for item in overview["stat"][iType]]
+            tickers = [item["ticker"] for item in portfolio["stat"][iType]]
             uLogger.debug("Instrument tickers with type [{}] that will be closed: {}".format(iType, tickers))
 
-            if tickers and overview:
-                self.CloseTrades(tickers, overview)
+            if tickers and portfolio:
+                self.CloseTrades(tickers, portfolio)
 
             else:
                 uLogger.info("Instrument tickers with type [{}] not found, nothing to close.".format(iType))

@@ -25,6 +25,7 @@
 * [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
 * [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method `ShowInstrumentInfo()`. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
 * [#64](https://github.com/Tim55667757/TKSBrokerAPI/issues/64) WARNING! Refactor a lot of methods. All "show" parameters: `showPrice`, `showPrices`, `printInfo`, `showInfo`, `showInstruments`, `showResults`, `showStatistics`, `printDeals`, `printCandles`, `showLimits`, `showAccounts` — were replaced with simple `show`.
+* [#65](https://github.com/Tim55667757/TKSBrokerAPI/issues/65) WARNING! Refactor a lot of methods. All `overview` parameters were replaced with `portfolio`.
 * No retries for 4xx net errors, only for 5xx.
 * If you run `SendAPIRequest(debug=True)` then prints more debug information, e.g. request and response parameters, headers etc.
 
