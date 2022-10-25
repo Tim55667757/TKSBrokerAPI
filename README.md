@@ -743,8 +743,8 @@ TKSBrokerAPI.py     L:1074 INFO    [2022-08-11 22:41:39,040] Full search results
 ```commandline
 $ tksbrokerapi  -t CNY -i
 
-TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:48:31,766] Information about instrument: ticker [CNYRUB_TOM], FIGI [BBG0013HRTL0]
-# Information is actual at: [2022-07-26 20:48] (UTC)
+TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:48:31,766] Main information: ticker [CNYRUB_TOM], FIGI [BBG0013HRTL0]
+# Actual at: [2022-07-26 20:48] (UTC)
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
@@ -794,8 +794,8 @@ TKSBrokerAPI.py     L:389  DEBUG   [2022-07-26 23:49:58,503] Requesting availabl
 TKSBrokerAPI.py     L:389  DEBUG   [2022-07-26 23:49:58,503] Requesting available [Etfs] list. Wait, please...
 TKSBrokerAPI.py     L:389  DEBUG   [2022-07-26 23:49:58,503] Requesting available [Futures] list. Wait, please...
 TKSBrokerAPI.py     L:798  DEBUG   [2022-07-26 23:49:59,357] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
-TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:49:59,462] Information about instrument: ticker [IBM], FIGI [BBG000BLNNH6]
-# Information is actual at: [2022-07-26 20:49] (UTC)
+TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:49:59,462] Main information: ticker [IBM], FIGI [BBG000BLNNH6]
+# Actual at: [2022-07-26 20:49] (UTC)
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
@@ -839,8 +839,8 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-26 23:49:59,472] TKSBrokerAPI module
 ```commandline
 $ tksbrokerapi -f TCS00A101YV8 --info
 
-TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:57:22,581] Information about instrument: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
-# Information is actual at: [2022-07-26 20:57] (UTC)
+TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:57:22,581] Main information: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
+# Actual at: [2022-07-26 20:57] (UTC)
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
@@ -882,8 +882,8 @@ TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:57:22,581] Information about i
 ```commandline
 $ tksbrokerapi --figi BBG222222222 -i
 
-TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:59:07,204] Information about instrument: ticker [TGLD], FIGI [BBG222222222]
-# Information is actual at: [2022-07-26 20:59] (UTC)
+TKSBrokerAPI.py     L:607  INFO    [2022-07-26 23:59:07,204] Main information: ticker [TGLD], FIGI [BBG222222222]
+# Actual at: [2022-07-26 20:59] (UTC)
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
@@ -935,8 +935,8 @@ TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 00:01:48,057] Requesting availabl
 TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 00:01:48,057] Requesting available [Etfs] list. Wait, please...
 TKSBrokerAPI.py     L:389  DEBUG   [2022-07-27 00:01:48,058] Requesting available [Futures] list. Wait, please...
 TKSBrokerAPI.py     L:798  DEBUG   [2022-07-27 00:01:48,968] Requesting current prices for instrument with ticker [PZH2] and FIGI [FUTPLZL03220]...
-TKSBrokerAPI.py     L:607  INFO    [2022-07-27 00:01:49,075] Information about instrument: ticker [PZH2], FIGI [FUTPLZL03220]
-# Information is actual at: [2022-07-26 21:01] (UTC)
+TKSBrokerAPI.py     L:607  INFO    [2022-07-27 00:01:49,075] Main information: ticker [PZH2], FIGI [FUTPLZL03220]
+# Actual at: [2022-07-26 21:01] (UTC)
 
 | Parameters                                              | Values
 |---------------------------------------------------------|---------------------------------------------------------
@@ -2457,7 +2457,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     # - Шаг 1: запрос текущего портфеля клиента и определение доступных объёмов и валют для торговли
 
     # Портфель пользователя. Это словарь с несколькими секциями: {"raw": {...}, "stat": {...}, "analytics": {...}}
-    portfolio = trader.Overview(showStatistics=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+    portfolio = trader.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
     uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
         portfolio["stat"]["portfolioCostRUB"],
@@ -2478,7 +2478,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     trader.depth = DEPTH_OF_MARKET
 
     # Получаем цены брокера для текущего инструмента:
-    ordersBook = trader.GetCurrentPrices(showPrice=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
+    ordersBook = trader.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
 
     if not (ordersBook["buy"] and ordersBook["sell"]):
         uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(trader.ticker))
@@ -2498,7 +2498,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
             # Так как инструмента нет среди открытых позиций, то получаем данные по инструменту и его валюте у брокера:
-            rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            rawIData = trader.SearchByTicker(requestPrice=False, show=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
             iCurr = rawIData["currency"]  # валюта текущего инструмента
 
             # Получаем аналитику портфеля: распределение активов по валютам, стоимость ранее купленных активов и доступный свободный остаток:
@@ -2572,7 +2572,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
 
 # Текущее состояние портфеля пользователя:
-trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+trader.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
 
 # --- Секция финализации торговых операций -----------------------------------------------------------------------------

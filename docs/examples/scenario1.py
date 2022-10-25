@@ -110,7 +110,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     # - Step 1: request the client's current portfolio and determining funds available for trading
 
     # User's portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
-    portfolio = trader.Overview(showStatistics=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+    portfolio = trader.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
     uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
         portfolio["stat"]["portfolioCostRUB"],
@@ -131,7 +131,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     trader.depth = DEPTH_OF_MARKET
 
     # Getting broker's prices on that instrument:
-    ordersBook = trader.GetCurrentPrices(showPrice=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
+    ordersBook = trader.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
 
     if not (ordersBook["buy"] and ordersBook["sell"]):
         uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(trader.ticker))
@@ -151,7 +151,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
             # Getting instrument's data and its currency:
-            rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            rawIData = trader.SearchByTicker(requestPrice=False, show=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
             iCurr = rawIData["currency"]  # currency of current instrument
 
             # Getting distribution by currencies, cost of previously purchased assets and free money in that currency:
@@ -225,7 +225,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
 
 # Showing detailed user portfolio information:
-trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+trader.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
 
 # --- Operations finalization section ----------------------------------------------------------------------------------
