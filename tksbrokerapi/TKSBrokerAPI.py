@@ -652,12 +652,12 @@ class TinkoffBrokerServer:
         return jsonDump
 
     @staticmethod
-    def ShowInstrumentInfo(iJSON: dict, printInfo: bool = False) -> str:
+    def ShowInstrumentInfo(iJSON: dict, show: bool = False) -> str:
         """
         Show information about one instrument defined by json data and prints it in Markdown format.
 
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
-        :param printInfo: if `True` then also printing information about instrument and its current price.
+        :param show: if `True` then also printing information about instrument and its current price.
         :return: multilines text in Markdown format with information about one instrument.
         """
         splitLine = "|                                                         |                                                         |\n"
@@ -665,7 +665,7 @@ class TinkoffBrokerServer:
 
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
-                "# Information is actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "* Actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                              | Values                                                  |\n",
                 "|---------------------------------------------------------|---------------------------------------------------------|\n",
                 "| Ticker:                                                 | {:<55} |\n".format(iJSON["ticker"]),
@@ -817,21 +817,21 @@ class TinkoffBrokerServer:
 
             infoText += "".join(info)
 
-            if printInfo:
-                uLogger.info("Information about instrument: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
+            if show:
+                uLogger.info("# Main information: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
 
             else:
-                uLogger.debug("Information about instrument: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
+                uLogger.debug("# Main information: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
 
         return infoText
 
-    def SearchByTicker(self, requestPrice: bool = False, showInfo: bool = False, debug: bool = False) -> dict:
+    def SearchByTicker(self, requestPrice: bool = False, show: bool = False, debug: bool = False) -> dict:
         """
-        Search and return raw broker's information about instrument by it's ticker.
-        `ticker` must be define! If debug=True then print all debug messages.
+        Search and return raw broker's information about instrument by its ticker.
+        `ticker` must be defined! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (because this is long operation).
-        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
+        :param show: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -875,7 +875,7 @@ class TinkoffBrokerServer:
             self.figi = tickerJSON["figi"]
 
             if requestPrice:
-                tickerJSON["currentPrice"] = self.GetCurrentPrices(showPrice=False)
+                tickerJSON["currentPrice"] = self.GetCurrentPrices(show=False)
 
                 if tickerJSON["currentPrice"]["closePrice"] is not None and tickerJSON["currentPrice"]["closePrice"] != 0 and tickerJSON["currentPrice"]["lastPrice"] is not None:
                     tickerJSON["currentPrice"]["changes"] = 100 * (tickerJSON["currentPrice"]["lastPrice"] - tickerJSON["currentPrice"]["closePrice"]) / tickerJSON["currentPrice"]["closePrice"]
@@ -883,22 +883,22 @@ class TinkoffBrokerServer:
                 else:
                     tickerJSON["currentPrice"]["changes"] = 0
 
-            if showInfo:
-                self.ShowInstrumentInfo(iJSON=tickerJSON, printInfo=True)  # print info as Markdown text
+            if show:
+                self.ShowInstrumentInfo(iJSON=tickerJSON, show=True)  # print info as Markdown text
 
         else:
-            if showInfo:
+            if show:
                 uLogger.warning("Ticker [{}] not found in available broker instrument's list!".format(self.ticker))
 
         return tickerJSON
 
-    def SearchByFIGI(self, requestPrice: bool = False, showInfo: bool = False, debug: bool = False) -> dict:
+    def SearchByFIGI(self, requestPrice: bool = False, show: bool = False, debug: bool = False) -> dict:
         """
-        Search and return raw broker's information about instrument by it's FIGI.
-        `figi` must be define! If debug=True then print all debug messages.
+        Search and return raw broker's information about instrument by its FIGI.
+        `figi` must be defined! If debug=True then print all debug messages.
 
         :param requestPrice: if `False` then do not request current price of instrument (it's long operation).
-        :param showInfo: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
+        :param show: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
         :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
@@ -967,7 +967,7 @@ class TinkoffBrokerServer:
             self.ticker = figiJSON["ticker"]
 
             if requestPrice:
-                figiJSON["currentPrice"] = self.GetCurrentPrices(showPrice=False)
+                figiJSON["currentPrice"] = self.GetCurrentPrices(show=False)
 
                 if figiJSON["currentPrice"]["closePrice"] is not None and figiJSON["currentPrice"]["closePrice"] != 0 and figiJSON["currentPrice"]["lastPrice"] is not None:
                     figiJSON["currentPrice"]["changes"] = 100 * (figiJSON["currentPrice"]["lastPrice"] - figiJSON["currentPrice"]["closePrice"]) / figiJSON["currentPrice"]["closePrice"]
@@ -975,21 +975,23 @@ class TinkoffBrokerServer:
                 else:
                     figiJSON["currentPrice"]["changes"] = 0
 
-            if showInfo:
-                self.ShowInstrumentInfo(iJSON=figiJSON, printInfo=True)  # print info as Markdown text
+            if show:
+                self.ShowInstrumentInfo(iJSON=figiJSON, show=True)  # print info as Markdown text
 
         else:
-            if showInfo:
+            if show:
                 uLogger.warning("FIGI [{}] not found in available broker instrument's list!".format(self.figi))
 
         return figiJSON
 
-    def GetCurrentPrices(self, showPrice: bool = False) -> dict:
+    def GetCurrentPrices(self, show: bool = False) -> dict:
         """
         Get and show Depth of Market with current prices of the instrument. If an error occurred then returns an empty record:
         `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
 
-        :param showPrice: if `True` then print DOM.
+        See also:
+
+        :param show: if `True` then print DOM to log and console.
         :return: orders book dict with lists of current buy and sell prices: `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}`.
         """
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
@@ -1044,7 +1046,7 @@ class TinkoffBrokerServer:
                 uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
                 uLogger.debug("Server response: {}".format(pricesResponse))
 
-            if showPrice:
+            if show:
                 if prices["buy"] or prices["sell"]:
                     info = [
                         "Orders book actual at [{}] (UTC)\nTicker: [{}], FIGI: [{}], Depth of Market: [{}]\n".format(
@@ -1094,12 +1096,12 @@ class TinkoffBrokerServer:
 
         return prices
 
-    def ShowInstrumentsInfo(self, showInstruments: bool = False) -> str:
+    def ShowInstrumentsInfo(self, show: bool = False) -> str:
         """
         This method get and show information about all available broker instruments for current user account.
         If `instrumentsFile` string is not empty then also save information to this file.
 
-        :param showInstruments: if `True` then print results to console, if `False` - print only to file.
+        :param show: if `True` then print results to console, if `False` - print only to file.
         :return: multi-string with all available broker instruments
         """
         if not self.iList:
@@ -1137,7 +1139,7 @@ class TinkoffBrokerServer:
 
         infoText = "".join(info)
 
-        if showInstruments:
+        if show:
             uLogger.info(infoText)
 
         if self.instrumentsFile:
@@ -1148,13 +1150,13 @@ class TinkoffBrokerServer:
 
         return infoText
 
-    def SearchInstruments(self, pattern: str, showResults: bool = False) -> dict:
+    def SearchInstruments(self, pattern: str, show: bool = False) -> dict:
         """
         This method search and show information about instruments by part of its ticker, FIGI or name.
         If `searchResultsFile` string is not empty then also save information to this file.
 
         :param pattern: string with part of ticker, FIGI or instrument's name.
-        :param showResults: if `True` then print results to console, if `False` - return list of result only.
+        :param show: if `True` then print results to console, if `False` - return list of result only.
         :return: list of dictionaries with all found instruments.
         """
         if not self.iList:
@@ -1215,7 +1217,7 @@ class TinkoffBrokerServer:
         infoText = "".join(info)
         infoTextShort = "".join(infoShort)
 
-        if showResults:
+        if show:
             uLogger.info(infoTextShort)
             uLogger.info("You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
 
@@ -1227,14 +1229,14 @@ class TinkoffBrokerServer:
 
         return searchResults
 
-    def GetListOfPrices(self, instruments: list = None, showPrices: bool = False) -> list:
+    def GetListOfPrices(self, instruments: list = None, show: bool = False) -> list:
         """
         This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
         See limits: https://tinkoff.github.io/investAPI/limits/
         If `pricesFile` string is not empty then also save information to this file.
 
         :param instruments: list of tickers or FIGIs.
-        :param showPrices: if `True` then print to console, if `False` - print only to file.
+        :param show: if `True` then print prices to console, if `False` - print only to file.
         :return: list of instruments looks like this: `iList = [{some ticker info, "currentPrice": {current prices}}, {...}, ...]`
                  One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
@@ -1281,7 +1283,7 @@ class TinkoffBrokerServer:
             iData = self.SearchByFIGI(requestPrice=True)
             iList.append(iData)
 
-        if showPrices:
+        if show:
             info = [
                 "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
@@ -1403,13 +1405,13 @@ class TinkoffBrokerServer:
 
         return rawStopOrders
 
-    def Overview(self, showStatistics: bool = False, details: str = "full") -> dict:
+    def Overview(self, show: bool = False, details: str = "full") -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
         are defined then also save information to file.
 
-        :param showStatistics: if `False` then only dictionary returns, if `True` then show more debug information.
+        :param show: if `False` then only dictionary returns, if `True` then show more debug information.
         :param details: how detailed should the information be? You should specify one of strings:
                         `full` - shows full available information about portfolio status (by default),
                         `positions` - shows only open positions,
@@ -1853,7 +1855,7 @@ class TinkoffBrokerServer:
         view["analytics"]["distrByCountries"].update(byCountry)
 
         # --- Prepare text statistics overview in human-readable:
-        if showStatistics:
+        if show:
             # Whatever the value `details`, header not changes:
             info = [
                 "# Client's portfolio\n\n",
@@ -2157,7 +2159,7 @@ class TinkoffBrokerServer:
 
         return view
 
-    def Deals(self, start: str = None, end: str = None, printDeals: bool = False, showCancelled: bool = True) -> tuple:
+    def Deals(self, start: str = None, end: str = None, show: bool = False, showCancelled: bool = True) -> tuple:
         """
         Returns history operations between two given dates for current `accountId`.
         If `reportFile` string is not empty then also save human-readable report.
@@ -2165,7 +2167,7 @@ class TinkoffBrokerServer:
 
         :param start: see docstring in `GetDatesAsString()` method
         :param end: see docstring in `GetDatesAsString()` method
-        :param printDeals: if `True` then also prints all records to the console.
+        :param show: if `True` then also prints all records to the console.
         :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
@@ -2186,7 +2188,7 @@ class TinkoffBrokerServer:
         customStat = {}  # custom statistics in additional to responseJSON
 
         # --- output report in human-readable format:
-        if printDeals or self.reportFile:
+        if show or self.reportFile:
             splitLine1 = "|                            |                               |                              |                      |                        |\n"  # Summary section
             splitLine2 = "|                     |              |              |            |           |                 |            |                                                                    |\n"  # Operations section
             nextDay = ""
@@ -2401,7 +2403,7 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            if printDeals:
+            if show:
                 uLogger.info(infoText)
 
             if self.reportFile:
@@ -2412,7 +2414,7 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
-    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", printCandles: bool = False) -> pd.DataFrame:
+    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = False) -> pd.DataFrame:
         """
         This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
 
@@ -2432,7 +2434,7 @@ class TinkoffBrokerServer:
                             False by default. Warning! History appends only from last candle to current time
                             with always update last candle!
         :param csvSep: separator if csv-file is used, `,` by default.
-        :param printCandles: if `True` then also prints pandas dataframe to the console.
+        :param show: if `True` then also prints pandas dataframe to the console.
         :return: pandas dataframe with prices history. Headers of columns are defined by default:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
@@ -2576,7 +2578,7 @@ class TinkoffBrokerServer:
             uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
 
         if history is not None and not history.empty:
-            if printCandles:
+            if show:
                 uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
                     strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
                     pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
@@ -2777,14 +2779,14 @@ class TinkoffBrokerServer:
     def Sell(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
         More simple method than `Trade()`. Create `Sell` market order and make deal at the current price. Returns JSON data with response.
-        If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
+        If `tp` or `sl` > 0, then in additional will open stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
         See also: `Order()` and `Trade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
         :param sl: float > 0, stop loss price of stop-order.
-        :param expDate: it's a local date in future.
+        :param expDate: it's a local date in the future.
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
@@ -2803,7 +2805,7 @@ class TinkoffBrokerServer:
 
         else:
             if overview is None or not overview:
-                overview = self.Overview(showStatistics=False)
+                overview = self.Overview(show=False)
 
             allOpenedTickers = [item["ticker"] for iType in TKS_INSTRUMENTS for item in overview["stat"][iType]]
             uLogger.debug("All opened instruments by it's tickers names: {}".format(allOpenedTickers))
@@ -2864,7 +2866,7 @@ class TinkoffBrokerServer:
 
         else:
             if overview is None or not overview:
-                overview = self.Overview(showStatistics=False)
+                overview = self.Overview(show=False)
 
             tickers = [item["ticker"] for item in overview["stat"][iType]]
             uLogger.debug("Instrument tickers with type [{}] that will be closed: {}".format(iType, tickers))
@@ -3202,12 +3204,12 @@ class TinkoffBrokerServer:
         """
         Close all available (not blocked) opened trades and orders.
 
-        Also you can select one or more keywords case insensitive:
+        Also, you can select one or more keywords case-insensitive:
         `orders`, `shares`, `bonds`, `etfs` and `futures` from `TKS_INSTRUMENTS` enum to specify trades type.
 
-        Currency positions you must closes manually using buy or sell operations, `CloseTrades()` or `CloseAllTrades()` methods.
+        Currency positions you must close manually using buy or sell operations, `CloseTrades()` or `CloseAllTrades()` methods.
         """
-        overview = self.Overview(showStatistics=False)  # get all open trades info
+        overview = self.Overview(show=False)  # get all open trades info
 
         if len(args) == 0:
             uLogger.debug("Closing all available (not blocked) opened trades and orders. Currency positions you must closes manually using buy or sell operations! Wait, please...")
@@ -3287,7 +3289,7 @@ class TinkoffBrokerServer:
         msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
-            portfolio = self.Overview(showStatistics=False)
+            portfolio = self.Overview(show=False)
 
         if self.ticker:
             uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
@@ -3330,7 +3332,7 @@ class TinkoffBrokerServer:
         msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
-            portfolio = self.Overview(showStatistics=False)
+            portfolio = self.Overview(show=False)
 
         if self.ticker:
             uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
@@ -3388,13 +3390,13 @@ class TinkoffBrokerServer:
 
         return rawLimits
 
-    def OverviewLimits(self, showLimits: bool = False) -> dict:
+    def OverviewLimits(self, show: bool = False) -> dict:
         """
         Method for parsing and show table with available funds for withdrawal for current `accountId`.
 
         See also: `RequestLimits()`.
 
-        :param showLimits: if `False` then only dictionary returns, if `True` then also print withdrawal limits to log.
+        :param show: if `False` then only dictionary returns, if `True` then also print withdrawal limits to log.
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
         if self.accountId is None or not self.accountId:
@@ -3419,7 +3421,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare text table with limits in human-readable format:
-        if showLimits:
+        if show:
             info = [
                 "# Withdrawal limits\n\n",
                 "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -3575,13 +3577,13 @@ class TinkoffBrokerServer:
 
         return rawTariffLimits
 
-    def OverviewAccounts(self, showAccounts: bool = False) -> dict:
+    def OverviewAccounts(self, show: bool = False) -> dict:
         """
         Method for parsing and show simple table with all available user accounts.
 
         See also: `RequestAccounts()` and `OverviewUserInfo()` methods.
 
-        :param showAccounts: if `False` then only dictionary with accounts data returns, if `True` then also print it to log.
+        :param show: if `False` then only dictionary with accounts data returns, if `True` then also print it to log.
         :return: dict with parsed accounts data received from `RequestAccounts()` method. Example of dict:
                  `view = {"rawAccounts": {rawAccounts from RequestAccounts() method...},
                           "stat": {"accountId string": {"type": "Tinkoff brokerage account", "name": "Test - 1",
@@ -3609,7 +3611,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare simple text table with only accounts data in human-readable format:
-        if showAccounts:
+        if show:
             info = [
                 "# User accounts\n\n",
                 "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -3639,17 +3641,17 @@ class TinkoffBrokerServer:
 
         return view
 
-    def OverviewUserInfo(self, showInfo: bool = False) -> dict:
+    def OverviewUserInfo(self, show: bool = False) -> dict:
         """
         Method for parsing and show all available user's data (`accountId`s, common user information, margin status and tariff connections limit).
 
         See also: `OverviewAccounts()`, `RequestAccounts()`, `RequestUserInfo()`, `RequestMarginStatus()` and `RequestTariffLimits()` methods.
 
-        :param showInfo: if `False` then only dictionary returns, if `True` then also print user's data to log.
+        :param show: if `False` then only dictionary returns, if `True` then also print user's data to log.
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
         rawUserInfo = self.RequestUserInfo()  # Raw response with common user info
-        overviewAccount = self.OverviewAccounts(showAccounts=False)  # Raw and parsed accounts data
+        overviewAccount = self.OverviewAccounts(show=False)  # Raw and parsed accounts data
         rawAccounts = overviewAccount["rawAccounts"]  # Raw response with user accounts data
         accounts = overviewAccount["stat"]  # Dict with only statistics about user accounts
         rawMargins = {account: self.RequestMarginStatus(accountId=account) for account in accounts.keys()}  # Raw response with margin calculation for every account ID
@@ -3716,7 +3718,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare text table with user information in human-readable format:
-        if showInfo:
+        if show:
             info = [
                 "# Full user information\n\n",
                 "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -3952,7 +3954,7 @@ def Main(**kwargs):
                 if args.output is not None:
                     server.instrumentsFile = args.output
 
-                server.ShowInstrumentsInfo(showInstruments=True)
+                server.ShowInstrumentsInfo(show=True)
 
             elif args.list_xlsx:
                 server.DumpInstrumentsAsXLSX(forceUpdate=False)
@@ -3961,7 +3963,7 @@ def Main(**kwargs):
                 if args.output is not None:
                     server.searchResultsFile = args.output
 
-                server.SearchInstruments(pattern=args.search[0], showResults=True)
+                server.SearchInstruments(pattern=args.search[0], show=True)
 
             elif args.info:
                 if not (args.ticker or args.figi):
@@ -3969,53 +3971,53 @@ def Main(**kwargs):
                     raise Exception("Ticker or FIGI required")
 
                 if args.ticker:
-                    server.SearchByTicker(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by ticker name
+                    server.SearchByTicker(requestPrice=True, show=True, debug=False)  # show info and current prices by ticker name
 
                 else:
-                    server.SearchByFIGI(requestPrice=True, showInfo=True, debug=False)  # show info and current prices by FIGI id
+                    server.SearchByFIGI(requestPrice=True, show=True, debug=False)  # show info and current prices by FIGI id
 
             elif args.price:
                 if not (args.ticker or args.figi):
                     uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
                     raise Exception("Ticker or FIGI required")
 
-                server.GetCurrentPrices(showPrice=True)
+                server.GetCurrentPrices(show=True)
 
             elif args.prices is not None:
                 if args.output is not None:
                     server.pricesFile = args.output
 
-                server.GetListOfPrices(instruments=args.prices, showPrices=True)  # WARNING: too long wait for a lot of instruments prices
+                server.GetListOfPrices(instruments=args.prices, show=True)  # WARNING: too long wait for a lot of instruments prices
 
             elif args.overview:
                 if args.output is not None:
                     server.overviewFile = args.output
 
-                server.Overview(showStatistics=True, details="full")
+                server.Overview(show=True, details="full")
 
             elif args.overview_digest:
                 if args.output is not None:
                     server.overviewDigestFile = args.output
 
-                server.Overview(showStatistics=True, details="digest")
+                server.Overview(show=True, details="digest")
 
             elif args.overview_positions:
                 if args.output is not None:
                     server.overviewPositionsFile = args.output
 
-                server.Overview(showStatistics=True, details="positions")
+                server.Overview(show=True, details="positions")
 
             elif args.overview_orders:
                 if args.output is not None:
                     server.overviewOrdersFile = args.output
 
-                server.Overview(showStatistics=True, details="orders")
+                server.Overview(show=True, details="orders")
 
             elif args.overview_analytics:
                 if args.output is not None:
                     server.overviewAnalyticsFile = args.output
 
-                server.Overview(showStatistics=True, details="analytics")
+                server.Overview(show=True, details="analytics")
 
             elif args.deals is not None:
                 if args.output is not None:
@@ -4025,7 +4027,7 @@ def Main(**kwargs):
                     server.Deals(
                         start=args.deals[0] if len(args.deals) >= 1 else None,
                         end=args.deals[1] if len(args.deals) == 2 else None,
-                        printDeals=True,  # Always show deals report in console
+                        show=True,  # Always show deals report in console
                         showCancelled=not args.no_cancelled,  # If --no-cancelled key then remove cancelled operations from the deals report. False by default.
                     )
 
@@ -4044,7 +4046,7 @@ def Main(**kwargs):
                         interval="hour" if args.interval is None or not args.interval else args.interval,
                         onlyMissing=False if args.only_missing is None or not args.only_missing else args.only_missing,
                         csvSep="," if args.csv_sep is None or not args.csv_sep else args.csv_sep,
-                        printCandles=True,  # shows all downloaded candles in console
+                        show=True,  # shows all downloaded candles in console
                     )
 
                     if args.render_chart is not None and dataReceived is not None:
@@ -4202,19 +4204,19 @@ def Main(**kwargs):
                 if args.output is not None:
                     server.withdrawalLimitsFile = args.output
 
-                server.OverviewLimits(showLimits=True)
+                server.OverviewLimits(show=True)
 
             elif args.user_info:
                 if args.output is not None:
                     server.userInfoFile = args.output
 
-                server.OverviewUserInfo(showInfo=True)
+                server.OverviewUserInfo(show=True)
 
             elif args.account:
                 if args.output is not None:
                     server.userAccountsFile = args.output
 
-                server.OverviewAccounts(showAccounts=True)
+                server.OverviewAccounts(show=True)
 
             else:
                 uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
