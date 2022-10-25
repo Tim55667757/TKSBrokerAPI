@@ -213,7 +213,7 @@ class TestTKSBrokerAPIMethods:
             assert result == test[1], 'Expected: `{}`, actual: `{}`'.format(test[1], result)
 
     def test_ShowInstrumentInfoCheckType(self):
-        assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, printInfo=False), str), "Not str type returned!"
+        assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, show=False), str), "Not str type returned!"
 
     def test_ShowInstrumentInfoPositive(self):
         # TODO: want more positive tests with different instruments
@@ -222,7 +222,7 @@ class TestTKSBrokerAPIMethods:
         ]
 
         for test in testData:
-            result = self.server.ShowInstrumentInfo(iJSON=test[0], printInfo=False)
+            result = self.server.ShowInstrumentInfo(iJSON=test[0], show=False)
 
             assert result == test[1], 'Expected: `{}`, actual: `{}`'.format(test[1], result)
 
@@ -230,7 +230,7 @@ class TestTKSBrokerAPIMethods:
         self.server.ticker = "IBM"
         self.server.figi = ""
 
-        assert isinstance(self.server.SearchByTicker(requestPrice=False, showInfo=False, debug=False), dict), "Not dict type returned!"
+        assert isinstance(self.server.SearchByTicker(requestPrice=False, show=False, debug=False), dict), "Not dict type returned!"
 
     def test_SearchByTickerPositive(self):
         testData = [  # tickers and their corresponding instruments:
@@ -245,14 +245,14 @@ class TestTKSBrokerAPIMethods:
             self.server.ticker = test[0]
             self.server.figi = ""
 
-            result = self.server.SearchByTicker(requestPrice=False, showInfo=False, debug=False)
+            result = self.server.SearchByTicker(requestPrice=False, show=False, debug=False)
             assert result == test[1], 'Ticker: {}\nExpected: {}\nActual: {}'.format(test[0], test[1], result)
 
     def test_SearchByFIGICheckType(self):
         self.server.ticker = ""
         self.server.figi = "BBG000BLNNH6"
 
-        assert isinstance(self.server.SearchByFIGI(requestPrice=False, showInfo=False, debug=False), dict), "Not dict type returned!"
+        assert isinstance(self.server.SearchByFIGI(requestPrice=False, show=False, debug=False), dict), "Not dict type returned!"
 
     def test_SearchByFIGIPositive(self):
         testData = [  # FIGIs and their corresponding instruments:
@@ -267,18 +267,18 @@ class TestTKSBrokerAPIMethods:
             self.server.ticker = ""
             self.server.figi = test[0]
 
-            result = self.server.SearchByFIGI(requestPrice=False, showInfo=False, debug=False)
+            result = self.server.SearchByFIGI(requestPrice=False, show=False, debug=False)
 
             assert result == test[1], 'FIGI: {}\nExpected: {}\nActual: {}'.format(test[0], test[1], result)
 
     def test_ShowInstrumentsInfoCheckType(self):
-        assert isinstance(self.server.ShowInstrumentsInfo(showInstruments=False), str), "Not str type returned!"
+        assert isinstance(self.server.ShowInstrumentsInfo(show=False), str), "Not str type returned!"
 
     def test_ShowInstrumentsInfoPositive(self):
         with open("./tests/InstrumentsInfoDump.md", mode="r", encoding="UTF-8") as fH:
             iListInfo = fH.readlines()
 
-        result = self.server.ShowInstrumentsInfo(showInstruments=False).split("\n")
+        result = self.server.ShowInstrumentsInfo(show=False).split("\n")
         result[2] = "* **Actual on date:** [2022-09-07 10:16 UTC]"  # replace 3 string with date similar as in InstrumentsInfoDump.md
 
         for i, line in enumerate(result):
