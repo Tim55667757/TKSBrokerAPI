@@ -9,7 +9,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-10-26)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+### [1.4.* (2022-10-28)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
 
 ##### New features
 
@@ -23,7 +23,7 @@
 
 * [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version` (or `--ver`).
 * [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
-* [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method `ShowInstrumentInfo()`. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
+* [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method `ShowInstrumentInfo()`. An additional `RequestTradingStatus()` method has been implemented to request current trade status of instrument. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
 * [#64](https://github.com/Tim55667757/TKSBrokerAPI/issues/64) WARNING! Refactor a lot of methods. All "show" parameters: `showPrice`, `showPrices`, `printInfo`, `showInfo`, `showInstruments`, `showResults`, `showStatistics`, `printDeals`, `printCandles`, `showLimits`, `showAccounts` — were replaced with simple `show`.
 * [#65](https://github.com/Tim55667757/TKSBrokerAPI/issues/65) WARNING! Refactor a lot of methods. All `overview` parameters were replaced with `portfolio`.
 * No retries for 4xx net errors, only for 5xx.
