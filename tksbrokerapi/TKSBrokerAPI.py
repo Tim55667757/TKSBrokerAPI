@@ -319,6 +319,12 @@ class TinkoffBrokerServer:
         See also: `GetListOfPrices()`.
         """
 
+        self.infoFile = "info.md"
+        """Filename where prices of selected instruments will be saved. Default: `prices.md`.
+
+        See also: `GetListOfPrices()`.
+        """
+
         self.overviewFile = "overview.md"
         """Filename where current portfolio, open trades and orders will be saved. Default: `overview.md`.
 
@@ -651,8 +657,7 @@ class TinkoffBrokerServer:
 
         return jsonDump
 
-    @staticmethod
-    def ShowInstrumentInfo(iJSON: dict, show: bool = False) -> str:
+    def ShowInstrumentInfo(self, iJSON: dict, show: bool = False) -> str:
         """
         Show information about one instrument defined by json data and prints it in Markdown format.
 
@@ -665,6 +670,7 @@ class TinkoffBrokerServer:
 
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
+                "# Main information: ticker [{}], FIGI [{}]\n\n".format(iJSON["ticker"], iJSON["figi"]),
                 "* Actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                              | Values                                                  |\n",
                 "|---------------------------------------------------------|---------------------------------------------------------|\n",
@@ -695,10 +701,22 @@ class TinkoffBrokerServer:
             info.extend([
                 splitLine,
                 "| Current broker security trading status:                 | {:<55} |\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
+                splitLine,
                 "| Buy operations allowed:                                 | {:<55} |\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
                 "| Sale operations allowed:                                | {:<55} |\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
                 "| Short positions allowed:                                | {:<55} |\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
             ])
+
+            if iJSON["figi"]:
+                self.figi = iJSON["figi"]
+                iJSON = iJSON | self.RequestTradingStatus()
+
+                info.extend([
+                    splitLine,
+                    "| Limit orders allowed:                                   | {:<55} |\n".format("Yes" if iJSON["limitOrderAvailableFlag"] else "No"),
+                    "| Market orders allowed:                                  | {:<55} |\n".format("Yes" if iJSON["marketOrderAvailableFlag"] else "No"),
+                    "| API trade allowed:                                      | {:<55} |\n".format("Yes" if iJSON["apiTradeAvailableFlag"] else "No"),
+                ])
 
             info.append(splitLine)
 
@@ -760,12 +778,14 @@ class TinkoffBrokerServer:
                 info.append("| Over-the-counter (OTC) securities:                      | Yes                                                     |\n")
 
             if iJSON["type"] == "Bonds":
-                info.append("| Bond issue (size / plan):                               | {:<55} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])))
-
-                info.append("| Nominal price (100%):                                   | {:<55} |\n".format("{:.2f} {}".format(
-                    NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
-                    iJSON["nominal"]["currency"],
-                )))
+                info.extend([
+                    splitLine,
+                    "| Bond issue (size / plan):                               | {:<55} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])),
+                    "| Nominal price (100%):                                   | {:<55} |\n".format("{:.2f} {}".format(
+                        NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
+                        iJSON["nominal"]["currency"],
+                    )),
+                ])
 
                 if "floatingCouponFlag" in iJSON.keys():
                     info.append("| Floating coupon:                                        | {:<55} |\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
@@ -818,10 +838,16 @@ class TinkoffBrokerServer:
             infoText += "".join(info)
 
             if show:
-                uLogger.info("# Main information: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
+                uLogger.info("{}".format(infoText))
 
             else:
-                uLogger.debug("# Main information: ticker [{}], FIGI [{}]\n{}".format(iJSON["ticker"], iJSON["figi"], infoText))
+                uLogger.debug("{}".format(infoText))
+
+            if self.infoFile is not None:
+                with open(self.infoFile, "w", encoding="UTF-8") as fH:
+                    fH.write(infoText)
+
+                uLogger.info("Info about instrument with ticker [{}] and FIGI [{}] was saved to file: [{}]".format(iJSON["ticker"], iJSON["figi"], os.path.abspath(self.infoFile)))
 
         return infoText
 
@@ -1321,10 +1347,35 @@ class TinkoffBrokerServer:
 
         return iList
 
+    def RequestTradingStatus(self) -> dict:
+        """
+        Requesting trading status for the instrument defined by `figi` variable.
+        REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetTradingStatus
+        Documentation: https://tinkoff.github.io/investAPI/marketdata/#gettradingstatusrequest
+
+        :return: dictionary with trading status attributes. Response example:
+                 `{"figi": "TCS00A103X66", "tradingStatus": "SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING",
+                  "limitOrderAvailableFlag": false, "marketOrderAvailableFlag": false, "apiTradeAvailableFlag": true}`
+        """
+        if self.figi is None or not self.figi:
+            uLogger.error("Variable `figi` must be defined for using this method!")
+            raise Exception("FIGI required")
+
+        uLogger.debug("Requesting current trading status, FIGI: [{}]. Wait, please...".format(self.figi))
+
+        self.body = str({"figi": self.figi, "instrumentId": self.figi})
+        tradingStatusURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus"
+        tradingStatus = self.SendAPIRequest(tradingStatusURL, reqType="POST")
+
+        uLogger.debug("Records about current trading status successfully received")
+
+        return tradingStatus
+
     def RequestPortfolio(self) -> dict:
         """
         Requesting actual user's portfolio for current `accountId`.
         REST API for user portfolio: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPortfolio
+        Documentation: https://tinkoff.github.io/investAPI/operations/#portfoliorequest
 
         :return: dictionary with user's portfolio.
         """
@@ -1346,6 +1397,7 @@ class TinkoffBrokerServer:
         """
         Requesting open positions by currencies and instruments for current `accountId`.
         REST API for open positions: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPositions
+        Documentation: https://tinkoff.github.io/investAPI/operations/#positionsrequest
 
         :return: dictionary with open positions by instruments.
         """
@@ -1367,6 +1419,7 @@ class TinkoffBrokerServer:
         """
         Requesting current actual pending orders for current `accountId`.
         REST API for pending (market) orders: https://tinkoff.github.io/investAPI/swagger-ui/#/OrdersService/OrdersService_GetOrders
+        Documentation: https://tinkoff.github.io/investAPI/orders/#getordersrequest
 
         :return: list of dictionaries with pending orders.
         """
@@ -1388,6 +1441,7 @@ class TinkoffBrokerServer:
         """
         Requesting current actual stop orders for current `accountId`.
         REST API for opened stop-orders: https://tinkoff.github.io/investAPI/swagger-ui/#/StopOrdersService/StopOrdersService_GetStopOrders
+        Documentation: https://tinkoff.github.io/investAPI/stoporders/#getstopordersrequest
 
         :return: list of dictionaries with stop orders.
         """
@@ -1410,6 +1464,10 @@ class TinkoffBrokerServer:
         Get portfolio: all open positions, orders and some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
         are defined then also save information to file.
+
+        WARNING! It is not recommended to run this method too many times in a loop! The server receives
+        many requests about the state of the portfolio, and then, based on the received data, a large number
+        of calculation and statistics are collected.
 
         :param show: if `False` then only dictionary returns, if `True` then show more debug information.
         :param details: how detailed should the information be? You should specify one of strings:
@@ -2063,12 +2121,12 @@ class TinkoffBrokerServer:
 
                     for company in view["analytics"]["distrByCompanies"].keys():
                         if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
-                            nameLen = 3 + len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
+                            nameLen = len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
                             info.append("| {} | {:<7} | {:<18} |\n".format(
                                 "{}{}{}".format(
                                     "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
                                     company,
-                                    "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen + 3)),
+                                    "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen - 3) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen)),
                                 ),
                                 "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
@@ -3969,6 +4027,9 @@ def Main(**kwargs):
                 if not (args.ticker or args.figi):
                     uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
                     raise Exception("Ticker or FIGI required")
+
+                if args.output is not None:
+                    server.infoFile = args.output
 
                 if args.ticker:
                     server.SearchByTicker(requestPrice=True, show=True, debug=False)  # show info and current prices by ticker name
