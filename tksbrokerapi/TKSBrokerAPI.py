@@ -661,6 +661,8 @@ class TinkoffBrokerServer:
         """
         Show information about one instrument defined by json data and prints it in Markdown format.
 
+        See also: `SearchByTicker()`, `SearchByFIGI()` and `RequestTradingStatus()`.
+
         :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
         :param show: if `True` then also printing information about instrument and its current price.
         :return: multilines text in Markdown format with information about one instrument.
