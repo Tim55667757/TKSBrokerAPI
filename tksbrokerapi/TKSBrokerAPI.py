@@ -322,7 +322,7 @@ class TinkoffBrokerServer:
         self.infoFile = "info.md"
         """Filename where prices of selected instruments will be saved. Default: `prices.md`.
 
-        See also: `GetListOfPrices()`.
+        See also: `RequestTradingStatus()`.
         """
 
         self.overviewFile = "overview.md"
