@@ -243,7 +243,7 @@ class TinkoffBrokerServer:
 
         self.aliasesKeys = self.aliases.keys()  # re-calc only first time at class init
 
-        self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some of the tickets or FIGIs raised exception earlier when it sends to server, that is why we exclude there
+        self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
         self.ticker = ""
         """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
@@ -322,7 +322,22 @@ class TinkoffBrokerServer:
         self.infoFile = "info.md"
         """Filename where prices of selected instruments will be saved. Default: `prices.md`.
 
-        See also: `RequestTradingStatus()`.
+        See also: `ShowInstrumentsInfo()`, `RequestBondCoupons()` and `RequestTradingStatus()`.
+        """
+
+        self.bondsXLSXFile = "ext-bonds.xlsx"
+        """Filename where wider pandas dataframe with more information about bonds: main info, current prices, 
+        bonds payment calendar, some statistics will be stored. Default: `ext-bonds.xlsx`.
+
+        See also: `ExtendBondsData()`.
+        """
+
+        self.calendarFile = "calendar.md"
+        """Filename where bonds payment calendar will be saved. Default: `calendar.md`.
+        
+        Pandas dataframe with only bonds payment calendar also will be stored to default file `calendar.xlsx`.
+
+        See also: `CreateBondsCalendar()`, `ShowBondsCalendar()`, `ShowInstrumentInfo()`, `RequestBondCoupons()` and `ExtendBondsData()`.
         """
 
         self.overviewFile = "overview.md"
@@ -382,7 +397,9 @@ class TinkoffBrokerServer:
         self.iListDumpFile = "dump.json" if defaultCache is None or not isinstance(defaultCache, str) or not defaultCache else defaultCache
         """Filename where raw data about shares, currencies, bonds, etfs and futures will be stored. Default: `dump.json`.
 
-        See also: `DumpInstruments()`.
+        Pandas dataframe with raw instruments data also will be stored to default file `dump.xlsx`.
+
+        See also: `DumpInstruments()` and `DumpInstrumentsAsXLSX()`.
         """
 
         self.iList = None  # init iList for raw instruments data
@@ -499,6 +516,16 @@ class TinkoffBrokerServer:
                     uLogger.debug("    - body length: {}".format(len(response.text)))
                     uLogger.debug("    - headers: {}".format(response.headers))
 
+                # Server returns some headers:
+                # - `x-ratelimit-limit` - shows the settings of the current user limit for this method.
+                # - `x-ratelimit-remaining` - the number of remaining requests of this type per minute.
+                # - `x-ratelimit-reset` - time in seconds before resetting the request counter.
+                # See: https://tinkoff.github.io/investAPI/grpc/#kreya
+                if "x-ratelimit-remaining" in response.headers.keys() and response.headers["x-ratelimit-remaining"] == "0":
+                    rateLimitWait = int(response.headers["x-ratelimit-reset"])
+                    uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
+                    sleep(rateLimitWait)
+
                 # Error status codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
                 if 400 <= response.status_code < 500:
                     msg = "status code: [{}], response body: {}".format(response.status_code, response.text)
@@ -511,7 +538,7 @@ class TinkoffBrokerServer:
                     counter += 1
 
                     if counter <= retry:
-                        uLogger.debug("Retry: [{}]. Wait until {} sec. and try again...".format(counter, pause))
+                        uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, pause))
                         sleep(pause)
 
             responseJSON = self._ParseJSON(response.text)
@@ -611,7 +638,7 @@ class TinkoffBrokerServer:
         # Save as XLSX with separated sheets for every type of instruments:
         with pd.ExcelWriter(
                 path=xlsxDumpFile,
-                date_format=TKS_DATE_TIME_FORMAT.split("T")[0],
+                date_format=TKS_DATE_FORMAT,
                 datetime_format=TKS_DATE_TIME_FORMAT,
                 mode="w",
         ) as writer:
@@ -657,56 +684,56 @@ class TinkoffBrokerServer:
 
         return jsonDump
 
-    def ShowInstrumentInfo(self, iJSON: dict, show: bool = False) -> str:
+    def ShowInstrumentInfo(self, iJSON: dict, show: bool = True) -> str:
         """
         Show information about one instrument defined by json data and prints it in Markdown format.
 
-        See also: `SearchByTicker()`, `SearchByFIGI()` and `RequestTradingStatus()`.
+        See also: `SearchByTicker()`, `SearchByFIGI()`, `RequestBondCoupons()`, `ExtendBondsData()`, `ShowBondsCalendar()` and `RequestTradingStatus()`.
 
-        :param iJSON: json data of instrument, e.g. in code `iJSON = self.iList["Shares"][self.ticker]`
+        :param iJSON: json data of instrument, example: `iJSON = self.iList["Shares"][self.ticker]`
         :param show: if `True` then also printing information about instrument and its current price.
         :return: multilines text in Markdown format with information about one instrument.
         """
-        splitLine = "|                                                         |                                                         |\n"
+        splitLine = "|                                                             |                                                        |\n"
         infoText = ""
 
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
                 "# Main information: ticker [{}], FIGI [{}]\n\n".format(iJSON["ticker"], iJSON["figi"]),
                 "* Actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
-                "| Parameters                                              | Values                                                  |\n",
-                "|---------------------------------------------------------|---------------------------------------------------------|\n",
-                "| Ticker:                                                 | {:<55} |\n".format(iJSON["ticker"]),
-                "| Full name:                                              | {:<55} |\n".format(iJSON["name"]),
+                "| Parameters                                                  | Values                                                 |\n",
+                "|-------------------------------------------------------------|--------------------------------------------------------|\n",
+                "| Ticker:                                                     | {:<54} |\n".format(iJSON["ticker"]),
+                "| Full name:                                                  | {:<54} |\n".format(iJSON["name"]),
             ]
 
             if "sector" in iJSON.keys() and iJSON["sector"]:
-                info.append("| Sector:                                                 | {:<55} |\n".format(iJSON["sector"]))
+                info.append("| Sector:                                                     | {:<54} |\n".format(iJSON["sector"]))
 
-            info.append("| Country of instrument:                                  | {:<55} |\n".format("{}{}".format(
+            info.append("| Country of instrument:                                      | {:<54} |\n".format("{}{}".format(
                 "({}) ".format(iJSON["countryOfRisk"]) if "countryOfRisk" in iJSON.keys() and iJSON["countryOfRisk"] else "",
                 iJSON["countryOfRiskName"] if "countryOfRiskName" in iJSON.keys() and iJSON["countryOfRiskName"] else "",
             )))
 
             info.extend([
                 splitLine,
-                "| FIGI (Financial Instrument Global Identifier):          | {:<55} |\n".format(iJSON["figi"]),
-                "| Exchange:                                               | {:<55} |\n".format(iJSON["exchange"]),
+                "| FIGI (Financial Instrument Global Identifier):              | {:<54} |\n".format(iJSON["figi"]),
+                "| Exchange:                                                   | {:<54} |\n".format(iJSON["exchange"]),
             ])
 
             if "isin" in iJSON.keys() and iJSON["isin"]:
-                info.append("| ISIN (International Securities Identification Number):  | {:<55} |\n".format(iJSON["isin"]))
+                info.append("| ISIN (International Securities Identification Number):      | {:<54} |\n".format(iJSON["isin"]))
 
             if "classCode" in iJSON.keys():
-                info.append("| Class Code:                                             | {:<55} |\n".format(iJSON["classCode"]))
+                info.append("| Class Code:                                                 | {:<54} |\n".format(iJSON["classCode"]))
 
             info.extend([
                 splitLine,
-                "| Current broker security trading status:                 | {:<55} |\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
+                "| Current broker security trading status:                     | {:<54} |\n".format(TKS_TRADING_STATUSES[iJSON["tradingStatus"]]),
                 splitLine,
-                "| Buy operations allowed:                                 | {:<55} |\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
-                "| Sale operations allowed:                                | {:<55} |\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
-                "| Short positions allowed:                                | {:<55} |\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
+                "| Buy operations allowed:                                     | {:<54} |\n".format("Yes" if iJSON["buyAvailableFlag"] else "No"),
+                "| Sale operations allowed:                                    | {:<54} |\n".format("Yes" if iJSON["sellAvailableFlag"] else "No"),
+                "| Short positions allowed:                                    | {:<54} |\n".format("Yes" if iJSON["shortEnabledFlag"] else "No"),
             ])
 
             if iJSON["figi"]:
@@ -715,91 +742,105 @@ class TinkoffBrokerServer:
 
                 info.extend([
                     splitLine,
-                    "| Limit orders allowed:                                   | {:<55} |\n".format("Yes" if iJSON["limitOrderAvailableFlag"] else "No"),
-                    "| Market orders allowed:                                  | {:<55} |\n".format("Yes" if iJSON["marketOrderAvailableFlag"] else "No"),
-                    "| API trade allowed:                                      | {:<55} |\n".format("Yes" if iJSON["apiTradeAvailableFlag"] else "No"),
+                    "| Limit orders allowed:                                       | {:<54} |\n".format("Yes" if iJSON["limitOrderAvailableFlag"] else "No"),
+                    "| Market orders allowed:                                      | {:<54} |\n".format("Yes" if iJSON["marketOrderAvailableFlag"] else "No"),
+                    "| API trade allowed:                                          | {:<54} |\n".format("Yes" if iJSON["apiTradeAvailableFlag"] else "No"),
                 ])
 
             info.append(splitLine)
 
             if "type" in iJSON.keys() and iJSON["type"]:
-                info.append("| Type of the instrument:                                 | {:<55} |\n".format(iJSON["type"]))
+                info.append("| Type of the instrument:                                     | {:<54} |\n".format(iJSON["type"]))
 
             if "futuresType" in iJSON.keys() and iJSON["futuresType"]:
-                info.append("| Futures type:                                           | {:<55} |\n".format(iJSON["futuresType"]))
+                info.append("| Futures type:                                               | {:<54} |\n".format(iJSON["futuresType"]))
 
             if "ipoDate" in iJSON.keys() and iJSON["ipoDate"]:
-                info.append("| IPO date:                                               | {:<55} |\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
+                info.append("| IPO date:                                                   | {:<54} |\n".format(iJSON["ipoDate"].replace("T", " ").replace("Z", "")))
 
             if "releasedDate" in iJSON.keys() and iJSON["releasedDate"]:
-                info.append("| Released date:                                          | {:<55} |\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
+                info.append("| Released date:                                              | {:<54} |\n".format(iJSON["releasedDate"].replace("T", " ").replace("Z", "")))
 
             if "rebalancingFreq" in iJSON.keys() and iJSON["rebalancingFreq"]:
-                info.append("| Rebalancing frequency:                                  | {:<55} |\n".format(iJSON["rebalancingFreq"]))
+                info.append("| Rebalancing frequency:                                      | {:<54} |\n".format(iJSON["rebalancingFreq"]))
 
             if "focusType" in iJSON.keys() and iJSON["focusType"]:
-                info.append("| Focusing type:                                          | {:<55} |\n".format(iJSON["focusType"]))
+                info.append("| Focusing type:                                              | {:<54} |\n".format(iJSON["focusType"]))
 
             if "assetType" in iJSON.keys() and iJSON["assetType"]:
-                info.append("| Asset type:                                             | {:<55} |\n".format(iJSON["assetType"]))
+                info.append("| Asset type:                                                 | {:<54} |\n".format(iJSON["assetType"]))
 
             if "basicAsset" in iJSON.keys() and iJSON["basicAsset"]:
-                info.append("| Basic asset:                                            | {:<55} |\n".format(iJSON["basicAsset"]))
+                info.append("| Basic asset:                                                | {:<54} |\n".format(iJSON["basicAsset"]))
 
             if "basicAssetSize" in iJSON.keys() and iJSON["basicAssetSize"]:
-                info.append("| Basic asset size:                                       | {:<55} |\n".format("{:.2f}".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"]))))
+                info.append("| Basic asset size:                                           | {:<54} |\n".format("{:.2f}".format(NanoToFloat(str(iJSON["basicAssetSize"]["units"]), iJSON["basicAssetSize"]["nano"]))))
 
             if "isoCurrencyName" in iJSON.keys() and iJSON["isoCurrencyName"]:
-                info.append("| ISO currency name:                                      | {:<55} |\n".format(iJSON["isoCurrencyName"]))
+                info.append("| ISO currency name:                                          | {:<54} |\n".format(iJSON["isoCurrencyName"]))
 
             if "currency" in iJSON.keys():
-                info.append("| Payment currency:                                       | {:<55} |\n".format(iJSON["currency"]))
+                info.append("| Payment currency:                                           | {:<54} |\n".format(iJSON["currency"]))
 
-            if "firstTradeDate" in iJSON.keys() and iJSON["firstTradeDate"] != 0:
-                info.append("| First trade date:                                       | {:<55} |\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
+            if iJSON["type"] == "Bonds" and "nominal" in iJSON.keys() and "currency" in iJSON["nominal"].keys():
+                info.append("| Nominal currency:                                           | {:<54} |\n".format(iJSON["nominal"]["currency"]))
 
-            if "lastTradeDate" in iJSON.keys() and iJSON["lastTradeDate"] != 0:
-                info.append("| Last trade date:                                        | {:<55} |\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
+            if "firstTradeDate" in iJSON.keys() and iJSON["firstTradeDate"]:
+                info.append("| First trade date:                                           | {:<54} |\n".format(iJSON["firstTradeDate"].replace("T", " ").replace("Z", "")))
 
-            if "expirationDate" in iJSON.keys() and iJSON["expirationDate"] != 0:
-                info.append("| Date of expiration:                                     | {:<55} |\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
+            if "lastTradeDate" in iJSON.keys() and iJSON["lastTradeDate"]:
+                info.append("| Last trade date:                                            | {:<54} |\n".format(iJSON["lastTradeDate"].replace("T", " ").replace("Z", "")))
 
-            if "stateRegDate" in iJSON.keys() and iJSON["stateRegDate"] != 0:
-                info.append("| State registration date:                                | {:<55} |\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
+            if "expirationDate" in iJSON.keys() and iJSON["expirationDate"]:
+                info.append("| Date of expiration:                                         | {:<54} |\n".format(iJSON["expirationDate"].replace("T", " ").replace("Z", "")))
 
-            if "placementDate" in iJSON.keys() and iJSON["placementDate"] != 0:
-                info.append("| Placement date:                                         | {:<55} |\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
+            if "stateRegDate" in iJSON.keys() and iJSON["stateRegDate"]:
+                info.append("| State registration date:                                    | {:<54} |\n".format(iJSON["stateRegDate"].replace("T", " ").replace("Z", "")))
 
-            if "maturityDate" in iJSON.keys() and iJSON["maturityDate"] != 0:
-                info.append("| Maturity date:                                          | {:<55} |\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
+            if "placementDate" in iJSON.keys() and iJSON["placementDate"]:
+                info.append("| Placement date:                                             | {:<54} |\n".format(iJSON["placementDate"].replace("T", " ").replace("Z", "")))
+
+            if "maturityDate" in iJSON.keys() and iJSON["maturityDate"]:
+                info.append("| Maturity date:                                              | {:<54} |\n".format(iJSON["maturityDate"].replace("T", " ").replace("Z", "")))
 
             if "perpetualFlag" in iJSON.keys() and iJSON["perpetualFlag"]:
-                info.append("| Perpetual bond:                                         | Yes                                                     |\n")
+                info.append("| Perpetual bond:                                             | Yes                                                    |\n")
 
             if "otcFlag" in iJSON.keys() and iJSON["otcFlag"]:
-                info.append("| Over-the-counter (OTC) securities:                      | Yes                                                     |\n")
+                info.append("| Over-the-counter (OTC) securities:                          | Yes                                                    |\n")
 
+            iExt = None
             if iJSON["type"] == "Bonds":
                 info.extend([
                     splitLine,
-                    "| Bond issue (size / plan):                               | {:<55} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])),
-                    "| Nominal price (100%):                                   | {:<55} |\n".format("{:.2f} {}".format(
-                        NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"]),
+                    "| Bond issue (size / plan):                                   | {:<54} |\n".format("{} / {}".format(iJSON["issueSize"], iJSON["issueSizePlan"])),
+                    "| Nominal price (100%):                                       | {:<54} |\n".format("{} {}".format(
+                        "{:.2f}".format(NanoToFloat(str(iJSON["nominal"]["units"]), iJSON["nominal"]["nano"])).rstrip("0").rstrip("."),
                         iJSON["nominal"]["currency"],
                     )),
                 ])
 
                 if "floatingCouponFlag" in iJSON.keys():
-                    info.append("| Floating coupon:                                        | {:<55} |\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
+                    info.append("| Floating coupon:                                            | {:<54} |\n".format("Yes" if iJSON["floatingCouponFlag"] else "No"))
 
                 if "amortizationFlag" in iJSON.keys():
-                    info.append("| Amortization:                                           | {:<55} |\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
+                    info.append("| Amortization:                                               | {:<54} |\n".format("Yes" if iJSON["amortizationFlag"] else "No"))
+
+                info.append(splitLine)
 
                 if "couponQuantityPerYear" in iJSON.keys() and iJSON["couponQuantityPerYear"]:
-                    info.append("| Number of coupon payments per year:                     | {:<55} |\n".format(iJSON["couponQuantityPerYear"]))
+                    info.append("| Number of coupon payments per year:                         | {:<54} |\n".format(iJSON["couponQuantityPerYear"]))
+
+                iExt = self.ExtendBondsData(instruments=iJSON["figi"], xlsx=False)  # extended bonds data
+
+                info.extend([
+                    "| Days last to maturity date:                                 | {:<54} |\n".format(iExt["daysToMaturity"][0]),
+                    "| Coupons yield (average coupon daily yield * 365):           | {:<54} |\n".format("{:.2f}%".format(iExt["couponsYield"][0])),
+                    "| Current price yield (average daily yield * 365):            | {:<54} |\n".format("{:.2f}%".format(iExt["currentYield"][0])),
+                ])
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current ACI (Accrued Interest):                         | {:<55} |\n".format("{:.2f} {}".format(
+                    info.append("| Current Accrued Interest (ACI):                             | {:<54} |\n".format("{:.2f} {}".format(
                         NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
                     )))
@@ -807,35 +848,67 @@ class TinkoffBrokerServer:
             if "currentPrice" in iJSON.keys():
                 info.append(splitLine)
 
+                currency = iJSON["currency"] if "currency" in iJSON.keys() else ""  # nominal currency for bonds, otherwise currency of instrument
+                aciCurrency = iExt["aciCurrency"][0] if iJSON["type"] == "Bonds" and iExt is not None and "aciCurrency" in iExt.keys() else ""  # payment currency
+
+                bondPrevClose = iExt["closePrice"][0] if iJSON["type"] == "Bonds" and iExt is not None and "closePrice" in iExt.keys() else 0  # previous close price of bond
+                bondLastPrice = iExt["lastPrice"][0] if iJSON["type"] == "Bonds" and iExt is not None and "lastPrice" in iExt.keys() else 0  # last price of bond
+                bondLimitUp = iExt["limitUp"][0] if iJSON["type"] == "Bonds" and iExt is not None and "limitUp" in iExt.keys() else 0  # max price of bond
+                bondLimitDown = iExt["limitDown"][0] if iJSON["type"] == "Bonds" and iExt is not None and "limitDown" in iExt.keys() else 0  # min price of bond
+                bondChangesDelta = iExt["changesDelta"][0] if iJSON["type"] == "Bonds" and iExt is not None and "changesDelta" in iExt.keys() else 0  # delta between last deal price and last close
+
+                curPriceSell = iJSON["currentPrice"]["sell"][0]["price"] if iJSON["currentPrice"]["sell"] else 0
+                curPriceBuy = iJSON["currentPrice"]["buy"][0]["price"] if iJSON["currentPrice"]["buy"] else 0
+
                 info.extend([
-                    "| Previous close price of the instrument:                 | {:<55} |\n".format("{}{}".format(
-                        "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                    "| Previous close price of the instrument:                     | {:<54} |\n".format("{}{}".format(
+                        "{}".format(iJSON["currentPrice"]["closePrice"]).rstrip("0").rstrip(".") if iJSON["currentPrice"]["closePrice"] is not None else "N/A",
+                        "% of nominal price ({:.2f} {})".format(bondPrevClose, aciCurrency) if iJSON["type"] == "Bonds" else " {}".format(currency),
                     )),
-                    "| Last deal price of the instrument:                      | {:<55} |\n".format("{}{}".format(
-                        "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
-                        "% of nominal price" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                    "| Last deal price of the instrument:                          | {:<54} |\n".format("{}{}".format(
+                        "{}".format(iJSON["currentPrice"]["lastPrice"]).rstrip("0").rstrip(".") if iJSON["currentPrice"]["lastPrice"] is not None else "N/A",
+                        "% of nominal price ({:.2f} {})".format(bondLastPrice, aciCurrency) if iJSON["type"] == "Bonds" else " {}".format(currency),
                     )),
-                    "| Changes between last deal price and last close  %       | {:<55} |\n".format("{:.2f}".format(iJSON["currentPrice"]["changes"])),
-                    "| Current limit price, min / max:                         | {:<55} |\n".format("{}{} / {}{}".format(
-                        "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                        "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
-                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                    "| Changes between last deal price and last close              | {:<54} |\n".format(
+                        "{:.2f}%{}".format(
+                            iJSON["currentPrice"]["changes"],
+                            " ({}{:.2f} {})".format(
+                                "+" if bondChangesDelta > 0 else "",
+                                bondChangesDelta,
+                                aciCurrency
+                            ) if iJSON["type"] == "Bonds" else " ({}{:.2f} {})".format(
+                                "+" if iJSON["currentPrice"]["lastPrice"] > iJSON["currentPrice"]["closePrice"] else "",
+                                iJSON["currentPrice"]["lastPrice"] - iJSON["currentPrice"]["closePrice"],
+                                currency
+                            ),
+                        )
+                    ),
+                    "| Current limit price, min / max:                             | {:<54} |\n".format("{}{} / {}{}{}".format(
+                        "{}".format(iJSON["currentPrice"]["limitDown"]).rstrip("0").rstrip(".") if iJSON["currentPrice"]["limitDown"] is not None else "N/A",
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(currency),
+                        "{}".format(iJSON["currentPrice"]["limitUp"]).rstrip("0").rstrip(".") if iJSON["currentPrice"]["limitUp"] is not None else "N/A",
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(currency),
+                        " ({:.2f} {} / {:.2f} {})".format(bondLimitDown, aciCurrency, bondLimitUp, aciCurrency) if iJSON["type"] == "Bonds" else ""
                     )),
-                    "| Actual price, sell / buy:                               | {:<55} |\n".format("{}{} / {}{}".format(
-                        "{}".format(iJSON["currentPrice"]["sell"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["sell"] else "N/A",
-                        "%" if iJSON["type"] == "Bonds" else " {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
-                        "{}".format(iJSON["currentPrice"]["buy"][0]["price"]).rstrip("0") if iJSON["currentPrice"]["buy"] else "N/A",
-                        "%" if iJSON["type"] == "Bonds" else" {}".format(iJSON["currency"] if "currency" in iJSON.keys() else ""),
+                    "| Actual price, sell / buy:                                   | {:<54} |\n".format("{}{} / {}{}{}".format(
+                        "{}".format(curPriceSell).rstrip("0").rstrip(".") if curPriceSell != 0 else "N/A",
+                        "%" if iJSON["type"] == "Bonds" else " {}".format(currency),
+                        "{}".format(curPriceBuy).rstrip("0").rstrip(".") if curPriceBuy != 0 else "N/A",
+                        "%" if iJSON["type"] == "Bonds" else" {}".format(currency),
+                        " ({:.2f} {} / {:.2f} {})".format(curPriceSell, aciCurrency, curPriceBuy, aciCurrency) if iJSON["type"] == "Bonds" else ""
                     )),
                 ])
 
             if "lot" in iJSON.keys():
-                info.append("| Minimum lot to buy:                                     | {:<55} |\n".format(iJSON["lot"]))
+                info.append("| Minimum lot to buy:                                         | {:<54} |\n".format(iJSON["lot"]))
 
             if "step" in iJSON.keys() and iJSON["step"] != 0:
-                info.append("| Minimum price increment (step):                         | {:<55} |\n".format(iJSON["step"]))
+                info.append("| Minimum price increment (step):                             | {:<54} |\n".format(iJSON["step"]))
+
+            # Add bond payment calendar:
+            if iJSON["type"] == "Bonds":
+                strCalendar = self.ShowBondsCalendar(extBonds=iExt, show=False)   # bond payment calendar
+                info.extend(["\n", strCalendar])
 
             infoText += "".join(info)
 
@@ -871,6 +944,10 @@ class TinkoffBrokerServer:
             uLogger.warning("self.ticker variable is not be empty!")
 
         else:
+            if self.ticker in TKS_TICKERS_OR_FIGI_EXCLUDED:
+                uLogger.warning("Instrument with ticker [{}] not allowed for trading!".format(self.ticker))
+                raise Exception("Instrument not allowed")
+
             if not self.iList:
                 self.iList = self.Listing()
 
@@ -938,6 +1015,10 @@ class TinkoffBrokerServer:
             uLogger.warning("self.figi variable is not be empty!")
 
         else:
+            if self.figi in TKS_TICKERS_OR_FIGI_EXCLUDED:
+                uLogger.warning("Instrument with figi [{}] not allowed for trading!".format(self.figi))
+                raise Exception("Instrument not allowed")
+
             if not self.iList:
                 self.iList = self.Listing()
 
@@ -1012,7 +1093,7 @@ class TinkoffBrokerServer:
 
         return figiJSON
 
-    def GetCurrentPrices(self, show: bool = False) -> dict:
+    def GetCurrentPrices(self, show: bool = True) -> dict:
         """
         Get and show Depth of Market with current prices of the instrument. If an error occurred then returns an empty record:
         `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
@@ -1041,10 +1122,11 @@ class TinkoffBrokerServer:
             self.ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
 
         if not self.figi:
-            uLogger.error("FIGI is not determined!")
+            uLogger.error("FIGI is not defined!")
+            raise Exception("Ticker or FIGI required")
 
         else:
-            uLogger.debug("Requesting current prices for instrument with ticker [{}] and FIGI [{}]...".format(self.ticker, self.figi))
+            uLogger.debug("Requesting current prices: ticker [{}], FIGI [{}]. Wait, please...".format(self.ticker, self.figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
             priceURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook"
@@ -1124,13 +1206,13 @@ class TinkoffBrokerServer:
 
         return prices
 
-    def ShowInstrumentsInfo(self, show: bool = False) -> str:
+    def ShowInstrumentsInfo(self, show: bool = True) -> str:
         """
         This method get and show information about all available broker instruments for current user account.
         If `instrumentsFile` string is not empty then also save information to this file.
 
         :param show: if `True` then print results to console, if `False` - print only to file.
-        :return: multi-string with all available broker instruments
+        :return: multi-lines string with all available broker instruments
         """
         if not self.iList:
             self.iList = self.Listing()
@@ -1178,7 +1260,7 @@ class TinkoffBrokerServer:
 
         return infoText
 
-    def SearchInstruments(self, pattern: str, show: bool = False) -> dict:
+    def SearchInstruments(self, pattern: str, show: bool = True) -> dict:
         """
         This method search and show information about instruments by part of its ticker, FIGI or name.
         If `searchResultsFile` string is not empty then also save information to this file.
@@ -1257,21 +1339,13 @@ class TinkoffBrokerServer:
 
         return searchResults
 
-    def GetListOfPrices(self, instruments: list = None, show: bool = False) -> list:
+    def GetUniqueFIGIs(self, instruments: list[str]) -> list:
         """
-        This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
-        See limits: https://tinkoff.github.io/investAPI/limits/
-        If `pricesFile` string is not empty then also save information to this file.
+        Creating list with unique instrument FIGIs from input list of tickers or FIGIs.
 
-        :param instruments: list of tickers or FIGIs.
-        :param show: if `True` then print prices to console, if `False` - print only to file.
-        :return: list of instruments looks like this: `iList = [{some ticker info, "currentPrice": {current prices}}, {...}, ...]`
-                 One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
+        :param instruments: list of strings with tickers or FIGIs.
+        :return: list with unique instrument FIGIs only.
         """
-        if instruments is None or not instruments:
-            uLogger.error("You must define some of tickers or FIGIs to request it's actual prices!")
-            raise Exception("Ticker or FIGI required")
-
         requestedInstruments = []
         for iName in instruments:
             if iName not in self.aliases.keys():
@@ -1283,10 +1357,13 @@ class TinkoffBrokerServer:
                     if self.aliases[iName] not in requestedInstruments:
                         requestedInstruments.append(self.aliases[iName])
 
-        uLogger.debug("Requested instruments without duplicates of tickers and FIGIs: {}".format(requestedInstruments))
+        uLogger.debug("Requested instruments without duplicates of tickers or FIGIs: {}".format(requestedInstruments))
 
         onlyUniqueFIGIs = []
         for iName in requestedInstruments:
+            if iName in TKS_TICKERS_OR_FIGI_EXCLUDED:
+                continue
+
             self.ticker = iName
             iData = self.SearchByTicker(requestPrice=False)  # trying to find instrument by ticker
 
@@ -1304,6 +1381,26 @@ class TinkoffBrokerServer:
                 onlyUniqueFIGIs.append(iData["figi"])
 
         uLogger.debug("Unique list of FIGIs: {}".format(onlyUniqueFIGIs))
+
+        return onlyUniqueFIGIs
+
+    def GetListOfPrices(self, instruments: list, show: bool = False) -> list:
+        """
+        This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
+        See limits: https://tinkoff.github.io/investAPI/limits/
+        If `pricesFile` string is not empty then also save information to this file.
+
+        :param instruments: list of strings with tickers or FIGIs.
+        :param show: if `True` then prints prices to console, if `False` - prints only to file `pricesFile`.
+        :return: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
+                 One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
+        """
+        if instruments is None or not instruments:
+            uLogger.error("You must define some of tickers or FIGIs to request it's actual prices!")
+            raise Exception("Ticker or FIGI required")
+
+        onlyUniqueFIGIs = self.GetUniqueFIGIs(instruments)
+
         uLogger.debug("Requesting current prices from Tinkoff Broker server...")
 
         iList = []  # trying to get info and current prices about all unique instruments:
@@ -1311,7 +1408,22 @@ class TinkoffBrokerServer:
             iData = self.SearchByFIGI(requestPrice=True)
             iList.append(iData)
 
-        if show:
+        self.ShowListOfPrices(iList, show)
+
+        return iList
+
+    def ShowListOfPrices(self, iList: list, show: bool = True) -> str:
+        """
+        Show table contains current prices of given instruments.
+
+        :param iList: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
+                      One item is dict returned by `SearchByTicker(requestPrice=True)` or by `SearchByFIGI(requestPrice=True)` methods.
+        :param show: if `True` then prints prices to console, if `False` - prints only to file `pricesFile`.
+        :return: multilines text in Markdown format as a table contains current prices.
+        """
+        infoText = ""
+
+        if show or self.pricesFile:
             info = [
                 "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
@@ -1339,7 +1451,8 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
+            if show:
+                uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
 
             if self.pricesFile:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
@@ -1347,7 +1460,7 @@ class TinkoffBrokerServer:
 
                 uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
 
-        return iList
+        return infoText
 
     def RequestTradingStatus(self) -> dict:
         """
@@ -3637,6 +3750,362 @@ class TinkoffBrokerServer:
 
         return rawTariffLimits
 
+    def RequestBondCoupons(self, iJSON: dict) -> dict:
+        """
+        Requesting bond payment calendar from official placement date to maturity date. If these dates are unknown
+        then requesting dates "from": "1970-01-01T00:00:00.000Z" and "to": "2099-12-31T23:59:59.000Z".
+        All dates are in UTC timezone.
+
+        REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/InstrumentsService/InstrumentsService_GetBondCoupons
+        Documentation:
+        - request: https://tinkoff.github.io/investAPI/instruments/#getbondcouponsrequest
+        - response: https://tinkoff.github.io/investAPI/instruments/#coupon
+
+        See also: `ExtendBondsData()`.
+
+        :param iJSON: raw json data of a bond from broker server, example: `iJSON = self.iList["Bonds"][self.ticker]`
+                      If raw iJSON is not data of bond then server returns an error [400] with message:
+                      `{"code": 3, "message": "instrument type is not bond", "description": "30048"}`.
+        :return: dictionary with bond payment calendar. Response example:
+                 `{"events": [{"figi": "TCS00A101YV8", "couponDate": "2023-07-26T00:00:00Z", "couponNumber": "12",
+                   "fixDate": "2023-07-25T00:00:00Z", "payOneBond": {"currency": "rub", "units": "7", "nano": 170000000},
+                   "couponType": "COUPON_TYPE_CONSTANT", "couponStartDate": "2023-04-26T00:00:00Z",
+                   "couponEndDate": "2023-07-26T00:00:00Z", "couponPeriod": 91}, {...}, ...]}`
+        """
+        if iJSON["figi"] is None or not iJSON["figi"]:
+            uLogger.error("FIGI must be defined for using this method!")
+            raise Exception("FIGI required")
+
+        startDate = iJSON["placementDate"] if "placementDate" in iJSON.keys() else "1970-01-01T00:00:00.000Z"
+        endDate = iJSON["maturityDate"] if "maturityDate" in iJSON.keys() else "2099-12-31T23:59:59.000Z"
+
+        uLogger.debug("Requesting bond payment calendar, {}FIGI: [{}], from: [{}], to: [{}]. Wait, please...".format(
+            "ticker: [{}], ".format(iJSON["ticker"]) if "ticker" in iJSON.keys() else "",
+            self.figi,
+            startDate,
+            endDate,
+        ))
+
+        self.body = str({"figi": iJSON["figi"], "from": startDate, "to": endDate})
+        calendarURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons"
+        calendar = self.SendAPIRequest(calendarURL, reqType="POST", debug=False)
+
+        if calendar == {"code": 3, "message": "instrument type is not bond", "description": "30048"}:
+            uLogger.warning("Instrument type is not bond!")
+
+        else:
+            uLogger.debug("Records about bond payment calendar successfully received")
+
+        return calendar
+
+    def ExtendBondsData(self, instruments: list[str], xlsx: bool = False) -> pd.DataFrame:
+        """
+        Requests jsons with raw bonds data for every ticker or FIGI in instruments list and transform it to the wider
+        pandas dataframe with more information about bonds: main info, current prices, bond payment calendar,
+        coupon yields, current yields and some statistics etc.
+
+        WARNING! This is too long operation if a lot of bonds requested from broker server.
+
+        See also: `ShowInstrumentInfo()`, `CreateBondsCalendar()`, `ShowBondsCalendar()`, `RequestBondCoupons()`.
+
+        :param instruments: list of strings with tickers or FIGIs.
+        :param xlsx: if True then also exports pandas dataframe to xlsx-file `bondsXLSXFile`, default: `ext-bonds.xlsx`,
+                     for further used by data scientists or stock analytics.
+        :return: wider pandas dataframe with more full and calculated data about bonds, than raw response from broker.
+                 In XLSX-file and pandas dataframe fields mean: https://tinkoff.github.io/investAPI/instruments/#bond
+        """
+        if instruments is None or not instruments:
+            uLogger.error("List of tickers or FIGIs must be defined for using this method!")
+            raise Exception("Ticker or FIGI required")
+
+        if isinstance(instruments, str):
+            instruments = [instruments]
+
+        uniqueInstruments = self.GetUniqueFIGIs(instruments)
+
+        uLogger.debug("Requesting raw bonds calendar from server, transforming and extending it. Wait, please...")
+
+        iCount = len(uniqueInstruments)
+        tooLong = iCount >= 20
+        if tooLong:
+            uLogger.warning("You requested a lot of bonds! Operation will takes more time. Wait, please...")
+
+        bonds = None
+        for i, self.figi in enumerate(uniqueInstruments):
+            instrument = self.SearchByFIGI(requestPrice=False)  # raw data about instrument from server
+
+            if "type" in instrument.keys() and instrument["type"] == "Bonds":
+                # raw bond data from server where fields mean: https://tinkoff.github.io/investAPI/instruments/#bond
+                rawBond = self.SearchByFIGI(requestPrice=True)
+
+                # Widen raw data with UTC current time (iData["actualDateTime"]):
+                actualDate = datetime.now(tzutc())
+                iData = {"actualDateTime": actualDate.strftime(TKS_DATE_TIME_FORMAT)} | rawBond
+
+                # Widen raw data with bond payment calendar (iData["rawCalendar"]):
+                iData = iData | {"rawCalendar": self.RequestBondCoupons(iJSON=iData)}
+
+                # Replace some values with human-readable:
+                iData["nominalCurrency"] = iData["nominal"]["currency"]
+                iData["nominal"] = NanoToFloat(iData["nominal"]["units"], iData["nominal"]["nano"])
+                iData["placementPrice"] = NanoToFloat(iData["placementPrice"]["units"], iData["placementPrice"]["nano"])
+                iData["aciCurrency"] = iData["aciValue"]["currency"]
+                iData["aciValue"] = NanoToFloat(iData["aciValue"]["units"], iData["aciValue"]["nano"])
+                iData["issueSize"] = int(iData["issueSize"])
+                iData["issueSizePlan"] = int(iData["issueSize"])
+                iData["tradingStatus"] = TKS_TRADING_STATUSES[iData["tradingStatus"]]
+                iData["minPriceIncrement"] = NanoToFloat(iData["minPriceIncrement"]["units"], iData["minPriceIncrement"]["nano"]) if "minPriceIncrement" in iData.keys() else 0.
+                iData["realExchange"] = TKS_REAL_EXCHANGES[iData["realExchange"]]
+
+                # Widen raw data with price fields from `currentPrice` values (all prices are actual at `actualDateTime` date):
+                iData["limitUpPercent"] = iData["currentPrice"]["limitUp"]  # max price on current day in percents of nominal
+                iData["limitDownPercent"] = iData["currentPrice"]["limitDown"]  # min price on current day in percents of nominal
+                iData["lastPricePercent"] = iData["currentPrice"]["lastPrice"]  # last price on market in percents of nominal
+                iData["closePricePercent"] = iData["currentPrice"]["closePrice"]  # previous day close in percents of nominal
+                iData["changes"] = iData["currentPrice"]["changes"]  # this is percent of changes between `currentPrice` and `lastPrice`
+                iData["limitUp"] = iData["limitUpPercent"] * iData["nominal"] / 100  # max price on current day is `limitUpPercent` * `nominal`
+                iData["limitDown"] = iData["limitDownPercent"] * iData["nominal"] / 100  # min price on current day is `limitDownPercent` * `nominal`
+                iData["lastPrice"] = iData["lastPricePercent"] * iData["nominal"] / 100  # last price on market is `lastPricePercent` * `nominal`
+                iData["closePrice"] = iData["closePricePercent"] * iData["nominal"] / 100  # previous day close is `closePricePercent` * `nominal`
+                iData["changesDelta"] = iData["lastPrice"] - iData["closePrice"]  # this is delta between last deal price and last close
+
+                # Widen raw data with calendar data from `rawCalendar` values:
+                calendarData = []
+                for item in iData["rawCalendar"]["events"]:
+                    calendarData.append({
+                        "couponDate": item["couponDate"],
+                        "couponNumber": int(item["couponNumber"]),
+                        "fixDate": item["fixDate"] if "fixDate" in item.keys() else "",
+                        "payCurrency": item["payOneBond"]["currency"],
+                        "payOneBond": NanoToFloat(item["payOneBond"]["units"], item["payOneBond"]["nano"]),
+                        "couponType": TKS_COUPON_TYPES[item["couponType"]],
+                        "couponStartDate": item["couponStartDate"],
+                        "couponEndDate": item["couponEndDate"],
+                        "couponPeriod": item["couponPeriod"],
+                    })
+
+                # if maturity date is unknown then uses the latest date in bond payment calendar for it:
+                if "maturityDate" not in iData.keys():
+                    iData["maturityDate"] = datetime.strptime(calendarData[0]["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_DATE_TIME_FORMAT) if calendarData else ""
+
+                # Widen raw data with Coupon Rate.
+                # This is sum of all coupon payments divided on nominal price and expire days sum and then multiple on 365 days and 100%:
+                iData["sumCoupons"] = sum([coupon["payOneBond"] for coupon in calendarData])
+                iData["periodDays"] = sum([coupon["couponPeriod"] for coupon in calendarData])
+                iData["couponsYield"] = 100 * 365 * (iData["sumCoupons"] / iData["nominal"]) / iData["periodDays"] if iData["nominal"] != 0 and iData["periodDays"] != 0 else 0.
+
+                # Widen raw data with Yield to Maturity (YTM) on current date.
+                # This is sum of all stayed coupons to maturity minus ACI and divided on current bond price and then multiple on stayed days and 100%:
+                maturityDate = datetime.strptime(iData["maturityDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()) if iData["maturityDate"] else None
+                iData["daysToMaturity"] = (maturityDate - actualDate).days if iData["maturityDate"] else None
+                iData["sumLastCoupons"] = sum([coupon["payOneBond"] for coupon in calendarData if datetime.strptime(coupon["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()) > actualDate])
+                iData["lastPayments"] = iData["sumLastCoupons"] - iData["aciValue"]  # sum of all last coupons minus current ACI value
+                iData["currentYield"] = 100 * 365 * (iData["lastPayments"] / iData["lastPrice"]) / iData["daysToMaturity"] if iData["lastPrice"] != 0 and iData["daysToMaturity"] != 0 else 0.
+
+                iData["calendar"] = calendarData  # adds calendar at the end
+
+                # Remove not used data:
+                iData.pop("uid")
+                iData.pop("positionUid")
+                iData.pop("currentPrice")
+                iData.pop("rawCalendar")
+
+                colNames = list(iData.keys())
+                if bonds is None:
+                    bonds = pd.DataFrame(data=pd.DataFrame.from_records(data=[iData], columns=colNames))
+
+                else:
+                    bonds = pd.concat([bonds, pd.DataFrame.from_records(data=[iData], columns=colNames)], axis=0, ignore_index=True)
+
+            else:
+                uLogger.warning("Instrument with ticker [{}] and FIGI [{}] is not a bond!".format(instrument["ticker"], instrument["figi"]))
+
+            processed = round(100 * (i + 1) / iCount, 1)
+            if tooLong and processed % 5 == 0:
+                uLogger.info("{}% processed [{} / {}]...".format(round(processed), i + 1, iCount))
+
+            else:
+                uLogger.debug("{}% bonds processed [{} / {}]...".format(processed, i + 1, iCount))
+
+        bonds.index = bonds["ticker"].tolist()  # replace indexes with ticker names
+
+        # Saving bonds from pandas dataframe to XLSX sheet:
+        if xlsx and self.bondsXLSXFile:
+            with pd.ExcelWriter(
+                    path=self.bondsXLSXFile,
+                    date_format=TKS_DATE_FORMAT,
+                    datetime_format=TKS_DATE_TIME_FORMAT,
+                    mode="w",
+            ) as writer:
+                bonds.to_excel(
+                    writer,
+                    sheet_name="Extended bonds data",
+                    index=True,
+                    encoding="UTF-8",
+                    freeze_panes=(1, 1),
+                )  # saving as XLSX-file with freeze first row and column as headers
+
+            uLogger.info("XLSX-file with extended bonds data for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(self.bondsXLSXFile)))
+
+        return bonds
+
+    def CreateBondsCalendar(self, extBonds: pd.DataFrame, xlsx: bool = False) -> pd.DataFrame:
+        """
+        Creates bond payments calendar as pandas dataframe, and you can also save it to the XLSX-file.
+
+        WARNING! This is too long operation if a lot of bonds requested from broker server.
+
+        See also: `ShowBondsCalendar()`, `ExtendBondsData()`.
+
+        :param extBonds: pandas dataframe object returns by `ExtendBondsData()` method and contains
+                        extended information about bonds: main info, current prices, bond payment calendar,
+                        coupon yields, current yields and some statistics etc.
+                        If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
+        :param xlsx: if True then also exports pandas dataframe to file `calendarFile` + `".xlsx"`, default: `calendar.xlsx`,
+                     for further used by data scientists or stock analytics.
+        :return: pandas dataframe with only bond payments calendar data.
+        """
+        if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
+            extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
+
+        uLogger.debug("Generating bond payments calendar data. Wait, please...")
+
+        colNames = ["Paid", "Payment date", "FIGI", "Ticker", "Name", "No.", "Value", "Currency", "Type", "Period", "End registry date", "Coupon start date", "Coupon end date"]
+        colID = ["paid", "couponDate", "figi", "ticker", "name", "couponNumber", "payOneBond", "payCurrency", "couponType", "couponPeriod", "fixDate", "couponStartDate", "couponEndDate"]
+        calendar = None
+        for bond in extBonds.iterrows():
+            for item in bond[1]["calendar"]:
+                cData = {
+                    "paid": datetime.now(tzutc()) > datetime.strptime(item["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()),
+                    "couponDate": item["couponDate"],
+                    "figi": bond[1]["figi"],
+                    "ticker": bond[1]["ticker"],
+                    "name": bond[1]["name"],
+                    "couponNumber": item["couponNumber"],
+                    "payOneBond": item["payOneBond"],
+                    "payCurrency": item["payCurrency"],
+                    "couponType": item["couponType"],
+                    "couponPeriod": item["couponPeriod"],
+                    "fixDate": item["fixDate"],
+                    "couponStartDate": item["couponStartDate"],
+                    "couponEndDate": item["couponEndDate"],
+                }
+
+                if calendar is None:
+                    calendar = pd.DataFrame(data=pd.DataFrame.from_records(data=[cData], columns=colID))
+
+                else:
+                    calendar = pd.concat([calendar, pd.DataFrame.from_records(data=[cData], columns=colID)], axis=0, ignore_index=True)
+
+        calendar = calendar.sort_values(by=["couponDate"], axis=0, ascending=True)  # sort all payments for all bonds by payment date
+
+        # Saving calendar from pandas dataframe to XLSX sheet:
+        if xlsx:
+            xlsxCalendarFile = self.calendarFile.replace(".md", ".xlsx") if self.calendarFile.endswith(".md") else self.calendarFile + ".xlsx"
+
+            with pd.ExcelWriter(
+                    path=xlsxCalendarFile,
+                    date_format=TKS_DATE_FORMAT,
+                    datetime_format=TKS_DATE_TIME_FORMAT,
+                    mode="w",
+            ) as writer:
+                humanReadable = calendar.copy(deep=True)
+                humanReadable["couponDate"] = humanReadable["couponDate"].apply(lambda x: x.split("T")[0])
+                humanReadable["fixDate"] = humanReadable["fixDate"].apply(lambda x: x.split("T")[0])
+                humanReadable["couponStartDate"] = humanReadable["couponStartDate"].apply(lambda x: x.split("T")[0])
+                humanReadable["couponEndDate"] = humanReadable["couponEndDate"].apply(lambda x: x.split("T")[0])
+                humanReadable.columns = colNames  # human-readable column names
+
+                humanReadable.to_excel(
+                    writer,
+                    sheet_name="Bond payments calendar",
+                    index=False,
+                    encoding="UTF-8",
+                    freeze_panes=(1, 2),
+                )  # saving as XLSX-file with freeze first row and column as headers
+
+                del humanReadable  # release df in memory
+
+            uLogger.info("XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxCalendarFile)))
+
+        return calendar
+
+    def ShowBondsCalendar(self, extBonds: pd.DataFrame, show: bool = True) -> str:
+        """
+        Show bond payments calendar as a table. One row in input `bonds` dataframe contains one bond.
+
+        See also: `ShowInstrumentInfo()`, `RequestBondCoupons()` and `ExtendBondsData()`.
+
+        :param extBonds: pandas dataframe object returns by `ExtendBondsData()` method and contains
+                        extended information about bonds: main info, current prices, bond payment calendar,
+                        coupon yields, current yields and some statistics etc.
+                        If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
+        :param show: if `True` then also printing bonds payment calendar to the console,
+                     otherwise save to file `calendarFile` only. `False` by default.
+        :return: multilines text in Markdown format with bonds payment calendar as a table.
+        """
+        if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
+            extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
+
+        infoText = "# Bond payments calendar\n\n"
+
+        calendar = self.CreateBondsCalendar(extBonds, xlsx=True)  # generate pandas dataframe with full calendar data
+
+        if not calendar.empty:
+            splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
+
+            info = [
+                "| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |\n",
+                "|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|\n",
+            ]
+
+            newMonth = False
+            notOneBond = calendar["figi"].nunique() > 1
+            for i, bond in enumerate(calendar.iterrows()):
+                if newMonth and notOneBond:
+                    info.append(splitLine)
+
+                info.append(
+                    "| {:<5} | {:<15} | {:<12} | {:<12} | {:<3} | {:<13} | {:<9} | {:<6} | {:<17} |\n".format(
+                        "  +" if bond[1]["paid"] else "  —",
+                        bond[1]["couponDate"].split("T")[0],
+                        bond[1]["figi"],
+                        bond[1]["ticker"],
+                        bond[1]["couponNumber"],
+                        "{} {}".format(
+                            "{}".format(round(bond[1]["payOneBond"], 6)).rstrip("0").rstrip("."),
+                            bond[1]["payCurrency"],
+                        ),
+                        bond[1]["couponType"],
+                        bond[1]["couponPeriod"],
+                        bond[1]["fixDate"].split("T")[0],
+                    )
+                )
+
+                if i < len(calendar.values) - 1:
+                    curDate = datetime.strptime(bond[1]["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc())
+                    nextDate = datetime.strptime(calendar["couponDate"].values[i + 1], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc())
+                    newMonth = False if curDate.month == nextDate.month else True
+
+                else:
+                    newMonth = False
+
+            infoText += "".join(info)
+
+            if show:
+                uLogger.info("{}".format(infoText))
+
+            if self.calendarFile is not None:
+                with open(self.calendarFile, "w", encoding="UTF-8") as fH:
+                    fH.write(infoText)
+
+                uLogger.info("Bond payment calendar was saved to file: [{}]".format(os.path.abspath(self.calendarFile)))
+
+        else:
+            infoText += "No data\n"
+
+        return infoText
+
     def OverviewAccounts(self, show: bool = False) -> dict:
         """
         Method for parsing and show simple table with all available user accounts.
@@ -3906,9 +4375,11 @@ def ParseArgs():
     parser.add_argument("--version", "--ver", action="store_true", help="Action: shows current semantic version, looks like `major.minor.buildnumber`. If TKSBrokerAPI not installed via pip, then used local build number `.dev0`.")
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
-    parser.add_argument("--list-xlsx", "-x", action="store_true", help="Action: get all available instruments from server for current account and save raw data into xlsx-file to further used by data scientists or stock analytics, default: `dump.xlsx`.")
+    parser.add_argument("--list-xlsx", "-x", action="store_true", help="Action: get all available instruments from server for current account and save raw data into xlsx-file for further used by data scientists or stock analytics, default: `dump.xlsx`.")
+    parser.add_argument("--bonds-xlsx", "-b", type=str, nargs="*", help="Action: get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc. And then export data to xlsx-file, default: `ext-bonds.xlsx` or you can change it with `--output` key. WARNING! This is too long operation if a lot of bonds requested from broker server.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
+    parser.add_argument("--calendar", "-c", type=str, nargs="*", help="Action: show bonds payment calendar as a table. Calendar build for one or more tickers or FIGIs, or for all bonds if only key present, and also saved to file `calendar.xlsx` by default. Also, if the `--output` key present then calendar saves to file, default: `calendar.md`. WARNING! This is too long operation if a lot of bonds requested from broker server.")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use `--depth` key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
@@ -3986,7 +4457,7 @@ def Main(**kwargs):
             uLogger.debug("User requested current TKSBrokerAPI major.minor.build version: [{}]".format(buildVersion))
 
         else:
-            # Init class for trading with Tinkoff Broker:
+            # Init class for trading with Tinkoff Broker: TODO: rename `server` to `trader`
             server = TinkoffBrokerServer(
                 token=args.token,
                 accountId=args.account_id,
@@ -3997,7 +4468,7 @@ def Main(**kwargs):
 
             if args.ticker:
                 if args.ticker in server.aliasesKeys:
-                    server.ticker = server.aliases[args.ticker]  # Replace some tickers with it's aliases
+                    server.ticker = server.aliases[args.ticker]  # Replace some tickers with its aliases
 
                 else:
                     server.ticker = args.ticker
@@ -4019,6 +4490,16 @@ def Main(**kwargs):
             elif args.list_xlsx:
                 server.DumpInstrumentsAsXLSX(forceUpdate=False)
 
+            elif args.bonds_xlsx is not None:
+                if args.output is not None:
+                    server.bondsXLSXFile = args.output
+
+                if len(args.bonds_xlsx) == 0:
+                    server.ExtendBondsData(instruments=server.iList["Bonds"].keys(), xlsx=True)  # request bonds with all available tickers
+
+                else:
+                    server.ExtendBondsData(instruments=args.bonds_xlsx, xlsx=True)  # request list of given bonds
+
             elif args.search:
                 if args.output is not None:
                     server.searchResultsFile = args.output
@@ -4038,6 +4519,18 @@ def Main(**kwargs):
 
                 else:
                     server.SearchByFIGI(requestPrice=True, show=True, debug=False)  # show info and current prices by FIGI id
+
+            elif args.calendar is not None:
+                if args.output is not None:
+                    server.calendarFile = args.output
+
+                if len(args.calendar) == 0:
+                    bondsData = server.ExtendBondsData(instruments=server.iList["Bonds"].keys(), xlsx=False)  # request bonds with all available tickers
+
+                else:
+                    bondsData = server.ExtendBondsData(instruments=args.calendar, xlsx=False)  # request list of given bonds
+
+                server.ShowBondsCalendar(extBonds=bondsData, show=True)  # shows bonds payment calendar only
 
             elif args.price:
                 if not (args.ticker or args.figi):
@@ -4293,7 +4786,7 @@ def Main(**kwargs):
                 break
 
         uLogger.debug(trace)
-        uLogger.debug("Please, checks troubleshooting or open a ticket for this issue at https://github.com/Tim55667757/TKSBrokerAPI/issues")
+        uLogger.debug("Please, check issues or request a new one at https://github.com/Tim55667757/TKSBrokerAPI/issues")
         exitCode = 255  # an error occurred, must be open a ticket for this issue
 
     finally:

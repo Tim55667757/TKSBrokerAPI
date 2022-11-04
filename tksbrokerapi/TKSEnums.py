@@ -30,6 +30,9 @@ TKS_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 TKS_DATE_TIME_FORMAT_EXT = "%Y-%m-%dT%H:%M:%S.%fZ"
 """Extended date and time string format used by Tinkoff Open API. Default: `"%Y-%m-%dT%H:%M:%S.%fZ"`."""
 
+TKS_DATE_FORMAT = "%Y-%m-%d"
+"""Date string format for some methods. Default: `"%Y-%m-%d"`."""
+
 TKS_PRINT_DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 """Human-readable format of date and time string. Default: `"%Y-%m-%d %H:%M:%S"`."""
 
@@ -49,7 +52,7 @@ TKS_TICKER_ALIASES = {
 
 # some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
 TKS_TICKERS_OR_FIGI_EXCLUDED = [
-    # "ISSUANCEBRUS",  # now available
+    "ISSUANCEBRUS",
 ]
 
 TKS_CANDLE_INTERVALS = {  # List values: 1st - Tinkoff API parameter, 2nd - minutes count, 3rd - max candles in block
@@ -70,7 +73,7 @@ TKS_ACCOUNT_STATUSES = {
     "ACCOUNT_STATUS_OPEN": "Opened and active account",
     "ACCOUNT_STATUS_CLOSED": "Closed account",
 }
-"""Account status enums: https://tinkoff.github.io/investAPI/users/#accountstatus"""
+"""Account status, enums: https://tinkoff.github.io/investAPI/users/#accountstatus"""
 
 TKS_ACCOUNT_TYPES = {
     "ACCOUNT_TYPE_UNSPECIFIED": "Account type undefined",
@@ -78,7 +81,7 @@ TKS_ACCOUNT_TYPES = {
     "ACCOUNT_TYPE_TINKOFF_IIS": "IIS account",
     "ACCOUNT_TYPE_INVEST_BOX": "Investment \"piggy bank\"",
 }
-"""Account type enums: https://tinkoff.github.io/investAPI/users/#accounttype"""
+"""Account type, enums: https://tinkoff.github.io/investAPI/users/#accounttype"""
 
 TKS_ACCESS_LEVELS = {
     "ACCOUNT_ACCESS_LEVEL_UNSPECIFIED": "Access level undefined",
@@ -86,7 +89,7 @@ TKS_ACCESS_LEVELS = {
     "ACCOUNT_ACCESS_LEVEL_READ_ONLY": "Read-only access",
     "ACCOUNT_ACCESS_LEVEL_NO_ACCESS": "No access",
 }
-"""Access level enums: https://tinkoff.github.io/investAPI/users/#accesslevel"""
+"""Access level, enums: https://tinkoff.github.io/investAPI/users/#accesslevel"""
 
 TKS_QUALIFIED_TYPES = {
     "derivative": "Futures and Options",
@@ -101,7 +104,7 @@ TKS_QUALIFIED_TYPES = {
     "leverage": "Margin trading, unsecured leveraged trades",
     "repo": "REPO agreements",
 }
-"""Values of `qualified_for_work_with` field: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with"""
+"""Values of `qualified_for_work_with`, field: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with"""
 
 TKS_TRADING_STATUSES = {
     "SECURITY_TRADING_STATUS_UNSPECIFIED": "Trading status undefined",
@@ -122,7 +125,7 @@ TKS_TRADING_STATUSES = {
     "SECURITY_TRADING_STATUS_DEALER_BREAK_IN_TRADING": "Break in trading in the broker's internal liquidity mode",
     "SECURITY_TRADING_STATUS_DEALER_NOT_AVAILABLE_FOR_TRADING": "Broker's internal liquidity mode is not available",
 }
-"""Security Trading Status enums: https://tinkoff.github.io/investAPI/orders/#securitytradingstatus"""
+"""Security Trading Status, enums: https://tinkoff.github.io/investAPI/orders/#securitytradingstatus"""
 
 TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_UNSPECIFIED": "The operation type is not defined",
@@ -171,35 +174,35 @@ TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_DIV_EXT": "Payout dividends to the card",
     "OPERATION_TYPE_TAX_CORRECTION_COUPON": "Coupon tax correction",
 }
-"""Operation type enums: https://tinkoff.github.io/investAPI/operations/#operationtype"""
+"""Operation type, enums: https://tinkoff.github.io/investAPI/operations/#operationtype"""
 
 TKS_OPERATION_STATES = {
     "OPERATION_STATE_UNSPECIFIED": "! Unknown",
     "OPERATION_STATE_EXECUTED": "√ Executed",
     "OPERATION_STATE_CANCELED": "× Canceled",
 }
-"""Operation state enums: https://tinkoff.github.io/investAPI/operations/#operationstate"""
+"""Operation state, enums: https://tinkoff.github.io/investAPI/operations/#operationstate"""
 
 TKS_ORDER_DIRECTIONS = {
     "ORDER_DIRECTION_UNSPECIFIED": "Undefined",
     "ORDER_DIRECTION_BUY": "↑ Buy",
     "ORDER_DIRECTION_SELL": "↓ Sell",
 }
-"""Order direction enums: https://tinkoff.github.io/investAPI/orders/#orderdirection"""
+"""Order direction, enums: https://tinkoff.github.io/investAPI/orders/#orderdirection"""
 
 TKS_STOP_ORDER_DIRECTIONS = {
     "STOP_ORDER_DIRECTION_UNSPECIFIED": "Undefined",
     "STOP_ORDER_DIRECTION_BUY": "↑ Buy",
     "STOP_ORDER_DIRECTION_SELL": "↓ Sell",
 }
-"""Stop-order direction enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection"""
+"""Stop-order direction, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection"""
 
 TKS_ORDER_TYPES = {
     "ORDER_TYPE_UNSPECIFIED": "Undefined",
     "ORDER_TYPE_LIMIT": "Limit",
     "ORDER_TYPE_MARKET": "Market",
 }
-"""Order type enums: https://tinkoff.github.io/investAPI/orders/#ordertype"""
+"""Order type, enums: https://tinkoff.github.io/investAPI/orders/#ordertype"""
 
 TKS_STOP_ORDER_TYPES = {
     "STOP_ORDER_TYPE_UNSPECIFIED": "Undefined",
@@ -207,7 +210,7 @@ TKS_STOP_ORDER_TYPES = {
     "STOP_ORDER_TYPE_STOP_LOSS": "Stop loss",
     "STOP_ORDER_TYPE_STOP_LIMIT": "Stop limit",
 }
-"""Stop-order type enums: https://tinkoff.github.io/investAPI/stoporders/#stopordertype"""
+"""Stop-order type, enums: https://tinkoff.github.io/investAPI/stoporders/#stopordertype"""
 
 TKS_ORDER_STATES = {
     "EXECUTION_REPORT_STATUS_UNSPECIFIED": "! Unknown",
@@ -217,11 +220,31 @@ TKS_ORDER_STATES = {
     "EXECUTION_REPORT_STATUS_NEW": "New order",
     "EXECUTION_REPORT_STATUS_PARTIALLYFILL": "Partially filled",
 }
-"""Order status enums: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus"""
+"""Order status, enums: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus"""
 
 TKS_STOP_ORDER_EXPIRATION_TYPES = {
     "STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED": "Undefined",
     "STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_CANCEL": "Until cancel",
     "STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_DATE": "Until date",
 }
-"""Expiration type of stop-orders enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype"""
+"""Expiration type of stop-orders, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype"""
+
+TKS_COUPON_TYPES = {
+    "COUPON_TYPE_UNSPECIFIED": "Undefined",
+    "COUPON_TYPE_CONSTANT": "Constant",
+    "COUPON_TYPE_FLOATING": "Floating",
+    "COUPON_TYPE_DISCOUNT": "Discount",
+    "COUPON_TYPE_MORTGAGE": "Mortgage",
+    "COUPON_TYPE_FIX": "Fixed",
+    "COUPON_TYPE_VARIABLE": "Variable",
+    "COUPON_TYPE_OTHER": "Other",
+}
+"""Coupon type of bonds, enums: https://tinkoff.github.io/investAPI/instruments/#coupontype"""
+
+TKS_REAL_EXCHANGES = {
+    "REAL_EXCHANGE_UNSPECIFIED": "Undefined",
+    "REAL_EXCHANGE_MOEX": "MOEX",
+    "REAL_EXCHANGE_RTS": "SPBEX",
+    "REAL_EXCHANGE_OTC": "OTC",
+}
+"""The real exchange for the execution of trades, enums: https://tinkoff.github.io/investAPI/instruments/#realexchange"""
