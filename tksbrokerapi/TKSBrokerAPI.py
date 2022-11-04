@@ -277,8 +277,13 @@ class TinkoffBrokerServer:
         See also: `SendAPIRequest()`.
         """
 
-        self.headers = {"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {}".format(self.token)}
-        """Headers which send in every request to broker server. Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`.
+        self.headers = {
+            "Content-Type": "application/json",
+            "accept": "application/json",
+            "Authorization": "Bearer {}".format(self.token),
+            "x-app-name": "Tim55667757.TKSBrokerAPI",
+        }
+        """Headers which send in every request to broker server. Please, do not change it! Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`.
 
         See also: `SendAPIRequest()`.
         """
@@ -3951,7 +3956,7 @@ class TinkoffBrokerServer:
 
     def CreateBondsCalendar(self, extBonds: pd.DataFrame, xlsx: bool = False) -> pd.DataFrame:
         """
-        Creates bond payments calendar as pandas dataframe, and you can also save it to the XLSX-file.
+        Creates bond payments calendar as pandas dataframe, and also save it to the XLSX-file, `calendar.xlsx` by default.
 
         WARNING! This is too long operation if a lot of bonds requested from broker server.
 
@@ -4033,8 +4038,9 @@ class TinkoffBrokerServer:
     def ShowBondsCalendar(self, extBonds: pd.DataFrame, show: bool = True) -> str:
         """
         Show bond payments calendar as a table. One row in input `bonds` dataframe contains one bond.
+        Also, creates Markdown file with calendar data, `calendar.md` by default.
 
-        See also: `ShowInstrumentInfo()`, `RequestBondCoupons()` and `ExtendBondsData()`.
+        See also: `ShowInstrumentInfo()`, `RequestBondCoupons()`, `CreateBondsCalendar()` and `ExtendBondsData()`.
 
         :param extBonds: pandas dataframe object returns by `ExtendBondsData()` method and contains
                         extended information about bonds: main info, current prices, bond payment calendar,
@@ -4376,10 +4382,10 @@ def ParseArgs():
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
     parser.add_argument("--list-xlsx", "-x", action="store_true", help="Action: get all available instruments from server for current account and save raw data into xlsx-file for further used by data scientists or stock analytics, default: `dump.xlsx`.")
-    parser.add_argument("--bonds-xlsx", "-b", type=str, nargs="*", help="Action: get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc. And then export data to xlsx-file, default: `ext-bonds.xlsx` or you can change it with `--output` key. WARNING! This is too long operation if a lot of bonds requested from broker server.")
+    parser.add_argument("--bonds-xlsx", "-b", type=str, nargs="*", help="Action: get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc. And then export data to XLSX-file, default: `ext-bonds.xlsx` or you can change it with `--output` key. WARNING! This is too long operation if a lot of bonds requested from broker server.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
-    parser.add_argument("--calendar", "-c", type=str, nargs="*", help="Action: show bonds payment calendar as a table. Calendar build for one or more tickers or FIGIs, or for all bonds if only key present, and also saved to file `calendar.xlsx` by default. Also, if the `--output` key present then calendar saves to file, default: `calendar.md`. WARNING! This is too long operation if a lot of bonds requested from broker server.")
+    parser.add_argument("--calendar", "-c", type=str, nargs="*", help="Action: show bonds payment calendar as a table. Calendar build for one or more tickers or FIGIs, or for all bonds if only key present. If the `--output` key present then calendar saves to file, default: `calendar.md`. Also, created XLSX-file with bond payments calendar for further used by data scientists or stock analytics, `calendar.xlsx` by default. WARNING! This is too long operation if a lot of bonds requested from broker server.")
     parser.add_argument("--price", action="store_true", help="Action: show actual price list for current instrument. Also, you can use `--depth` key. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--prices", "-p", type=str, nargs="+", help="Action: get and print current prices for list of given instruments (by it's tickers or by FIGIs). WARNING! This is too long operation if you request a lot of instruments! Also, you can define `--output` key to save list of prices to file, default: `prices.md`.")
 
