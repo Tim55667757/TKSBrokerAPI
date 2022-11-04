@@ -30,6 +30,7 @@
 * No retries for 4xx net errors, only for 5xx.
 * If you run `SendAPIRequest(debug=True)` then prints more debug information, e.g. request and response parameters, headers etc.
 * Added waiting between network requests, in case of reaching the limit on the number of requests. The limit is determined by the response header value `"x-ratelimit-remaining": "0"`, and the number of seconds to wait is determined by the value of the `x-ratelimit-reset` header, for example, `"x-ratelimit-reset": "15"` , which means wait 15 seconds before the next request. This significantly reduced the number of network errors for a large number of requests to the server API.
+* Header `"x-app-name": "Tim55667757.TKSBrokerAPI"` was added to API requests to identify TKSBrokerAPI framework.
 
 ##### Bug fixes
 
