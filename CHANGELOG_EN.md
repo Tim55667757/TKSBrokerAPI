@@ -9,7 +9,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-10-28)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+### [1.4.* (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — released
 
 ##### New features
 
@@ -17,7 +17,8 @@
 * [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and rendering interactive or static charts using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library. Similarly, you can build charts for previously saved csv-files with the candles history. To do this, you need to specify the `--render-chart` key with the new key for loading data from file: `--load-history`.
 * [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--list-xlsx` key (or `-x`) that returned raw instruments data for current account similar to `dump.json`, but saved in XLSX format to further used by data scientists or stock analytics, `dump.xlsx` by default. Also, `DumpInstrumentsAsXLSX()` method that converts raw instruments data to XLSX format was developed.
 * [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` (`-u`) key has been added, which displays data associated with the account linked to the current token: available information about the user and his accounts, rights to operations, limits for margin trading. Also added the `--account` (`--accounts`, `-a`) key, which displays a simple table containing only user accounts.
-* [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
+* [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment calendar, total number of payments and already redeemed coupons, coupons yield (average coupon daily yield * 365), current price yield (average daily yield * 365), ACI and coupon's size. To request the necessary information, the `RequestBondCoupons()` (returns a dictionary of processed data received from the server) and `ExtendBondsData()` (returns an extended pandas dataframe containing more information about bonds) methods were implemented to extend bonds data with more information. The `ShowInstrumentInfo()` method has been improved to display more information on bonds and the payment calendar. To receive extended information about bonds in XLSX-format now you can use `--bonds-xlsx` (`-b`) key.
+* [#63](https://github.com/Tim55667757/TKSBrokerAPI/issues/63) The `CreateBondsCalendar()` method is implemented, which generates a pandas dataframe with a general payment calendar for the specified or all bonds. The `ShowBondsCalendar()` method displays the calendar in the console and saves it to a file, `calendar.md` by default in Markdown format. To request a payment calendar, you need to use the `--calendar` (`-c`) key. Also, the table in XLSX format will be saved to the default file `calendar.xlsx`.
 
 ##### Improvements
 
@@ -28,6 +29,7 @@
 * [#65](https://github.com/Tim55667757/TKSBrokerAPI/issues/65) WARNING! Refactor a lot of methods. All `overview` parameters were replaced with `portfolio`.
 * No retries for 4xx net errors, only for 5xx.
 * If you run `SendAPIRequest(debug=True)` then prints more debug information, e.g. request and response parameters, headers etc.
+* Added waiting between network requests, in case of reaching the limit on the number of requests. The limit is determined by the response header value `"x-ratelimit-remaining": "0"`, and the number of seconds to wait is determined by the value of the `x-ratelimit-reset` header, for example, `"x-ratelimit-reset": "15"` , which means wait 15 seconds before the next request. This significantly reduced the number of network errors for a large number of requests to the server API.
 
 ##### Bug fixes
 
