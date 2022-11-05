@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Instrument: GAZP, timeframe: 1h 0m 0s, horizon length: 32 (from 2022-10-15 07:00:00 to 2022-10-17 20:00:00)</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">google.charts.load('current', {'packages': ['corechart']});</script>
+    <style type="text/css">
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #FFFFFF;
+        z-index: 99;
+    }
+    #status {
+        width: 300px;
+        height: 150px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        background-image: url(https://raw.githubusercontent.com/niklausgerber/PreLoadMe/master/img/status.gif);
+        background-repeat: no-repeat;
+        background-position: left;
+        margin: -100px 0 0 -100px;
+        font-family: "Segoe UI", "Frutiger", "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", "Arial", sans-serif;
+        font-size: 14px;
+    }
+    pre {
+        font-family: "Lucida Console", sans-serif;
+        font-size: 11px;
+        padding: 0;
+        border-width: 0 0 0 0;
+    }
+    table {
+        font-family: "Segoe UI", "Frutiger", "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", "Arial", sans-serif;
+        font-size: 12px;
+        border-spacing: 0;
+        text-align: left;
+        background: white;
+        width: 100%;
+    }
+    th {
+        border-radius: 10px 10px 10px 10px;
+        border-style: solid;
+        border-width: 0 1px 1px 0;
+        border-color: white;
+        padding: 6px;
+        vertical-align: middle;
+        padding-left: 1em;
+        background: #E6E6E6;
+        height: 50px;
+    }
+    td {
+        border-radius: 10px 10px 10px 10px;
+        border-style: solid;
+        border-width: 0 1px 1px 0;
+        border-color: white;
+        padding: 6px;
+        vertical-align: top;
+        padding-left: 1em;
+        background: white;
+    }
+    </style>
+    <script>
+    function drawChartCandlesticks(candlesData) {
+        var chartOptions = {
+            legend: "none",
+            titlePosition: "in",
+            chartArea: {width: "100%", height: "100%"},
+            fontSize: 11,
+            candlestick: {
+                fallingColor: {stroke: "#000000", strokeWidth: 1, fill: "#999999"},
+                risingColor: {stroke: "#000000",  strokeWidth: 1, fill: "#FFFFFF"},
+            },
+            colors: ["#000000"],
+            hAxis: {textPosition: "none"},
+            vAxis: {textPosition: "in", textStyle: {fontSize: 12}},
+        }
+        if (typeof candlesData !== "undefined") {
+            var data = google.visualization.arrayToDataTable(candlesData, true);
+            var chart = new google.visualization.CandlestickChart(document.getElementById("candlestickChart"));
+            chart.draw(data, chartOptions);
+        }
+    }
+    </script>
+</head>
+
+
+<body onload="drawChartCandlesticks([['2022-10-15 07:00:00', 159.21, 159.86, 160.47, 160.48], ['2022-10-15 08:00:00', 159.46, 160.48, 160.18, 160.97], ['2022-10-15 09:00:00', 159.78, 160.82, 160.77, 160.88], ['2022-10-15 10:00:00', 160.01, 160.78, 160.7, 160.98], ['2022-10-15 11:00:00', 160.0, 160.7, 161.16, 161.27], ['2022-10-15 12:00:00', 160.1, 160.51, 160.8, 161.34], ['2022-10-15 13:00:00', 160.14, 160.14, 160.46, 161.16], ['2022-10-15 14:00:00', 160.34, 161.12, 161.54, 161.98], ['2022-10-15 15:00:00', 160.57, 160.88, 161.59, 161.75], ['2022-10-16 07:00:00', 160.69, 161.59, 161.69, 161.84], ['2022-10-16 08:00:00', 160.72, 161.04, 161.61, 162.08], ['2022-10-16 09:00:00', 160.56, 161.62, 161.57, 162.06], ['2022-10-16 10:00:00', 160.69, 161.57, 161.52, 161.81], ['2022-10-16 11:00:00', 159.74, 161.52, 161.1, 161.53], ['2022-10-16 12:00:00', 159.64, 161.1, 161.17, 162.58], ['2022-10-16 13:00:00', 160.22, 160.52, 161.08, 161.22], ['2022-10-16 14:00:00', 160.44, 161.08, 161.44, 161.93], ['2022-10-16 15:00:00', 160.53, 161.44, 161.43, 161.8], ['2022-10-17 07:00:00', 159.6, 159.95, 161.49, 162.22], ['2022-10-17 08:00:00', 161.0, 161.49, 161.36, 161.8], ['2022-10-17 09:00:00', 160.8, 161.36, 161.35, 161.8], ['2022-10-17 10:00:00', 161.28, 161.39, 162.87, 162.87], ['2022-10-17 11:00:00', 162.53, 162.83, 162.88, 163.8], ['2022-10-17 12:00:00', 162.56, 162.85, 162.66, 163.37], ['2022-10-17 13:00:00', 162.55, 162.66, 163.01, 163.19], ['2022-10-17 14:00:00', 162.03, 163.01, 162.4, 163.16], ['2022-10-17 15:00:00', 162.05, 162.41, 162.5, 162.58], ['2022-10-17 16:00:00', 161.52, 162.5, 162.31, 162.66], ['2022-10-17 17:00:00', 162.25, 162.31, 162.4, 162.5], ['2022-10-17 18:00:00', 162.3, 162.4, 162.7, 162.82], ['2022-10-17 19:00:00', 162.5, 162.72, 162.79, 162.81], ['2022-10-17 20:00:00', 162.78, 162.78, 163.24, 163.3]])">
+
+
+<!-- Preloader -->
+<script>
+    $(window).on('load', function() {
+        $('#status').fadeOut('slow');
+        $('#preloader').fadeOut('slow');
+    })
+</script>
+<div id="preloader">
+    <div id="status">Wait...</div>
+</div>
+
+
+<!-- Chart part -->
+
+<table id="chart">
+    <tr>
+        <th style="width: 75%;">
+            <b>Instrument: GAZP, timeframe: 1h 0m 0s, horizon length: 32 (from 2022-10-15 07:00:00 to 2022-10-17 20:00:00)</b>
+        </th>
+        <th>
+            <b>Info</b>
+        </th>
+    </tr>
+    <tr>
+        <td>
+            <div id="candlestickChart" style="height: 800px; width: 100%;"></div>
+        </td>
+        <td>
+            
+                <pre># Summary</pre>
+            
+                <pre>| Parameter                                    | Value</pre>
+            
+                <pre>|----------------------------------------------|---------------</pre>
+            
+                <pre>| Candles count:                               | 32</pre>
+            
+                <pre>| Timeframe:                                   | 0 days 01:00:00</pre>
+            
+                <pre>| Precision (signs after comma):               | 2</pre>
+            
+                <pre>| Close first:                                 | 160.47</pre>
+            
+                <pre>| Close last:                                  | 163.24</pre>
+            
+                <pre>| Close max:                                   | 163.24</pre>
+            
+                <pre>| Close min:                                   | 160.18</pre>
+            
+                <pre>| Diapason (between max and min close prices): | 3.06</pre>
+            
+                <pre>| Trend (between close first and close last:   | UP trend</pre>
+            
+                <pre></pre>
+            
+                <pre># Some statistics</pre>
+            
+                <pre>| Statistic                                    | Value</pre>
+            
+                <pre>|----------------------------------------------|---------------</pre>
+            
+                <pre>| Up candles count:                            | 20 (62.5%)</pre>
+            
+                <pre>| Down candles count:                          | 12 (37.5%)</pre>
+            
+                <pre>| Max of up / down candle chains:              | 7 / 3</pre>
+            
+                <pre>| Max delta (between High and Low prices):     | 2.94</pre>
+            
+                <pre>| Min delta (between High and Low prices):     | 0.25</pre>
+            
+                <pre>| Delta's std. dev.:                           | 0.56</pre>
+            
+                <pre>| - 99 percentile:                             | ≤ 2.84</pre>
+            
+                <pre>| - 95 percentile:                             | ≤ 2.16</pre>
+            
+                <pre>| - 80 percentile:                             | ≤ 1.5</pre>
+            
+                <pre>| Cumulative sum of volumes:                   | 2726506</pre>
+            
+        </td>
+    </tr>
+</table>
+
+
+<!-- Footer -->
+
+<table>
+    <tr>
+        <th><b>Generated by <a href="https://github.com/Tim55667757/PriceGenerator">PriceGenerator</a></b></th>
+    </tr>
+</table>
+
+
+</body>
+
+</html>

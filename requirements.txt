@@ -2,11 +2,12 @@
 # Changing the order has an impact on the overall integration  process, which may cause troubles later.
 
 # Build requirements:
-twine==4.0.1
-pytest>=7.1.2
+twine == 4.0.1
+pytest >= 7.1.2
 
 # Packet TKSBrokerAPI requirements:
-requests>=2.25.1  # Apache-2.0 license
-pandas>=1.2.2
-python-dateutil>=2.8.1  # Apache-2.0 license
-PriceGenerator>=1.2.74  # Apache-2.0 license
+requests >= 2.25.1  # Apache-2.0 license
+pandas >= 1.2.2
+openpyxl >= 3.0.10
+python-dateutil >= 2.8.1  # Apache-2.0 license
+PriceGenerator >= 1.2.74  # Apache-2.0 license

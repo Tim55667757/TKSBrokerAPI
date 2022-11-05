@@ -9,29 +9,35 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-09-19)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — preparing for release...
+### [1.4.* (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — released
 
 ##### New features
 
-* [In progress] [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and display the change in instrument prices on an interactive or static chart using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library.
-* [In progress] [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment schedule, total number of payments and already redeemed coupons, accumulated coupon income, current yield, yield to maturity and coupon's size.
-* [In progress] [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` key has been added, which displays data associated with the account for the current token: available information about the user, operations rights, limits on operations, and API methods available for this token.
-* [In progress] [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) The `GetWithdrawalLimits()` method and the `--withdrawal-limits` key are implemented. They request the currency balance available to the user for withdrawing funds from the account.
-* [In progress] [#45](https://github.com/Tim55667757/TKSBrokerAPI/issues/45) For all methods that return data in table form was added the ability to change file type to `xlsx`, instead of `md` or `csv`, with selector `--xlsx` for `--output` key.
-* [In progress] [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--detail-list` key that produces instrument's data similar to `dump.json`, but saved in `xlsx` format.
+* [#15](https://github.com/Tim55667757/TKSBrokerAPI/issues/15) Implemented methods: `RequestLimits()` to request raw data on user withdrawal limits, `OverviewLimits()` to display table data, and the `--limits` (`--withdrawal-limits`, `-w`) key to request and print limits in the console.
+* [#6](https://github.com/Tim55667757/TKSBrokerAPI/issues/6) When launched with the `--history` key, the ability to specify an additional key `--render-chart` and rendering interactive or static charts using the [`PriceGenerator`](https://tim55667757.github.io/PriceGenerator) library. Similarly, you can build charts for previously saved csv-files with the candles history. To do this, you need to specify the `--render-chart` key with the new key for loading data from file: `--load-history`.
+* [#46](https://github.com/Tim55667757/TKSBrokerAPI/issues/46) Implemented the `--list-xlsx` key (or `-x`) that returned raw instruments data for current account similar to `dump.json`, but saved in XLSX format to further used by data scientists or stock analytics, `dump.xlsx` by default. Also, `DumpInstrumentsAsXLSX()` method that converts raw instruments data to XLSX format was developed.
+* [#11](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) The `--user-info` (`-u`) key has been added, which displays data associated with the account linked to the current token: available information about the user and his accounts, rights to operations, limits for margin trading. Also added the `--account` (`--accounts`, `-a`) key, which displays a simple table containing only user accounts.
+* [#10](https://github.com/Tim55667757/TKSBrokerAPI/issues/10) When requesting information about bonds (with the `--info` or `-i` key), more data is now calculated and displayed: bond payment calendar, total number of payments and already redeemed coupons, coupons yield (average coupon daily yield * 365), current price yield (average daily yield * 365), ACI and coupon's size. To request the necessary information, the `RequestBondCoupons()` (returns a dictionary of processed data received from the server) and `ExtendBondsData()` (returns an extended pandas dataframe containing more information about bonds) methods were implemented to extend bonds data with more information. The `ShowInstrumentInfo()` method has been improved to display more information on bonds and the payment calendar. To receive extended information about bonds in XLSX-format now you can use `--bonds-xlsx` (`-b`) key.
+* [#63](https://github.com/Tim55667757/TKSBrokerAPI/issues/63) The `CreateBondsCalendar()` method is implemented, which generates a pandas dataframe with a general payment calendar for the specified or all bonds. The `ShowBondsCalendar()` method displays the calendar in the console and saves it to a file, `calendar.md` by default in Markdown format. To request a payment calendar, you need to use the `--calendar` (`-c`) key. Also, the table in XLSX format will be saved to the default file `calendar.xlsx`. If the calendar is built for more than one bond, then payments in the same month are grouped.
 
 ##### Improvements
 
-* [In progress] [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method that implements launching with the `--info` (or `-i`) key. An additional `GetTradingStatus()` method has been implemented, using an extension of the `SearchByTicker()` and `SearchByFIGI()` methods. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`.
-* [In progress] [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
-* [In progress] [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version`.
+* [#59](https://github.com/Tim55667757/TKSBrokerAPI/issues/59) TKSBrokerAPI build version was added to the start of debug log, also shows by the key `--version` (or `--ver`).
+* [#47](https://github.com/Tim55667757/TKSBrokerAPI/issues/47) `iList` field is not actual because local `dump.json` make the similar function and auto-updates instruments list. So this field was deleted from `TinkoffBrokerServer()` class.
+* [#9](https://github.com/Tim55667757/TKSBrokerAPI/issues/9) Added information about the current trading status for the requested instrument to the method `ShowInstrumentInfo()`. An additional `RequestTradingStatus()` method has been implemented to request current trade status of instrument. Added flags: `buyAvailableFlag`, `sellAvailableFlag`, `shortEnabledFlag`, `limitOrderAvailableFlag`, `marketOrderAvailableFlag` and `apiTradeAvailableFlag`. As part of the same task, the task [#37](https://github.com/Tim55667757/TKSBrokerAPI/issues/37) was implemented: added the ability to save information on the instrument to a file specified by the `--output` key, by default `info .md`.
+* [#64](https://github.com/Tim55667757/TKSBrokerAPI/issues/64) WARNING! Refactor a lot of methods. All "show" parameters: `showPrice`, `showPrices`, `printInfo`, `showInfo`, `showInstruments`, `showResults`, `showStatistics`, `printDeals`, `printCandles`, `showLimits`, `showAccounts` — were replaced with simple `show`.
+* [#65](https://github.com/Tim55667757/TKSBrokerAPI/issues/65) WARNING! Refactor a lot of methods. All `overview` parameters were replaced with `portfolio`.
+* No retries for 4xx net errors, only for 5xx.
+* If you run `SendAPIRequest(debug=True)` then prints more debug information, e.g. request and response parameters, headers etc.
+* Added waiting between network requests, in case of reaching the limit on the number of requests. The limit is determined by the response header value `"x-ratelimit-remaining": "0"`, and the number of seconds to wait is determined by the value of the `x-ratelimit-reset` header, for example, `"x-ratelimit-reset": "15"` , which means wait 15 seconds before the next request. This significantly reduced the number of network errors for a large number of requests to the server API.
+* Header `"x-app-name": "Tim55667757.TKSBrokerAPI"` was added to API requests to identify TKSBrokerAPI framework.
 
 ##### Bug fixes
 
-* ...
+* Bug fix with `NoneType object has no attribute ...` if `--history` key used without any variables.
 
 
-### [1.3.* (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/3) — released
+### [1.3.70 (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.3.70) — released
 
 ##### New features
 

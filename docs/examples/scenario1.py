@@ -32,7 +32,7 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md#Пример-�
 
 Действия будут следующие:
 
-- запросить текущий портфель клиента и определение доступных для торговли средств;
+- запросить текущий портфель клиента и определить доступные для торговли средства;
 - запросить стакан цен с глубиной 20 для выбранных инструментов, например, акции с тикерами `YNDX`, `IBM` and `GOOGLE`;
 - если инструмент ранее ещё не был куплен, то проверить:
   - если резерв денежных средств (свободный кеш) в валюте инструмента больше, чем 5% от общей стоимости всех
@@ -45,8 +45,11 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md#Пример-�
      с большой вероятностью в течении текущей сессии.
 - после всех торговых операций напечатать в консоль текущее состояние портфеля пользователя.
 
-Для понимания примера сохраните и запустите этот скрипт. Не забудьте перед этим получить token и узнать свой accountId
-(см. раздел "Аутентификация" в `README.md`).
+Для понимания примера сохраните и запустите этот скрипт. Не забудьте перед этим подставить свой token и accountId
+в разделе инициализации в коде (см. раздел "Аутентификация" в `README.md`).
+
+Комментарии к коду на русском можно найти в документации под спойлерами:
+https://github.com/Tim55667757/TKSBrokerAPI#Пример-реализации-абстрактного-сценария
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
@@ -71,7 +74,7 @@ from dateutil.tz import tzlocal, tzutc
 from math import ceil
 from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations
 
-uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log
+uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
 uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
 
 start = datetime.now(tzutc())
@@ -96,8 +99,6 @@ VOLUME_DIFF = 0.1  # Enough volumes difference to open position, 10% by default
 trader = TinkoffBrokerServer(
     token="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
     accountId="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
-    iList=None,  # Do not use previous saved dictionaries with instruments from broker server
-    useCache=True,  # Use auto-updated local cache from `dump.json`
 )
 
 
@@ -109,7 +110,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     # - Step 1: request the client's current portfolio and determining funds available for trading
 
     # User's portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
-    portfolio = trader.Overview(showStatistics=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+    portfolio = trader.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
     uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
         portfolio["stat"]["portfolioCostRUB"],
@@ -130,7 +131,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
     trader.depth = DEPTH_OF_MARKET
 
     # Getting broker's prices on that instrument:
-    ordersBook = trader.GetCurrentPrices(showPrice=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
+    ordersBook = trader.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
 
     if not (ordersBook["buy"] and ordersBook["sell"]):
         uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(trader.ticker))
@@ -143,14 +144,14 @@ for ticker in TICKERS_LIST_FOR_TRADING:
         #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
         #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
 
-        # Checks if instrument is in portfolio:
+        # Checks if instrument (defined by it's `ticker`) is in portfolio:
         isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
         if not isInPortfolio:
             uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
-            # Getting instrument's data and it currency:
-            rawIData = trader.SearchByTicker(requestPrice=False, showInfo=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            # Getting instrument's data and its currency:
+            rawIData = trader.SearchByTicker(requestPrice=False, show=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
             iCurr = rawIData["currency"]  # currency of current instrument
 
             # Getting distribution by currencies, cost of previously purchased assets and free money in that currency:
@@ -224,7 +225,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
 uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
 
 # Showing detailed user portfolio information:
-trader.Overview(showStatistics=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+trader.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
 
 # --- Operations finalization section ----------------------------------------------------------------------------------
