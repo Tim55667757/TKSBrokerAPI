@@ -3861,7 +3861,7 @@ class TinkoffBrokerServer:
                 iData["issueSize"] = int(iData["issueSize"])
                 iData["issueSizePlan"] = int(iData["issueSizePlan"])
                 iData["tradingStatus"] = TKS_TRADING_STATUSES[iData["tradingStatus"]]
-                iData["minPriceIncrement"] = NanoToFloat(iData["minPriceIncrement"]["units"], iData["minPriceIncrement"]["nano"]) if "minPriceIncrement" in iData.keys() else 0
+                iData["step"] = iData["step"] if "step" in iData.keys() else 0
                 iData["realExchange"] = TKS_REAL_EXCHANGES[iData["realExchange"]]
                 iData["klong"] = NanoToFloat(iData["klong"]["units"], iData["klong"]["nano"]) if "klong" in iData.keys() else 0
                 iData["kshort"] = NanoToFloat(iData["kshort"]["units"], iData["kshort"]["nano"]) if "kshort" in iData.keys() else 0
