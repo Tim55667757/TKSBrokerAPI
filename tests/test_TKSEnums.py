@@ -32,6 +32,8 @@ class TestConstantsConsistent:
             "TKS_STOP_ORDER_TYPES": "<class 'dict'>",
             "TKS_ORDER_STATES": "<class 'dict'>",
             "TKS_STOP_ORDER_EXPIRATION_TYPES": "<class 'dict'>",
+            "TKS_COUPON_TYPES": "<class 'dict'>",
+            "TKS_REAL_EXCHANGES": "<class 'dict'>",
         }
         self.mainConstantsNames = self.mainConstants.keys()
         self.currentConstantsNames = dir(TKSEnums)  # constants in fact
