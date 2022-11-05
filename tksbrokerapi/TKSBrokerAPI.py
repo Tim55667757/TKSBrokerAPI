@@ -3817,7 +3817,9 @@ class TinkoffBrokerServer:
         :param xlsx: if True then also exports pandas dataframe to xlsx-file `bondsXLSXFile`, default: `ext-bonds.xlsx`,
                      for further used by data scientists or stock analytics.
         :return: wider pandas dataframe with more full and calculated data about bonds, than raw response from broker.
-                 In XLSX-file and pandas dataframe fields mean: https://tinkoff.github.io/investAPI/instruments/#bond
+                 In XLSX-file and pandas dataframe fields mean:
+                 - main info about bond: https://tinkoff.github.io/investAPI/instruments/#bond
+                 - info about coupon: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
         if instruments is None or not instruments:
             uLogger.error("List of tickers or FIGIs must be defined for using this method!")
@@ -3857,10 +3859,16 @@ class TinkoffBrokerServer:
                 iData["aciCurrency"] = iData["aciValue"]["currency"]
                 iData["aciValue"] = NanoToFloat(iData["aciValue"]["units"], iData["aciValue"]["nano"])
                 iData["issueSize"] = int(iData["issueSize"])
-                iData["issueSizePlan"] = int(iData["issueSize"])
+                iData["issueSizePlan"] = int(iData["issueSizePlan"])
                 iData["tradingStatus"] = TKS_TRADING_STATUSES[iData["tradingStatus"]]
-                iData["minPriceIncrement"] = NanoToFloat(iData["minPriceIncrement"]["units"], iData["minPriceIncrement"]["nano"]) if "minPriceIncrement" in iData.keys() else 0.
+                iData["minPriceIncrement"] = NanoToFloat(iData["minPriceIncrement"]["units"], iData["minPriceIncrement"]["nano"]) if "minPriceIncrement" in iData.keys() else 0
                 iData["realExchange"] = TKS_REAL_EXCHANGES[iData["realExchange"]]
+                iData["klong"] = NanoToFloat(iData["klong"]["units"], iData["klong"]["nano"]) if "klong" in iData.keys() else 0
+                iData["kshort"] = NanoToFloat(iData["kshort"]["units"], iData["kshort"]["nano"]) if "kshort" in iData.keys() else 0
+                iData["dlong"] = NanoToFloat(iData["dlong"]["units"], iData["dlong"]["nano"]) if "dlong" in iData.keys() else 0
+                iData["dshort"] = NanoToFloat(iData["dshort"]["units"], iData["dshort"]["nano"]) if "dshort" in iData.keys() else 0
+                iData["dlongMin"] = NanoToFloat(iData["dlongMin"]["units"], iData["dlongMin"]["nano"]) if "dlongMin" in iData.keys() else 0
+                iData["dshortMin"] = NanoToFloat(iData["dshortMin"]["units"], iData["dshortMin"]["nano"]) if "dshortMin" in iData.keys() else 0
 
                 # Widen raw data with price fields from `currentPrice` values (all prices are actual at `actualDateTime` date):
                 iData["limitUpPercent"] = iData["currentPrice"]["limitUp"]  # max price on current day in percents of nominal
@@ -3968,7 +3976,7 @@ class TinkoffBrokerServer:
                         If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
         :param xlsx: if True then also exports pandas dataframe to file `calendarFile` + `".xlsx"`, default: `calendar.xlsx`,
                      for further used by data scientists or stock analytics.
-        :return: pandas dataframe with only bond payments calendar data.
+        :return: pandas dataframe with only bond payments calendar data. Fields mean: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
             extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
