@@ -47,6 +47,8 @@
      - [Download historical data in OHLCV-candles format](#Download-historical-data-in-OHLCV-candles-format)
      - [Find out the balance of funds available for withdrawal](#Find-out-the-balance-of-funds-available-for-withdrawal)
      - [Get user and account information](#Get-user-and-account-information)
+     - [Get extended bonds data](#Get-extended-bonds-data)
+     - [Build a bond payment calendar](#Build-a-bond-payment-calendar)
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
 
@@ -246,6 +248,12 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Request general information about the user, a list of accounts (including the `accountId`s), available funds for margin trading and connection limits for the current tariff;
   - common key `--user-info` (`-u`) to request general information or key `--account` (`--accounts`, `-a`) to request list of accounts;
   - API-methods: [`RequestAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestAccounts), [`RequestUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestUserInfo), [`RequestMarginStatus()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestMarginStatus), [`RequestTariffLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestTariffLimits), [`OverviewUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewUserInfo) and [`OverviewAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewAccounts).
+- Request raw bonds data, extend it and creating pandas dataframe with more information for datascientists or stock analytics: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics, and also saves this data to XLSX-file;
+  - common key `--bonds-xlsx` (`-b`) to extend data for all at once or for specified bonds;
+  - API-methods: [`RequestBondCoupons()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestBondCoupons) and [`ExtendBondsData()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ExtendBondsData).
+- Generate bonds payment calendar for all at once or for a list of bonds and save it to a Markdown-file or XLSX-file;
+  - common key `--calendar` (`-c`) to generate bonds payment calendar;
+  - API-methods: [`CreateBondsCalendar()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CreateBondsCalendar) and [`ShowBondsCalendar()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowBondsCalendar).
 
 
 ## Setup
@@ -393,6 +401,16 @@ options:
                         current account and save raw data into xlsx-file to
                         further used by data scientists or stock analytics,
                         default: `dump.xlsx`.
+  --bonds-xlsx [BONDS_XLSX ...], -b [BONDS_XLSX ...]
+                        Action: get all available bonds if only key present or
+                        list of bonds with FIGIs or tickers and transform it
+                        to the wider pandas dataframe with more information
+                        about bonds: main info, current prices, bonds payment
+                        calendar, coupon yields, current yields and some
+                        statistics etc. And then export data to XLSX-file,
+                        default: `ext-bonds.xlsx` or you can change it with
+                        `--output` key. WARNING! This is too long operation if
+                        a lot of bonds requested from broker server.
   --search SEARCH, -s SEARCH
                         Action: search for an instruments by part of the name,
                         ticker or FIGI. Also, you can define `--output` key to
@@ -400,6 +418,16 @@ options:
   --info, -i            Action: get information from broker server about
                         instrument by it's ticker or FIGI. `--ticker` key or
                         `--figi` key must be defined!
+  --calendar [CALENDAR ...], -c [CALENDAR ...]
+                        Action: show bonds payment calendar as a table.
+                        Calendar build for one or more tickers or FIGIs, or
+                        for all bonds if only key present. If the `--output`
+                        key present then calendar saves to file, default:
+                        `calendar.md`. Also, created XLSX-file with bond
+                        payments calendar for further used by data scientists
+                        or stock analytics, `calendar.xlsx` by default.
+                        WARNING! This is too long operation if a lot of bonds
+                        requested from broker server.
   --price               Action: show actual price list for current instrument.
                         Also, you can use `--depth` key. `--ticker` key or
                         `--figi` key must be defined!
@@ -564,6 +592,10 @@ The `--debug-level=10` key (or `--verbosity 10`, `-v 10`) will output all debugg
 
 Starting with TKSBrokerAPI v1.4.*, you can use the `--list-xlsx` (`-x`) key to save raw data for available instruments in XLSX-format suitable for further processing by data scientists or stock analysts. By default, data from the local `dump.json` cache is used, which is converted to XLSX-format and saved to the `dump.xlsx` file.
 
+Output is an XLSX-file with raw data, you can see the example of that file here: [./docs/media/dump.xlsx](./docs/media/dump.xlsx). Which mean headers in XLSX-file, see here: "[Get extended bonds data](#Get-extended-bonds-data)" and "[Builds a bond payment calendar](#Builds-a-bond-payment-calendar)".
+
+![](./docs/media/dump.xlsx.png)
+
 <details>
   <summary>Command to get a list of all available instruments in Markdown format</summary>
 
@@ -614,10 +646,6 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-26 22:04:41,215] TKSBrokerAPI module
 
 <details>
   <summary>Command to get raw data of all available instruments in XLSX format</summary>
-
-Output is an XLSX-file, you can see the example of that file here: [./docs/media/dump.xlsx](./docs/media/dump.xlsx).
-
-![](./docs/media/dump.xlsx.png)
 
 ```commandline
 $ tksbrokerapi -v 10 --list-xlsx
@@ -832,54 +860,78 @@ TKSBrokerAPI.py     L:4309 DEBUG   [2022-10-28 00:18:29,220] >>> TKSBrokerAPI mo
 ```commandline
 $ tksbrokerapi -f TCS00A101YV8 --info
 
-TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:20:06,931] # Main information: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
+TKSBrokerAPI.py     L:4029 INFO    [2022-11-04 20:50:53,226] XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [calendar.xlsx]
+TKSBrokerAPI.py     L:4102 INFO    [2022-11-04 20:50:53,230] Bond payment calendar was saved to file: [calendar.md]
+TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
 
-* Actual at: [2022-10-27 21:20] (UTC)
+* Actual at: [2022-11-04 17:50] (UTC)
 
-| Parameters                                              | Values                                                  |
-|---------------------------------------------------------|---------------------------------------------------------|
-| Ticker:                                                 | RU000A101YV8                                            |
-| Full name:                                              | Позитив Текнолоджиз выпуск 1                            |
-| Sector:                                                 | it                                                      |
-| Country of instrument:                                  | (RU) Российская Федерация                               |
-|                                                         |                                                         |
-| FIGI (Financial Instrument Global Identifier):          | TCS00A101YV8                                            |
-| Exchange:                                               | MOEX                                                    |
-| ISIN (International Securities Identification Number):  | RU000A101YV8                                            |
-| Class Code:                                             | TQCB                                                    |
-|                                                         |                                                         |
-| Current broker security trading status:                 | Not available for trading                               |
-|                                                         |                                                         |
-| Buy operations allowed:                                 | Yes                                                     |
-| Sale operations allowed:                                | Yes                                                     |
-| Short positions allowed:                                | No                                                      |
-|                                                         |                                                         |
-| Limit orders allowed:                                   | No                                                      |
-| Market orders allowed:                                  | No                                                      |
-| API trade allowed:                                      | Yes                                                     |
-|                                                         |                                                         |
-| Type of the instrument:                                 | Bonds                                                   |
-| Payment currency:                                       | rub                                                     |
-| State registration date:                                | 2020-07-21 00:00:00                                     |
-| Placement date:                                         | 2020-07-29 00:00:00                                     |
-| Maturity date:                                          | 2023-07-26 00:00:00                                     |
-|                                                         |                                                         |
-| Bond issue (size / plan):                               | 500000 / 500000                                         |
-| Nominal price (100%):                                   | 750.00 rub                                              |
-| Floating coupon:                                        | No                                                      |
-| Amortization:                                           | Yes                                                     |
-| Number of coupon payments per year:                     | 4                                                       |
-| Current ACI (Accrued Interest):                         | 0.47 rub                                                |
-|                                                         |                                                         |
-| Previous close price of the instrument:                 | 101.74% of nominal price                                |
-| Last deal price of the instrument:                      | 101.74% of nominal price                                |
-| Changes between last deal price and last close  %       | 0.00                                                    |
-| Current limit price, min / max:                         | 60.8% / 141.86%                                         |
-| Actual price, sell / buy:                               | N/A% / N/A%                                             |
-| Minimum lot to buy:                                     | 1                                                       |
-| Minimum price increment (step):                         | 0.01                                                    |
+| Parameters                                                  | Values                                                 |
+|-------------------------------------------------------------|--------------------------------------------------------|
+| Ticker:                                                     | RU000A101YV8                                           |
+| Full name:                                                  | Позитив Текнолоджиз выпуск 1                           |
+| Sector:                                                     | it                                                     |
+| Country of instrument:                                      | (RU) Российская Федерация                              |
+|                                                             |                                                        |
+| FIGI (Financial Instrument Global Identifier):              | TCS00A101YV8                                           |
+| Exchange:                                                   | MOEX                                                   |
+| ISIN (International Securities Identification Number):      | RU000A101YV8                                           |
+| Class Code (exchange section where instrument is traded):   | TQCB                                                   |
+|                                                             |                                                        |
+| Current broker security trading status:                     | Not available for trading                              |
+|                                                             |                                                        |
+| Buy operations allowed:                                     | Yes                                                    |
+| Sale operations allowed:                                    | Yes                                                    |
+| Short positions allowed:                                    | No                                                     |
+|                                                             |                                                        |
+| Limit orders allowed:                                       | No                                                     |
+| Market orders allowed:                                      | No                                                     |
+| API trade allowed:                                          | Yes                                                    |
+|                                                             |                                                        |
+| Type of the instrument:                                     | Bonds                                                  |
+| Payment currency:                                           | rub                                                    |
+| Nominal currency:                                           | rub                                                    |
+| State registration date:                                    | 2020-07-21 00:00:00                                    |
+| Placement date:                                             | 2020-07-29 00:00:00                                    |
+| Maturity date:                                              | 2023-07-26 00:00:00                                    |
+|                                                             |                                                        |
+| Bond issue (size / plan):                                   | 500000 / 500000                                        |
+| Nominal price (100%):                                       | 750 rub                                                |
+| Floating coupon:                                            | No                                                     |
+| Amortization:                                               | Yes                                                    |
+|                                                             |                                                        |
+| Number of coupon payments per year:                         | 4                                                      |
+| Days last to maturity date:                                 | 263                                                    |
+| Coupons yield (average coupon daily yield * 365):           | 13.42%                                                 |
+| Current price yield (average daily yield * 365):            | 7.31%                                                  |
+| Current accumulated coupon income (ACI):                    | 2.84 rub                                               |
+|                                                             |                                                        |
+| Previous close price of the instrument:                     | 101.75% of nominal price (763.12 rub)                  |
+| Last deal price of the instrument:                          | 101.75% of nominal price (763.12 rub)                  |
+| Changes between last deal price and last close              | 0.00% (0.00 rub)                                       |
+| Current limit price, min / max:                             | 61.12% / 142.6% (458.40 rub / 1069.50 rub)             |
+| Actual price, sell / buy:                                   | N/A% / N/A% (0.00 rub / 0.00 rub)                      |
+| Minimum lot to buy:                                         | 1                                                      |
+| Minimum price increment (step):                             | 0.01                                                   |
 
-TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:20:06,932] Info about instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8] was saved to file: [info.md]
+# Bond payments calendar
+
+| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |
+|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|
+|   +   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
+|   +   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
+|   +   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
+|   +   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
+|   +   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
+|   +   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
+|   +   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
+|   +   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
+|   +   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
+|   —   | 2023-01-25      | TCS00A101YV8 | RU000A101YV8 | 10  | 21.5 rub      | Constant  | 91     | 2023-01-24        |
+|   —   | 2023-04-26      | TCS00A101YV8 | RU000A101YV8 | 11  | 14.34 rub     | Constant  | 91     | 2023-04-25        |
+|   —   | 2023-07-26      | TCS00A101YV8 | RU000A101YV8 | 12  | 7.17 rub      | Constant  | 91     | 2023-07-25        |
+
+TKSBrokerAPI.py     L:925  INFO    [2022-11-04 20:50:53,231] Info about instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8] was saved to file: [info.md]
 ```
 
 </details>
@@ -2149,14 +2201,20 @@ TKSBrokerAPI.py     L:2601 INFO    [2022-10-18 15:40:40,565] Rendered candles ch
 
 #### Find out the balance of funds available for withdrawal
 
-Starting with TKSBrokerAPI v1.4.*, the `--limits` (`--withdrawal-limits`, `-w`) key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used. You can also use `--account-id` key to find out the available limits for a specific user account. You can get all `accountId` of a user using the keys `--user-info` or `--accounts` (see: ["Get user and account information"](#Get-user-and-account-information))
+Starting with TKSBrokerAPI v1.4.*, the `--limits` (`--withdrawal-limits`, `-w`) key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used.
 
-In the table, the columns mean:
+<details>
+  <summary>In the table, the columns mean:</summary>
+
 - `Currencies` — the currency available in the user's portfolio;
 - `Total` — the total amount of funds in the specified currency;
 - `Available for withdrawal` — how much is available for withdrawal in the specified currency;
 - `Blocked for trade` — the amount of funds in the specified currency that are blocked for trading, for example, to secure transactions on placed limit orders;
 - `Futures guarantee` — the amount of funds in the specified currency that are blocked to secure futures transactions.
+
+</details>
+
+You can also use `--account-id` key to find out the available limits for a specific user account. You can get all `accountId` of a user using the keys `--user-info` or `--accounts` (see: ["Get user and account information"](#Get-user-and-account-information)).
 
 <details>
   <summary>Command to query available balance for withdrawal</summary>
@@ -2192,13 +2250,23 @@ The `accountId` parameter (also, `Account ID`, `ID` or `--account-id`) is a stri
 
 To execute the `--user-info` command via TKSBrokerAPI, it is sufficient that any user token be specified (see the ["Token"](#Token) section). Also, if the `--output` key is present, then all information will be saved to the specified file, or the default file `user-info.md` will be used.
 
-In the [main user information section](https://tinkoff.github.io/investAPI/users/#getinforesponse) parameters mean:
+[Main user information section](https://tinkoff.github.io/investAPI/users/#getinforesponse).
+
+<details>
+  <summary>Parameters mean:</summary>
+
 - `Qualified user` — a sign of a qualified investor;
 - `Tariff name` — user's tariff name;
 - `Premium user` — a sign of a premium client;
 - `Allowed to work with instruments` — [a set of instruments and features](https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with) with which the user can work (depends on the tests passed in the Tinkoff Investments application).
 
-In the [user accounts section](https://tinkoff.github.io/investAPI/users/#account) parameters mean:
+</details>
+
+[User accounts section](https://tinkoff.github.io/investAPI/users/#account).
+
+<details>
+  <summary>Parameters mean:</summary>
+
 - `ID` — user account identifier;
 - `Account type` — [type of account](https://tinkoff.github.io/investAPI/users/#accounttype): Tinkoff brokerage account, IIS account or Investment "piggy bank";
 - `Account name` — account name that can be changed on the website or in the Tinkoff Investments app;
@@ -2213,9 +2281,17 @@ In the [user accounts section](https://tinkoff.github.io/investAPI/users/#accoun
   - `Sufficiency level` — the level of sufficiency of funds, calculated as the ratio of the value of the liquid portfolio to the initial margin,
   - `Missing funds` — the amount of missing funds, calculated as the difference between the starting margin and the liquid value of the portfolio.
 
-In the [tariff limit section](https://tinkoff.github.io/investAPI/limits/) parameters mean:
+</details>
+
+[Tariff limit section](https://tinkoff.github.io/investAPI/limits/).
+
+<details>
+  <summary>Parameters mean:</summary>
+
 - `Unary limits` — maximum [number of unary requests](https://tinkoff.github.io/investAPI/users/#unarylimit) per minute;
 - `Stream limits` — maximum [number of stream connections](https://tinkoff.github.io/investAPI/users/#streamlimit).
+
+</details>
 
 If you need to know only user accounts, without other details, then you can use the `--account` key (`--accounts`, `-a`). It will show a simple table with all available `accountId` of the user (by default the table will be saved to `accounts.md` file or override it with the `--output` key).
 
@@ -2390,6 +2466,257 @@ TKSBrokerAPI.py     L:3635 INFO    [2022-10-24 00:09:47,101] # User accounts
 | **********   | Tinkoff brokerage account | New, open in progress...  | Account **********             |
 
 TKSBrokerAPI.py     L:3641 INFO    [2022-10-24 00:09:47,102] User accounts were saved to file: [user-accounts.md]
+```
+
+</details>
+
+#### Get extended bonds data
+
+TKSBrokerAPI v1.4.* contains a new console command `--bonds-xlsx` (`-b`). This action get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc.
+
+Also, at the end data exports to XLSX-file, for the further used by datascientists or stock analytics. Default `ext-bonds.xlsx` or you can change it with the `--output` key.
+
+❗ WARNING: this is too long operation if a lot of bonds requested from broker server (~90-120 extended data bonds per minute, depends on speed limit rate).
+
+Which mean headers in XLSX-file, see here: "[Main bond information](https://tinkoff.github.io/investAPI/instruments/#bond)" and "[Coupon information](https://tinkoff.github.io/investAPI/instruments/#coupon)".
+
+<details>
+  <summary>Headers in XLSX-file or pandas dataframe:</summary>
+
+- `actualDateTime` — the date and time at which the extended data on the bond was received;
+- `figi` — FIGI identifier of the instrument;
+- `ticker` — instrument ticker;
+- `classCode` — [Class Code](https://tinkoff.github.io/investAPI/faq_instruments/#class_code) (exchange section where instrument is traded);
+- `isin` — ISIN identifier of the instrument;
+- `lot` — [lot of the instrument](https://tinkoff.github.io/investAPI/glossary/#lot) (you can trade operation only with [volumes of the instrument](https://tinkoff.github.io/investAPI/faq_marketdata/#_3) multiple of this parameter);
+- `currency` — settlement currency (for buying and selling an instrument);
+- `shortEnabledFlag` — availability flag for short operations;
+- `name` — human-understandable name of the instrument;
+- `exchange` — trading platform (`MOEX` — Moscow Exchange, `SPBEX` — St. Petersburg Exchange, `OTC` — over-the-counter transactions);
+- `couponQuantityPerYear` — number of coupon payments per year;
+- `maturityDate` — bond maturity date in UTC time zone;
+- `nominal` — current nominal price of a bond;
+- `stateRegDate` — bond state registration date in UTC time zone;
+- `placementDate` — bond placement date in UTC time zone;
+- `placementPrice` — bond placement price;
+- `aciValue` — current accumulated coupon income;
+- `countryOfRisk` — country risk code (the country in which the company keep its main business);
+- `countryOfRiskName` — name of the country risk (the country in which the company keep its main business);
+- `sector` — sector of the economy;
+- `issueKind` — bond issue kind (`documentary`  or `non_documentary`);
+- `issueSize` — actual issue size;
+- `issueSizePlan` — planned issue size;
+- `tradingStatus` — [current instrument trading status](https://tinkoff.github.io/investAPI/instruments/#securitytradingstatus) at the moment of `actualDateTime`;
+- `otcFlag` — flag of an over-the-counter security;
+- `buyAvailableFlag` — buy available flag;
+- `sellAvailableFlag` — sell available flag;
+- `floatingCouponFlag` — flag of floating coupon bond;
+- `perpetualFlag` — flag of a perpetual bond;
+- `amortizationFlag` — flag of a bond with debt amortization;
+- `apiTradeAvailableFlag` — flag of the ability to trade the instrument through the API (including through the TKSBrokerAPI);
+- `realExchange` — [real platform for settlements](https://tinkoff.github.io/investAPI/instruments/#realexchange);
+- `forIisFlag` — availability indicator for individual investment account;
+- `first1minCandleDate` — date and time of the first available minute candle of the instrument in the UTC time zone;
+- `first1dayCandleDate` — date of the first available daily candle of the instrument in the UTC time zone;
+- `type` — instrument type (`Currencies`, `Shares`, `Bonds`, `Etfs` and `Futures`);
+- `step` — [minimal step of changes](https://tinkoff.github.io/investAPI/faq_marketdata/);
+- `nominalCurrency` — nominal currency;
+- `aciCurrency` — currency of coupon payments for bonds;
+- `klong` — risk rate coefficient for a long position;
+- `kshort` — risk rate coefficient for a short position;
+- `dlong` — [risk rate](https://www.tinkoff.ru/invest/account/help/margin/about/#q5) of minimum margin per long;
+- `dshort` — [risk rate](https://www.tinkoff.ru/invest/account/help/margin/about/#q5) of minimum margin per short;
+- `dlongMin` — [risk rate](https://www.tinkoff.ru/invest/account/help/margin/about/#q5) of start margin per long;
+- `dshortMin` — [risk rate](https://www.tinkoff.ru/invest/account/help/margin/about/#q5) of start margin per short;
+- `limitUpPercent` — the upper limit of the prices set by the stock exchange for a bond, as a percentage of the nominal price;
+- `limitDownPercent` — the lower limit of the prices set by the stock exchange for a bond, as a percentage of the nominal price;
+- `lastPricePercent` — last bond price, as a percentage of the nominal price;
+- `closePricePercent` — last day close price, as a percentage of the nominal price;
+- `changes` — the difference between the last price of a bond and the closing price of the previous trading day, measured as a percentage;
+- `limitUp` — the upper limit of the prices set by the exchange for a bond in the settlement `currency`;
+- `limitDown` — the lower limit of the prices set by the exchange for a bond in the settlement `currency`;
+- `lastPrice` — last bond price in the settlement `currency`;
+- `closePrice` — last day close price in the settlement `currency`;
+- `changesDelta` — the difference between the last price of a bond and the closing price of the previous trading day in the settlement `currency`;
+- `sumCoupons` — the sum of all declared coupons for payment on the bond during the entire period of its validity;
+- `periodDays` — the total number of days for all coupon periods of the bond;
+- `couponsYield` — annual coupon yield on a bond (average daily yield, assuming all coupons paid, multiplied by 365 days);
+- `daysToMaturity` — number of days remaining until full redemption of the bond;
+- `sumLastCoupons` — amount of remaining coupon payments (in the currency of `aciCurrency` coupon payments);
+- `lastPayments` — the amount of payments remaining on the current date `actualDateTime` `sumLastCoupons`, reduced by the ACI value `aciValue`;
+- `currentYield` — current yield at the time of `actualDateTime` (the current price is taken, the average daily yield is calculated and multiplied by 365 days);
+- `calendar` — bond payments calendar is a python list of dictionaries, which contains [all coupons data](https://tinkoff.github.io/investAPI/instruments/#coupon), where fields mean:
+  - `couponDate` — coupon payment date;
+  - `couponNumber` — coupon number;
+  - `fixDate` — date of fixing the register, before which, inclusive, you need to have to buy a bond to receive payments;
+  - `payCurrency` — the currency in which the coupon will be paid (usually the same as `aciCurrency`);
+  - `payOneBond` — pay one bond in payment currency `payCurrency`;
+  - `couponType` — [coupon type](https://tinkoff.github.io/investAPI/instruments/#coupontype) (`Constant`, `Floating`, `Discount`, `Mortgage`, `Fixed`, `Variable` and `Other`);
+  - `couponStartDate` — start date of coupon period in UTC time zone;
+  - `couponEndDate` — end date of coupon period in UTC time zone;
+  - `couponPeriod` — days count in coupon period.
+
+</details>
+
+An example of the generated XLSX file, with extended bond data, can be viewed here: [./docs/media/ext-bonds.xlsx](./docs/media/ext-bonds.xlsx). 
+
+![](./docs/media/ext-bonds.xlsx.png)
+
+<details>
+  <summary>Command to generate extended data for multiple bonds</summary>
+
+```commandline
+$ tksbrokerapi -v 10 --bonds-xlsx RU000A1002C2 RU000A102CK5 RU000A101YV8 BBG00JS9D851 --output ext-bonds--2022-11-05.xlsx
+
+TKSBrokerAPI.py     L:4451 DEBUG   [2022-11-05 17:54:31,756] >>> TKSBrokerAPI module started at: [2022-11-05 14:54:31] UTC, it is [2022-11-05 17:54:31] local time
+TKSBrokerAPI.py     L:4465 DEBUG   [2022-11-05 17:54:31,757] TKSBrokerAPI major.minor.build version used: [1.4.dev0]
+TKSBrokerAPI.py     L:4466 DEBUG   [2022-11-05 17:54:31,757] Host CPU count: [8]
+TKSBrokerAPI.py     L:210  DEBUG   [2022-11-05 17:54:31,757] Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:223  DEBUG   [2022-11-05 17:54:31,757] Main account ID [2000096541] set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:272  DEBUG   [2022-11-05 17:54:31,757] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:430  DEBUG   [2022-11-05 17:54:31,780] Local cache with raw instruments data is used: [dump.json]
+TKSBrokerAPI.py     L:431  DEBUG   [2022-11-05 17:54:31,780] Dump file was last modified [2022-11-05 09:56:11] UTC
+TKSBrokerAPI.py     L:1365 DEBUG   [2022-11-05 17:54:31,780] Requested instruments without duplicates of tickers or FIGIs: ['RU000A1002C2', 'RU000A102CK5', 'RU000A101YV8', 'BBG00JS9D851']
+TKSBrokerAPI.py     L:1388 DEBUG   [2022-11-05 17:54:31,781] Unique list of FIGIs: ['BBG00N6MD6M2', 'BBG00Y5TNGR6', 'TCS00A101YV8', 'BBG00JS9D851']
+TKSBrokerAPI.py     L:3833 DEBUG   [2022-11-05 17:54:31,781] Requesting raw bonds calendar from server, transforming and extending it. Wait, please...
+TKSBrokerAPI.py     L:1134 DEBUG   [2022-11-05 17:54:31,782] Requesting current prices: ticker [RU000A1002C2], FIGI [BBG00N6MD6M2]. Wait, please...
+TKSBrokerAPI.py     L:3787 DEBUG   [2022-11-05 17:54:31,919] Requesting bond payment calendar, ticker: [RU000A1002C2], FIGI: [BBG00N6MD6M2], from: [2019-02-01T00:00:00Z], to: [2024-01-26T00:00:00Z]. Wait, please...
+TKSBrokerAPI.py     L:3802 DEBUG   [2022-11-05 17:54:32,094] Records about bond payment calendar successfully received
+TKSBrokerAPI.py     L:3941 DEBUG   [2022-11-05 17:54:32,103] 25.0% bonds processed [1 / 4]...
+TKSBrokerAPI.py     L:1134 DEBUG   [2022-11-05 17:54:32,105] Requesting current prices: ticker [RU000A102CK5], FIGI [BBG00Y5TNGR6]. Wait, please...
+TKSBrokerAPI.py     L:3787 DEBUG   [2022-11-05 17:54:32,221] Requesting bond payment calendar, ticker: [RU000A102CK5], FIGI: [BBG00Y5TNGR6], from: [2020-11-20T00:00:00Z], to: [2027-11-20T00:00:00Z]. Wait, please...
+TKSBrokerAPI.py     L:3802 DEBUG   [2022-11-05 17:54:32,365] Records about bond payment calendar successfully received
+TKSBrokerAPI.py     L:3941 DEBUG   [2022-11-05 17:54:32,376] 50.0% bonds processed [2 / 4]...
+TKSBrokerAPI.py     L:1134 DEBUG   [2022-11-05 17:54:32,378] Requesting current prices: ticker [RU000A101YV8], FIGI [TCS00A101YV8]. Wait, please...
+TKSBrokerAPI.py     L:3787 DEBUG   [2022-11-05 17:54:32,469] Requesting bond payment calendar, ticker: [RU000A101YV8], FIGI: [TCS00A101YV8], from: [2020-07-29T00:00:00Z], to: [2023-07-26T00:00:00Z]. Wait, please...
+TKSBrokerAPI.py     L:3802 DEBUG   [2022-11-05 17:54:32,619] Records about bond payment calendar successfully received
+TKSBrokerAPI.py     L:3941 DEBUG   [2022-11-05 17:54:32,625] 75.0% bonds processed [3 / 4]...
+TKSBrokerAPI.py     L:1134 DEBUG   [2022-11-05 17:54:32,627] Requesting current prices: ticker [XS1760786340], FIGI [BBG00JS9D851]. Wait, please...
+TKSBrokerAPI.py     L:3787 DEBUG   [2022-11-05 17:54:32,717] Requesting bond payment calendar, ticker: [XS1760786340], FIGI: [BBG00JS9D851], from: [2018-01-30T00:00:00Z], to: [2111-01-01T00:00:00Z]. Wait, please...
+TKSBrokerAPI.py     L:3802 DEBUG   [2022-11-05 17:54:32,845] Records about bond payment calendar successfully received
+TKSBrokerAPI.py     L:3941 DEBUG   [2022-11-05 17:54:32,853] 100.0% bonds processed [4 / 4]...
+TKSBrokerAPI.py     L:3961 INFO    [2022-11-05 17:54:32,953] XLSX-file with extended bonds data for further used by data scientists or stock analytics: [ext-bonds--2022-11-05.xlsx]
+TKSBrokerAPI.py     L:4810 DEBUG   [2022-11-05 17:54:32,953] All operations were finished success (summary code is 0).
+TKSBrokerAPI.py     L:4817 DEBUG   [2022-11-05 17:54:32,953] >>> TKSBrokerAPI module work duration: [0:00:01.197099]
+TKSBrokerAPI.py     L:4818 DEBUG   [2022-11-05 17:54:32,953] >>> TKSBrokerAPI module finished: [2022-11-05 14:54:32 UTC], it is [2022-11-05 17:54:32] local time
+```
+
+</details>
+
+#### Build a bond payment calendar
+
+Since TKSBrokerAPI v1.4.* you can use a new console command `--calendar` (`-c`). This action show bond payment calendar as a table. Calendar build for one or list of given tickers or FIGIs, or for all bonds if only key present without values.
+
+Also, the calendar exports to XLSX-file, for the further used by datascientists or stock analytics, `calendar.xlsx`by default. If the `--output` key present then calendar also saves to Markdown file `calendar.md` by default, or you can change it with the `--output` key.
+
+❗ WARNING: this is too long operation if a lot of bonds requested from broker server (~90-120 extended data bonds per minute, depends on speed limit rate).
+
+Coupons data are described here in [the main coupon information](https://tinkoff.github.io/investAPI/instruments/#coupon). For the pandas dataframe calendar, the data headers are the same as those described in the `calendar` field in the section "[Get extended bonds data](#Get-extended-bonds-data)", below the spoiler. The titles for the calendar as an XLSX file are converted to a more human-readable format before being saved.
+
+<details>
+  <summary>Headers in XLSX-file:</summary>
+
+- `Paid` — whether the coupon has already been paid (information for the convenience of the user);
+- `Payment date` — coupon payment date;
+- `FIGI` — FIGI identifier of the instrument;
+- `Ticker` — instrument ticker;
+- `Name` — human-understandable name of the company;
+- `No.` — coupon number;
+- `Value` — pay one bond;
+- `Currency` — payment currency;
+- `Coupon type` — coupon type (`Constant`, `Floating`, `Discount`, `Mortgage`, `Fixed`, `Variable` and `Other`);
+- `Period` — days count in coupon period;
+- `End registry date` — date of fixing the register, before which, inclusive, you need to have to buy a bond to receive payments;
+- `Coupon start date` — start date of coupon period in UTC time zone;
+- `Coupon end date` — end date of coupon period in UTC time zone.
+
+</details>
+
+An example of a generated XLSX file with a bond payment calendar can be viewed here: [./docs/media/calendar.xlsx](./docs/media/calendar.xlsx), and also as Markdown file here: [./docs/media/calendar.md](./docs/media/calendar.md). If the calendar is built for more than one bond, then payments in the same month are grouped.
+
+![](./docs/media/calendar.xlsx.png)
+
+<details>
+  <summary>Command for building a payment calendar for several bonds</summary>
+
+```commandline
+$ tksbrokerapi --calendar RU000A1002C2 IBM RU000A101YV8 BBG00JS9D851 ISSUANCEBRUS
+
+TKSBrokerAPI.py     L:3934 WARNING [2022-11-05 21:56:23,772] Instrument with ticker [IBM] and FIGI [BBG000BLNNH6] is not a bond!
+TKSBrokerAPI.py     L:4042 INFO    [2022-11-05 21:56:24,400] XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [calendar.xlsx]
+TKSBrokerAPI.py     L:4110 INFO    [2022-11-05 21:56:24,403] # Bond payments calendar
+
+| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |
+|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|
+|   +   | 2018-04-30      | BBG00JS9D851 | XS1760786340 | 1   | 17.375 usd    | Variable  | 90     | 2018-04-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2018-07-30      | BBG00JS9D851 | XS1760786340 | 2   | 17.375 usd    | Variable  | 90     | 2018-07-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2018-10-30      | BBG00JS9D851 | XS1760786340 | 3   | 17.375 usd    | Variable  | 90     | 2018-10-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2019-01-30      | BBG00JS9D851 | XS1760786340 | 4   | 17.375 usd    | Variable  | 90     | 2019-01-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2019-04-30      | BBG00JS9D851 | XS1760786340 | 5   | 17.375 usd    | Variable  | 90     | 2019-04-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2019-07-30      | BBG00JS9D851 | XS1760786340 | 6   | 17.375 usd    | Variable  | 90     | 2019-07-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2019-08-02      | BBG00N6MD6M2 | RU000A1002C2 | 1   | 43.38 rub     | Constant  | 182    | 2019-08-01        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2019-10-30      | BBG00JS9D851 | XS1760786340 | 7   | 17.375 usd    | Variable  | 90     | 2019-10-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2020-01-30      | BBG00JS9D851 | XS1760786340 | 8   | 17.375 usd    | Variable  | 90     | 2020-01-29        |
+|   +   | 2020-01-31      | BBG00N6MD6M2 | RU000A1002C2 | 2   | 43.38 rub     | Constant  | 182    | 2020-01-30        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2020-04-30      | BBG00JS9D851 | XS1760786340 | 9   | 17.375 usd    | Variable  | 90     | 2020-04-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2020-07-30      | BBG00JS9D851 | XS1760786340 | 10  | 17.375 usd    | Variable  | 90     | 2020-07-29        |
+|   +   | 2020-07-31      | BBG00N6MD6M2 | RU000A1002C2 | 3   | 43.38 rub     | Constant  | 182    | 2020-07-30        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
+|   +   | 2020-10-30      | BBG00JS9D851 | XS1760786340 | 11  | 17.375 usd    | Variable  | 90     | 2020-10-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
+|   +   | 2021-01-29      | BBG00N6MD6M2 | RU000A1002C2 | 4   | 43.38 rub     | Constant  | 182    | 2021-01-28        |
+|   +   | 2021-01-30      | BBG00JS9D851 | XS1760786340 | 12  | 17.375 usd    | Variable  | 90     | 2021-01-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
+|   +   | 2021-04-30      | BBG00JS9D851 | XS1760786340 | 13  | 17.375 usd    | Variable  | 90     | 2021-04-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
+|   +   | 2021-07-30      | BBG00N6MD6M2 | RU000A1002C2 | 5   | 43.38 rub     | Constant  | 182    | 2021-07-29        |
+|   +   | 2021-07-30      | BBG00JS9D851 | XS1760786340 | 14  | 17.375 usd    | Variable  | 90     | 2021-07-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
+|   +   | 2021-10-30      | BBG00JS9D851 | XS1760786340 | 15  | 17.375 usd    | Variable  | 90     | 2021-10-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
+|   +   | 2022-01-28      | BBG00N6MD6M2 | RU000A1002C2 | 6   | 43.38 rub     | Constant  | 182    | 2022-01-27        |
+|   +   | 2022-01-30      | BBG00JS9D851 | XS1760786340 | 16  | 17.375 usd    | Variable  | 90     | 2022-01-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
+|   +   | 2022-04-30      | BBG00JS9D851 | XS1760786340 | 17  | 17.375 usd    | Variable  | 90     | 2022-04-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
+|   +   | 2022-07-29      | BBG00N6MD6M2 | RU000A1002C2 | 7   | 43.38 rub     | Constant  | 182    | 2022-07-28        |
+|   +   | 2022-07-30      | BBG00JS9D851 | XS1760786340 | 18  | 17.375 usd    | Variable  | 90     | 2022-07-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   +   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
+|   +   | 2022-10-30      | BBG00JS9D851 | XS1760786340 | 19  | 17.375 usd    | Variable  | 90     | 2022-10-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-01-25      | TCS00A101YV8 | RU000A101YV8 | 10  | 21.5 rub      | Constant  | 91     | 2023-01-24        |
+|   —   | 2023-01-27      | BBG00N6MD6M2 | RU000A1002C2 | 8   | 43.38 rub     | Constant  | 182    | 2023-01-26        |
+|   —   | 2023-01-30      | BBG00JS9D851 | XS1760786340 | 20  | 17.375 usd    | Variable  | 90     | 2023-01-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-04-26      | TCS00A101YV8 | RU000A101YV8 | 11  | 14.34 rub     | Constant  | 91     | 2023-04-25        |
+|   —   | 2023-04-30      | BBG00JS9D851 | XS1760786340 | 21  | 17.375 usd    | Variable  | 90     | 2023-04-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-07-26      | TCS00A101YV8 | RU000A101YV8 | 12  | 7.17 rub      | Constant  | 91     | 2023-07-25        |
+|   —   | 2023-07-28      | BBG00N6MD6M2 | RU000A1002C2 | 9   | 43.38 rub     | Constant  | 182    | 2023-07-27        |
+|   —   | 2023-07-30      | BBG00JS9D851 | XS1760786340 | 22  | 0 usd         | Variable  | 90     | 2023-07-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2024-01-26      | BBG00N6MD6M2 | RU000A1002C2 | 10  | 43.38 rub     | Constant  | 182    | 2024-01-25        |
+
+TKSBrokerAPI.py     L:4116 INFO    [2022-11-05 21:56:24,404] Bond payment calendar was saved to file: [calendar.md]
 ```
 
 </details>
