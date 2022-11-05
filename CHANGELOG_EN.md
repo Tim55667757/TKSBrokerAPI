@@ -9,7 +9,15 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.* (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/4) — released
+### [1.4.86 (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.86) — released
+
+##### Digest
+
+Now you can extend raw bond data with a large number of fields and values, save them in XLSX format and pandas dataframe! This is useful for data scientists and stock analysts (see the description of the `--bonds-xlsx` key). Using this data, you can build a complete bond payments calendar (key `--calendar`).
+
+For historical candles downloaded from the server or loaded from a file, it is now possible to build interactive or simple charts (key `--render-chart`). If you need raw data from the server for all instruments, you can save them in XLSX format with the `--list-xlsx` key.
+
+And also, now you can find out: all data on your account, including `accounId` (key `--user-info` or `--account`) and limits on the withdrawal of available funds (key `--limits`).
 
 ##### New features
 
