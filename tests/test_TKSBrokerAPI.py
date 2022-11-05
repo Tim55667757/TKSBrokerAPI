@@ -215,6 +215,7 @@ class TestTKSBrokerAPIMethods:
     def test_ShowInstrumentInfoCheckType(self):
         assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, show=False), str), "Not str type returned!"
 
+    @pytest.mark.skip(reason="Need to create new data cache")
     def test_ShowInstrumentInfoPositive(self):
         testData = [
             ({}, None), (None, 0),
