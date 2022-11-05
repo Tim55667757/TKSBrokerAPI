@@ -730,7 +730,7 @@ class TinkoffBrokerServer:
                 info.append("| ISIN (International Securities Identification Number):      | {:<54} |\n".format(iJSON["isin"]))
 
             if "classCode" in iJSON.keys():
-                info.append("| Class Code:                                                 | {:<54} |\n".format(iJSON["classCode"]))
+                info.append("| Class Code (exchange section where instrument is traded):   | {:<54} |\n".format(iJSON["classCode"]))
 
             info.extend([
                 splitLine,
