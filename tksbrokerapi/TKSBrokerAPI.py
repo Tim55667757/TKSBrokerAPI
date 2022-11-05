@@ -845,7 +845,7 @@ class TinkoffBrokerServer:
                 ])
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
-                    info.append("| Current Accrued Interest (ACI):                             | {:<54} |\n".format("{:.2f} {}".format(
+                    info.append("| Current accumulated coupon income (ACI):                    | {:<54} |\n".format("{:.2f} {}".format(
                         NanoToFloat(str(iJSON["aciValue"]["units"]), iJSON["aciValue"]["nano"]),
                         iJSON["aciValue"]["currency"]
                     )))
@@ -3983,7 +3983,7 @@ class TinkoffBrokerServer:
 
         uLogger.debug("Generating bond payments calendar data. Wait, please...")
 
-        colNames = ["Paid", "Payment date", "FIGI", "Ticker", "Name", "No.", "Value", "Currency", "Type", "Period", "End registry date", "Coupon start date", "Coupon end date"]
+        colNames = ["Paid", "Payment date", "FIGI", "Ticker", "Name", "No.", "Value", "Currency", "Coupon type", "Period", "End registry date", "Coupon start date", "Coupon end date"]
         colID = ["paid", "couponDate", "figi", "ticker", "name", "couponNumber", "payOneBond", "payCurrency", "couponType", "couponPeriod", "fixDate", "couponStartDate", "couponEndDate"]
         calendar = None
         for bond in extBonds.iterrows():
