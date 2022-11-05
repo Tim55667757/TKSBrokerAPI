@@ -3758,7 +3758,7 @@ class TinkoffBrokerServer:
     def RequestBondCoupons(self, iJSON: dict) -> dict:
         """
         Requesting bond payment calendar from official placement date to maturity date. If these dates are unknown
-        then requesting dates "from": "1970-01-01T00:00:00.000Z" and "to": "2099-12-31T23:59:59.000Z".
+        then requesting dates `"from": "1970-01-01T00:00:00.000Z"` and `"to": "2099-12-31T23:59:59.000Z"`.
         All dates are in UTC timezone.
 
         REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/InstrumentsService/InstrumentsService_GetBondCoupons
@@ -3768,10 +3768,10 @@ class TinkoffBrokerServer:
 
         See also: `ExtendBondsData()`.
 
-        :param iJSON: raw json data of a bond from broker server, example: `iJSON = self.iList["Bonds"][self.ticker]`
+        :param iJSON: raw json data of a bond from broker server, example `iJSON = self.iList["Bonds"][self.ticker]`
                       If raw iJSON is not data of bond then server returns an error [400] with message:
                       `{"code": 3, "message": "instrument type is not bond", "description": "30048"}`.
-        :return: dictionary with bond payment calendar. Response example:
+        :return: dictionary with bond payment calendar. Response example
                  `{"events": [{"figi": "TCS00A101YV8", "couponDate": "2023-07-26T00:00:00Z", "couponNumber": "12",
                    "fixDate": "2023-07-25T00:00:00Z", "payOneBond": {"currency": "rub", "units": "7", "nano": 170000000},
                    "couponType": "COUPON_TYPE_CONSTANT", "couponStartDate": "2023-04-26T00:00:00Z",
@@ -3814,7 +3814,7 @@ class TinkoffBrokerServer:
         See also: `ShowInstrumentInfo()`, `CreateBondsCalendar()`, `ShowBondsCalendar()`, `RequestBondCoupons()`.
 
         :param instruments: list of strings with tickers or FIGIs.
-        :param xlsx: if True then also exports pandas dataframe to xlsx-file `bondsXLSXFile`, default: `ext-bonds.xlsx`,
+        :param xlsx: if True then also exports pandas dataframe to xlsx-file `bondsXLSXFile`, default `ext-bonds.xlsx`,
                      for further used by data scientists or stock analytics.
         :return: wider pandas dataframe with more full and calculated data about bonds, than raw response from broker.
                  In XLSX-file and pandas dataframe fields mean:
@@ -3974,7 +3974,7 @@ class TinkoffBrokerServer:
                         extended information about bonds: main info, current prices, bond payment calendar,
                         coupon yields, current yields and some statistics etc.
                         If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
-        :param xlsx: if True then also exports pandas dataframe to file `calendarFile` + `".xlsx"`, default: `calendar.xlsx`,
+        :param xlsx: if True then also exports pandas dataframe to file `calendarFile` + `".xlsx"`, `calendar.xlsx` by default,
                      for further used by data scientists or stock analytics.
         :return: pandas dataframe with only bond payments calendar data. Fields mean: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
@@ -4357,7 +4357,11 @@ class Args:
 
 def ParseArgs():
     """
-    Function get and parse command line keys. See examples: https://tim55667757.github.io/TKSBrokerAPI/
+    Function get and parse command line keys.
+
+    See examples:
+    - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
+    - in russian: https://tim55667757.github.io/TKSBrokerAPI/
     """
     parser = ArgumentParser()  # command-line string parser
 
@@ -4438,7 +4442,9 @@ def Main(**kwargs):
     """
     Main function for work with Tinkoff Open API service. It realizes simple logic: get a lot of options and execute one command.
 
-    See examples: https://tim55667757.github.io/TKSBrokerAPI/
+    See examples:
+    - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
+    - in russian: https://tim55667757.github.io/TKSBrokerAPI/
     """
     args = Args(**kwargs) if kwargs else ParseArgs()  # get and parse command-line parameters or use **kwarg parameters
 
