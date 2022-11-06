@@ -9,7 +9,7 @@
 * 🎁 Поддержать проект донатом на ЮМани-кошелёк: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=%D0%94%D0%BE%D0%BD%D0%B0%D1%82%20(%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA)%20%D0%B4%D0%BB%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B2%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20TKSBrokerAPI&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.86 (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.86) — опубликована
+### [1.4.90 (2022-11-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.90) — опубликована
 
 ##### Дайджест
 
@@ -43,6 +43,7 @@
 ##### Баг-фиксы
 
 * Исправлена ошибка `NoneType object has no attribute ...` в случае, если ключ `--history` использовался без указания каких-либо параметров.
+* [#71](https://github.com/Tim55667757/TKSBrokerAPI/issues/71) Пришлось сделать быстрый хак, чтобы избежать проблем в секциях статистики `Portfolio distribution by currencies` и `Portfolio distribution by countries`: принудительно добавлена валюта `rub` и страна `"[RU] Российская Федерация"`, перед расчётом статистики.
 
 
 ### [1.3.70 (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.3.70) — опубликована

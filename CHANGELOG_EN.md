@@ -9,7 +9,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.4.86 (2022-11-05)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.86) — released
+### [1.4.90 (2022-11-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.90) — released
 
 ##### Digest
 
@@ -43,6 +43,7 @@ And also, now you can find out: all data on your account, including `accounId` (
 ##### Bug fixes
 
 * Bug fix with `NoneType object has no attribute ...` if `--history` key used without any variables.
+* [#71](https://github.com/Tim55667757/TKSBrokerAPI/issues/71) Fast hack to avoid issues in `Portfolio distribution by currencies` and `Portfolio distribution by countries` sections: adding `rub` currency and `"[RU] Российская Федерация"` before calculate statistics.
 
 
 ### [1.3.70 (2022-09-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.3.70) — released
