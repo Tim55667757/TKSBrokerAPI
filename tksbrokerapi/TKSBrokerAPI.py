@@ -4081,7 +4081,7 @@ class TinkoffBrokerServer:
 
                 info.append(
                     "| {:<5} | {:<15} | {:<12} | {:<12} | {:<3} | {:<13} | {:<9} | {:<6} | {:<17} |\n".format(
-                        "  +" if bond[1]["paid"] else "  —",
+                        "  √" if bond[1]["paid"] else "  —",
                         bond[1]["couponDate"].split("T")[0],
                         bond[1]["figi"],
                         bond[1]["ticker"],
