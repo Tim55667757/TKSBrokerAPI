@@ -578,7 +578,7 @@ options:
 
 #### Local cache
 
-Starting with TKSBrokerAPI v1.2.* versions, the ability to use the local cache `dump.json` with data on traded instruments has been added, which allows you to avoid constant requests for this data from the broker's server and significantly save time. The cache is used by default when executing any command, there is no need to specifically set it.
+Starting with TKSBrokerAPI v1.2.62 the ability to use the local cache `dump.json` with data on traded instruments has been added, which allows you to avoid constant requests for this data from the broker's server and significantly save time. The cache is used by default when executing any command, there is no need to specifically set it.
 
 If the current day differs from the day the cache was last modified, it will be automatically updated at the next time when program is started. If the `dump.json` file does not exist in the local directory, it will also be created automatically.
 
@@ -590,7 +590,7 @@ The `--list` (`-l`) key is used. At the same time, information is requested from
 
 The `--debug-level=10` key (or `--verbosity 10`, `-v 10`) will output all debugging information to the console (not necessary to specify it).
 
-Starting with TKSBrokerAPI v1.4.*, you can use the `--list-xlsx` (`-x`) key to save raw data for available instruments in XLSX-format suitable for further processing by data scientists or stock analysts. By default, data from the local `dump.json` cache is used, which is converted to XLSX-format and saved to the `dump.xlsx` file.
+Starting with TKSBrokerAPI v1.4.86, you can use the `--list-xlsx` (`-x`) key to save raw data for available instruments in XLSX-format suitable for further processing by data scientists or stock analysts. By default, data from the local `dump.json` cache is used, which is converted to XLSX-format and saved to the `dump.xlsx` file.
 
 Output is an XLSX-file with raw data, you can see the example of that file here: [./docs/media/dump.xlsx](./docs/media/dump.xlsx). Which mean headers in XLSX-file, see here: "[Get extended bonds data](#Get-extended-bonds-data)" and "[Builds a bond payment calendar](#Builds-a-bond-payment-calendar)".
 
@@ -670,7 +670,7 @@ TKSBrokerAPI.py     L:3814 DEBUG   [2022-10-19 01:20:37,279] >>> TKSBrokerAPI mo
 
 To work with exchange instruments, receive information on them, request prices and make deals, you usually need to specify a ticker (key `--ticker`) or FIGI (key `--figi`). But there are hardly many people who know them by heart. Most often, there is only an assumption about a part of the ticker or the name of the company. In this case, you can use the search by pattern: part of the name, ticker or FIGI, or by specifying a regular expression. The search is performed by the standard python module [`re`](https://docs.python.org/3/library/re.html#re.compile), case-insensitive.
 
-Starting with TKSBrokerAPI v1.2.*, the `--search` key has been added, after which you need to specify the pattern. For example, you want to find all the instruments of the Russian Sber group of companies, then you can try to specify a part of the word: `tksbrokerapi --search "sber"`. Or you want to know all the instruments of companies whose names contain the word "United" with "medical" or "rent". In this case, you can try to specify a regular expression: `tksbrokerapi --search "(United.*).*(?:.*medical|rent)"`.
+Starting with TKSBrokerAPI v1.2.62 the `--search` key has been added, after which you need to specify the pattern. For example, you want to find all the instruments of the Russian Sber group of companies, then you can try to specify a part of the word: `tksbrokerapi --search "sber"`. Or you want to know all the instruments of companies whose names contain the word "United" with "medical" or "rent". In this case, you can try to specify a regular expression: `tksbrokerapi --search "(United.*).*(?:.*medical|rent)"`.
 
 In addition to the `--search` key, you can specify the `--output` key and define the file name where to save the search results. By default, full search results are stored in `search-results.md`. Only the first 5 found instruments of each type are shown in the console.
 
@@ -918,15 +918,15 @@ TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information:
 
 | Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |
 |-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|
-|   +   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
-|   +   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
-|   +   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
-|   +   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
-|   +   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
-|   +   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
-|   +   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
-|   +   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
-|   +   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
+|   √   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
+|   √   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
+|   √   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
+|   √   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
+|   √   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
+|   √   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
+|   √   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
+|   √   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
+|   √   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
 |   —   | 2023-01-25      | TCS00A101YV8 | RU000A101YV8 | 10  | 21.5 rub      | Constant  | 91     | 2023-01-24        |
 |   —   | 2023-04-26      | TCS00A101YV8 | RU000A101YV8 | 11  | 14.34 rub     | Constant  | 91     | 2023-04-25        |
 |   —   | 2023-07-26      | TCS00A101YV8 | RU000A101YV8 | 12  | 7.17 rub      | Constant  | 91     | 2023-07-25        |
@@ -1122,7 +1122,7 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 To view portfolio status and asset allocation statistics (by types, companies, sectors, currencies, and countries), use the `--overview` (`-o`) key. Additionally, you can specify the `--output` key and specify the file name where to save the portfolio in Markdown format (by default `overview.md` in the current working directory). The `--verbosity=10` key will output all debugging information to the console (not necessary to specify it).
 
-Also, you can use another keys instead of the `--overview` key, since TKSBrokerAPI version 1.3.*: the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-positions` key shows only open positions, without everything else, the `--overview-orders` shows only section of open limits and stop orders, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories. Key `--output` also overrides the output file for them.
+Also, you can use another keys instead of the `--overview` key, since TKSBrokerAPI v1.3.70: the `--overview-digest` key shows a short digest of the portfolio status, the `--overview-positions` key shows only open positions, without everything else, the `--overview-orders` shows only section of open limits and stop orders, the `--overview-analytics` key shows only the analytics section and the distribution of the portfolio by various categories. Key `--output` also overrides the output file for them.
 
 <details>
   <summary>Command to show user's portfolio</summary>
@@ -1886,11 +1886,11 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Download historical data in OHLCV-candles format
 
-Since TKSBrokerAPI v1.3.* you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
+Since TKSBrokerAPI v1.3.70 you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
 
 History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. **Warning!** Broker server use ISO UTC time by default.
 
-Since TKSBrokerAPI v1.4.* you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
+Since TKSBrokerAPI v1.4.86 you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
 
 The generated graphs of various types will look like below (see also real examples under the spoilers). By default, they are saved to the `index.html` file. The charts additionally display some statistical values and indicators, however, they are presented only for a quick review of the price behavior in a given range. To conduct full analytical research and technical analysis, it is recommended to use other professional tools.
 
@@ -2201,7 +2201,7 @@ TKSBrokerAPI.py     L:2601 INFO    [2022-10-18 15:40:40,565] Rendered candles ch
 
 #### Find out the balance of funds available for withdrawal
 
-Starting with TKSBrokerAPI v1.4.*, the `--limits` (`--withdrawal-limits`, `-w`) key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used.
+Starting with TKSBrokerAPI v1.4.86, the `--limits` (`--withdrawal-limits`, `-w`) key is available in the CLI to get a table of funds available for withdrawal in various currencies. If the `--output` key is present, then the table will be saved to the specified file, and if the switch is not present, then the standard `limits.md` file will be used.
 
 <details>
   <summary>In the table, the columns mean:</summary>
@@ -2244,7 +2244,7 @@ TKSBrokerAPI.py     L:3233 INFO    [2022-10-07 16:59:56,797] Client's withdrawal
 
 #### Get user and account information
 
-TKSBrokerAPI v1.4.* contains a new console command `--user-info` (`-u`). It allows you to find out general information about the user, a list of accounts, available funds for margin trading and connection limits via API for the current tariff. It is also possible to find out the `accountId`s of all accounts, even if they are not opened yet.
+TKSBrokerAPI v1.4.86 contains a new console command `--user-info` (`-u`). It allows you to find out general information about the user, a list of accounts, available funds for margin trading and connection limits via API for the current tariff. It is also possible to find out the `accountId`s of all accounts, even if they are not opened yet.
 
 The `accountId` parameter (also, `Account ID`, `ID` or `--account-id`) is a string with the ID of a particular account and must be specified for any trading operations (see the ["User account ID"](#User-account-ID) section).
 
@@ -2472,7 +2472,7 @@ TKSBrokerAPI.py     L:3641 INFO    [2022-10-24 00:09:47,102] User accounts were 
 
 #### Get extended bonds data
 
-TKSBrokerAPI v1.4.* contains a new console command `--bonds-xlsx` (`-b`). This action get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc.
+TKSBrokerAPI v1.4.86 contains a new console command `--bonds-xlsx` (`-b`). This action get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc.
 
 Also, at the end data exports to XLSX-file, for the further used by datascientists or stock analytics. Default `ext-bonds.xlsx` or you can change it with the `--output` key.
 
@@ -2605,7 +2605,7 @@ TKSBrokerAPI.py     L:4818 DEBUG   [2022-11-05 17:54:32,953] >>> TKSBrokerAPI mo
 
 #### Build a bond payment calendar
 
-Since TKSBrokerAPI v1.4.* you can use a new console command `--calendar` (`-c`). This action show bond payment calendar as a table. Calendar build for one or list of given tickers or FIGIs, or for all bonds if only key present without values.
+Since TKSBrokerAPI v1.4.86 you can use a new console command `--calendar` (`-c`). This action show bond payment calendar as a table. Calendar build for one or list of given tickers or FIGIs, or for all bonds if only key present without values.
 
 Also, the calendar exports to XLSX-file, for the further used by datascientists or stock analytics, `calendar.xlsx`by default. If the `--output` key present then calendar also saves to Markdown file `calendar.md` by default, or you can change it with the `--output` key.
 
@@ -2648,60 +2648,60 @@ TKSBrokerAPI.py     L:4110 INFO    [2022-11-05 21:56:24,403] # Bond payments cal
 
 | Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |
 |-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|
-|   +   | 2018-04-30      | BBG00JS9D851 | XS1760786340 | 1   | 17.375 usd    | Variable  | 90     | 2018-04-27        |
+|   √   | 2018-04-30      | BBG00JS9D851 | XS1760786340 | 1   | 17.375 usd    | Variable  | 90     | 2018-04-27        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2018-07-30      | BBG00JS9D851 | XS1760786340 | 2   | 17.375 usd    | Variable  | 90     | 2018-07-27        |
+|   √   | 2018-07-30      | BBG00JS9D851 | XS1760786340 | 2   | 17.375 usd    | Variable  | 90     | 2018-07-27        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2018-10-30      | BBG00JS9D851 | XS1760786340 | 3   | 17.375 usd    | Variable  | 90     | 2018-10-29        |
+|   √   | 2018-10-30      | BBG00JS9D851 | XS1760786340 | 3   | 17.375 usd    | Variable  | 90     | 2018-10-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2019-01-30      | BBG00JS9D851 | XS1760786340 | 4   | 17.375 usd    | Variable  | 90     | 2019-01-29        |
+|   √   | 2019-01-30      | BBG00JS9D851 | XS1760786340 | 4   | 17.375 usd    | Variable  | 90     | 2019-01-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2019-04-30      | BBG00JS9D851 | XS1760786340 | 5   | 17.375 usd    | Variable  | 90     | 2019-04-29        |
+|   √   | 2019-04-30      | BBG00JS9D851 | XS1760786340 | 5   | 17.375 usd    | Variable  | 90     | 2019-04-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2019-07-30      | BBG00JS9D851 | XS1760786340 | 6   | 17.375 usd    | Variable  | 90     | 2019-07-29        |
+|   √   | 2019-07-30      | BBG00JS9D851 | XS1760786340 | 6   | 17.375 usd    | Variable  | 90     | 2019-07-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2019-08-02      | BBG00N6MD6M2 | RU000A1002C2 | 1   | 43.38 rub     | Constant  | 182    | 2019-08-01        |
+|   √   | 2019-08-02      | BBG00N6MD6M2 | RU000A1002C2 | 1   | 43.38 rub     | Constant  | 182    | 2019-08-01        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2019-10-30      | BBG00JS9D851 | XS1760786340 | 7   | 17.375 usd    | Variable  | 90     | 2019-10-29        |
+|   √   | 2019-10-30      | BBG00JS9D851 | XS1760786340 | 7   | 17.375 usd    | Variable  | 90     | 2019-10-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2020-01-30      | BBG00JS9D851 | XS1760786340 | 8   | 17.375 usd    | Variable  | 90     | 2020-01-29        |
-|   +   | 2020-01-31      | BBG00N6MD6M2 | RU000A1002C2 | 2   | 43.38 rub     | Constant  | 182    | 2020-01-30        |
+|   √   | 2020-01-30      | BBG00JS9D851 | XS1760786340 | 8   | 17.375 usd    | Variable  | 90     | 2020-01-29        |
+|   √   | 2020-01-31      | BBG00N6MD6M2 | RU000A1002C2 | 2   | 43.38 rub     | Constant  | 182    | 2020-01-30        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2020-04-30      | BBG00JS9D851 | XS1760786340 | 9   | 17.375 usd    | Variable  | 90     | 2020-04-29        |
+|   √   | 2020-04-30      | BBG00JS9D851 | XS1760786340 | 9   | 17.375 usd    | Variable  | 90     | 2020-04-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2020-07-30      | BBG00JS9D851 | XS1760786340 | 10  | 17.375 usd    | Variable  | 90     | 2020-07-29        |
-|   +   | 2020-07-31      | BBG00N6MD6M2 | RU000A1002C2 | 3   | 43.38 rub     | Constant  | 182    | 2020-07-30        |
+|   √   | 2020-07-30      | BBG00JS9D851 | XS1760786340 | 10  | 17.375 usd    | Variable  | 90     | 2020-07-29        |
+|   √   | 2020-07-31      | BBG00N6MD6M2 | RU000A1002C2 | 3   | 43.38 rub     | Constant  | 182    | 2020-07-30        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
-|   +   | 2020-10-30      | BBG00JS9D851 | XS1760786340 | 11  | 17.375 usd    | Variable  | 90     | 2020-10-29        |
+|   √   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
+|   √   | 2020-10-30      | BBG00JS9D851 | XS1760786340 | 11  | 17.375 usd    | Variable  | 90     | 2020-10-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
-|   +   | 2021-01-29      | BBG00N6MD6M2 | RU000A1002C2 | 4   | 43.38 rub     | Constant  | 182    | 2021-01-28        |
-|   +   | 2021-01-30      | BBG00JS9D851 | XS1760786340 | 12  | 17.375 usd    | Variable  | 90     | 2021-01-29        |
+|   √   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
+|   √   | 2021-01-29      | BBG00N6MD6M2 | RU000A1002C2 | 4   | 43.38 rub     | Constant  | 182    | 2021-01-28        |
+|   √   | 2021-01-30      | BBG00JS9D851 | XS1760786340 | 12  | 17.375 usd    | Variable  | 90     | 2021-01-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
-|   +   | 2021-04-30      | BBG00JS9D851 | XS1760786340 | 13  | 17.375 usd    | Variable  | 90     | 2021-04-29        |
+|   √   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
+|   √   | 2021-04-30      | BBG00JS9D851 | XS1760786340 | 13  | 17.375 usd    | Variable  | 90     | 2021-04-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
-|   +   | 2021-07-30      | BBG00N6MD6M2 | RU000A1002C2 | 5   | 43.38 rub     | Constant  | 182    | 2021-07-29        |
-|   +   | 2021-07-30      | BBG00JS9D851 | XS1760786340 | 14  | 17.375 usd    | Variable  | 90     | 2021-07-29        |
+|   √   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
+|   √   | 2021-07-30      | BBG00N6MD6M2 | RU000A1002C2 | 5   | 43.38 rub     | Constant  | 182    | 2021-07-29        |
+|   √   | 2021-07-30      | BBG00JS9D851 | XS1760786340 | 14  | 17.375 usd    | Variable  | 90     | 2021-07-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
-|   +   | 2021-10-30      | BBG00JS9D851 | XS1760786340 | 15  | 17.375 usd    | Variable  | 90     | 2021-10-29        |
+|   √   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
+|   √   | 2021-10-30      | BBG00JS9D851 | XS1760786340 | 15  | 17.375 usd    | Variable  | 90     | 2021-10-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
-|   +   | 2022-01-28      | BBG00N6MD6M2 | RU000A1002C2 | 6   | 43.38 rub     | Constant  | 182    | 2022-01-27        |
-|   +   | 2022-01-30      | BBG00JS9D851 | XS1760786340 | 16  | 17.375 usd    | Variable  | 90     | 2022-01-28        |
+|   √   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
+|   √   | 2022-01-28      | BBG00N6MD6M2 | RU000A1002C2 | 6   | 43.38 rub     | Constant  | 182    | 2022-01-27        |
+|   √   | 2022-01-30      | BBG00JS9D851 | XS1760786340 | 16  | 17.375 usd    | Variable  | 90     | 2022-01-28        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
-|   +   | 2022-04-30      | BBG00JS9D851 | XS1760786340 | 17  | 17.375 usd    | Variable  | 90     | 2022-04-29        |
+|   √   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
+|   √   | 2022-04-30      | BBG00JS9D851 | XS1760786340 | 17  | 17.375 usd    | Variable  | 90     | 2022-04-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
-|   +   | 2022-07-29      | BBG00N6MD6M2 | RU000A1002C2 | 7   | 43.38 rub     | Constant  | 182    | 2022-07-28        |
-|   +   | 2022-07-30      | BBG00JS9D851 | XS1760786340 | 18  | 17.375 usd    | Variable  | 90     | 2022-07-29        |
+|   √   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
+|   √   | 2022-07-29      | BBG00N6MD6M2 | RU000A1002C2 | 7   | 43.38 rub     | Constant  | 182    | 2022-07-28        |
+|   √   | 2022-07-30      | BBG00JS9D851 | XS1760786340 | 18  | 17.375 usd    | Variable  | 90     | 2022-07-29        |
 |       |                 |              |              |     |               |           |        |                   |
-|   +   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
-|   +   | 2022-10-30      | BBG00JS9D851 | XS1760786340 | 19  | 17.375 usd    | Variable  | 90     | 2022-10-28        |
+|   √   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
+|   √   | 2022-10-30      | BBG00JS9D851 | XS1760786340 | 19  | 17.375 usd    | Variable  | 90     | 2022-10-28        |
 |       |                 |              |              |     |               |           |        |                   |
 |   —   | 2023-01-25      | TCS00A101YV8 | RU000A101YV8 | 10  | 21.5 rub      | Constant  | 91     | 2023-01-24        |
 |   —   | 2023-01-27      | BBG00N6MD6M2 | RU000A1002C2 | 8   | 43.38 rub     | Constant  | 182    | 2023-01-26        |

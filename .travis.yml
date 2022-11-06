@@ -5,7 +5,7 @@ branches:
   only:
     - master
     - /^release-.*$/
-    - develop
+#    - develop
 
 stages:
   - env-test-build-publish

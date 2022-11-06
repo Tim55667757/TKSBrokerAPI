@@ -64,7 +64,7 @@ uLogger = uLog.UniLogger  # init logger for TKSBrokerAPI
 uLogger.level = 10  # debug level by default for TKSBrokerAPI module
 uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerAPI module
 
-__version__ = "1.4"  # The "major.minor" version setup here, but build number define at the build-server only
+__version__ = "1.5"  # The "major.minor" version setup here, but build number define at the build-server only
 
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
@@ -2025,12 +2025,22 @@ class TinkoffBrokerServer:
         view["analytics"]["distrBySectors"].update(bySect)
 
         # portfolio distribution by currencies:
+        if "rub" not in view["analytics"]["distrByCurrencies"].keys():
+            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
+            view["analytics"]["distrByCurrencies"]["rub"] = {"name": "Российский рубль", "cost": 0, "percent": 0}
+
         view["analytics"]["distrByCurrencies"].update(byCurr)
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
         view["analytics"]["distrByCurrencies"]["rub"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
         # portfolio distribution by countries:
+        if "[RU] Российская Федерация" not in view["analytics"]["distrByCountries"].keys():
+            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
+            view["analytics"]["distrByCountries"]["[RU] Российская Федерация"] = {"cost": 0, "percent": 0}
+
         view["analytics"]["distrByCountries"].update(byCountry)
+        view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
+        view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
         # --- Prepare text statistics overview in human-readable:
         if show:
@@ -4081,7 +4091,7 @@ class TinkoffBrokerServer:
 
                 info.append(
                     "| {:<5} | {:<15} | {:<12} | {:<12} | {:<3} | {:<13} | {:<9} | {:<6} | {:<17} |\n".format(
-                        "  +" if bond[1]["paid"] else "  —",
+                        "  √" if bond[1]["paid"] else "  —",
                         bond[1]["couponDate"].split("T")[0],
                         bond[1]["figi"],
                         bond[1]["ticker"],
