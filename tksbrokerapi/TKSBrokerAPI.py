@@ -2025,12 +2025,22 @@ class TinkoffBrokerServer:
         view["analytics"]["distrBySectors"].update(bySect)
 
         # portfolio distribution by currencies:
+        if "rub" not in view["analytics"]["distrByCurrencies"].keys():
+            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
+            view["analytics"]["distrByCurrencies"]["rub"] = {"name": "Российский рубль", "cost": 0, "percent": 0}
+
         view["analytics"]["distrByCurrencies"].update(byCurr)
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
         view["analytics"]["distrByCurrencies"]["rub"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
         # portfolio distribution by countries:
+        if "[RU] Российская Федерация" not in view["analytics"]["distrByCountries"].keys():
+            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
+            view["analytics"]["distrByCountries"]["[RU] Российская Федерация"] = {"cost": 0, "percent": 0}
+
         view["analytics"]["distrByCountries"].update(byCountry)
+        view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
+        view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
         # --- Prepare text statistics overview in human-readable:
         if show:
