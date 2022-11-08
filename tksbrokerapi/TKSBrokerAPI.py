@@ -295,7 +295,7 @@ class TinkoffBrokerServer:
         """
 
         self.historyFile = None
-        """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only pandas dataframe.
+        """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only Pandas DataFrame.
 
         See also: `History()`.
         """
@@ -331,7 +331,7 @@ class TinkoffBrokerServer:
         """
 
         self.bondsXLSXFile = "ext-bonds.xlsx"
-        """Filename where wider pandas dataframe with more information about bonds: main info, current prices, 
+        """Filename where wider Pandas DataFrame with more information about bonds: main info, current prices, 
         bonds payment calendar, some statistics will be stored. Default: `ext-bonds.xlsx`.
 
         See also: `ExtendBondsData()`.
@@ -2609,7 +2609,7 @@ class TinkoffBrokerServer:
         History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`.
         Warning! Broker server used ISO UTC time by default.
 
-        If `historyFile` is not `None` then method save history to file, otherwise return only pandas dataframe.
+        If `historyFile` is not `None` then method save history to file, otherwise return only Pandas DataFrame.
         Also, `historyFile` used to update history with `onlyMissing` parameter.
 
         See also: `LoadHistory()` and `ShowHistoryChart()` methods.
@@ -2622,8 +2622,8 @@ class TinkoffBrokerServer:
                             False by default. Warning! History appends only from last candle to current time
                             with always update last candle!
         :param csvSep: separator if csv-file is used, `,` by default.
-        :param show: if `True` then also prints pandas dataframe to the console.
-        :return: pandas dataframe with prices history. Headers of columns are defined by default:
+        :param show: if `True` then also prints Pandas DataFrame to the console.
+        :return: Pandas DataFrame with prices history. Headers of columns are defined by default:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
         strStartDate, strEndDate = GetDatesAsString(start, end)  # example: ("2020-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
@@ -2784,13 +2784,13 @@ class TinkoffBrokerServer:
                 uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
 
         else:
-            uLogger.debug("--output key is not defined. Parsed history file not saved to file, only pandas dataframe returns.")
+            uLogger.debug("--output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.")
 
         return history
 
     def LoadHistory(self, filePath: str) -> pd.DataFrame:
         """
-        Load candles history from csv-file and return pandas dataframe object.
+        Load candles history from csv-file and return Pandas DataFrame object.
 
         See also: `History()` and `ShowHistoryChart()` methods.
 
@@ -2801,7 +2801,7 @@ class TinkoffBrokerServer:
         uLogger.debug("Loading candles history with PriceGenerator module. Wait, please...")
 
         if os.path.exists(filePath):
-            loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as pandas dataframe
+            loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as Pandas DataFrame
 
             tfStr = self.priceModel.FormattedDelta(
                 self.priceModel.timeframe,
@@ -3816,7 +3816,7 @@ class TinkoffBrokerServer:
     def ExtendBondsData(self, instruments: list[str], xlsx: bool = False) -> pd.DataFrame:
         """
         Requests jsons with raw bonds data for every ticker or FIGI in instruments list and transform it to the wider
-        pandas dataframe with more information about bonds: main info, current prices, bond payment calendar,
+        Pandas DataFrame with more information about bonds: main info, current prices, bond payment calendar,
         coupon yields, current yields and some statistics etc.
 
         WARNING! This is too long operation if a lot of bonds requested from broker server.
@@ -3824,10 +3824,10 @@ class TinkoffBrokerServer:
         See also: `ShowInstrumentInfo()`, `CreateBondsCalendar()`, `ShowBondsCalendar()`, `RequestBondCoupons()`.
 
         :param instruments: list of strings with tickers or FIGIs.
-        :param xlsx: if True then also exports pandas dataframe to xlsx-file `bondsXLSXFile`, default `ext-bonds.xlsx`,
+        :param xlsx: if True then also exports Pandas DataFrame to xlsx-file `bondsXLSXFile`, default `ext-bonds.xlsx`,
                      for further used by data scientists or stock analytics.
-        :return: wider pandas dataframe with more full and calculated data about bonds, than raw response from broker.
-                 In XLSX-file and pandas dataframe fields mean:
+        :return: wider Pandas DataFrame with more full and calculated data about bonds, than raw response from broker.
+                 In XLSX-file and Pandas DataFrame fields mean:
                  - main info about bond: https://tinkoff.github.io/investAPI/instruments/#bond
                  - info about coupon: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
@@ -3952,7 +3952,7 @@ class TinkoffBrokerServer:
 
         bonds.index = bonds["ticker"].tolist()  # replace indexes with ticker names
 
-        # Saving bonds from pandas dataframe to XLSX sheet:
+        # Saving bonds from Pandas DataFrame to XLSX sheet:
         if xlsx and self.bondsXLSXFile:
             with pd.ExcelWriter(
                     path=self.bondsXLSXFile,
@@ -3974,19 +3974,19 @@ class TinkoffBrokerServer:
 
     def CreateBondsCalendar(self, extBonds: pd.DataFrame, xlsx: bool = False) -> pd.DataFrame:
         """
-        Creates bond payments calendar as pandas dataframe, and also save it to the XLSX-file, `calendar.xlsx` by default.
+        Creates bond payments calendar as Pandas DataFrame, and also save it to the XLSX-file, `calendar.xlsx` by default.
 
         WARNING! This is too long operation if a lot of bonds requested from broker server.
 
         See also: `ShowBondsCalendar()`, `ExtendBondsData()`.
 
-        :param extBonds: pandas dataframe object returns by `ExtendBondsData()` method and contains
+        :param extBonds: Pandas DataFrame object returns by `ExtendBondsData()` method and contains
                         extended information about bonds: main info, current prices, bond payment calendar,
                         coupon yields, current yields and some statistics etc.
                         If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
-        :param xlsx: if True then also exports pandas dataframe to file `calendarFile` + `".xlsx"`, `calendar.xlsx` by default,
+        :param xlsx: if True then also exports Pandas DataFrame to file `calendarFile` + `".xlsx"`, `calendar.xlsx` by default,
                      for further used by data scientists or stock analytics.
-        :return: pandas dataframe with only bond payments calendar data. Fields mean: https://tinkoff.github.io/investAPI/instruments/#coupon
+        :return: Pandas DataFrame with only bond payments calendar data. Fields mean: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
             extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
@@ -4022,7 +4022,7 @@ class TinkoffBrokerServer:
 
         calendar = calendar.sort_values(by=["couponDate"], axis=0, ascending=True)  # sort all payments for all bonds by payment date
 
-        # Saving calendar from pandas dataframe to XLSX sheet:
+        # Saving calendar from Pandas DataFrame to XLSX sheet:
         if xlsx:
             xlsxCalendarFile = self.calendarFile.replace(".md", ".xlsx") if self.calendarFile.endswith(".md") else self.calendarFile + ".xlsx"
 
@@ -4060,7 +4060,7 @@ class TinkoffBrokerServer:
 
         See also: `ShowInstrumentInfo()`, `RequestBondCoupons()`, `CreateBondsCalendar()` and `ExtendBondsData()`.
 
-        :param extBonds: pandas dataframe object returns by `ExtendBondsData()` method and contains
+        :param extBonds: Pandas DataFrame object returns by `ExtendBondsData()` method and contains
                         extended information about bonds: main info, current prices, bond payment calendar,
                         coupon yields, current yields and some statistics etc.
                         If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
@@ -4073,7 +4073,7 @@ class TinkoffBrokerServer:
 
         infoText = "# Bond payments calendar\n\n"
 
-        calendar = self.CreateBondsCalendar(extBonds, xlsx=True)  # generate pandas dataframe with full calendar data
+        calendar = self.CreateBondsCalendar(extBonds, xlsx=True)  # generate Pandas DataFrame with full calendar data
 
         if not calendar.empty:
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
@@ -4366,21 +4366,15 @@ class Args:
 
 
 def ParseArgs():
-    """
-    Function get and parse command line keys.
-
-    See examples:
-    - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-    - in russian: https://tim55667757.github.io/TKSBrokerAPI/
-    """
+    """This function get and parse command line keys."""
     parser = ArgumentParser()  # command-line string parser
 
-    parser.description = "TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API using REST protocol. It can view history, orders and market information. Also, you can open orders and trades. See examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples"
+    parser.description = "TKSBrokerAPI is a trading platform for automation on Python to simplify the implementation of trading scenarios and work with Tinkoff Invest API server via the REST protocol. See examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"
     parser.usage = "\n/as module/ python TKSBrokerAPI.py [some options] [one command]\n/as CLI tool/ tksbrokerapi [some options] [one command]"
 
     # --- options:
 
-    parser.add_argument("--no-cache", action="store_true", default=False, help="Option: not use local cache `dump.json`, but update raw instruments data when starting the program. `False` by default.")
+    parser.add_argument("--no-cache", action="store_true", default=False, help="Option: not use local cache `dump.json`, but update raw instruments data when starting the platform. `False` by default.")
     parser.add_argument("--token", type=str, help="Option: Tinkoff service's api key. If not set then used environment variable `TKS_API_TOKEN`. See how to use: https://tinkoff.github.io/investAPI/token/")
     parser.add_argument("--account-id", type=str, default=None, help="Option: string with an user numeric account ID in Tinkoff Broker. It can be found in any broker's reports (see the contract number). Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.")
 
@@ -4404,7 +4398,7 @@ def ParseArgs():
 
     parser.add_argument("--list", "-l", action="store_true", help="Action: get and print all available instruments and some information from broker server. Also, you can define `--output` key to save list of instruments to file, default: `instruments.md`.")
     parser.add_argument("--list-xlsx", "-x", action="store_true", help="Action: get all available instruments from server for current account and save raw data into xlsx-file for further used by data scientists or stock analytics, default: `dump.xlsx`.")
-    parser.add_argument("--bonds-xlsx", "-b", type=str, nargs="*", help="Action: get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc. And then export data to XLSX-file, default: `ext-bonds.xlsx` or you can change it with `--output` key. WARNING! This is too long operation if a lot of bonds requested from broker server.")
+    parser.add_argument("--bonds-xlsx", "-b", type=str, nargs="*", help="Action: get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider Pandas DataFrame with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc. And then export data to XLSX-file, default: `ext-bonds.xlsx` or you can change it with `--output` key. WARNING! This is too long operation if a lot of bonds requested from broker server.")
     parser.add_argument("--search", "-s", type=str, nargs=1, help="Action: search for an instruments by part of the name, ticker or FIGI. Also, you can define `--output` key to save results to file, default: `search-results.md`.")
     parser.add_argument("--info", "-i", action="store_true", help="Action: get information from broker server about instrument by it's ticker or FIGI. `--ticker` key or `--figi` key must be defined!")
     parser.add_argument("--calendar", "-c", type=str, nargs="*", help="Action: show bonds payment calendar as a table. Calendar build for one or more tickers or FIGIs, or for all bonds if only key present. If the `--output` key present then calendar saves to file, default: `calendar.md`. Also, created XLSX-file with bond payments calendar for further used by data scientists or stock analytics, `calendar.xlsx` by default. WARNING! This is too long operation if a lot of bonds requested from broker server.")
@@ -4450,11 +4444,11 @@ def ParseArgs():
 
 def Main(**kwargs):
     """
-    Main function for work with Tinkoff Open API service. It realizes simple logic: get a lot of options and execute one command.
+    Main function for work with TKSBrokerAPI in the console.
 
     See examples:
     - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-    - in russian: https://tim55667757.github.io/TKSBrokerAPI/
+    - in russian: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
     """
     args = Args(**kwargs) if kwargs else ParseArgs()  # get and parse command-line parameters or use **kwarg parameters
 
