@@ -35,7 +35,7 @@ setup(
 
     version=__version__,
 
-    description="Simple python API to work with Tinkoff Open API and access to the TKS Broker server using REST protocol.",
+    description="TKSBrokerAPI is a trading platform for automation and simplifying the implementation of trading scenarios, as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module.",
 
     long_description="See full documentation with examples on GitHub Pages: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md\n\nTKSBrokerAPI module documentation: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html\n\nПодробная документация на русском с примерами: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md\n\nДокументация на модуль TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html",
 
