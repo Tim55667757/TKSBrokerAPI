@@ -1,6 +1,6 @@
-# TKSBrokerAPI
+# TKSBrokerAPI. The platform for automation trading scenarios
 
-**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is a python API for working with Tinkoff Open API and accessing the [Tinkoff Investments](http://tinkoff.ru/sl/AaX1Et1omnH) broker's trade server via the REST protocol. The TKSBrokerAPI module can be used from the console, it has a rich keys and commands. Also, you can used it with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into CI/CD automation systems.
+**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is a trading platform for automation and simplifying the implementation of trading scenarios, as well as working with [Tinkoff Invest API](http://tinkoff.ru/sl/AaX1Et1omnH) server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
 [![Build Status](https://travis-ci.com/Tim55667757/TKSBrokerAPI.svg?branch=master)](https://travis-ci.com/Tim55667757/TKSBrokerAPI)
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
@@ -10,7 +10,7 @@
 [![api-doc](https://badgen.net/badge/api-doc/TKSBrokerAPI/blue)](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
-❗ If you are missing some feature of the program or some specific example in the documentation to understand how to work with the TKSBrokerAPI module (in the CLI or as a python API), then describe your case in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. As far as possible, we will try to implement the desired feature and add examples in the next release.
+❗ If you are missing some feature of the platform or some specific example in the documentation to understand how to work with the TKSBrokerAPI module (in the CLI or as a Python API), then describe your case in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. As far as possible, we will try to implement the desired feature and add examples in the next release.
 
 **Useful links**
 
@@ -59,7 +59,7 @@ If you are engaged in investment, automation and algorithmic trading at the same
 
 When working with any API, there are always technical difficulties: a high entry threshold, the need to study of the big volume of documentation, writing and debugging code to make network requests using the API format. It will take a long time before you get to the point of implementing a trading algorithm.
 
-**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is a simpler tool that can be used as a regular python module or run from the command line, and immediately out of the box get the opportunity to work with an account with a Tinkoff Investments broker: receive information about the state of the portfolio, including elementary analytics, open and close positions, receive general information about the instruments traded on the exchange, request prices and receive reports on operations for the specified period. All data is output immediately to the console: in text view or saved in Markdown format files.
+**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is a simple tool that can be used as a Python module or run from the command line, and immediately out of the box get the opportunity to work with an account with a Tinkoff Investments broker: receive information about the state of the portfolio, including elementary analytics, open and close positions, receive general information about the instruments traded on the exchange, request prices and receive reports on operations for the specified period. All data is output immediately to the console: in text view or saved in Markdown format files.
 
 <details>
   <summary>An example of requesting a client portfolio and viewing information in the console</summary>
@@ -248,7 +248,7 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Request general information about the user, a list of accounts (including the `accountId`s), available funds for margin trading and connection limits for the current tariff;
   - common key `--user-info` (`-u`) to request general information or key `--account` (`--accounts`, `-a`) to request list of accounts;
   - API-methods: [`RequestAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestAccounts), [`RequestUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestUserInfo), [`RequestMarginStatus()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestMarginStatus), [`RequestTariffLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestTariffLimits), [`OverviewUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewUserInfo) and [`OverviewAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewAccounts).
-- Request raw bonds data, extend it and creating pandas dataframe with more information for datascientists or stock analytics: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics, and also saves this data to XLSX-file;
+- Request raw bonds data, extend it and creating Pandas DataFrame with more information for datascientists or stock analytics: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics, and also saves this data to XLSX-file;
   - common key `--bonds-xlsx` (`-b`) to extend data for all at once or for specified bonds;
   - API-methods: [`RequestBondCoupons()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestBondCoupons) and [`ExtendBondsData()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ExtendBondsData).
 - Generate bonds payment calendar for all at once or for a list of bonds and save it to a Markdown-file or XLSX-file;
@@ -272,7 +272,7 @@ pip show tksbrokerapi
 
 You can also use the TKSBrokerAPI module by downloading it directly from [repository](https://github.com/Tim55667757/TKSBrokerAPI/) via `git clone` and taking the codebase of any tested [release](https://github.com/Tim55667757/TKSBrokerAPI/releases).
 
-In the first case, the tool will be available in the console through the `tksbrokerapi` command, and in the second case, you will have to run it as a normal python script, through `python TKSBrokerAPI.py` from the source directory.
+In the first case, the tool will be available in the console through the `tksbrokerapi` command, and in the second case, you will have to run it as a Python script, through `python TKSBrokerAPI.py` from the source directory.
 
 Further, all examples are written for the case when TKSBrokerAPI is installed via PyPI.
 
@@ -286,7 +286,7 @@ The TINKOFF INVEST API service uses a token for authentication. A token is a set
 The TKSBrokerAPI module takes care of all the work with tokens. There are three options for setting a user token:
 
 - when calling `tksbrokerapi` in the console, specify the key: `--token "your_token_here"`;
-- either specify `token` when initializing the class in a python script: [`TKSBrokerAPI.TinkoffBrokerServer(token="your_token_here", ...)`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__);
+- either specify `token` when initializing the class in a Python script: [`TKSBrokerAPI.TinkoffBrokerServer(token="your_token_here", ...)`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__);
 - or you can pre-set a special variable in the user environment: `TKS_API_TOKEN=your_token_here`.
 
 ❗ **Working with the TINKOFF INVEST API without creating and using a token is not possible**. Before you start working with the TKSBrokerAPI module, please open the [brokerage account in Tinkoff Investments](http://tinkoff.ru/sl/AaX1Et1omnH), and then select the type of token you need and create it as indicated [in official documentation](https://tinkoff.github.io/investAPI/token/).
@@ -304,13 +304,13 @@ But the easiest way is to use the `--user-info` key and TKSBrokerAPI will show y
 There are three options for setting the user account ID:
 
 - when calling `tksbrokerapi` in the console, specify the key: `--account-id your_id_number"`;
-- either specify `accountId` when initializing the class in a python script: [`TKSBrokerAPI.TinkoffBrokerServer(token="...", accountId=your_id_number, ...)`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__);
+- either specify `accountId` when initializing the class in a Python script: [`TKSBrokerAPI.TinkoffBrokerServer(token="...", accountId=your_id_number, ...)`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__);
 - or you can pre-set a special variable in the user environment: `TKS_ACCOUNT_ID=your_id_number`.
 
 
 ## Usage examples
 
-Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a python script.
+Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a Python script.
 
 ❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
 
@@ -318,7 +318,7 @@ Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.l
 
 ### Command line
 
-When you run the program in the console, you can specify many parameters and perform one action. The format of any commands is as follows:
+When you run the platform in the console, you can specify many parameters and perform one action. The format of any commands is as follows:
 
 ```commandline
 tksbrokerapi [optional keys and parameters] [one action]
@@ -346,15 +346,15 @@ usage:
 /as module/ python TKSBrokerAPI.py [some options] [one command]
 /as CLI tool/ tksbrokerapi [some options] [one command]
 
-TKSBrokerAPI is a python API to work with some methods of Tinkoff Open API
-using REST protocol. It can view history, orders and market information. Also,
-you can open orders and trades. See examples:
-https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+TKSBrokerAPI is a trading platform for automation on Python to simplify the
+implementation of trading scenarios and work with Tinkoff Invest API server
+via the REST protocol. See examples:
+https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
 
 options:
   -h, --help            show this help message and exit
   --no-cache            Option: not use local cache `dump.json`, but update
-                        raw instruments data when starting the program.
+                        raw instruments data when starting the platform.
                         `False` by default.
   --token TOKEN         Option: Tinkoff service's api key. If not set then
                         used environment variable `TKS_API_TOKEN`. See how to
@@ -404,7 +404,7 @@ options:
   --bonds-xlsx [BONDS_XLSX ...], -b [BONDS_XLSX ...]
                         Action: get all available bonds if only key present or
                         list of bonds with FIGIs or tickers and transform it
-                        to the wider pandas dataframe with more information
+                        to the wider Pandas DataFrame with more information
                         about bonds: main info, current prices, bonds payment
                         calendar, coupon yields, current yields and some
                         statistics etc. And then export data to XLSX-file,
@@ -580,7 +580,7 @@ options:
 
 Starting with TKSBrokerAPI v1.2.62 the ability to use the local cache `dump.json` with data on traded instruments has been added, which allows you to avoid constant requests for this data from the broker's server and significantly save time. The cache is used by default when executing any command, there is no need to specifically set it.
 
-If the current day differs from the day the cache was last modified, it will be automatically updated at the next time when program is started. If the `dump.json` file does not exist in the local directory, it will also be created automatically.
+If the current day differs from the day the cache was last modified, it will be automatically updated at the next time when the TKSBrokerAPI platform is started. If the `dump.json` file does not exist in the local directory, it will also be created automatically.
 
 Usually, share exchanges rarely experience critical changes in instruments during the day, and updating the cache at least once a day is justified. But if you want to be completely sure about the consistency of the data, you can specify the `--no-cahce` key together with each command. In this case, data on instruments will be requested every time.
 
@@ -668,7 +668,7 @@ TKSBrokerAPI.py     L:3814 DEBUG   [2022-10-19 01:20:37,279] >>> TKSBrokerAPI mo
 
 #### Find an instrument
 
-To work with exchange instruments, receive information on them, request prices and make deals, you usually need to specify a ticker (key `--ticker`) or FIGI (key `--figi`). But there are hardly many people who know them by heart. Most often, there is only an assumption about a part of the ticker or the name of the company. In this case, you can use the search by pattern: part of the name, ticker or FIGI, or by specifying a regular expression. The search is performed by the standard python module [`re`](https://docs.python.org/3/library/re.html#re.compile), case-insensitive.
+To work with exchange instruments, receive information on them, request prices and make deals, you usually need to specify a ticker (key `--ticker`) or FIGI (key `--figi`). But there are hardly many people who know them by heart. Most often, there is only an assumption about a part of the ticker or the name of the company. In this case, you can use the search by pattern: part of the name, ticker or FIGI, or by specifying a regular expression. The search is performed by the standard Python module [`re`](https://docs.python.org/3/library/re.html#re.compile), case-insensitive.
 
 Starting with TKSBrokerAPI v1.2.62 the `--search` key has been added, after which you need to specify the pattern. For example, you want to find all the instruments of the Russian Sber group of companies, then you can try to specify a part of the word: `tksbrokerapi --search "sber"`. Or you want to know all the instruments of companies whose names contain the word "United" with "medical" or "rent". In this case, you can try to specify a regular expression: `tksbrokerapi --search "(United.*).*(?:.*medical|rent)"`.
 
@@ -1886,7 +1886,7 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Download historical data in OHLCV-candles format
 
-Since TKSBrokerAPI v1.3.70 you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only pandas dataframe. `--csv-sep` key define separator in csv-files.
+Since TKSBrokerAPI v1.3.70 you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only Pandas DataFrame. `--csv-sep` key define separator in csv-files.
 
 History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. **Warning!** Broker server use ISO UTC time by default.
 
@@ -1937,7 +1937,7 @@ TKSBrokerAPI.py     L:2343 INFO    [2022-09-04 14:08:42,026] Here's requested hi
 2022.09.04 09:00 253.82 255.43 252.81 252.95    3506
 2022.09.04 10:00 252.95 255.36 252.55 254.02    3522
 2022.09.04 11:00 254.02 255.05 253.22 254.26     574
-TKSBrokerAPI.py     L:2357 DEBUG   [2022-09-04 14:08:42,026] --output key is not defined. Parsed history file not saved to file, only pandas dataframe returns.
+TKSBrokerAPI.py     L:2357 DEBUG   [2022-09-04 14:08:42,026] --output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.
 TKSBrokerAPI.py     L:3354 DEBUG   [2022-09-04 14:08:42,026] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
 TKSBrokerAPI.py     L:3359 DEBUG   [2022-09-04 14:08:42,026] TKSBrokerAPI module work duration: [0:00:01.582813]
 TKSBrokerAPI.py     L:3360 DEBUG   [2022-09-04 14:08:42,026] TKSBrokerAPI module finished: [2022-09-04 11:08:42] UTC, it is [2022-09-04 14:08:42] local time
@@ -2472,7 +2472,7 @@ TKSBrokerAPI.py     L:3641 INFO    [2022-10-24 00:09:47,102] User accounts were 
 
 #### Get extended bonds data
 
-TKSBrokerAPI v1.4.90 contains a new console command `--bonds-xlsx` (`-b`). This action get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider pandas dataframe with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc.
+TKSBrokerAPI v1.4.90 contains a new console command `--bonds-xlsx` (`-b`). This action get all available bonds if only key present or list of bonds with FIGIs or tickers and transform it to the wider Pandas DataFrame with more information about bonds: main info, current prices, bonds payment calendar, coupon yields, current yields and some statistics etc.
 
 Also, at the end data exports to XLSX-file, for the further used by datascientists or stock analytics. Default `ext-bonds.xlsx` or you can change it with the `--output` key.
 
@@ -2481,7 +2481,7 @@ Also, at the end data exports to XLSX-file, for the further used by datascientis
 Which mean headers in XLSX-file, see here: "[Main bond information](https://tinkoff.github.io/investAPI/instruments/#bond)" and "[Coupon information](https://tinkoff.github.io/investAPI/instruments/#coupon)".
 
 <details>
-  <summary>Headers in XLSX-file or pandas dataframe:</summary>
+  <summary>Headers in XLSX-file or Pandas DataFrame:</summary>
 
 - `actualDateTime` — the date and time at which the extended data on the bond was received;
 - `figi` — FIGI identifier of the instrument;
@@ -2545,7 +2545,7 @@ Which mean headers in XLSX-file, see here: "[Main bond information](https://tink
 - `sumLastCoupons` — amount of remaining coupon payments (in the currency of `aciCurrency` coupon payments);
 - `lastPayments` — the amount of payments remaining on the current date `actualDateTime` `sumLastCoupons`, reduced by the ACI value `aciValue`;
 - `currentYield` — current yield at the time of `actualDateTime` (the current price is taken, the average daily yield is calculated and multiplied by 365 days);
-- `calendar` — bond payments calendar is a python list of dictionaries, which contains [all coupons data](https://tinkoff.github.io/investAPI/instruments/#coupon), where fields mean:
+- `calendar` — bond payments calendar is a Python list of dictionaries, which contains [all coupons data](https://tinkoff.github.io/investAPI/instruments/#coupon), where fields mean:
   - `couponDate` — coupon payment date;
   - `couponNumber` — coupon number;
   - `fixDate` — date of fixing the register, before which, inclusive, you need to have to buy a bond to receive payments;
@@ -2611,7 +2611,7 @@ Also, the calendar exports to XLSX-file, for the further used by datascientists 
 
 ❗ WARNING: this is too long operation if a lot of bonds requested from broker server (~90-120 extended data bonds per minute, depends on speed limit rate).
 
-Coupons data are described here in [the main coupon information](https://tinkoff.github.io/investAPI/instruments/#coupon). For the pandas dataframe calendar, the data headers are the same as those described in the `calendar` field in the section "[Get extended bonds data](#Get-extended-bonds-data)", below the spoiler. The titles for the calendar as an XLSX file are converted to a more human-readable format before being saved.
+Coupons data are described here in [the main coupon information](https://tinkoff.github.io/investAPI/instruments/#coupon). For the Pandas DataFrame calendar, the data headers are the same as those described in the `calendar` field in the section "[Get extended bonds data](#Get-extended-bonds-data)", below the spoiler. The titles for the calendar as an XLSX file are converted to a more human-readable format before being saved.
 
 <details>
   <summary>Headers in XLSX-file:</summary>
@@ -2731,12 +2731,31 @@ Using the TKSBrokerAPI module, you can implement any trading scenario in Python.
 
 ![](./docs/media/TKSBrokerAPI-flow.png)
 
-The development scheme with TKSBrokerAPI is very simple:
-1. You come up with an ingenious trading algorithm.
+The scheme of trade scenario automation with TKSBrokerAPI is very simple:
+1. You come up with a brilliant trading algorithm.
 2. Write it down step by step in the form of some kind of plan or trading scenario.
 3. Automate scenario as a Python script using TKSBrokerAPI.
 4. TKSBrokerAPI takes care of all the work with the Tinkoff Investments broker infrastructure.
 5. Profit!
+
+But where to get this "brilliant trading algorithm"? The TKSBrokerAPI platform will also help you solve the problem of obtaining primary, "raw" data on trading instruments (shares, bonds, funds, futures and currencies) from the broker server, for their future analysis in any analytical tool convenient for you. To do this, the methods of the TKSBrokerAPI module provide the ability to extend and save data in classic formats: XLSX and CSV (for analysis in spreadsheet editors), Markdown (for readability), and Pandas DataFrame (for data scientists and stock analysts). Some methods can be found in section "[Key features](#Key-features)" or in the full "[API documentation](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)".
+
+The "raw" data can be anything that [can be obtained](https://tinkoff.github.io/investAPI/swagger-ui/) from the broker's server. After extends, this data can be used to build, for example, a [consolidated payment calendar](#Build-a-bond-payment-calendar) for bonds and calculate their [coupon and current yields](#Get-extended-bonds-data), or you can generate analytics about the status of the user's portfolio and the [distribution of assets](#Get-the-current-portfolio-and-asset-allocation-statistics) by types, companies, industries, currencies, and countries.
+
+![](./docs/media/TKSBrokerAPI-extend-data-flow.png)
+
+How data is extended and used in TKSBrokerAPI:
+1. You request the data you need from the Tinkoff Investments broker server using the TKSBrokerAPI module:
+   - in this module, almost all methods return "raw" data from the server in the form of a Python dictionary.
+2. Then they are processed and extended:
+   - with various statistics, parameters and some analytical reports.
+3. After that, the data is stored in a form suitable for further analysis:
+   - most of the methods return extended data in the form of a Python dictionary or Pandas DataFrame;
+   - if you launched the TKSBrokerAPI platform in the console, then the data will be saved in XLSX, CSV or Markdown formats.
+4. Next, you can load the data into analytical system and use various data analysis methods to find and highlight dependencies, correlations, make predictions and suggest hypothesis.
+5. Further, based on data analysis, you come up with the same "brilliant trading algorithm".
+6. Automate the trading scenario (according to the previous scheme).
+7. Profit!
 
 #### Abstract scenario implementation example
 
@@ -2754,7 +2773,7 @@ In this documentation, we do not want to focus on specific trading scenarios, bu
 To understand the example, just save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)). Most of the code is commented in detail and links to the relevant API methods are given.
 
 <details>
-  <summary>Example of trading script in python using TKSBrokerAPI</summary>
+  <summary>Example of trading script in Python using TKSBrokerAPI</summary>
 
 Download script here: [./docs/examples/scenario1.py](./docs/examples/scenario1.py)
 
