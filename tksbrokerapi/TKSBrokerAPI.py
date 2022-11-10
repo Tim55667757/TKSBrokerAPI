@@ -2,17 +2,19 @@
 # Author: Timur Gilmullin
 
 """
-**TKSBrokerAPI** is a python API to work with some methods of Tinkoff Open API using REST protocol.
-It can view history, orders and market information. Also, you can open orders and trades.
+**TKSBrokerAPI** is the trading platform for automation and simplifying the implementation of trading scenarios,
+as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways:
+from the console, it has a rich keys and commands, or you can use it as Python module with `python import`.
 
-If you run this module as CLI program then it realizes simple logic: receiving a lot of options and execute one command.
-**See examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive
+the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
-**Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
-
-About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
-
-Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui/
+- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
+- **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+- **See examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+- **Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
+- **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
+- **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
