@@ -2520,7 +2520,7 @@ class TinkoffBrokerServer:
 
                 # --- view "Actions" lines:
                 info.extend([
-                    "| 1                          | 2                             | 3                            | 4                    | 5                      |\n",
+                    "| Report sections            |                               |                              |                      |                        |\n",
                     "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|\n",
                     "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |                        |\n".format(customStat["opsCount"]),
                     "|                            |   Buy: {:<22} | {:<28} |                      |                        |\n".format(
