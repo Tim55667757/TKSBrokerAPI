@@ -3638,9 +3638,16 @@ class TinkoffBrokerServer:
                 "# Withdrawal limits\n\n",
                 "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
                 "* **Account ID:** [{}]\n".format(self.accountId),
-                "\n| Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |\n",
-                "|------------|---------------|--------------------------|-------------------|-------------------|\n",
             ]
+
+            if view["limits"]["money"]:
+                info.extend([
+                    "\n| Currencies | Total         | Available for withdrawal | Blocked for trade | Futures guarantee |\n",
+                    "|------------|---------------|--------------------------|-------------------|-------------------|\n",
+                ])
+
+            else:
+                info.append("\nNo withdrawal limits\n")
 
             for curr in view["limits"]["money"].keys():
                 blocked = view["limits"]["blocked"][curr] if curr in view["limits"]["blocked"].keys() else 0
@@ -3656,7 +3663,7 @@ class TinkoffBrokerServer:
                 )
 
                 if curr == "rub":
-                    info.insert(5, infoStr)  # insert at first position in table and after headers
+                    info.insert(5, infoStr)  # hack: insert "rub" at the first position in table and after headers
 
                 else:
                     info.append(infoStr)
