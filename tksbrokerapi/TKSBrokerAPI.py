@@ -1102,13 +1102,35 @@ class TinkoffBrokerServer:
 
     def GetCurrentPrices(self, show: bool = True) -> dict:
         """
-        Get and show Depth of Market with current prices of the instrument. If an error occurred then returns an empty record:
-        `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
+        Get and show Depth of Market with current prices of the instrument as dictionary. Result example with `depth` 5:
+        `{"buy": [{"price": 1243.8, "quantity": 193},
+                  {"price": 1244.0, "quantity": 168},
+                  {"price": 1244.8, "quantity": 5},
+                  {"price": 1245.0, "quantity": 61},
+                  {"price": 1245.4, "quantity": 60}],
+          "sell": [{"price": 1243.6, "quantity": 8},
+                   {"price": 1242.6, "quantity": 10},
+                   {"price": 1242.4, "quantity": 18},
+                   {"price": 1242.2, "quantity": 50},
+                   {"price": 1242.0, "quantity": 113}],
+          "limitUp": 1619.0, "limitDown": 903.4, "lastPrice": 1243.8, "closePrice": 1263.0}`, where parameters mean:
+        - buy: list of dicts with Sellers prices, see also: https://tinkoff.github.io/investAPI/marketdata/#order
+        - sell: list of dicts with Buyers prices,
+            - price: price of 1 instrument (to get the cost of the lot, you need to multiply it by the lot of size of the instrument),
+            - quantity: volume value by current price in lots,
+        - limitUp: current trade session limit price, maximum,
+        - limitDown: current trade session limit price, minimum,
+        - lastPrice: last deal price of the instrument,
+        - closePrice: previous trade session close price of the instrument.
 
-        See also:
+        See also: `SearchByTicker()` and `SearchByFIGI()`.
+        REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
+        Response fields: https://tinkoff.github.io/investAPI/marketdata/#getorderbookresponse
 
         :param show: if `True` then print DOM to log and console.
         :return: orders book dict with lists of current buy and sell prices: `{"buy": [{"price": x1, "quantity": y1, ...}], "sell": [....]}`.
+                 If an error occurred then returns an empty record:
+                 `{"buy": [], "sell": [], "limitUp": None, "limitDown": None, "lastPrice": None, "closePrice": None}`.
         """
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
@@ -1138,14 +1160,14 @@ class TinkoffBrokerServer:
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
             priceURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook"
             self.body = str({"figi": self.figi, "depth": self.depth})
-            pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")
+            pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")  # Response fields: https://tinkoff.github.io/investAPI/marketdata/#getorderbookresponse
 
             if pricesResponse:
                 # list of dicts with sellers orders:
-                prices["buy"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
+                prices["buy"] = [{"price": round(NanoToFloat(item["price"]["units"], item["price"]["nano"]), 6), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
 
                 # list of dicts with buyers orders:
-                prices["sell"] = [{"price": NanoToFloat(item["price"]["units"], item["price"]["nano"]), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
+                prices["sell"] = [{"price": round(NanoToFloat(item["price"]["units"], item["price"]["nano"]), 6), "quantity": int(item["quantity"])} for item in pricesResponse["bids"]]
 
                 # max price of instrument at this time:
                 prices["limitUp"] = round(NanoToFloat(pricesResponse["limitUp"]["units"], pricesResponse["limitUp"]["nano"]), 6) if "limitUp" in pricesResponse.keys() else None
@@ -1154,10 +1176,10 @@ class TinkoffBrokerServer:
                 prices["limitDown"] = round(NanoToFloat(pricesResponse["limitDown"]["units"], pricesResponse["limitDown"]["nano"]), 6) if "limitDown" in pricesResponse.keys() else None
 
                 # last price of deal with instrument:
-                prices["lastPrice"] = NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]) if "lastPrice" in pricesResponse.keys() else 0
+                prices["lastPrice"] = round(NanoToFloat(pricesResponse["lastPrice"]["units"], pricesResponse["lastPrice"]["nano"]), 6) if "lastPrice" in pricesResponse.keys() else 0
 
                 # last close price of instrument:
-                prices["closePrice"] = NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]) if "closePrice" in pricesResponse.keys() else 0
+                prices["closePrice"] = round(NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]), 6) if "closePrice" in pricesResponse.keys() else 0
 
             else:
                 uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
@@ -1172,36 +1194,36 @@ class TinkoffBrokerServer:
                             self.figi,
                             self.depth,
                         ),
-                        uLog.sepShort, "\n",
-                        " Orders of Buyers   | Orders of Sellers\n",
-                        uLog.sepShort, "\n",
-                        " Sell prices (vol.) | Buy prices (vol.)\n",
-                        uLog.sepShort, "\n",
+                        "-" * 60, "\n",
+                        "             Orders of Buyers | Orders of Sellers\n",
+                        "-" * 60, "\n",
+                        "        Sell prices (volumes) | Buy prices (volumes)\n",
+                        "-" * 60, "\n",
                     ]
 
                     if not prices["buy"]:
-                        info.append("                    | No orders!\n")
+                        info.append("                              | No orders!\n")
                         sumBuy = 0
 
                     else:
                         sumBuy = sum([x["quantity"] for x in prices["buy"]])
                         maxMinSorted = sorted(prices["buy"], key=lambda k: k["price"], reverse=True)
                         for item in maxMinSorted:
-                            info.append("                    | {} ({})\n".format(item["price"], item["quantity"]))
+                            info.append("                              | {} ({})\n".format(item["price"], item["quantity"]))
 
                     if not prices["sell"]:
-                        info.append("No orders!          |\n")
+                        info.append("No orders!                    |\n")
                         sumSell = 0
 
                     else:
                         sumSell = sum([x["quantity"] for x in prices["sell"]])
                         for item in prices["sell"]:
-                            info.append("{:>19} |\n".format("{} ({})".format(item["price"], item["quantity"])))
+                            info.append("{:>29} |\n".format("{} ({})".format(item["price"], item["quantity"])))
 
                     info.extend([
-                        uLog.sepShort, "\n",
-                        "{:>19} | {}\n".format("Total sell: {}".format(sumSell), "Total buy: {}".format(sumBuy)),
-                        uLog.sepShort, "\n",
+                        "-" * 60, "\n",
+                        "{:>29} | {}\n".format("Total sell: {}".format(sumSell), "Total buy: {}".format(sumBuy)),
+                        "-" * 60, "\n",
                     ])
 
                     infoText = "".join(info)
