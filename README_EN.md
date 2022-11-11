@@ -234,7 +234,7 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
   - keys `--close-order` or `--cancel-order`, `--close-orders` or `--cancel-orders`;
   - API-method: [`CloseOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseOrders).
 - Close previously opened positions completely (except for blocked volumes) by specifying an instrument or a list of instruments through their tickers or FIGI ID;
-  - key `--close-trade` or `--cancel-trade`;
+  - keys `--close-trade` (`--cancel-trade`) or `--close-trades` (`--cancel-trades`);
   - API-method: [`CloseTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseTrades).
 - Cancel all previously opened orders and close current positions for all instruments at once, except for blocked volumes and positions for currencies, which must be closed manually;
   - key `--close-all`, you can also specify orders, asset type or specify several keywords after the key `--close-all` separated by a space: `orders`, `shares`, `bonds`, `etfs` or `futures`;
@@ -546,10 +546,11 @@ options:
                         these IDs using the key `--overview`.
   --close-trade, --cancel-trade
                         Action: close only one position for instrument defined
-                        by `--ticker` key, including for currencies tickers.
+                        by `--ticker` (high priority) or `--figi` keys,
+                        including for currencies tickers.
   --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
-                        Action: close positions for list of tickers, including
-                        for currencies tickers.
+                        Action: close positions for list of tickers or FIGIs,
+                        including for currencies tickers or FIGIs.
   --close-all [CLOSE_ALL ...], --cancel-all [CLOSE_ALL ...]
                         Action: close all available (not blocked) opened
                         trades and orders, excluding for currencies. Also you
@@ -1734,7 +1735,7 @@ Order IDs and instrument tickers for which positions are open can be found in th
 
 To close one order of any type by its ID, you can use the `--close-order` (`--cancel-order`) key followed by a unique order ID. To close orders by list, you can use the similar key `--close-orders` (`--cancel-orders`), after which followed all order identifiers.
 
-To close a previously opened position (both "long" or "short") use the `--close-trade` (`--cancel-trade`) key, preceded by the instrument with the `--ticker key `. In fact, a market order is opened with the direction opposite to the open position. To close positions for several instruments, you can use the similar key `--close-trades` (`--cancel-trades`), after which define the required tickers (the `--ticker` key is no longer required).
+To close a previously opened position (both "long" or "short") use the `--close-trade` (`--cancel-trade`) key, preceded by the instrument with the `--ticker` (priority) or `--figi` keys. In fact, a market order is opened with the direction opposite to the open position. To close positions for several instruments, you can use the similar key `--close-trades` (`--cancel-trades`), after which define the required tickers or FIGIs (the `--ticker` or `--figi` keys are no longer required).
 
 You can also use the common key `--close-all` (`--cancel-all`). If you specify it without parameters, then an attempt will be made to close all instruments and orders, except for those that are blocked or not available for trading. First, all orders will be closed, otherwise, for example, limit orders may block the closing of part of the available volumes for instruments. Then, in order, positions will be closed for all instruments: shares, bonds, ETFs and futures. This key is more convenient when you need to urgently close all positions than to perform these operations one by one.
 
