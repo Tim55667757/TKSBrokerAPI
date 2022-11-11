@@ -1083,30 +1083,40 @@ TKSBrokerAPI.py     L:4309 DEBUG   [2022-10-28 00:22:48,930] >>> TKSBrokerAPI mo
   <summary>Команда для получения стакана цен</summary>
 
 ```commandline
-$ tksbrokerapi --ticker IBM --depth=5 --price
+$ tksbrokerapi -t TRUR --depth 10 --price
 
-TKSBrokerAPI.py     L:871  INFO    [2022-07-27 00:11:35,189] Current prices in order book:
+TKSBrokerAPI.py     L:1231 INFO    [2022-11-11 18:01:48,273] Current prices in order book:
 
-Orders book actual at [2022-07-26 21:11:35] (UTC)
-Ticker: [IBM], FIGI: [BBG000BLNNH6], Depth of Market: [5]
-----------------------------------------
- Orders of Buyers   | Orders of Sellers
-----------------------------------------
- Sell prices (vol.) | Buy prices (vol.)
-----------------------------------------
-                    | 129.2 (1)
-                    | 129.0 (9)
-                    | 128.96 (21)
-                    | 128.7 (1)
-                    | 128.65 (150)
-         127.67 (1) |
-         127.66 (1) |
-        127.65 (60) |
-         127.53 (2) |
-          127.5 (5) |
-----------------------------------------
-     Total sell: 69 | Total buy: 182
-----------------------------------------
+Orders book actual at [2022-11-11 15:01:48] (UTC)
+Ticker: [TRUR], FIGI: [BBG000000001], Depth of Market: [10]
+------------------------------------------------------------
+             Orders of Buyers | Orders of Sellers
+------------------------------------------------------------
+        Sell prices (volumes) | Buy prices (volumes)
+------------------------------------------------------------
+                              | 5.71 (1158)
+                              | 5.7 (93508)
+                              | 5.69 (112074)
+                              | 5.68 (12804)
+                              | 5.67 (106064)
+                              | 5.66 (23593)
+                              | 5.65 (1457706)
+                              | 5.64 (32957)
+                              | 5.63 (823159)
+                              | 5.62 (1991386)
+               5.61 (3351948) |
+                5.6 (1780747) |
+               5.59 (1354789) |
+               5.58 (1167135) |
+                5.57 (770161) |
+                5.56 (521801) |
+                5.55 (337911) |
+                  5.54 (6204) |
+                  5.53 (5603) |
+               5.52 (1110590) |
+------------------------------------------------------------
+         Total sell: 10406889 | Total buy: 4654409
+------------------------------------------------------------
 ```
 
 </details>
@@ -2976,6 +2986,7 @@ uLogger.debug("Trading scenario finished: [{}] UTC, it is [{}] local time".forma
 ))
 uLogger.debug("=--=" * 20)
 ```
+
 </details>
 
 <details>
