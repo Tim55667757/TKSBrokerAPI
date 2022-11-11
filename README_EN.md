@@ -2783,7 +2783,7 @@ In this documentation, we do not want to focus on specific trading scenarios, bu
 To understand the example, just save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)). Most of the code is commented in detail and links to the relevant API methods are given.
 
 <details>
-  <summary>Example of trading script in Python using TKSBrokerAPI</summary>
+  <summary>Example of trading script in Python using TKSBrokerAPI platform</summary>
 
 Download script here: [./docs/examples/scenario1.py](./docs/examples/scenario1.py)
 
@@ -2994,6 +2994,27 @@ TKSBrokerAPI.py     L:1922 INFO    [2022-08-23 17:35:59,958] Statistics of clien
 ```
 
 </details>
+
+As you can see, in the example above, a linear script is actually written that sequentially executes the trading script. Parameterization occurs at the beginning of the script, then there are many trading steps and commands. That is, the classical imperative programming paradigm is used. One of the advantages of this approach is that the logic of the trading scenario is described step by step, and you can see what is being done and why. If the trade logic is simple, you can take a look all code on one screen. The same plus becomes a minus when the logic of the trading scenario is too complicated, with many variances. In this case, the script can turn into a "footcloth" of hard-to-read code.
+
+If you're more of an object oriented programming fan, the same scenario can be implemented with classes. At the same time, the previous disadvantage will disappear: the logic of individual steps will be moved to class methods, which will simplify their debugging, and the final scenario of trading steps can be described with short constructions like `if ... else`.
+
+In this case, it is better to create a class `TradeScenario(TinkoffBrokerServer)` inherited from the main API class `TinkoffBrokerServer()`. As class fields, you can take the names of constants from the first example, write separate methods for each step and logical checks, and then combine the call of all conditions and trading operations in the `run()` method. In the main block `if __name__ == "__main__:"` when running the script, it will be enough to create an instance of the class and initialize it with constants from the first example, and then just call the `run()` method.
+
+Trading script from the first example, rewritten with classes, can be viewed under the spoiler below. Don't forget to set up your token and accountId when class initialization (see the section ["Auth"](#Auth)).
+
+<details>
+  <summary>Trading script for the TKSBrokerAPI platform (version with a class for a trading scenario)</summary>
+
+Download script here: [./docs/examples/scenario1a.py](./docs/examples/scenario1a.py)
+
+```python
+
+```
+
+</details>
+
+Вывод скрипта в консоль будет полностью аналогичен, как в первом примере.
 
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
