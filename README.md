@@ -1327,21 +1327,21 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:13:18,960] # Client's operatio
 
 ## Summary (operations executed only)
 
-| 1                          | 2                             | 3                            | 4                    | 5
-|----------------------------|-------------------------------|------------------------------|----------------------|------------------------
-| **Actions:**               | Operations executed: 35       | Trading volumes:             |                      |
-|                            |   Buy: 19 (54.3%)             |   rub, buy: -25907.12        |                      |
-|                            |   Sell: 16 (45.7%)            |   rub, sell: +11873.86       |                      |
-|                            |                               |   usd, buy: -664.45          |                      |
-|                            |                               |   usd, sell: +281.03         |                      |
-|                            |                               |                              |                      |
-| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:
-|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01
-|                            |                               |                              |                      |
-| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections:
-|                            |   rub: -75.85                 |   —                          |   —                  |   rub: -11.00
-|                            |   usd: -0.30                  |   —                          |   —                  |   —
-|                            |                               |                              |                      |
+| Report sections            |                               |                              |                      |                        |
+|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|
+| **Actions:**               | Operations executed: 35       | Trading volumes:             |                      |                        |
+|                            |   Buy: 19 (54.3%)             |   rub, buy: -25907.12        |                      |                        |
+|                            |   Sell: 16 (45.7%)            |   rub, sell: +11873.86       |                      |                        |
+|                            |                               |   usd, buy: -664.45          |                      |                        |
+|                            |                               |   usd, sell: +281.03         |                      |                        |
+|                            |                               |                              |                      |                        |
+| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |
+|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01          |
+|                            |                               |                              |                      |                        |
+| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |
+|                            |   rub: -75.85                 |   —                          |   —                  |   rub: -11.00          |
+|                            |   usd: -0.30                  |   —                          |   —                  |   —                    |
+|                            |                               |                              |                      |                        |
 
 ## All operations
 
@@ -1454,21 +1454,21 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:15,026] # Client's operatio
 
 ## Summary (operations executed only)
 
-| 1                          | 2                             | 3                            | 4                    | 5
-|----------------------------|-------------------------------|------------------------------|----------------------|------------------------
-| **Actions:**               | Operations executed: 13       | Trading volumes:             |                      |
-|                            |   Buy: 9 (69.2%)              |   rub, buy: -23138.58        |                      |
-|                            |   Sell: 4 (30.8%)             |   rub, sell: +9206.00        |                      |
-|                            |                               |   usd, buy: -593.50          |                      |
-|                            |                               |   usd, sell: +256.90         |                      |
-|                            |                               |                              |                      |
-| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:
-|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01
-|                            |                               |                              |                      |
-| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections:
-|                            |   rub: -69.23                 |   —                          |   —                  |   rub: -11.00
-|                            |   usd: -0.18                  |   —                          |   —                  |   —
-|                            |                               |                              |                      |
+| Report sections            |                               |                              |                      |                        |                   
+|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|
+| **Actions:**               | Operations executed: 13       | Trading volumes:             |                      |                        |
+|                            |   Buy: 9 (69.2%)              |   rub, buy: -23138.58        |                      |                        |
+|                            |   Sell: 4 (30.8%)             |   rub, sell: +9206.00        |                      |                        |
+|                            |                               |   usd, buy: -593.50          |                      |                        |
+|                            |                               |   usd, sell: +256.90         |                      |                        |
+|                            |                               |                              |                      |                        |
+| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |
+|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01          |
+|                            |                               |                              |                      |                        |
+| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |
+|                            |   rub: -69.23                 |   —                          |   —                  |   rub: -11.00          |
+|                            |   usd: -0.18                  |   —                          |   —                  |   —                    |
+|                            |                               |                              |                      |                        |
 
 ## All operations
 
@@ -1527,21 +1527,21 @@ TKSBrokerAPI.py     L:1972 INFO    [2022-07-28 18:29:59,035] # Client's operatio
 
 ## Summary (operations executed only)
 
-| 1                          | 2                             | 3                            | 4                    | 5
-|----------------------------|-------------------------------|------------------------------|----------------------|------------------------
-| **Actions:**               | Operations executed: 15       | Trading volumes:             |                      |
-|                            |   Buy: 10 (66.7%)             |   rub, buy: -23138.58        |                      |
-|                            |   Sell: 5 (33.3%)             |   rub, sell: +9206.00        |                      |
-|                            |                               |   usd, buy: -594.24          |                      |
-|                            |                               |   usd, sell: +259.04         |                      |
-|                            |                               |                              |                      |
-| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:
-|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01
-|                            |                               |                              |                      |
-| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections:
-|                            |   rub: -69.23                 |   —                          |   —                  |   rub: -11.00
-|                            |   usd: -0.20                  |   —                          |   —                  |   —
-|                            |                               |                              |                      |
+| Report sections            |                               |                              |                      |                        |                   
+|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|
+| **Actions:**               | Operations executed: 15       | Trading volumes:             |                      |                        |
+|                            |   Buy: 10 (66.7%)             |   rub, buy: -23138.58        |                      |                        |
+|                            |   Sell: 5 (33.3%)             |   rub, sell: +9206.00        |                      |                        |
+|                            |                               |   usd, buy: -594.24          |                      |                        |
+|                            |                               |   usd, sell: +259.04         |                      |                        |
+|                            |                               |                              |                      |                        |
+| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |
+|                            |   rub: +14000.00              |   —                          |   —                  |   rub: +86.01          |
+|                            |                               |                              |                      |                        |
+| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |
+|                            |   rub: -69.23                 |   —                          |   —                  |   rub: -11.00          |
+|                            |   usd: -0.20                  |   —                          |   —                  |   —                    |
+|                            |                               |                              |                      |                        |
 
 ## All operations
 
