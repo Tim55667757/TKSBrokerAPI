@@ -2962,7 +2962,7 @@ class TinkoffBrokerServer:
             ))
 
         else:
-            uLogger.warning("Not `oK` status received! Market order not created. See full debug log or try again and open order later.")
+            uLogger.warning("Not `oK` status received! Market order not executed. See full debug log or try again and open order later.")
 
         if tp > 0:
             self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
@@ -3004,27 +3004,32 @@ class TinkoffBrokerServer:
         """
         return self.Trade(operation="Sell", lots=lots, tp=tp, sl=sl, expDate=expDate)
 
-    def CloseTrades(self, tickers: list, portfolio: dict = None) -> None:
+    def CloseTrades(self, instruments: list[str], portfolio: dict = None) -> None:
         """
         Close position of given instruments.
 
-        :param tickers: tickers list of instruments that must be closed.
+        :param instruments: list of instruments defined by tickers or FIGIs that must be closed.
         :param portfolio: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
-        if not tickers:
-            uLogger.info("Tickers list is empty, nothing to close.")
+        if instruments is None or not instruments:
+            uLogger.error("List of tickers or FIGIs must be defined for using this method!")
+            raise Exception("Ticker or FIGI required")
 
-        else:
+        if isinstance(instruments, str):
+            instruments = [instruments]
+
+        uniqueInstruments = self.GetUniqueFIGIs(instruments)
+        if uniqueInstruments:
             if portfolio is None or not portfolio:
                 portfolio = self.Overview(show=False)
 
-            allOpenedTickers = [item["ticker"] for iType in TKS_INSTRUMENTS for item in portfolio["stat"][iType]]
-            uLogger.debug("All opened instruments by it's tickers names: {}".format(allOpenedTickers))
+            allOpened = [item["figi"] for iType in TKS_INSTRUMENTS for item in portfolio["stat"][iType]]
+            uLogger.debug("All opened instruments by it's FIGI: {}".format(", ".join(allOpened)))
 
-            for ticker in tickers:
-                if ticker not in allOpenedTickers:
-                    uLogger.warning("Instrument with ticker [{}] not in open positions list!".format(ticker))
+            for self.figi in uniqueInstruments:
+                if self.figi not in allOpened:
+                    uLogger.warning("Instrument with FIGI [{}] not in open positions list!".format(self.figi))
                     continue
 
                 # search open trade info about instrument by ticker:
@@ -3034,12 +3039,12 @@ class TinkoffBrokerServer:
                         break
 
                     for item in portfolio["stat"][iType]:
-                        if item["ticker"] == ticker:
+                        if item["figi"] == self.figi:
                             instrument = item
                             break
 
                 if instrument:
-                    self.ticker = ticker
+                    self.ticker = instrument["ticker"]
                     self.figi = instrument["figi"]
 
                     uLogger.debug("Closing trade of instrument: ticker [{}], FIGI[{}], lots [{}]{}. Wait, please...".format(
@@ -4461,8 +4466,8 @@ def ParseArgs():
 
     parser.add_argument("--close-order", "--cancel-order", type=str, nargs=1, help="Action: close only one order by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`.")
     parser.add_argument("--close-orders", "--cancel-orders", type=str, nargs="+", help="Action: close one or list of orders by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`.")
-    parser.add_argument("--close-trade", "--cancel-trade", action="store_true", help="Action: close only one position for instrument defined by `--ticker` key, including for currencies tickers.")
-    parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers, including for currencies tickers.")
+    parser.add_argument("--close-trade", "--cancel-trade", action="store_true", help="Action: close only one position for instrument defined by `--ticker` (high priority) or `--figi` keys, including for currencies tickers.")
+    parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers or FIGIs, including for currencies tickers or FIGIs.")
     parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations.")
 
     parser.add_argument("--limits", "--withdrawal-limits", "-w", action="store_true", help="Action: show table of funds available for withdrawal for current `accountId`. You can change `accountId` with the key `--account-id`. Also, you can define `--output` key to save this information to file, default: `limits.md`.")
@@ -4799,11 +4804,15 @@ def Main(**kwargs):
                 server.CloseOrders(args.close_orders)  # close list of orders
 
             elif args.close_trade:
-                if not args.ticker:
-                    uLogger.error("`--ticker` key is required for this operation!")
-                    raise Exception("Ticker required")
+                if not (args.ticker or args.figi):
+                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    raise Exception("Ticker or FIGI required")
 
-                server.CloseTrades([args.ticker])  # close only one trade
+                if args.ticker:
+                    server.CloseTrades([args.ticker])  # close only one trade by ticker (priority)
+
+                else:
+                    server.CloseTrades([args.figi])  # close only one trade by FIGI
 
             elif args.close_trades is not None:
                 server.CloseTrades(args.close_trades)  # close trades for list of tickers
