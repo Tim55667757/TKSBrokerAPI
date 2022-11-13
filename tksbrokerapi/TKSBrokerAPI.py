@@ -2960,14 +2960,14 @@ class TinkoffBrokerServer:
                 NanoToFloat(response["executedOrderPrice"]["units"], response["executedOrderPrice"]["nano"]), response["executedOrderPrice"]["currency"],
             ))
 
+            if tp > 0:
+                self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
+
+            if sl > 0:
+                self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
+
         else:
             uLogger.warning("Not `oK` status received! Market order not executed. See full debug log or try again and open order later.")
-
-        if tp > 0:
-            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
-
-        if sl > 0:
-            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
 
         return response
 
@@ -4506,7 +4506,7 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("=-" * 60)
+    uLogger.debug("=-" * 50)
     uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime(TKS_PRINT_DATE_TIME_FORMAT),
         start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
@@ -4887,7 +4887,7 @@ def Main(**kwargs):
             finish.strftime(TKS_PRINT_DATE_TIME_FORMAT),
             finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
         ))
-        uLogger.debug("=-" * 60)
+        uLogger.debug("=-" * 50)
 
         if not kwargs:
             sys.exit(exitCode)
