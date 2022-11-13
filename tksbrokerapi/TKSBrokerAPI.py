@@ -1887,16 +1887,20 @@ class TinkoffBrokerServer:
         }
 
         # --- pending orders sector data:
-        uniquePendingOrders = []
-        uniquePendingOrdersFIGIs = []
-        for item in view["raw"]["orders"]:
-            if item["figi"] not in uniquePendingOrdersFIGIs:
-                uniquePendingOrdersFIGIs.append(item["figi"])
-                uniquePendingOrders.append(item)
+        uniquePendingOrdersFIGIs = []  # unique FIGIs of pending orders to avoid many times price requests
+        uniquePendingOrders = {}  # unique instruments with FIGIs as dictionary keys
 
-        for item in uniquePendingOrders:
+        for item in view["raw"]["orders"]:
             self.figi = item["figi"]
-            instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
+
+            if item["figi"] not in uniquePendingOrdersFIGIs:
+                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
+
+                uniquePendingOrdersFIGIs.append(item["figi"])
+                uniquePendingOrders[item["figi"]] = instrument
+
+            else:
+                instrument = uniquePendingOrders[item["figi"]]
 
             if instrument:
                 action = TKS_ORDER_DIRECTIONS[item["direction"]]
@@ -1935,16 +1939,20 @@ class TinkoffBrokerServer:
                 })
 
         # --- stop orders sector data:
-        uniqueStopOrders = []
-        uniqueStopOrdersFIGIs = []
-        for item in view["raw"]["stopOrders"]:
-            if item["figi"] not in uniqueStopOrdersFIGIs:
-                uniqueStopOrdersFIGIs.append(item["figi"])
-                uniqueStopOrders.append(item)
+        uniqueStopOrdersFIGIs = []  # unique FIGIs of stop orders to avoid many times price requests
+        uniqueStopOrders = {}  # unique instruments with FIGIs as dictionary keys
 
-        for item in uniqueStopOrders:
+        for item in view["raw"]["stopOrders"]:
             self.figi = item["figi"]
-            instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
+
+            if item["figi"] not in uniqueStopOrdersFIGIs:
+                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
+
+                uniqueStopOrdersFIGIs.append(item["figi"])
+                uniqueStopOrders[item["figi"]] = instrument
+
+            else:
+                instrument = uniqueStopOrders[item["figi"]]
 
             if instrument:
                 action = TKS_STOP_ORDER_DIRECTIONS[item["direction"]]
@@ -2046,8 +2054,10 @@ class TinkoffBrokerServer:
 
         # portfolio distribution by currencies:
         if "rub" not in view["analytics"]["distrByCurrencies"].keys():
-            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
             view["analytics"]["distrByCurrencies"]["rub"] = {"name": "Российский рубль", "cost": 0, "percent": 0}
+
+            if self.moreDebug:
+                uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
 
         view["analytics"]["distrByCurrencies"].update(byCurr)
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
@@ -2055,8 +2065,10 @@ class TinkoffBrokerServer:
 
         # portfolio distribution by countries:
         if "[RU] Российская Федерация" not in view["analytics"]["distrByCountries"].keys():
-            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
             view["analytics"]["distrByCountries"]["[RU] Российская Федерация"] = {"cost": 0, "percent": 0}
+
+            if self.moreDebug:
+                uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
 
         view["analytics"]["distrByCountries"].update(byCountry)
         view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
