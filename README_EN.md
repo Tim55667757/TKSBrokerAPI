@@ -312,9 +312,9 @@ There are three options for setting the user account ID:
 
 Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a Python script.
 
-❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
+❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--log-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
 
-Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called).
+Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called). The `--more` (`--more-debug`) key additionally includes debugging information in all methods and displays it in the logs, for example, network requests, responses and their headers.
 
 ### Command line
 
@@ -386,10 +386,14 @@ options:
                         add only last missing candles, do not request all
                         history length. `False` by default.
   --csv-sep CSV_SEP     Option: separator if csv-file is used, `,` by default.
-  --debug-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
+  --debug-level DEBUG_LEVEL, --log-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
                         Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING,
-                        40 = ERROR, 50 = CRITICAL. INFO (20) by default.
+                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
+                        ERROR, 50 = CRITICAL. INFO (20) by default.
+  --more, --more-debug  Option: `--debug-level` key only switch log level
+                        verbosity, but in addition `--more` key enable all
+                        debug information, such as net request and response
+                        headers in all methods.
   --version, --ver      Action: shows current semantic version, looks like
                         `major.minor.buildnumber`. If TKSBrokerAPI not installed
                         via pip, then used local build number `.dev0`.
@@ -589,7 +593,7 @@ Usually, share exchanges rarely experience critical changes in instruments durin
 
 The `--list` (`-l`) key is used. At the same time, information is requested from the broker's server on the instruments available for the current account. Additionally, you can use the `--output` key to specify the file where you want to save the received raw data as a table in human-readable Markdown format (by default, `instruments.md` in the current working directory). Data from the local `dump.json` cache is used to generate the `instruments.md` file.
 
-The `--debug-level=10` key (or `--verbosity 10`, `-v 10`) will output all debugging information to the console (not necessary to specify it).
+The `--debug-level=10` key (or `--log-level 10`, `--verbosity 10`, `-v 10`) will output all debugging information to the console (not necessary to specify it).
 
 Starting with TKSBrokerAPI v1.4.90, you can use the `--list-xlsx` (`-x`) key to save raw data for available instruments in XLSX-format suitable for further processing by data scientists or stock analysts. By default, data from the local `dump.json` cache is used, which is converted to XLSX-format and saved to the `dump.xlsx` file.
 
