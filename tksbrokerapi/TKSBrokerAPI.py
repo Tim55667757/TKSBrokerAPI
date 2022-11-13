@@ -296,6 +296,9 @@ class TinkoffBrokerServer:
         See also: `SendAPIRequest()`.
         """
 
+        self.moreDebug = False
+        """Enables more debug information in this class, such as net request and response headers in all methods. `False` by default."""
+
         self.historyFile = None
         """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only Pandas DataFrame.
 
@@ -429,8 +432,10 @@ class TinkoffBrokerServer:
                 else:
                     self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
 
-                    uLogger.debug("Local cache with raw instruments data is used: [{}]".format(os.path.abspath(self.iListDumpFile)))
-                    uLogger.debug("Dump file was last modified [{}] UTC".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
+                    uLogger.debug("Local cache with raw instruments data is used: [{}]. Last modified: [{}] UTC".format(
+                        os.path.abspath(self.iListDumpFile),
+                        dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT),
+                    ))
 
             else:
                 uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
@@ -446,29 +451,21 @@ class TinkoffBrokerServer:
         See also: `LoadHistory()`, `ShowHistoryChart()` and the PriceGenerator project: https://github.com/Tim55667757/PriceGenerator
         """
 
-    @staticmethod
-    def _ParseJSON(rawData="{}", debug: bool = False) -> dict:
+    def _ParseJSON(self, rawData="{}") -> dict:
         """
         Parse JSON from response string.
 
         :param rawData: this is a string with JSON-formatted text.
-        :param debug: if `True` then print more debug information.
         :return: JSON (dictionary), parsed from server response string.
         """
-        if debug:
-            uLogger.debug("Raw text body:")
-            uLogger.debug(rawData)
-
         responseJSON = json.loads(rawData) if rawData else {}
 
-        if debug:
-            uLogger.debug("JSON formatted:")
-            for jsonLine in json.dumps(responseJSON, indent=4).split('\n'):
-                uLogger.debug(jsonLine)
+        if self.moreDebug:
+            uLogger.debug("JSON formatted raw body data of response:\n{}".format(json.dumps(responseJSON, indent=4)))
 
         return responseJSON
 
-    def SendAPIRequest(self, url: str, reqType: str = "GET", retry: int = 3, pause: int = 5, debug: bool = False) -> dict:
+    def SendAPIRequest(self, url: str, reqType: str = "GET", retry: int = 3, pause: int = 5) -> dict:
         """
         Send GET or POST request to broker server and receive JSON object.
 
@@ -479,26 +476,25 @@ class TinkoffBrokerServer:
         :param reqType: send "GET" or "POST" request. "GET" by default.
         :param retry: how many times retry after first request if an 5xx server errors occurred.
         :param pause: sleep time in seconds between retries.
-        :param debug: if `True` then print more debug information, e.g. request and response parameters, headers etc.
         :return: response JSON (dictionary) from broker.
         """
         if reqType not in ("GET", "POST"):
             uLogger.error("You can define request type: 'GET' or 'POST'!")
             raise Exception("Incorrect value")
 
-        if debug:
+        if self.moreDebug:
             uLogger.debug("Request parameters:")
             uLogger.debug("    - REST API URL: {}".format(url))
             uLogger.debug("    - request type: {}".format(reqType))
-            uLogger.debug("    - headers: {}".format(str(self.headers).replace(self.token, "*** request token ***")))
-            uLogger.debug("    - body: {}".format(self.body))
+            uLogger.debug("    - headers:\n{}".format(str(self.headers).replace(self.token, "*** request token ***")))
+            uLogger.debug("    - body:\n{}".format(self.body))
 
         # fast hack to avoid all operations with some tickers/FIGI
         responseJSON = {}
         oK = True
         for item in self.exclude:
             if item in url:
-                if debug:
+                if self.moreDebug:
                     uLogger.warning("Do not execute operations with list of this tickers/FIGI: {}".format(str(self.exclude)))
 
                 oK = False
@@ -516,12 +512,12 @@ class TinkoffBrokerServer:
                 if reqType == "POST":
                     response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Response:")
                     uLogger.debug("    - status code: {}".format(response.status_code))
                     uLogger.debug("    - reason: {}".format(response.reason))
                     uLogger.debug("    - body length: {}".format(len(response.text)))
-                    uLogger.debug("    - headers: {}".format(response.headers))
+                    uLogger.debug("    - headers:\n{}".format(response.headers))
 
                 # Server returns some headers:
                 # - `x-ratelimit-limit` - shows the settings of the current user limit for this method.
@@ -548,7 +544,7 @@ class TinkoffBrokerServer:
                         uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, pause))
                         sleep(pause)
 
-            responseJSON = self._ParseJSON(response.text)
+            responseJSON = self._ParseJSON(rawData=response.text)
 
             if errMsg:
                 uLogger.error("Server returns not `oK` status! See: https://tinkoff.github.io/investAPI/errors/")
@@ -576,7 +572,7 @@ class TinkoffBrokerServer:
             # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
             instrumentURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/{}".format(iType)
-            result = self.SendAPIRequest(instrumentURL, reqType="POST", debug=False)["instruments"]
+            result = self.SendAPIRequest(instrumentURL, reqType="POST")["instruments"]
 
         return iType, result
 
@@ -933,18 +929,16 @@ class TinkoffBrokerServer:
 
         return infoText
 
-    def SearchByTicker(self, requestPrice: bool = False, show: bool = False, debug: bool = False) -> dict:
+    def SearchByTicker(self, requestPrice: bool = False, show: bool = False) -> dict:
         """
-        Search and return raw broker's information about instrument by its ticker.
-        `ticker` must be defined! If debug=True then print all debug messages.
+        Search and return raw broker's information about instrument by its ticker. Variable `ticker` must be defined!
 
         :param requestPrice: if `False` then do not request current price of instrument (because this is long operation).
         :param show: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
-        :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
         tickerJSON = {}
-        if debug:
+        if self.moreDebug:
             uLogger.debug("Searching information about instrument by it's ticker [{}] ...".format(self.ticker))
 
         if not self.ticker:
@@ -960,27 +954,27 @@ class TinkoffBrokerServer:
 
             if self.ticker in self.iList["Shares"].keys():
                 tickerJSON = self.iList["Shares"][self.ticker]
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Ticker [{}] found in shares list".format(self.ticker))
 
             elif self.ticker in self.iList["Currencies"].keys():
                 tickerJSON = self.iList["Currencies"][self.ticker]
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Ticker [{}] found in currencies list".format(self.ticker))
 
             elif self.ticker in self.iList["Bonds"].keys():
                 tickerJSON = self.iList["Bonds"][self.ticker]
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Ticker [{}] found in bonds list".format(self.ticker))
 
             elif self.ticker in self.iList["Etfs"].keys():
                 tickerJSON = self.iList["Etfs"][self.ticker]
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Ticker [{}] found in etfs list".format(self.ticker))
 
             elif self.ticker in self.iList["Futures"].keys():
                 tickerJSON = self.iList["Futures"][self.ticker]
-                if debug:
+                if self.moreDebug:
                     uLogger.debug("Ticker [{}] found in futures list".format(self.ticker))
 
         if tickerJSON:
@@ -1004,18 +998,16 @@ class TinkoffBrokerServer:
 
         return tickerJSON
 
-    def SearchByFIGI(self, requestPrice: bool = False, show: bool = False, debug: bool = False) -> dict:
+    def SearchByFIGI(self, requestPrice: bool = False, show: bool = False) -> dict:
         """
-        Search and return raw broker's information about instrument by its FIGI.
-        `figi` must be defined! If debug=True then print all debug messages.
+        Search and return raw broker's information about instrument by its FIGI. Variable `figi` must be defined!
 
         :param requestPrice: if `False` then do not request current price of instrument (it's long operation).
         :param show: if `False` then do not run `ShowInstrumentInfo()` method and do not print info to the console.
-        :param debug: if `True` then print all debug console messages.
         :return: JSON formatted data with information about instrument.
         """
         figiJSON = {}
-        if debug:
+        if self.moreDebug:
             uLogger.debug("Searching information about instrument by it's FIGI [{}] ...".format(self.figi))
 
         if not self.figi:
@@ -1033,7 +1025,7 @@ class TinkoffBrokerServer:
                 if self.figi == self.iList["Shares"][item]["figi"]:
                     figiJSON = self.iList["Shares"][item]
 
-                    if debug:
+                    if self.moreDebug:
                         uLogger.debug("FIGI [{}] found in shares list".format(self.figi))
 
                     break
@@ -1043,7 +1035,7 @@ class TinkoffBrokerServer:
                     if self.figi == self.iList["Currencies"][item]["figi"]:
                         figiJSON = self.iList["Currencies"][item]
 
-                        if debug:
+                        if self.moreDebug:
                             uLogger.debug("FIGI [{}] found in currencies list".format(self.figi))
 
                         break
@@ -1053,7 +1045,7 @@ class TinkoffBrokerServer:
                     if self.figi == self.iList["Bonds"][item]["figi"]:
                         figiJSON = self.iList["Bonds"][item]
 
-                        if debug:
+                        if self.moreDebug:
                             uLogger.debug("FIGI [{}] found in bonds list".format(self.figi))
 
                         break
@@ -1063,7 +1055,7 @@ class TinkoffBrokerServer:
                     if self.figi == self.iList["Etfs"][item]["figi"]:
                         figiJSON = self.iList["Etfs"][item]
 
-                        if debug:
+                        if self.moreDebug:
                             uLogger.debug("FIGI [{}] found in etfs list".format(self.figi))
 
                         break
@@ -1073,7 +1065,7 @@ class TinkoffBrokerServer:
                     if self.figi == self.iList["Futures"][item]["figi"]:
                         figiJSON = self.iList["Futures"][item]
 
-                        if debug:
+                        if self.moreDebug:
                             uLogger.debug("FIGI [{}] found in futures list".format(self.figi))
 
                         break
@@ -1511,7 +1503,8 @@ class TinkoffBrokerServer:
         tradingStatusURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus"
         tradingStatus = self.SendAPIRequest(tradingStatusURL, reqType="POST")
 
-        uLogger.debug("Records about current trading status successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about current trading status successfully received")
 
         return tradingStatus
 
@@ -1533,7 +1526,8 @@ class TinkoffBrokerServer:
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPortfolio"
         rawPortfolio = self.SendAPIRequest(portfolioURL, reqType="POST")
 
-        uLogger.debug("Records about user's portfolio successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about user's portfolio successfully received")
 
         return rawPortfolio
 
@@ -1555,7 +1549,8 @@ class TinkoffBrokerServer:
         positionsURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPositions"
         rawPositions = self.SendAPIRequest(positionsURL, reqType="POST")
 
-        uLogger.debug("Records about current open positions successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about current open positions successfully received")
 
         return rawPositions
 
@@ -2371,7 +2366,7 @@ class TinkoffBrokerServer:
 
         return view
 
-    def Deals(self, start: str = None, end: str = None, show: bool = False, showCancelled: bool = True) -> tuple:
+    def Deals(self, start: str = None, end: str = None, show: bool = False, showCancelled: bool = True) -> tuple[list[dict], dict]:
         """
         Returns history operations between two given dates for current `accountId`.
         If `reportFile` string is not empty then also save human-readable report.
@@ -2616,6 +2611,9 @@ class TinkoffBrokerServer:
             infoText = "".join(info)
 
             if show:
+                if self.moreDebug:
+                    uLogger.debug("Records about history of a client's operations successfully received")
+
                 uLogger.info(infoText)
 
             if self.reportFile:
@@ -2663,11 +2661,11 @@ class TinkoffBrokerServer:
             raise Exception("Ticker or FIGI required")
 
         if self.ticker and not self.figi:
-            instrumentByTicker = self.SearchByTicker(requestPrice=False, debug=False)
+            instrumentByTicker = self.SearchByTicker(requestPrice=False)
             self.figi = instrumentByTicker["figi"] if instrumentByTicker else ""
 
         if self.figi and not self.ticker:
-            instrumentByFIGI = self.SearchByFIGI(requestPrice=False, debug=False)
+            instrumentByFIGI = self.SearchByFIGI(requestPrice=False)
             self.ticker = instrumentByFIGI["ticker"] if instrumentByFIGI else ""
 
         dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
@@ -2738,7 +2736,7 @@ class TinkoffBrokerServer:
                     "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
                     "interval": TKS_CANDLE_INTERVALS[interval][0]
                 })
-                responseJSON = self.SendAPIRequest(historyURL, reqType="POST", retry=1, pause=1, debug=False)
+                responseJSON = self.SendAPIRequest(historyURL, reqType="POST", retry=1, pause=1)
 
                 if "code" in responseJSON.keys():
                     uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
@@ -2936,7 +2934,7 @@ class TinkoffBrokerServer:
             uLogger.error("Ticker or FIGI must be defined!")
             raise Exception("Ticker or FIGI required")
 
-        instrument = self.SearchByTicker(requestPrice=True, debug=False) if self.ticker else self.SearchByFIGI(requestPrice=True, debug=False)
+        instrument = self.SearchByTicker(requestPrice=True) if self.ticker else self.SearchByFIGI(requestPrice=True)
         self.ticker = instrument["ticker"]
         self.figi = instrument["figi"]
 
@@ -2950,7 +2948,7 @@ class TinkoffBrokerServer:
             "accountId": str(self.accountId),
             "orderType": "ORDER_TYPE_MARKET",  # see: TKS_ORDER_TYPES
         })
-        response = self.SendAPIRequest(openTradeURL, reqType="POST", retry=0, debug=False)
+        response = self.SendAPIRequest(openTradeURL, reqType="POST", retry=0)
 
         if "orderId" in response.keys():
             uLogger.info("[{}] market order [{}] was executed: ticker [{}], FIGI [{}], lots [{}]. Total order price: [{:.4f} {}] (with commission: [{:.2f} {}]). Average price of lot: [{:.2f} {}]".format(
@@ -3160,7 +3158,7 @@ class TinkoffBrokerServer:
             raise Exception("Ticker or FIGI required")
 
         response = {}
-        instrument = self.SearchByTicker(requestPrice=True, debug=False) if self.ticker else self.SearchByFIGI(requestPrice=True, debug=False)
+        instrument = self.SearchByTicker(requestPrice=True) if self.ticker else self.SearchByFIGI(requestPrice=True)
         self.ticker = instrument["ticker"]
         self.figi = instrument["figi"]
 
@@ -3180,7 +3178,7 @@ class TinkoffBrokerServer:
                 "accountId": str(self.accountId),
                 "orderType": "ORDER_TYPE_LIMIT",  # see: TKS_ORDER_TYPES
             })
-            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0, debug=False)
+            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0)
 
             if "orderId" in response.keys():
                 uLogger.info(
@@ -3235,7 +3233,7 @@ class TinkoffBrokerServer:
                 body["expireDate"] = expDateUTC
 
             self.body = str(body)
-            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0, debug=False)
+            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0)
 
             if "stopOrderId" in response.keys():
                 uLogger.info(
@@ -3373,7 +3371,9 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
+                            if self.moreDebug:
+                                uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
+
                             uLogger.info("Pending order with ID [{}] successfully cancel".format(orderID))
 
                         else:
@@ -3388,7 +3388,9 @@ class TinkoffBrokerServer:
                         responseJSON = self.SendAPIRequest(closeURL, reqType="POST")
 
                         if responseJSON and "time" in responseJSON.keys() and responseJSON["time"]:
-                            uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
+                            if self.moreDebug:
+                                uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
+
                             uLogger.info("Stop order with ID [{}] successfully cancel".format(orderID))
 
                         else:
@@ -3603,7 +3605,8 @@ class TinkoffBrokerServer:
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits"
         rawLimits = self.SendAPIRequest(portfolioURL, reqType="POST")
 
-        uLogger.debug("Records about available funds for withdrawal successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about available funds for withdrawal successfully received")
 
         return rawLimits
 
@@ -3706,7 +3709,8 @@ class TinkoffBrokerServer:
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts"
         rawAccounts = self.SendAPIRequest(portfolioURL, reqType="POST")
 
-        uLogger.debug("Records about available accounts successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about available accounts successfully received")
 
         return rawAccounts
 
@@ -3730,7 +3734,8 @@ class TinkoffBrokerServer:
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetInfo"
         rawUserInfo = self.SendAPIRequest(portfolioURL, reqType="POST")
 
-        uLogger.debug("Records about current user successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records about current user successfully received")
 
         return rawUserInfo
 
@@ -3772,7 +3777,8 @@ class TinkoffBrokerServer:
             rawMargin = {}
 
         else:
-            uLogger.debug("Records with margin calculation for accountId [{}] successfully received".format(accountId))
+            if self.moreDebug:
+                uLogger.debug("Records with margin calculation for accountId [{}] successfully received".format(accountId))
 
         return rawMargin
 
@@ -3797,7 +3803,8 @@ class TinkoffBrokerServer:
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetUserTariff"
         rawTariffLimits = self.SendAPIRequest(portfolioURL, reqType="POST")
 
-        uLogger.debug("Records with limits of current tariff successfully received")
+        if self.moreDebug:
+            uLogger.debug("Records with limits of current tariff successfully received")
 
         return rawTariffLimits
 
@@ -3839,13 +3846,14 @@ class TinkoffBrokerServer:
 
         self.body = str({"figi": iJSON["figi"], "from": startDate, "to": endDate})
         calendarURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons"
-        calendar = self.SendAPIRequest(calendarURL, reqType="POST", debug=False)
+        calendar = self.SendAPIRequest(calendarURL, reqType="POST")
 
         if calendar == {"code": 3, "message": "instrument type is not bond", "description": "30048"}:
             uLogger.warning("Instrument type is not bond!")
 
         else:
-            uLogger.debug("Records about bond payment calendar successfully received")
+            if self.moreDebug:
+                uLogger.debug("Records about bond payment calendar successfully received")
 
         return calendar
 
@@ -4426,7 +4434,8 @@ def ParseArgs():
     parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. `False` by default.")
     parser.add_argument("--csv-sep", type=str, default=",", help="Option: separator if csv-file is used, `,` by default.")
 
-    parser.add_argument("--debug-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
+    parser.add_argument("--debug-level", "--log-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
+    parser.add_argument("--more", "--more-debug", action="store_true", default=False, help="Option: `--debug-level` key only switch log level verbosity, but in addition `--more` key enable all debug information, such as net request and response headers in all methods.")
 
     # --- commands:
 
@@ -4494,6 +4503,7 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
+    uLogger.debug("=-" * 60)
     uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime(TKS_PRINT_DATE_TIME_FORMAT),
         start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
@@ -4526,6 +4536,10 @@ def Main(**kwargs):
 
             # --- set some options:
 
+            if args.more:
+                server.moreDebug = True
+                uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
+
             if args.ticker:
                 if args.ticker in server.aliasesKeys:
                     server.ticker = server.aliases[args.ticker]  # Replace some tickers with its aliases
@@ -4539,7 +4553,7 @@ def Main(**kwargs):
             if args.depth is not None:
                 server.depth = args.depth
 
-            # --- do one of commands:
+            # --- do one command:
 
             if args.list:
                 if args.output is not None:
@@ -4575,10 +4589,10 @@ def Main(**kwargs):
                     server.infoFile = args.output
 
                 if args.ticker:
-                    server.SearchByTicker(requestPrice=True, show=True, debug=False)  # show info and current prices by ticker name
+                    server.SearchByTicker(requestPrice=True, show=True)  # show info and current prices by ticker name
 
                 else:
-                    server.SearchByFIGI(requestPrice=True, show=True, debug=False)  # show info and current prices by FIGI id
+                    server.SearchByFIGI(requestPrice=True, show=True)  # show info and current prices by FIGI id
 
             elif args.calendar is not None:
                 if args.output is not None:
@@ -4857,7 +4871,8 @@ def Main(**kwargs):
         finish = datetime.now(tzutc())
 
         if exitCode == 0:
-            uLogger.debug("All operations were finished success (summary code is 0).")
+            if args.more:
+                uLogger.debug("All operations were finished success (summary code is 0).")
 
         else:
             uLogger.error("An issue occurred with TKSBrokerAPI module! See full debug log in [{}] or run TKSBrokerAPI once again with the key `--debug-level 10`. Summary code: {}".format(
@@ -4869,6 +4884,7 @@ def Main(**kwargs):
             finish.strftime(TKS_PRINT_DATE_TIME_FORMAT),
             finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
         ))
+        uLogger.debug("=-" * 60)
 
         if not kwargs:
             sys.exit(exitCode)
