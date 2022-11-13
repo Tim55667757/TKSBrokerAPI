@@ -1,14 +1,14 @@
 # All available instruments from Tinkoff Broker server for current user token
 
-* **Actual on date:** [2022-09-07 10:16 UTC]
-* **Currencies:** [17]
-* **Shares:** [1947]
-* **Bonds:** [660]
-* **Etfs:** [91]
-* **Futures:** [366]
+* **Actual on date:** [2022-11-13 15:00 UTC]
+* **Currencies:** [16]
+* **Shares:** [2014]
+* **Bonds:** [642]
+* **Etfs:** [199]
+* **Futures:** [450]
 
 
-## Currencies available. Total: [17]
+## Currencies available. Total: [16]
 
 | Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |
 |--------------|-----------------------------------------------------------|--------------|-----|---------|------------|
@@ -22,7 +22,6 @@
 | CNYRUB_TOM   | Юань                                                      | BBG0013HRTL0 | rub | 1000    | 0.001      |
 | BYNRUB_TOM   | Белорусский рубль                                         | BBG00D87WQY7 | rub | 1000    | 0.0025     |
 | EUR_RUB__TOM | Евро                                                      | BBG0013HJJ31 | rub | 1000    | 0.0025     |
-| GBPRUB_TOM   | Фунт стерлингов                                           | BBG0013HQ5F0 | rub | 1000    | 0.0025     |
 | HKDRUB_TOM   | Гонконгский доллар                                        | BBG0013HSW87 | rub | 1000    | 0.0001     |
 | GLDRUB_TOM   | Золото                                                    | BBG000VJ5YR4 | rub | 1       | 0.01       |
 | TRYRUB_TOM   | Турецкая лира                                             | BBG0013J12N1 | rub | 1000    | 0.0001     |
@@ -31,7 +30,7 @@
 | AEDRUB_TOM   | Дирхам ОАЭ                                                | BBG0013HJ924 | rub | 1000    | 0.0025     |
 
 
-## Shares available. Total: [1947]
+## Shares available. Total: [2014]
 
 | Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |
 |--------------|-----------------------------------------------------------|--------------|-----|---------|------------|
@@ -40,17 +39,19 @@
 | CNX          | CNX Resources Corporation                                 | BBG000CKVSG8 | usd | 1       | 0.01       |
 | SLM          | SLM Corp                                                  | BBG000BBCQD7 | usd | 1       | 0.01       |
 | SWX          | Southwest Gas Holdings                                    | BBG00FWP4JW4 | usd | 1       | 0.01       |
+| SLDB         | Solid Biosciences                                         | BBG00JN4FXG8 | usd | 1       | 0.01       |
 | ACLS         | Axcelis Technologies                                      | BBG000DW34S2 | usd | 1       | 0.01       |
 | LPL          | LG Display                                                | BBG000FJ0RK9 | usd | 1       | 0.01       |
+| AMPH         | Amphastar Pharmaceuticals                                 | BBG000BW90S6 | usd | 1       | 0.01       |
 | CAG          | Conagra Brands                                            | BBG000BDXGP9 | usd | 1       | 0.01       |
 | DSKY         | Детский Мир                                               | BBG000BN56Q9 | rub | 10      | 0.02       |
 | WW           | WW International, Inc.                                    | BBG000DY6735 | usd | 1       | 0.01       |
 | MLKN         | MillerKnoll                                               | BBG000BP46T2 | usd | 1       | 0.01       |
+| RELY         | Remitly Global                                            | BBG012C7JST2 | usd | 1       | 0.01       |
 | BAS@DE       | BASF SE                                                   | BBG000BBVVK7 | eur | 1       | 0.01       |
 | MDT          | Medtronic                                                 | BBG000BNWG87 | usd | 1       | 0.01       |
 | AJG          | Arthur J. Gallagher & Co                                  | BBG000BBHXQ3 | usd | 1       | 0.01       |
 | RIO          | Rio Tinto                                                 | BBG000FD28T3 | usd | 1       | 0.01       |
-| JOBS         | 51job                                                     | BBG000BJD1D4 | usd | 1       | 0.01       |
 | GWRE         | Guidewire Software Inc                                    | BBG001C7PM75 | usd | 1       | 0.01       |
 | MAR          | Marriott International                                    | BBG000BGD7W6 | usd | 1       | 0.01       |
 | ENPG         | En+ Group                                                 | BBG000RMWQD4 | rub | 1       | 0.5        |
@@ -64,10 +65,12 @@
 | THS          | TreeHouse Foods Inc                                       | BBG000GQGJT4 | usd | 1       | 0.01       |
 | HUBB         | Hubbell                                                   | BBG000BLK267 | usd | 1       | 0.01       |
 | NWSA         | News Corp (A)                                             | BBG0035LY913 | usd | 1       | 0.01       |
+| ALEC         | Alector                                                   | BBG00N0PL198 | usd | 1       | 0.01       |
 | AVIR         | Atea Pharmaceuticals                                      | BBG00TZNCJ75 | usd | 1       | 0.01       |
 | APH          | Amphenol                                                  | BBG000B9YJ35 | usd | 1       | 0.01       |
 | NKNCP        | Нижнекамскнефтехим - акции привилегированные              | BBG000GQSVC2 | rub | 10      | 0.02       |
 | AVT          | Avnet                                                     | BBG000BCPB71 | usd | 1       | 0.01       |
+| KDNY         | Chinook Therapeutics                                      | BBG000DW9ZK5 | usd | 1       | 0.01       |
 | DPZ          | Domino's Pizza Inc                                        | BBG000P458P3 | usd | 1       | 0.01       |
 | ZIM          | ZIM Integrated Shipping Services                          | BBG00YQ7XR05 | usd | 1       | 0.01       |
 | GTN          | Gray Television Inc                                       | BBG000DSQLQ0 | usd | 1       | 0.01       |
@@ -76,13 +79,11 @@
 | R            | Ryder System                                              | BBG000BRVP70 | usd | 1       | 0.01       |
 | IP           | International Paper                                       | BBG000BM5SR2 | usd | 1       | 0.01       |
 | KEX          | Kirby Corp                                                | BBG000BMQCP6 | usd | 1       | 0.01       |
-| ACH          | Aluminum Corp of China                                    | BBG000CMRVH1 | usd | 1       | 0.01       |
 | EPC          | Edgewell Personal Care Co                                 | BBG000BRW644 | usd | 1       | 0.01       |
 | COUP         | Coupa Software Inc                                        | BBG001J4BCN4 | usd | 1       | 0.01       |
 | GILD         | GILEAD                                                    | BBG000CKGBP2 | usd | 1       | 0.01       |
 | WGO          | Winnebago Industries Inc                                  | BBG000BWS3F3 | usd | 1       | 0.01       |
 | BCRX         | BioCryst Pharmaceuticals                                  | BBG000BLYWX6 | usd | 1       | 0.01       |
-| SLDB         | Solid Biosciences                                         | BBG00JN4FXG8 | usd | 1       | 0.01       |
 | MLAB         | Mesa Laboratories Inc                                     | BBG000BP3PW7 | usd | 1       | 0.01       |
 | WCN          | Waste Connections                                         | BBG000FLHZZ2 | usd | 1       | 0.01       |
 | AMAT         | Applied Materials                                         | BBG000BBPFB9 | usd | 1       | 0.01       |
@@ -90,6 +91,7 @@
 | HLT          | Hilton                                                    | BBG0058KMH30 | usd | 1       | 0.01       |
 | SNA          | Snap-on                                                   | BBG000BT7JW9 | usd | 1       | 0.01       |
 | VNT          | Vontier Corporation                                       | BBG00RRGSJR4 | usd | 1       | 0.01       |
+| ETD          | Ethan Allen Interiors Inc                                 | BBG000BBVDT8 | usd | 1       | 0.01       |
 | OGN          | Organon & Co.                                             | BBG00ZQRGW24 | usd | 1       | 0.01       |
 | BMY          | Bristol-Myers Squibb                                      | BBG000DQLV23 | usd | 1       | 0.01       |
 | AVTR         | Avantor Inc                                               | BBG00G2HHYD7 | usd | 1       | 0.01       |
@@ -100,6 +102,7 @@
 | RSTIP        | Российские сети - акции привилегированные                 | BBG000KTF667 | rub | 1000    | 0.001      |
 | BR           | Broadridge Financial Solutions                            | BBG000PPFKQ7 | usd | 1       | 0.01       |
 | ON           | ON Semiconductor Corp                                     | BBG000DV7MX4 | usd | 1       | 0.01       |
+| TVTX         | Travere Therapeutics                                      | BBG000P9D6W9 | usd | 1       | 0.01       |
 | NET          | CloudFlare Inc                                            | BBG001WMKHH5 | usd | 1       | 0.01       |
 | CTVA         | Corteva Inc                                               | BBG00BN969C1 | usd | 1       | 0.01       |
 | TGTX         | TG Therapeutics                                           | BBG000FVZQY1 | usd | 1       | 0.01       |
@@ -117,17 +120,16 @@
 | PNC          | PNC Financial Services                                    | BBG000BRD0D8 | usd | 1       | 0.01       |
 | DOW          | Dow Inc                                                   | BBG00BN96922 | usd | 1       | 0.01       |
 | MUV2@DE      | Muenchener Rueckversicherungs-Gesellschaft AG             | BBG000BD9FD1 | eur | 1       | 0.01       |
-| ZGNX         | Zogenix Inc                                               | BBG000VDC3G9 | usd | 1       | 0.01       |
 | VXRT         | Vaxart Inc                                                | BBG000DR0RZ7 | usd | 1       | 0.01       |
 | LCII         | LCI Industries                                            | BBG000DNLMB0 | usd | 1       | 0.01       |
 | HAIN         | Hain Celestial Group Inc                                  | BBG000BQW085 | usd | 1       | 0.01       |
 | IRM          | Iron Mountain REIT                                        | BBG000KCZPC3 | usd | 1       | 0.01       |
+| 338          | Sinopec Shanghai Petrochemical                            | BBG000BCHHM0 | hkd | 1000    | 0.01       |
 | FBHS         | Fortune Brands Home & Security                            | BBG001B4BV87 | usd | 1       | 0.01       |
 | FATE         | Fate Therapeutics Inc                                     | BBG000QP35H2 | usd | 1       | 0.01       |
 | SLQT         | SelectQuote                                               | BBG000GTP1B6 | usd | 1       | 0.01       |
 | F            | Ford                                                      | BBG000BQPC32 | usd | 1       | 0.01       |
 | SYNH         | Syneos Health Inc                                         | BBG0078Y1D92 | usd | 1       | 0.01       |
-| CCXI         | ChemoCentryx, Inc                                         | BBG000PTSB12 | usd | 1       | 0.01       |
 | ABM          | ABM Industries                                            | BBG000B9YYH7 | usd | 1       | 0.01       |
 | WSO          | Watsco Inc                                                | BBG000DJN7L9 | usd | 1       | 0.01       |
 | HUM          | Humana                                                    | BBG000BLKK03 | usd | 1       | 0.01       |
@@ -136,7 +138,6 @@
 | CENTA        | Central Garden & Pet Co                                   | BBG000KTYB56 | usd | 1       | 0.01       |
 | CVM          | CEL SCI Corporation                                       | BBG000H5G6L5 | usd | 1       | 0.01       |
 | EW           | Edwards Lifesciences                                      | BBG000BRXP69 | usd | 1       | 0.01       |
-| SSA@GS       | Sistema PJSFC                                             | BBG000G7B4C2 | usd | 1       | 0.01       |
 | IGMS         | IGM Biosciences Inc                                       | BBG00PNR1BT2 | usd | 1       | 0.01       |
 | SNY          | Sanofi                                                    | BBG000BBD5N1 | usd | 1       | 0.01       |
 | FLGT         | Fulgent Genetics                                          | BBG00DR7LTG2 | usd | 1       | 0.01       |
@@ -146,6 +147,7 @@
 | AORT         | Artivion                                                  | BBG000BMLVJ6 | usd | 1       | 0.01       |
 | IRKT         | Корпорация ИРКУТ                                          | BBG000FWGSZ5 | rub | 100     | 0.02       |
 | OVV          | Ovintiv Inc.                                              | BBG00R2NHQ65 | usd | 1       | 0.01       |
+| VAL          | Valaris Limited                                           | BBG010JW9K49 | usd | 1       | 0.01       |
 | BJ           | BJs Wholesale Club Holdings, Inc.                         | BBG00FQ8T4G3 | usd | 1       | 0.01       |
 | IRBT         | iRobot Corp                                               | BBG000HXJB21 | usd | 1       | 0.01       |
 | VMC          | Vulcan Materials                                          | BBG000BWGYF8 | usd | 1       | 0.01       |
@@ -154,7 +156,6 @@
 | SMG          | Scotts Miracle-Gro Co The                                 | BBG000BT5PG5 | usd | 1       | 0.01       |
 | ALE          | ALLETE, Inc.                                              | BBG000CYW7N5 | usd | 1       | 0.01       |
 | BAH          | Booz Allen Hamilton                                       | BBG000R2YFG7 | usd | 1       | 0.01       |
-| COHR         | Coherent Inc                                              | BBG000BG1DH3 | usd | 1       | 0.01       |
 | WMT          | Wal-Mart Stores                                           | BBG000BWXBC2 | usd | 1       | 0.01       |
 | TSN          | Tyson Foods                                               | BBG000DKCC19 | usd | 1       | 0.01       |
 | RXRX         | Recursion Pharmaceuticals, Inc.                           | BBG00PQ4XJ45 | usd | 1       | 0.01       |
@@ -169,14 +170,12 @@
 | GLW          | Corning                                                   | BBG000BKFZM4 | usd | 1       | 0.01       |
 | WLK          | Westlake Corporation                                      | BBG000PXZFW2 | usd | 1       | 0.01       |
 | HEAR         | Turtle Beach Corp                                         | BBG000BM6N47 | usd | 1       | 0.01       |
-| PLAN         | Anaplan Inc                                               | BBG002DZS299 | usd | 1       | 0.01       |
 | QRTEA        | Qurate Retail Inc                                         | BBG000PCQQL6 | usd | 1       | 0.01       |
 | CAT          | Caterpillar                                               | BBG000BF0K17 | usd | 1       | 0.01       |
 | NEM          | Newmont Goldcorp Corporation                              | BBG000BPWXK1 | usd | 1       | 0.01       |
 | MIDD         | Middleby Corp The                                         | BBG000DQN9R3 | usd | 1       | 0.01       |
 | YUMC         | Yum China Holdings                                        | BBG00B8N0HG1 | usd | 1       | 0.01       |
 | LYFT         | Lyft Inc                                                  | BBG004M9ZHX5 | usd | 1       | 0.01       |
-| NLOK         | NortonLifeLock Inc                                        | BBG000BH2JM1 | usd | 1       | 0.01       |
 | EGRX         | Eagle Pharmaceuticals Inc                                 | BBG005Y3XWH9 | usd | 1       | 0.01       |
 | VSMO         | ВСМПО-АВИСМА                                              | BBG004S68CV8 | rub | 1       | 20         |
 | CERE         | Cerevel Therapeutics Holdings                             | BBG00VCYVLH4 | usd | 1       | 0.01       |
@@ -186,7 +185,6 @@
 | WK           | Workiva Inc                                               | BBG007BVZ8H9 | usd | 1       | 0.01       |
 | GDEV         | Nexters Inc                                               | BBG00Z5KBW72 | usd | 1       | 0.01       |
 | STWD         | Starwood Property Trust REIT                              | BBG000M1J270 | usd | 1       | 0.01       |
-| SHI          | Sinopec Shanghai Petrochemical                            | BBG000BHR1H9 | usd | 1       | 0.01       |
 | SPR          | Spirit AeroSystems Holdings                               | BBG000PRJ2Z9 | usd | 1       | 0.01       |
 | BUD          | Anheuser-Busch InBev                                      | BBG000RYC984 | usd | 1       | 0.01       |
 | FRME         | First Merchants Corporation                               | BBG000BBSJ28 | usd | 1       | 0.01       |
@@ -207,6 +205,7 @@
 | WTFC         | Wintrust Financial                                        | BBG000HD3DW5 | usd | 1       | 0.01       |
 | PLXS         | Plexus Corp                                               | BBG000BRBX66 | usd | 1       | 0.01       |
 | APPF         | Appfolio Inc                                              | BBG008GC8CP6 | usd | 1       | 0.01       |
+| BLDP         | Ballard Power Systems                                     | BBG000BNJRZ8 | usd | 1       | 0.01       |
 | TT           | Trane Technologies                                        | BBG000BM6788 | usd | 1       | 0.01       |
 | ILMN         | Illumina                                                  | BBG000DSMS70 | usd | 1       | 0.01       |
 | NXST         | Nexstar Media Group Inc                                   | BBG000DZJVH0 | usd | 1       | 0.01       |
@@ -215,7 +214,7 @@
 | COLD         | Americold Realty Trust REIT                               | BBG000QF05R6 | usd | 1       | 0.01       |
 | UPS          | United Parcel Service                                     | BBG000L9CV04 | usd | 1       | 0.01       |
 | MBUU         | Malibu Boats Inc                                          | BBG005PXTR70 | usd | 1       | 0.01       |
-| CDK          | CDK Global                                                | BBG006B6PVN9 | usd | 1       | 0.01       |
+| ARI          | Apollo Commercial Real Estate                             | BBG000NFPF36 | usd | 1       | 0.01       |
 | ZBH          | Zimmer Biomet Holdings                                    | BBG000BKPL53 | usd | 1       | 0.01       |
 | XP           | XP Inc                                                    | BBG00QVJYGM9 | usd | 1       | 0.01       |
 | BDC          | Belden Inc                                                | BBG000Q4XNV1 | usd | 1       | 0.01       |
@@ -258,18 +257,20 @@
 | BGS          | B&G Foods Inc                                             | BBG000RKXRQ1 | usd | 1       | 0.01       |
 | XM           | Qualtrics International Inc.                              | BBG00M9BHPZ5 | usd | 1       | 0.01       |
 | PRGS         | Progress Software Corp                                    | BBG000C4QP94 | usd | 1       | 0.01       |
+| CLBK         | Columbia Financial                                        | BBG003222R31 | usd | 1       | 0.01       |
 | DLTR         | Dollar Tree                                               | BBG000BSC0K9 | usd | 1       | 0.01       |
 | WCC          | WESCO International Inc                                   | BBG000D0FNV3 | usd | 1       | 0.01       |
 | GTX          | Garrett Motion Inc                                        | BBG00HY28P97 | usd | 1       | 0.01       |
 | PFGC         | Performance Food Group Co                                 | BBG009XW2WB8 | usd | 1       | 0.01       |
-| CHGG         | Chegg Inc                                                 | BBG0014XR0N5 | usd | 1       | 0.01       |
 | COF          | Capital One                                               | BBG000BGKTF9 | usd | 1       | 0.01       |
+| CHGG         | Chegg Inc                                                 | BBG0014XR0N5 | usd | 1       | 0.01       |
 | KIDS         | OrthoPediatrics Corp                                      | BBG00HFFRW39 | usd | 1       | 0.01       |
 | LOW          | Lowe's                                                    | BBG000BNDN65 | usd | 1       | 0.01       |
 | AMP          | Ameriprise Financial                                      | BBG000G3QLY3 | usd | 1       | 0.01       |
 | MGNT         | Магнит                                                    | BBG004RVFCY3 | rub | 1       | 0.5        |
 | SVAV         | СОЛЛЕРС                                                   | BBG004S68JR8 | rub | 10      | 0.5        |
 | AZO          | AutoZone                                                  | BBG000C7LMS8 | usd | 1       | 0.01       |
+| SUMO         | Sumo Logic, Inc.                                          | BBG002GKBNW5 | usd | 1       | 0.01       |
 | KSPI@GS      | ГДР Kaspi.kz JSC                                          | BBG00XV2T033 | usd | 1       | 0.01       |
 | PRG          | PROG Holdings                                             | BBG00VSH86G4 | usd | 1       | 0.01       |
 | ABR          | Arbor Realty Trust REIT                                   | BBG000KMVDV1 | usd | 1       | 0.01       |
@@ -279,24 +280,25 @@
 | PPG          | PPG Industries                                            | BBG000BRJ809 | usd | 1       | 0.01       |
 | MKSI         | MKS Instruments                                           | BBG000BVMG26 | usd | 1       | 0.01       |
 | SCHW         | The Charles Schwab Corporation                            | BBG000BSLZY7 | usd | 1       | 0.01       |
+| 175          | Geely Automobile Holdings                                 | BBG000BZ3PX4 | hkd | 100     | 0.02       |
 | WYNN         | Wynn Resorts                                              | BBG000LD9JQ8 | usd | 1       | 0.01       |
 | RDN          | Radian Group                                              | BBG000BMWV95 | usd | 1       | 0.01       |
 | MCO          | Moody's                                                   | BBG000F86GP6 | usd | 1       | 0.01       |
 | CNXC         | Concentrix Corporation                                    | BBG00RCNQMX3 | usd | 1       | 0.01       |
 | FTCH         | Farfetch Ltd                                              | BBG00LSD4456 | usd | 1       | 0.01       |
-| BC           | Brunswick Corp DE                                         | BBG000BCWSS3 | usd | 1       | 0.01       |
 | SPGI         | S&P Global                                                | BBG000BP1Q11 | usd | 1       | 0.01       |
+| BC           | Brunswick Corp DE                                         | BBG000BCWSS3 | usd | 1       | 0.01       |
 | RDY          | Dr. Reddy's Laboratories                                  | BBG000NJ96L6 | usd | 1       | 0.01       |
+| SPBE         | СПБ Биржа                                                 | BBG002GHV6L9 | rub | 1       | 0.1        |
 | ALB          | Albemarle                                                 | BBG000BJ26K7 | usd | 1       | 0.01       |
 | MELI         | MercadoLibre Inc                                          | BBG000GQPB11 | usd | 1       | 0.01       |
 | CSWI         | CSW Industrials Inc                                       | BBG007NLG4L3 | usd | 1       | 0.01       |
 | UAA          | Under Armour                                              | BBG000BXM6V2 | usd | 1       | 0.01       |
-| NLMK@GS      | Novolipetsk Steel PJSC                                    | BBG000PR0PJ6 | usd | 1       | 0.01       |
 | UNP          | Union Pacific Corporation                                 | BBG000BW3299 | usd | 1       | 0.01       |
 | NTLA         | Intellia Therapeutics Inc                                 | BBG007KC7PB0 | usd | 1       | 0.01       |
 | FFIN         | First Financial Bankshares, Inc.                          | BBG000BL8476 | usd | 1       | 0.01       |
 | ECPG         | Encore Capital Group Inc                                  | BBG000F369C7 | usd | 1       | 0.01       |
-| CVET         | Covetrus Inc                                              | BBG00KR691K8 | usd | 1       | 0.01       |
+| 291          | China Resources Beer                                      | BBG000BKWM80 | hkd | 10      | 0.05       |
 | HIG          | Hartford Financial Services                               | BBG000G0Z878 | usd | 1       | 0.01       |
 | SAIC         | Science Applications Internati                            | BBG003BW05K6 | usd | 1       | 0.01       |
 | WAT          | Waters                                                    | BBG000FQRVM3 | usd | 1       | 0.01       |
@@ -308,8 +310,8 @@
 | ZM           | Zoom Video Communications Inc                             | BBG0042V6JM8 | usd | 1       | 0.01       |
 | UHS          | Universal Health Services                                 | BBG000CB8Q50 | usd | 1       | 0.01       |
 | CSII         | Cardiovascular Systems Inc                                | BBG000NWQ9S5 | usd | 1       | 0.01       |
-| HOG          | Harley-Davidson                                           | BBG000BKZTP3 | usd | 1       | 0.01       |
 | WELL         | Welltower REIT                                            | BBG000BKY1G5 | usd | 1       | 0.01       |
+| HOG          | Harley-Davidson                                           | BBG000BKZTP3 | usd | 1       | 0.01       |
 | POWI         | Power Integrations Inc                                    | BBG000BTT3D1 | usd | 1       | 0.01       |
 | KTB          | Kontoor Brands Inc                                        | BBG00LPTHYD5 | usd | 1       | 0.01       |
 | PAG          | Penske Automotive Group                                   | BBG000H6K1B0 | usd | 1       | 0.01       |
@@ -317,7 +319,6 @@
 | UGI          | UGI Corp                                                  | BBG000BVYN55 | usd | 1       | 0.01       |
 | SLB          | Schlumberger                                              | BBG000BT41Q8 | usd | 1       | 0.01       |
 | LPSN         | LivePerson Inc                                            | BBG000BSV0W5 | usd | 1       | 0.01       |
-| PLZL@GS      | Polyus PJSC                                               | BBG00H2CS6K7 | usd | 1       | 0.01       |
 | TM           | Toyota Motor Corp                                         | BBG000BPH299 | usd | 1       | 0.01       |
 | GTLB         | GitLab                                                    | BBG00DHTYPH8 | usd | 1       | 0.01       |
 | BXP          | Boston Properties REIT                                    | BBG000BS5CM9 | usd | 1       | 0.01       |
@@ -325,20 +326,22 @@
 | EIX          | Edison International                                      | BBG000D7RKJ5 | usd | 1       | 0.01       |
 | JBHT         | JB Hunt                                                   | BBG000BMDBZ1 | usd | 1       | 0.01       |
 | ODFL         | Old Dominion Freight Line Inc                             | BBG000CHSS88 | usd | 1       | 0.01       |
+| SPNS         | Sapiens International Corporation N.V.                    | BBG000G3YP84 | usd | 1       | 0.01       |
 | NEWR         | New Relic Inc                                             | BBG001NFKJ68 | usd | 1       | 0.01       |
 | AXSM         | Axsome Therapeutics Inc                                   | BBG00B6G7GL7 | usd | 1       | 0.01       |
+| PLL          | Piedmont Lithium                                          | BBG00YJ7NBQ1 | usd | 1       | 0.01       |
 | FCEL         | FuelCell Energy                                           | BBG000HQ1LB3 | usd | 1       | 0.01       |
-| SBER@GS      | Sberbank of Russia PJSC                                   | BBG001VBZR00 | usd | 1       | 0.01       |
 | PRFT         | Perficient Inc                                            | BBG000BVXFK6 | usd | 1       | 0.01       |
+| RKT          | Rocket Companies                                          | BBG00VY1MYW7 | usd | 1       | 0.01       |
 | VIRT         | Virtu Financial, Inc.                                     | BBG0064N2T78 | usd | 1       | 0.01       |
-| ORUP         | Обувь России                                              | BBG001BBGNS2 | rub | 10      | 0.02       |
+| ORUP         | Обувь России                                              | BBG001BBGNS2 | rub | 10      | 0.01       |
 | ASH          | Ashland Inc                                               | BBG00D0Y81M1 | usd | 1       | 0.01       |
 | GEVO         | Gevo                                                      | BBG000P7S7L7 | usd | 1       | 0.01       |
 | ABNB         | Airbnb, Inc                                               | BBG001Y2XS07 | usd | 1       | 0.01       |
 | ETLN         | ГДР Etalon Group PLC                                      | BBG001M2SC01 | rub | 1       | 0.02       |
 | ET           | Energy Transfer LP                                        | BBG000BM2FL9 | usd | 1       | 0.01       |
 | AXON         | Axon Enterprise Inc                                       | BBG000BHJWG1 | usd | 1       | 0.01       |
-| NLY          | Annaly Capital Management REIT                            | BBG000BJFJ98 | usd | 1       | 0.01       |
+| 2269         | Wuxi Biologics                                            | BBG00GTY47H0 | hkd | 10      | 0.05       |
 | APPN         | Appian Corp                                               | BBG001C7PMJ2 | usd | 1       | 0.01       |
 | 700          | Tencent Holdings                                          | BBG000BJ35N5 | hkd | 1       | 0.2        |
 | PSMT         | PriceSmart, Inc.                                          | BBG000BTKR92 | usd | 1       | 0.01       |
@@ -376,6 +379,7 @@
 | GEF          | Greif Inc                                                 | BBG000BLFNC0 | usd | 1       | 0.01       |
 | LMT          | Lockheed Martin                                           | BBG000C1BW00 | usd | 1       | 0.01       |
 | FRPT         | Freshpet Inc                                              | BBG001D0HB36 | usd | 1       | 0.01       |
+| NI           | NiSource Inc                                              | BBG000BPZBB6 | usd | 1       | 0.01       |
 | TMHC         | Taylor Morrison Home Corp                                 | BBG003PGJHP5 | usd | 1       | 0.01       |
 | BXMT         | Blackstone Mortgage Trust REIT                            | BBG000BGKJ70 | usd | 1       | 0.01       |
 | SNOW         | Snowflake Inc                                             | BBG007DHGNJ4 | usd | 1       | 0.01       |
@@ -394,14 +398,15 @@
 | CSGS         | CSG Systems International Inc                             | BBG000G3TQV2 | usd | 1       | 0.01       |
 | AFMD         | Affimed NV                                                | BBG006R5SSH5 | usd | 1       | 0.01       |
 | HI           | Hillenbrand                                               | BBG000KT0GV3 | usd | 1       | 0.01       |
-| PRLB         | Proto Labs Inc                                            | BBG000BT13B3 | usd | 1       | 0.01       |
 | ZTS          | Zoetis                                                    | BBG0039320N9 | usd | 1       | 0.01       |
+| PRLB         | Proto Labs Inc                                            | BBG000BT13B3 | usd | 1       | 0.01       |
 | KMAZ         | КАМАЗ                                                     | BBG000LNHHJ9 | rub | 10      | 0.1        |
 | AEM          | Agnico Eagle Mines                                        | BBG000DLVDK3 | usd | 1       | 0.01       |
 | INTU         | Intuit                                                    | BBG000BH5DV1 | usd | 1       | 0.01       |
 | BRBR         | BellRing Brands                                           | BBG013QNJHP8 | usd | 1       | 0.01       |
 | KZOS         | ПАО «КАЗАНЬОРГСИНТЕЗ»                                     | BBG0029SFXB3 | rub | 10      | 0.1        |
 | CHRW         | C.H. Robinson Worldwide                                   | BBG000BTCH57 | usd | 1       | 0.01       |
+| NHI          | National Health Investors REIT                            | BBG000CGWSJ3 | usd | 1       | 0.01       |
 | ORI          | Old Republic International Corporation                    | BBG000C4PLF7 | usd | 1       | 0.01       |
 | BBSI         | Barrett Business Services Inc                             | BBG000BHJSC4 | usd | 1       | 0.01       |
 | RAMP         | LiveRamp Holdings Inc                                     | BBG000BB4HM6 | usd | 1       | 0.01       |
@@ -412,7 +417,6 @@
 | PACB         | Pacific Biosciences of California                         | BBG000QKXH20 | usd | 1       | 0.01       |
 | CDNA         | CareDx Inc                                                | BBG006JS5785 | usd | 1       | 0.01       |
 | SKM          | SK Telecom Co.                                            | BBG000BLN497 | usd | 1       | 0.01       |
-| MTOR         | Meritor Inc                                               | BBG000BH92D1 | usd | 1       | 0.01       |
 | PEP          | PepsiCo                                                   | BBG000DH7JK6 | usd | 1       | 0.01       |
 | IAC          | IAC Inc                                                   | BBG00S1LR2C3 | usd | 1       | 0.01       |
 | TCX          | Tucows Inc                                                | BBG000L69KL5 | usd | 1       | 0.01       |
@@ -424,6 +428,7 @@
 | ORLY         | O'Reilly Automotive                                       | BBG000BGYWY6 | usd | 1       | 0.01       |
 | AIR          | AAR Corp                                                  | BBG000BBGQF1 | usd | 1       | 0.01       |
 | AVNS         | Avanos Medical Inc                                        | BBG005L86G05 | usd | 1       | 0.01       |
+| ALT          | Altimmune                                                 | BBG000FXML90 | usd | 1       | 0.01       |
 | CBRE         | CBRE Group                                                | BBG000C04224 | usd | 1       | 0.01       |
 | DUK          | Duke Energy Corp                                          | BBG000BHGDH5 | usd | 1       | 0.01       |
 | HEN3@DE      | Henkel AG & Co                                            | BBG000BC3BJ2 | eur | 1       | 0.01       |
@@ -431,9 +436,8 @@
 | MSGS         | Madison Square Garden Co                                  | BBG007FG0C23 | usd | 1       | 0.01       |
 | RS           | Reliance Steel & Aluminum Co                              | BBG000CJ2181 | usd | 1       | 0.01       |
 | SGMO         | Sangamo Therapeutics                                      | BBG000BHYT80 | usd | 1       | 0.01       |
-| SPBE         | СПБ Биржа                                                 | BBG002GHV6L9 | usd | 1       | 0.01       |
-| MHO          | M/I Homes Inc                                             | BBG000BL9MZ4 | usd | 1       | 0.01       |
 | CMI          | Cummins                                                   | BBG000BGPTV6 | usd | 1       | 0.01       |
+| MHO          | M/I Homes Inc                                             | BBG000BL9MZ4 | usd | 1       | 0.01       |
 | PRTS         | CarParts.com                                              | BBG000N26V95 | usd | 1       | 0.01       |
 | CAH          | Cardinal Health                                           | BBG000D898T9 | usd | 1       | 0.01       |
 | UCTT         | Ultra Clean Holdings Inc                                  | BBG000HSLV70 | usd | 1       | 0.01       |
@@ -457,6 +461,7 @@
 | OGE          | OGE Energy Corp.                                          | BBG000BQGLS5 | usd | 1       | 0.01       |
 | VOW3@DE      | Volkswagen AG                                             | BBG000BFCS17 | eur | 1       | 0.01       |
 | JBSS         | John B Sanfilippo & Son Inc                               | BBG000CHPMY5 | usd | 1       | 0.01       |
+| 9992         | Pop Mart                                                  | BBG00Y9WVZ76 | hkd | 100     | 0.05       |
 | TSP          | TuSimple Holdings                                         | BBG00ZSDS6T8 | usd | 1       | 0.01       |
 | PKG          | Packaging Corp of America                                 | BBG000BB8SW7 | usd | 1       | 0.01       |
 | DMTK         | DermTech                                                  | BBG00H19F184 | usd | 1       | 0.01       |
@@ -466,6 +471,7 @@
 | WH           | Wyndham Hotels & Resorts                                  | BBG00HCY3Q67 | usd | 1       | 0.01       |
 | UDR          | UDR REIT                                                  | BBG000C41023 | usd | 1       | 0.01       |
 | BLK          | BlackRock                                                 | BBG000C2PW58 | usd | 1       | 0.01       |
+| PENN         | PENN Entertainment                                        | BBG000CDZLV8 | usd | 1       | 0.01       |
 | WFC          | Wells Fargo & Company                                     | BBG000BWQFY7 | usd | 1       | 0.01       |
 | SELG         | Селигдар                                                  | BBG002458LF8 | rub | 10      | 0.01       |
 | OKE          | ONEOK                                                     | BBG000BQHGR6 | usd | 1       | 0.01       |
@@ -476,8 +482,8 @@
 | AGCO         | AGCO Corp                                                 | BBG000DCCZW2 | usd | 1       | 0.01       |
 | HXL          | Hexcel Corp                                               | BBG000BLMDQ9 | usd | 1       | 0.01       |
 | RBLX         | ROBLOX Corp                                               | BBG001R1GCT0 | usd | 1       | 0.01       |
-| MTN          | Vail Resorts Inc                                          | BBG000BCMWM1 | usd | 1       | 0.01       |
 | IDCC         | InterDigital                                              | BBG000HLJ7M4 | usd | 1       | 0.01       |
+| MTN          | Vail Resorts Inc                                          | BBG000BCMWM1 | usd | 1       | 0.01       |
 | NIC          | Nicolet Bankshares                                        | BBG000QK0TG5 | usd | 1       | 0.01       |
 | RCL          | Royal Caribbean Cruises                                   | BBG000BB5792 | usd | 1       | 0.01       |
 | NOV          | National Oilwell Varco                                    | BBG000BJX8C8 | usd | 1       | 0.01       |
@@ -486,7 +492,6 @@
 | HWM          | Howmet Aerospace                                          | BBG00DYNJGH9 | usd | 1       | 0.01       |
 | TASK         | TaskUs                                                    | BBG009CL6VK3 | usd | 1       | 0.01       |
 | RETA         | Reata Pharmaceuticals Inc                                 | BBG000R33BD1 | usd | 1       | 0.01       |
-| AVLR         | Avalara Inc                                               | BBG000R4Y9C1 | usd | 1       | 0.01       |
 | IOSP         | Innospec                                                  | BBG000BMFNP4 | usd | 1       | 0.01       |
 | TWOU         | 2U Inc                                                    | BBG001KS9450 | usd | 1       | 0.01       |
 | AGRO         | РусАгро                                                   | BBG007N0Z367 | rub | 1       | 0.2        |
@@ -514,6 +519,7 @@
 | CSL          | Carlisle Companies Incorporated                           | BBG000BGGBT8 | usd | 1       | 0.01       |
 | JLL          | Jones Lang LaSalle Inc                                    | BBG000C2L2L0 | usd | 1       | 0.01       |
 | RACE         | Ferrari N.V.                                              | BBG009PH3Q86 | usd | 1       | 0.01       |
+| 2319         | China Mengniu Dairy                                       | BBG000PXTGY5 | hkd | 10      | 0.05       |
 | AFRM         | Affirm Holdings                                           | BBG00Y7BP8Y1 | usd | 1       | 0.01       |
 | MATV         | Mativ Holdings                                            | BBG000C3CWZ7 | usd | 1       | 0.01       |
 | DECK         | Deckers Outdoor Corp                                      | BBG000BKXYX5 | usd | 1       | 0.01       |
@@ -528,15 +534,15 @@
 | FARO         | FARO Technologies Inc                                     | BBG000BJD7C2 | usd | 1       | 0.01       |
 | BLNG         | Белон                                                     | BBG000VQWH86 | rub | 100     | 0.005      |
 | EVBG         | Everbridge Inc                                            | BBG0022FMPD5 | usd | 1       | 0.01       |
-| NVRO         | Nevro                                                     | BBG001K61W36 | usd | 1       | 0.01       |
+| ORMP         | Oramed Pharmaceuticals                                    | BBG000LRYR36 | usd | 1       | 0.01       |
 | MASI         | Masimo Corporation                                        | BBG000C3W281 | usd | 1       | 0.01       |
+| NVRO         | Nevro                                                     | BBG001K61W36 | usd | 1       | 0.01       |
 | ANF          | Abercrombie & Fitch                                       | BBG000H9G7X2 | usd | 1       | 0.01       |
 | OGS          | ONE Gas                                                   | BBG004WQKD07 | usd | 1       | 0.01       |
 | GGG          | Graco                                                     | BBG000BK9W84 | usd | 1       | 0.01       |
 | RSKD         | Riskified                                                 | BBG011P2TCH8 | usd | 1       | 0.01       |
 | IDXX         | IDEXX                                                     | BBG000BLRT07 | usd | 1       | 0.01       |
 | FSLR         | First Solar                                               | BBG000BFL116 | usd | 1       | 0.01       |
-| CCMP         | CMC Materials                                             | BBG000BP3NW2 | usd | 1       | 0.01       |
 | COUR         | Coursera, Inc.                                            | BBG002WLDMW5 | usd | 1       | 0.01       |
 | YEXT         | Yext Inc                                                  | BBG001MKZGY7 | usd | 1       | 0.01       |
 | WDFC         | WD-40 Co                                                  | BBG000BWNV93 | usd | 1       | 0.01       |
@@ -561,16 +567,19 @@
 | HCCI         | Heritage-Crystal Clean Inc                                | BBG000CCFB17 | usd | 1       | 0.01       |
 | NABL         | N-able                                                    | BBG00YJKWXD8 | usd | 1       | 0.01       |
 | HHR          | HeadHunter Group PLC                                      | BBG00KHGQ0H4 | usd | 1       | 0.01       |
+| UEC          | Uranium Energy Corp                                       | BBG000LCK3Q2 | usd | 1       | 0.01       |
 | ZNTL         | Zentalis Pharmaceuticals                                  | BBG00R2K8TF5 | usd | 1       | 0.01       |
 | ARW          | Arrow Electronics Inc                                     | BBG000BCD3D5 | usd | 1       | 0.01       |
+| 1109         | China Resources Land                                      | BBG000HPNDX5 | hkd | 10      | 0.05       |
 | FCFS         | FirstCash                                                 | BBG0145KL747 | usd | 1       | 0.01       |
 | WDAY         | Workday Inc                                               | BBG000VC0T95 | usd | 1       | 0.01       |
 | FOCS         | Focus Financial Partners Inc                              | BBG00L0YTFN8 | usd | 1       | 0.01       |
 | ADM          | Archer-Daniels-Midland Company                            | BBG000BB6WG8 | usd | 1       | 0.01       |
-| NVTK@GS      | Novatek PJSC                                              | BBG000QY6FL3 | usd | 1       | 0.01       |
+| 1299         | AIA Group                                                 | BBG0016XR1Q8 | hkd | 10      | 0.05       |
 | GPS          | Gap                                                       | BBG000BKLH74 | usd | 1       | 0.01       |
 | RYN          | Rayonier REIT                                             | BBG000BG7L34 | usd | 1       | 0.01       |
 | UA           | Under Armour (C)                                          | BBG009DTD8H2 | usd | 1       | 0.01       |
+| 1347         | Hua Hong Semiconductor                                    | BBG0078Q6BC4 | hkd | 100     | 0.05       |
 | XOM          | Exxon Mobil Corporation                                   | BBG000GZQ728 | usd | 1       | 0.01       |
 | EMBC         | Embecta                                                   | BBG014L7D4G1 | usd | 1       | 0.01       |
 | MAGN         | Магнитогорский металлургический комбинат                  | BBG004S68507 | rub | 10      | 0.005      |
@@ -589,8 +598,8 @@
 | SAVA         | Cassava Sciences                                          | BBG000BK9YW3 | usd | 1       | 0.01       |
 | TPH          | Tri Pointe Homes, Inc.                                    | BBG0016YQTR5 | usd | 1       | 0.01       |
 | AVNT         | Avient Corporation                                        | BBG000C8NJ10 | usd | 1       | 0.01       |
-| SJI          | South Jersey Industries, Inc                              | BBG000BT0T72 | usd | 1       | 0.01       |
 | EL           | The Estee Lauder Companies                                | BBG000FKJRC5 | usd | 1       | 0.01       |
+| SJI          | South Jersey Industries, Inc                              | BBG000BT0T72 | usd | 1       | 0.01       |
 | AAP          | Advance Auto Parts                                        | BBG000F7RCJ1 | usd | 1       | 0.01       |
 | KNBE         | KnowBe4                                                   | BBG00C4DL9L4 | usd | 1       | 0.01       |
 | BANE         | Башнефть                                                  | BBG004S68758 | rub | 1       | 0.5        |
@@ -602,6 +611,7 @@
 | AFLT         | Аэрофлот                                                  | BBG004S683W7 | rub | 10      | 0.02       |
 | EFX          | Equifax                                                   | BBG000BHPL78 | usd | 1       | 0.01       |
 | QS           | QuantumScape Corporation                                  | BBG00VJ17DS2 | usd | 1       | 0.01       |
+| 2020         | Anta Sports Products                                      | BBG000QWR4M8 | hkd | 10      | 0.05       |
 | MKC          | McCormick & Co                                            | BBG000G6Y5W4 | usd | 1       | 0.01       |
 | MCK          | McKesson                                                  | BBG000DYGNW7 | usd | 1       | 0.01       |
 | RPD          | Rapid7 Inc                                                | BBG009DFHWG6 | usd | 1       | 0.01       |
@@ -610,20 +620,24 @@
 | VTSC@DE      | Vitesco Technologies Group AG                             | BBG00ZVC67K7 | eur | 1       | 0.01       |
 | MHK          | Mohawk Industries                                         | BBG000FLZN98 | usd | 1       | 0.01       |
 | MA           | Mastercard                                                | BBG000F1ZSQ2 | usd | 1       | 0.01       |
+| 3800         | GCL Technology                                            | BBG000TRZNP2 | hkd | 100     | 0.01       |
 | RUAL         | РУСАЛ                                                     | BBG008F2T3T2 | rub | 10      | 0.005      |
 | PDCE         | PDC Energy                                                | BBG000BR1KR2 | usd | 1       | 0.01       |
 | ATRC         | AtriCure                                                  | BBG000BL6CB5 | usd | 1       | 0.01       |
 | NKHP         | НКХП                                                      | BBG00BGKYH17 | rub | 10      | 0.5        |
 | SMAR         | Smartsheet Inc                                            | BBG00GQK3WB5 | usd | 1       | 0.01       |
 | GLBE         | Global-E Online Ltd                                       | BBG00ZKY1P71 | usd | 1       | 0.01       |
+| COHR         | Coherent Corp                                             | BBG000BLW102 | usd | 1       | 0.01       |
 | DT           | Dynatrace Inc                                             | BBG00PNN7C40 | usd | 1       | 0.01       |
 | SBAC         | SBA Communications REIT                                   | BBG000D2M0Z7 | usd | 1       | 0.01       |
 | FME@DE       | Fresenius Medical Care AG & Co                            | BBG000DHXTF1 | eur | 1       | 0.01       |
-| SIGI         | Selective Insurance Group                                 | BBG000BSZ738 | usd | 1       | 0.01       |
 | AWR          | American States Water Co                                  | BBG000F964B6 | usd | 1       | 0.01       |
+| SIGI         | Selective Insurance Group                                 | BBG000BSZ738 | usd | 1       | 0.01       |
 | GLPI         | Gaming and Leisure Properties REIT                        | BBG003MSMCS6 | usd | 1       | 0.01       |
 | HLNE         | Hamilton Lane Incorporated                                | BBG00FX58Q66 | usd | 1       | 0.01       |
 | NMIH         | NMI Holdings Inc                                          | BBG005DLMMZ6 | usd | 1       | 0.01       |
+| PLTK         | Playtika Holding Corp.                                    | BBG00QQ8C789 | usd | 1       | 0.01       |
+| PDS          | Precision Drilling                                        | BBG000BBK2X9 | usd | 1       | 0.01       |
 | BLI          | Berkeley Lights                                           | BBG00HJ8K617 | usd | 1       | 0.01       |
 | OSTK         | Overstock.com                                             | BBG000BF7BV7 | usd | 1       | 0.01       |
 | LTHM         | Livent Corporation                                        | BBG00LV3NRG0 | usd | 1       | 0.01       |
@@ -638,12 +652,13 @@
 | EVER         | EverQuote                                                 | BBG00F17NDH7 | usd | 1       | 0.01       |
 | AWK          | American Water Works                                      | BBG000TRJ294 | usd | 1       | 0.01       |
 | CTLT         | Catalent Inc                                              | BBG005XR47P5 | usd | 1       | 0.01       |
+| LC           | Lending Club                                              | BBG001YKDND6 | usd | 1       | 0.01       |
 | BERY         | Berry Global Group Inc                                    | BBG000Q1R1Y9 | usd | 1       | 0.01       |
 | SCL          | Stepan Company                                            | BBG000BSMFN2 | usd | 1       | 0.01       |
 | CMC          | Commercial Metals Company                                 | BBG000BFSND8 | usd | 1       | 0.01       |
 | WHR          | Whirlpool                                                 | BBG000BWSV34 | usd | 1       | 0.01       |
 | BA           | BOEING                                                    | BBG000BCSST7 | usd | 1       | 0.01       |
-| EPAY         | Bottomline Technologies DE Inc                            | BBG000BRNH31 | usd | 1       | 0.01       |
+| IRWD         | Ironwood Pharmaceuticals                                  | BBG000GBZ3J2 | usd | 1       | 0.01       |
 | DASH         | DoorDash                                                  | BBG005D7QCJ3 | usd | 1       | 0.01       |
 | GMED         | Globus Medical Inc                                        | BBG002V87SD0 | usd | 1       | 0.01       |
 | TFC          | Truist Financial Corporation                              | BBG000BYYLS8 | usd | 1       | 0.01       |
@@ -656,7 +671,7 @@
 | SNAP         | Snap Inc                                                  | BBG00441QMJ7 | usd | 1       | 0.01       |
 | TSM          | Taiwan Semiconductor Manufacturing                        | BBG000BD8ZK0 | usd | 1       | 0.01       |
 | SLP          | Simulations Plus Inc.                                     | BBG000BS2ZD1 | usd | 1       | 0.01       |
-| CHNG         | Change Healthcare Inc                                     | BBG0059KNH10 | usd | 1       | 0.01       |
+| HZO          | MarineMax, Inc.                                           | BBG000C1SRH5 | usd | 1       | 0.01       |
 | CPB          | Campbell Soup                                             | BBG000BG4202 | usd | 1       | 0.01       |
 | VRT          | Vertiv Holdings Co                                        | BBG00L2B8KW8 | usd | 1       | 0.01       |
 | CHD          | Church & Dwight                                           | BBG000BFJT36 | usd | 1       | 0.01       |
@@ -672,10 +687,11 @@
 | ZUMZ         | Zumiez Inc                                                | BBG000PYX812 | usd | 1       | 0.01       |
 | TMUS         | T-Mobile US Inc                                           | BBG000NDV1D4 | usd | 1       | 0.01       |
 | TRI          | Thomson Reuters Corporation                               | BBG000BBS9F6 | usd | 1       | 0.01       |
-| VNE          | Veoneer Inc                                               | BBG00K4MPP27 | usd | 1       | 0.01       |
+| MODG         | Topgolf Callaway Brands                                   | BBG000CPCVY1 | usd | 1       | 0.01       |
 | USM          | United States Cellular Corp                               | BBG000BW6P59 | usd | 1       | 0.01       |
 | ZYNE         | Zynerba Pharmaceuticals Inc                               | BBG007BBS8B7 | usd | 1       | 0.01       |
 | ABG          | Asbury Automotive Group Inc                               | BBG000BKDWB5 | usd | 1       | 0.01       |
+| 3            | Hong Kong and China Gas Co.                               | BBG000BDWT45 | hkd | 100     | 0.01       |
 | MRVL         | Marvell Technology, Inc.                                  | BBG00ZXBJ153 | usd | 1       | 0.01       |
 | AMTI         | Applied Molecular Transport                               | BBG00R240WL5 | usd | 1       | 0.01       |
 | RRR          | Red Rock Resorts                                          | BBG00B6G8077 | usd | 1       | 0.01       |
@@ -683,10 +699,13 @@
 | AVB          | AvalonBay Communities REIT                                | BBG000BLPBL5 | usd | 1       | 0.01       |
 | ITRI         | Itron Inc                                                 | BBG000BD2167 | usd | 1       | 0.01       |
 | MTB          | M&T Bank                                                  | BBG000D9KWL9 | usd | 1       | 0.01       |
+| 16           | Sun Hung Kai Properties                                   | BBG000BF0155 | hkd | 10      | 0.05       |
+| 857          | PetroChina                                                | BBG000BFNTD0 | hkd | 100     | 0.01       |
 | BMO          | Bank of Montreal                                          | BBG000DLY9B9 | usd | 1       | 0.01       |
 | HON          | Honeywell                                                 | BBG000H556T9 | usd | 1       | 0.01       |
 | TTC          | Toro                                                      | BBG000BVQRY3 | usd | 1       | 0.01       |
 | ACIW         | ACI Worldwide, Inc.                                       | BBG000PMBV39 | usd | 1       | 0.01       |
+| AVXL         | Anavex Life Sciences Corp.                                | BBG000C9K8K4 | usd | 1       | 0.01       |
 | ESAB         | ESAB Corporation                                          | BBG0028ZMP45 | usd | 1       | 0.01       |
 | AN           | AutoNation                                                | BBG000BBXLW4 | usd | 1       | 0.01       |
 | SEE          | Sealed Air                                                | BBG000C22QV7 | usd | 1       | 0.01       |
@@ -732,13 +751,13 @@
 | ALV@DE       | Allianz SE                                                | BBG000BBFBD7 | eur | 1       | 0.01       |
 | NTGR         | NETGEAR Inc                                               | BBG000C4GBR6 | usd | 1       | 0.01       |
 | NARI         | Inari Medical Inc                                         | BBG009J8K7M0 | usd | 1       | 0.01       |
-| SVST@GS      | Severstal PJSC                                            | BBG000Q3XWC4 | usd | 1       | 0.01       |
 | J            | Jacobs Solutions                                          | BBG019C1BQR4 | usd | 1       | 0.01       |
 | BANEP        | Башнефть - привилегированные акции                        | BBG004S686N0 | rub | 1       | 0.5        |
-| ROLL         | RBC Bearings Inc                                          | BBG000GMGNB3 | usd | 1       | 0.01       |
+| RBC          | RBC Bearings Inc                                          | BBG000GMGNB3 | usd | 1       | 0.01       |
 | BRX          | Brixmor Property Group REIT                               | BBG001LFLZZ1 | usd | 1       | 0.01       |
 | OXY          | Occidental Petroleum                                      | BBG000BQQ2S6 | usd | 1       | 0.01       |
 | APD          | Air Products & Chemicals                                  | BBG000BC4JJ4 | usd | 1       | 0.01       |
+| GES          | Guess? Inc                                                | BBG000BC26P7 | usd | 1       | 0.01       |
 | VRTV         | Veritiv Corp                                              | BBG005XZHR97 | usd | 1       | 0.01       |
 | NDSN         | Nordson Corp                                              | BBG000BPWGR1 | usd | 1       | 0.01       |
 | SWN          | Southwestern Energy                                       | BBG000BTR593 | usd | 1       | 0.01       |
@@ -751,8 +770,9 @@
 | MYRG         | MYR Group Inc                                             | BBG000BC7VW9 | usd | 1       | 0.01       |
 | ANDE         | Andersons Inc                                             | BBG000BF8CN3 | usd | 1       | 0.01       |
 | FOUR         | Shift4 Payments                                           | BBG00TX393L4 | usd | 1       | 0.01       |
+| UDMY         | Udemy                                                     | BBG0025DTRN5 | usd | 1       | 0.01       |
 | SBUX         | Starbucks Corporation                                     | BBG000CTQBF3 | usd | 1       | 0.01       |
-| GBT          | Global Blood Therapeutics Inc                             | BBG00341H6M0 | usd | 1       | 0.01       |
+| AMKR         | Amkor Technology                                          | BBG000BCKGW7 | usd | 1       | 0.01       |
 | BFH          | Bread Financial                                           | BBG000BFNR17 | usd | 1       | 0.01       |
 | SNX          | SYNNEX Corp                                               | BBG000CL9JV4 | usd | 1       | 0.01       |
 | MSFT         | Microsoft Corporation                                     | BBG000BPH459 | usd | 1       | 0.01       |
@@ -772,16 +792,16 @@
 | BKU          | BankUnited, Inc.                                          | BBG000PQPCM6 | usd | 1       | 0.01       |
 | SAIA         | Saia Inc                                                  | BBG000P5LMQ0 | usd | 1       | 0.01       |
 | SAP          | АДР SAP                                                   | BBG000BDSLD7 | usd | 1       | 0.01       |
-| IIVI         | II-VI Inc                                                 | BBG000BLW102 | usd | 1       | 0.01       |
 | GRMN         | Garmin                                                    | BBG000C4LN67 | usd | 1       | 0.01       |
 | MGY          | Magnolia Oil & Gas Corp                                   | BBG00GNC8DL2 | usd | 1       | 0.01       |
-| PING         | Ping Identity Holding Corp                                | BBG00Q3GDB13 | usd | 1       | 0.01       |
 | ZIP          | ZipRecruiter Inc                                          | BBG010JBYV98 | usd | 1       | 0.01       |
+| PSEC         | Prospect Capital Corporation                              | BBG000Q3RGN4 | usd | 1       | 0.01       |
 | MKL          | Markel Corp                                               | BBG000FC7366 | usd | 1       | 0.01       |
 | ERIE         | Erie IndemnIty Co                                         | BBG000BBTJZ1 | usd | 1       | 0.01       |
 | HSC          | Harsco Corp                                               | BBG000BLH3P8 | usd | 1       | 0.01       |
 | SRCL         | Stericycle                                                | BBG000H3FZM6 | usd | 1       | 0.01       |
 | TRGP         | Targa Resources                                           | BBG0015XMW40 | usd | 1       | 0.01       |
+| 6618         | JD Health International                                   | BBG00Y6QRNM7 | hkd | 10      | 0.05       |
 | BDX          | Becton, Dickinson and Company                             | BBG000BCZYD3 | usd | 1       | 0.01       |
 | MSGE         | Madison Square Garden Entertainment                       | BBG00L9HLWV8 | usd | 1       | 0.01       |
 | LRCX         | Lam Research                                              | BBG000BNFLM9 | usd | 1       | 0.01       |
@@ -793,6 +813,7 @@
 | PCOR         | Procore Technologies                                      | BBG0026ZJ304 | usd | 1       | 0.01       |
 | HRTX         | Heron Therapeutics Inc                                    | BBG000G2GJT7 | usd | 1       | 0.01       |
 | STT          | State Street                                              | BBG000BKFBD7 | usd | 1       | 0.01       |
+| ALGM         | Allegro MicroSystems                                      | BBG00H5S8391 | usd | 1       | 0.01       |
 | MRKP         | Россети Центр и Приволжье                                 | BBG000VG1034 | rub | 10000   | 0.0001     |
 | RWE@DE       | RWE AG                                                    | BBG000BBQ209 | eur | 1       | 0.01       |
 | INTC         | Intel Corporation                                         | BBG000C0G1D1 | usd | 1       | 0.01       |
@@ -834,13 +855,15 @@
 | BKNG         | Booking                                                   | BBG000BLBVN4 | usd | 1       | 0.01       |
 | PMSBP        | Пермэнергосбыт - акции привилегированные                  | BBG000MZL2S9 | rub | 10      | 0.2        |
 | PRTA         | Prothena Corporation                                      | BBG003PDKJF7 | usd | 1       | 0.01       |
+| AMR          | Alpha Metallurgical Resources Inc.                        | BBG00DGWV035 | usd | 1       | 0.01       |
 | AGIO         | Agios Pharmaceuticals Inc                                 | BBG000QY4ZD0 | usd | 1       | 0.01       |
+| ONL          | Orion Office REIT                                         | BBG0118JXCD9 | usd | 1       | 0.01       |
 | FND          | Floor & Decor Holdings Inc                                | BBG007GJ2F81 | usd | 1       | 0.01       |
 | STAG         | STAG Industrial REIT                                      | BBG000BGLFP7 | usd | 1       | 0.01       |
 | ETSY         | Etsy Inc                                                  | BBG000N7MXL8 | usd | 1       | 0.01       |
 | HALO         | Halozyme Therapeutics Inc                                 | BBG000CZ8W54 | usd | 1       | 0.01       |
-| DLO          | DLocal                                                    | BBG00XGCHFV7 | usd | 1       | 0.01       |
 | M            | Macy's                                                    | BBG000C46HM9 | usd | 1       | 0.01       |
+| DLO          | DLocal                                                    | BBG00XGCHFV7 | usd | 1       | 0.01       |
 | FIS          | Fidelity National Information                             | BBG000BK2F42 | usd | 1       | 0.01       |
 | VICR         | Vicor Corp                                                | BBG000C3VHF1 | usd | 1       | 0.01       |
 | HE           | Hawaiian Electric Industries, Inc.                        | BBG000BL0P40 | usd | 1       | 0.01       |
@@ -857,7 +880,9 @@
 | MSTT         | Мостотрест                                                | BBG004S68DD6 | rub | 10      | 0.05       |
 | MMSI         | MerIt Medical Systems Inc                                 | BBG000C42VX0 | usd | 1       | 0.01       |
 | WWD          | Woodward Inc                                              | BBG000BD53V2 | usd | 1       | 0.01       |
+| AG           | First Majestic Silver Corp                                | BBG000CH7WB8 | usd | 1       | 0.01       |
 | BL           | Blackline Inc                                             | BBG0029KJVB0 | usd | 1       | 0.01       |
+| 6098         | Country Garden Services                                   | BBG00L3B3R02 | hkd | 100     | 0.02       |
 | AUPH         | Aurinia Pharmaceuticals                                   | BBG000BCRJM5 | usd | 1       | 0.01       |
 | RHI          | Robert Half                                               | BBG000BS5DR2 | usd | 1       | 0.01       |
 | ITW          | Illinois Tool Works                                       | BBG000BMBL90 | usd | 1       | 0.01       |
@@ -865,16 +890,19 @@
 | INGN         | Inogen Inc                                                | BBG0021PH456 | usd | 1       | 0.01       |
 | MTLR         | Мечел                                                     | BBG004S68598 | rub | 1       | 0.01       |
 | SAVE         | Spirit Airlines Inc                                       | BBG000BF6RQ9 | usd | 1       | 0.01       |
+| 960          | Longfor                                                   | BBG000CHNH78 | hkd | 10      | 0.05       |
+| 2388         | Bank of China (Hong Kong)                                 | BBG000F6F1G3 | hkd | 10      | 0.05       |
 | OMF          | OneMain Holdings                                          | BBG005497GZ3 | usd | 1       | 0.01       |
 | WISH         | ContextLogic                                              | BBG006DZTJ56 | usd | 1       | 0.01       |
-| NUE          | Nucor                                                     | BBG000BQ8KV2 | usd | 1       | 0.01       |
 | QRVO         | Qorvo                                                     | BBG007TJF1N7 | usd | 1       | 0.01       |
+| NUE          | Nucor                                                     | BBG000BQ8KV2 | usd | 1       | 0.01       |
 | THG          | Hanover Insurance Group                                   | BBG000FJH8W0 | usd | 1       | 0.01       |
 | CG           | Carlyle Group                                             | BBG000BH3F20 | usd | 1       | 0.01       |
 | NTCO         | Natura & Co Holding S.A.                                  | BBG00R4ZKPN5 | usd | 1       | 0.01       |
 | ENPH         | Enphase Energy Inc                                        | BBG001R3MNY9 | usd | 1       | 0.01       |
 | LAC          | Lithium Americas Corp.                                    | BBG000BGM5P8 | usd | 1       | 0.01       |
 | LPLA         | LPL Financial Holdings                                    | BBG000P2TYL8 | usd | 1       | 0.01       |
+| BLZE         | Backblaze                                                 | BBG0037X6HX3 | usd | 1       | 0.01       |
 | RRBI         | Red River Bancshares                                      | BBG000QKNLB2 | usd | 1       | 0.01       |
 | BILL         | Bill.com Holdings Inc                                     | BBG00QVJV6V4 | usd | 1       | 0.01       |
 | HYLN         | Hyliion Holdings Corp.                                    | BBG00N9MJTZ9 | usd | 1       | 0.01       |
@@ -886,12 +914,12 @@
 | UNFI         | United Natural Foods                                      | BBG000BXB1M5 | usd | 1       | 0.01       |
 | STRA         | Strategic Education Inc                                   | BBG000GRZDV1 | usd | 1       | 0.01       |
 | KALU         | Kaiser Aluminum Corp                                      | BBG000PKZDX4 | usd | 1       | 0.01       |
-| CERN         | Cerner                                                    | BBG000BFDLV8 | usd | 1       | 0.01       |
 | QLYS         | Qualys Inc                                                | BBG000HT5G06 | usd | 1       | 0.01       |
 | TTMI         | TTM Technologies Inc                                      | BBG000BYQ0B1 | usd | 1       | 0.01       |
 | EEFT         | Euronet Worldwide Inc                                     | BBG000BMNBY1 | usd | 1       | 0.01       |
 | ROP          | Roper Technologies                                        | BBG000F1ZSN5 | usd | 1       | 0.01       |
 | CBT          | Cabot Corporation                                         | BBG000BF3WW4 | usd | 1       | 0.01       |
+| SKT          | Tanger Factory Outlet Centers REIT                        | BBG000D2JB50 | usd | 1       | 0.01       |
 | PATK         | Patrick Industries Inc                                    | BBG000BQSBB2 | usd | 1       | 0.01       |
 | TAK          | Takeda Pharmaceutical Co Ltd                              | BBG000LF8708 | usd | 1       | 0.01       |
 | SBRA         | Sabra Health Care REIT                                    | BBG000MTDW24 | usd | 1       | 0.01       |
@@ -912,6 +940,8 @@
 | NU           | Nubank                                                    | BBG0136WM1M4 | usd | 1       | 0.01       |
 | OSK          | Oshkosh Corporation                                       | BBG000CC53X1 | usd | 1       | 0.01       |
 | HII          | Huntington Ingalls Industries Inc                         | BBG001KJ2HM9 | usd | 1       | 0.01       |
+| XENE         | Xenon Pharmaceuticals Inc                                 | BBG0073DM784 | usd | 1       | 0.01       |
+| CNO          | CNO Financial Group Inc                                   | BBG000Q1GK24 | usd | 1       | 0.01       |
 | UWGN         | ОВК                                                       | BBG008HD3V85 | rub | 1       | 0.1        |
 | NVAX         | Novavax                                                   | BBG000NVSBL7 | usd | 1       | 0.01       |
 | ZEN          | Zendesk Inc                                               | BBG001HRFJG4 | usd | 1       | 0.01       |
@@ -919,8 +949,9 @@
 | CLB          | Core Laboratories N.V.                                    | BBG000JKCWS0 | usd | 1       | 0.01       |
 | WSC          | WillScot Mobile Mini Holdings                             | BBG00B0FS947 | usd | 1       | 0.01       |
 | INVH         | Invitation Homes REIT                                     | BBG00FQH6BS9 | usd | 1       | 0.01       |
-| Y            | Alleghany Corp                                            | BBG000BX6BJ3 | usd | 1       | 0.01       |
+| UUUU         | Energy Fuels                                              | BBG000BXTPV3 | usd | 1       | 0.01       |
 | AKRN         | Акрон                                                     | BBG004S688G4 | rub | 1       | 2          |
+| METC         | Ramaco Resources Inc                                      | BBG00BCQJ2X3 | usd | 1       | 0.01       |
 | SFM          | Sprouts Farmers Market Inc                                | BBG001KFKQM7 | usd | 1       | 0.01       |
 | MSTR         | MicroStrategy Inc                                         | BBG000GQJPZ0 | usd | 1       | 0.01       |
 | SNBR         | Sleep Number Corp                                         | BBG000DM2BF3 | usd | 1       | 0.01       |
@@ -930,7 +961,6 @@
 | GAZP         | Газпром                                                   | BBG004730RP0 | rub | 10      | 0.01       |
 | EVK@DE       | Evonik Industries AG                                      | BBG001PD3L10 | eur | 1       | 0.01       |
 | STAA         | STAAR Surgical Co                                         | BBG000C4QB95 | usd | 1       | 0.01       |
-| HNP          | Huaneng Power International                               | BBG000BX5YM0 | usd | 1       | 0.01       |
 | CTSH         | Cognizant Technology Solutions                            | BBG000BBDV81 | usd | 1       | 0.01       |
 | JBT          | John Bean Technologies                                    | BBG000VLBCQ1 | usd | 1       | 0.01       |
 | DVEC         | ДЭК                                                       | BBG000V07CB8 | rub | 1000    | 0.001      |
@@ -940,6 +970,7 @@
 | MRK@DE       | Merck KGaA                                                | BBG000BX4S53 | eur | 1       | 0.01       |
 | CMS          | CMS Energy Corporation                                    | BBG000BFVXX0 | usd | 1       | 0.01       |
 | RNG          | RingCentral Inc                                           | BBG000J094P3 | usd | 1       | 0.01       |
+| DCT          | Duck Creek Technologies                                   | BBG00PPWYWJ8 | usd | 1       | 0.01       |
 | DY           | Dycom Industries Inc                                      | BBG000C4SKT1 | usd | 1       | 0.01       |
 | 9988         | Alibaba                                                   | BBG00QV37ZP9 | hkd | 10      | 0.05       |
 | HSY          | Hershey                                                   | BBG000BLHRS2 | usd | 1       | 0.01       |
@@ -960,6 +991,8 @@
 | CRNC         | Cerence                                                   | BBG00MMDJG84 | usd | 1       | 0.01       |
 | JNPR         | Juniper Networks                                          | BBG000BY33P5 | usd | 1       | 0.01       |
 | COOP         | Mr. Cooper Group                                          | BBG002V098F7 | usd | 1       | 0.01       |
+| AGO          | Assured Guaranty Ltd                                      | BBG000CQB185 | usd | 1       | 0.01       |
+| SIRI         | Sirius XM Holdings Inc                                    | BBG000BT0093 | usd | 1       | 0.01       |
 | LENT         | Лента                                                     | BBG0063FKTD9 | rub | 1       | 0.5        |
 | FTNT         | Fortinet Inc                                              | BBG000BCMBG4 | usd | 1       | 0.01       |
 | LIFE         | Фармсинтез                                                | BBG0019K04R5 | rub | 100     | 0.005      |
@@ -970,12 +1003,12 @@
 | NEU          | NewMarket Corp                                            | BBG000BJ5SS8 | usd | 1       | 0.01       |
 | ALLY         | Ally Financial Inc                                        | BBG000BC2R71 | usd | 1       | 0.01       |
 | ESGR         | Enstar Group                                              | BBG000NQKP71 | usd | 1       | 0.01       |
+| TEAM         | Atlassian                                                 | BBG00BDQ1H13 | usd | 1       | 0.01       |
 | AMG          | Affiliated Managers Group                                 | BBG000C060M4 | usd | 1       | 0.01       |
 | KOD          | Kodiak Sciences Inc                                       | BBG00BVR0D02 | usd | 1       | 0.01       |
 | INSG         | Inseego Corp                                              | BBG00DWX7QH0 | usd | 1       | 0.01       |
 | FRPH         | FRP Holdings Inc                                          | BBG000HCVWW4 | usd | 1       | 0.01       |
 | BSPB         | Банк Санкт-Петербург                                      | BBG000QJW156 | rub | 10      | 0.01       |
-| TMX          | Terminix Global Holdings                                  | BBG002WMH2F2 | usd | 1       | 0.01       |
 | MTSS         | МТС                                                       | BBG004S681W1 | rub | 10      | 0.05       |
 | DV           | DoubleVerify Holdings, Inc.                               | BBG00ZNRRJM2 | usd | 1       | 0.01       |
 | KDP          | Keurig Dr Pepper                                          | BBG000TJM7F0 | usd | 1       | 0.01       |
@@ -1002,16 +1035,16 @@
 | RKKE         | РКК Энергия им.С.П.Королева                               | BBG000LWNRP3 | rub | 1       | 10         |
 | OI           | O-I Glass                                                 | BBG00R2JZG39 | usd | 1       | 0.01       |
 | EXP          | Eagle Materials Inc                                       | BBG000BJW241 | usd | 1       | 0.01       |
-| DHI          | D.R. Horton                                               | BBG000DQTXY6 | usd | 1       | 0.01       |
 | SXT          | Sensient Technologies Corp                                | BBG000J79P80 | usd | 1       | 0.01       |
+| DHI          | D.R. Horton                                               | BBG000DQTXY6 | usd | 1       | 0.01       |
 | EXC          | Exelon Corporation                                        | BBG000J6XT05 | usd | 1       | 0.01       |
 | LSNG         | Ленэнерго                                                 | BBG000NLC9Z6 | rub | 100     | 0.01       |
 | WABC         | Westamerica Bancorporation                                | BBG000DD3KP1 | usd | 1       | 0.01       |
 | LUV          | Southwest Airlines                                        | BBG000BNJHS8 | usd | 1       | 0.01       |
-| RENI         | Ренессанс Страхование                                     | BBG00QKJSX05 | rub | 10      | 0.01       |
+| RENI         | Ренессанс Страхование                                     | BBG00QKJSX05 | rub | 10      | 0.02       |
+| PMT          | PennyMac Mortgage Investment REIT                         | BBG000DKDWS5 | usd | 1       | 0.01       |
 | PEG          | Public Service Enterprise Group                           | BBG000BQZMH4 | usd | 1       | 0.01       |
 | SYF          | Synchrony Financial                                       | BBG00658F3P3 | usd | 1       | 0.01       |
-| INFO         | IHS Markit                                                | BBG006G063F9 | usd | 1       | 0.01       |
 | ADUS         | Addus HomeCare Corp                                       | BBG000NJGX84 | usd | 1       | 0.01       |
 | SSD          | Simpson Manufacturing Co Inc                              | BBG000JLC8L8 | usd | 1       | 0.01       |
 | HRB          | H&R Block                                                 | BBG000BLDV98 | usd | 1       | 0.01       |
@@ -1019,6 +1052,7 @@
 | ALTR         | Altair Engineering Inc                                    | BBG000PN9NB9 | usd | 1       | 0.01       |
 | VLO          | Valero Energy Corporation                                 | BBG000BBGGQ1 | usd | 1       | 0.01       |
 | MOV          | Movado Group Inc                                          | BBG000BL30Y9 | usd | 1       | 0.01       |
+| 268          | Kingdee International Software                            | BBG000FQH8C6 | hkd | 100     | 0.02       |
 | MRKC         | Россети Центр                                             | BBG000VH7TZ8 | rub | 1000    | 0.0002     |
 | GKOS         | Glaukos Corp                                              | BBG000WG2LQ1 | usd | 1       | 0.01       |
 | HIBB         | Hibbett, Inc.                                             | BBG000H001V3 | usd | 1       | 0.01       |
@@ -1043,25 +1077,25 @@
 | CRUS         | Cirrus Logic Inc                                          | BBG000C1DHF5 | usd | 1       | 0.01       |
 | EXR          | Extra Space Storage REIT                                  | BBG000PV27K3 | usd | 1       | 0.01       |
 | ROL          | Rollins                                                   | BBG000BSBBP1 | usd | 1       | 0.01       |
+| 9888         | Baidu                                                     | BBG00ZMFX1S5 | hkd | 10      | 0.1        |
 | TNL          | Travel + Leisure Co.                                      | TBG000PV2L86 | usd | 1       | 0.01       |
 | LNG          | Cheniere Energy                                           | BBG000C3HSR0 | usd | 1       | 0.01       |
 | POSI         | Positive Technologies                                     | TCS00A103X66 | rub | 1       | 0.2        |
 | QGEN         | QIAGEN NV                                                 | BBG000GTYWL7 | usd | 1       | 0.01       |
 | MARA         | Marathon Digital Holdings                                 | BBG001K7WBT8 | usd | 1       | 0.01       |
 | BSX          | Boston Scientific Corporation                             | BBG000C0LW92 | usd | 1       | 0.01       |
-| VCRA         | Vocera Communications Inc                                 | BBG00179VSY7 | usd | 1       | 0.01       |
 | SPB@US       | Spectrum Brands Holdings Inc                              | BBG000DS5588 | usd | 1       | 0.01       |
 | NFG          | National Fuel Gas Company                                 | BBG000BPYD87 | usd | 1       | 0.01       |
 | WRB          | WR Berkley                                                | BBG000BD1HP2 | usd | 1       | 0.01       |
 | JWN          | Nordstrom                                                 | BBG000G8N9C6 | usd | 1       | 0.01       |
 | CEVA         | CEVA                                                      | BBG000BN3P07 | usd | 1       | 0.01       |
-| ENV          | Envestnet Inc                                             | BBG000Q4NZ54 | usd | 1       | 0.01       |
 | RL           | Ralph Lauren                                              | BBG000BS0ZF1 | usd | 1       | 0.01       |
+| ENV          | Envestnet Inc                                             | BBG000Q4NZ54 | usd | 1       | 0.01       |
 | POGR         | Petropavlovsk PLC                                         | BBG00VPKLPX4 | rub | 100     | 0.005      |
 | CVNA         | Carvana Co                                                | BBG00GCTWDJ3 | usd | 1       | 0.01       |
 | RPM          | RPM International Inc                                     | BBG000DCNK80 | usd | 1       | 0.01       |
 | CCS          | Century Communities                                       | BBG006G412Q6 | usd | 1       | 0.01       |
-| FEES         | ФСК ЕЭС                                                   | BBG00475JZZ6 | rub | 10000   | 0.00002    |
+| FEES         | Россети                                                   | BBG00475JZZ6 | rub | 10000   | 0.00002    |
 | LSI          | Life Storage REIT                                         | BBG000C42VL3 | usd | 1       | 0.01       |
 | SWAV         | Shockwave Medical Inc                                     | BBG005XVXML5 | usd | 1       | 0.01       |
 | FIGS         | FIGS                                                      | BBG004SK5VL9 | usd | 1       | 0.01       |
@@ -1089,12 +1123,14 @@
 | EVH          | Evolent Health Inc                                        | BBG005CHLM96 | usd | 1       | 0.01       |
 | AVAV         | AeroVironment Inc                                         | BBG000GX14P2 | usd | 1       | 0.01       |
 | MDGL         | Madrigal Pharmaceuticals Inc                              | BBG000QS6NV8 | usd | 1       | 0.01       |
+| 9626         | Bilibili                                                  | BBG00ZNW65W3 | hkd | 10      | 0.1        |
 | Z            | Zillow Group Inc                                          | BBG009NRSWJ4 | usd | 1       | 0.01       |
 | UNM          | Unum                                                      | BBG000BW2QX0 | usd | 1       | 0.01       |
 | PSN          | Parsons                                                   | BBG000C3TKY6 | usd | 1       | 0.01       |
 | JPM          | JPMorgan                                                  | BBG000DMBXR2 | usd | 1       | 0.01       |
-| RUGR         | Русгрэйн                                                  | BBG0014PFYM2 | rub | 10      | 0.002      |
+| RUGR         | Русгрэйн                                                  | BBG0014PFYM2 | rub | 10      | 0.005      |
 | KFY          | Korn Ferry                                                | BBG000C5QMB5 | usd | 1       | 0.01       |
+| 968          | Xinyi Solar                                               | BBG001XVDJ15 | hkd | 100     | 0.02       |
 | TTEK         | Tetra Tech                                                | BBG000BYZ0Q5 | usd | 1       | 0.01       |
 | PMSB         | Пермэнергосбыт                                            | BBG000MZL0Y6 | rub | 10      | 0.1        |
 | SLVM         | Sylvamo Corp.                                             | BBG0122M8031 | usd | 1       | 0.01       |
@@ -1104,6 +1140,7 @@
 | MEI          | Methode Electronics Inc                                   | BBG000BNY197 | usd | 1       | 0.01       |
 | META         | Meta Platforms                                            | BBG000MM2P62 | usd | 1       | 0.01       |
 | ABCL         | AbCellera Biologics                                       | BBG00LLW2MF2 | usd | 1       | 0.01       |
+| 27           | Galaxy Entertainment Group                                | BBG000BG5LL6 | hkd | 10      | 0.05       |
 | S            | SentinelOne, Inc.                                         | BBG00B6F2F09 | usd | 1       | 0.01       |
 | WOLF         | Wolfspeed                                                 | BBG000BG14P4 | usd | 1       | 0.01       |
 | MTG          | MGIC Investment Corp                                      | BBG000CBMH27 | usd | 1       | 0.01       |
@@ -1116,8 +1153,10 @@
 | VSCO         | Victorias Secret & Co.                                    | BBG01103B471 | usd | 1       | 0.01       |
 | BCO          | Brink's Co                                                | BBG000DR5QP5 | usd | 1       | 0.01       |
 | NPK          | National Presto Industries Inc                            | BBG000BQ4GG2 | usd | 1       | 0.01       |
+| 992          | Lenovo                                                    | BBG000BG4QM5 | hkd | 100     | 0.01       |
 | YAKG         | ЯТЭК                                                      | BBG002B298N6 | rub | 10      | 0.05       |
 | EQIX         | Equinix REIT                                              | BBG000MBDGM6 | usd | 1       | 0.01       |
+| ASTS         | AST SpaceMobile                                           | BBG00Q402TR2 | usd | 1       | 0.01       |
 | VIPS         | Vipshop                                                   | BBG002NLDLV8 | usd | 1       | 0.01       |
 | ELV          | Elevance Health                                           | BBG000BCG930 | usd | 1       | 0.01       |
 | UMBF         | UMB Financial                                             | BBG000DD8WX1 | usd | 1       | 0.01       |
@@ -1125,6 +1164,7 @@
 | TGKB         | ТГК-2                                                     | BBG000Q7GG57 | rub | 1000000 | 0.000005   |
 | XRAY         | Dentsply Sirona                                           | BBG000BX57K1 | usd | 1       | 0.01       |
 | D            | Dominion Energy Inc                                       | BBG000BGVW60 | usd | 1       | 0.01       |
+| 688          | China Overseas Land & Investment                          | BBG000BGD8W4 | hkd | 100     | 0.05       |
 | GO           | Grocery Outlet Holding Corp                               | BBG00P4R3079 | usd | 1       | 0.01       |
 | GOSS         | Gossamer Bio Inc                                          | BBG00MVWLLM2 | usd | 1       | 0.01       |
 | BRK.B        | Berkshire Hathaway                                        | BBG000DWG505 | usd | 1       | 0.01       |
@@ -1150,24 +1190,28 @@
 | CALM         | Cal-Maine Foods Inc                                       | BBG000CDMJW6 | usd | 1       | 0.01       |
 | WPM          | Wheaton Precious Metals                                   | BBG000PVRDL2 | usd | 1       | 0.01       |
 | BALL         | Ball Corporation                                          | BBG000BDDNH5 | usd | 1       | 0.01       |
-| RNFT         | РуссНефть                                                 | BBG00F9XX7H4 | rub | 1       | 0.2        |
+| RNFT         | РуссНефть                                                 | BBG00F9XX7H4 | rub | 1       | 0.1        |
+| 2618         | JD Logistics                                              | BBG010RJL3B5 | hkd | 100     | 0.02       |
 | MSRS         | МОЭСК                                                     | BBG004S687G6 | rub | 1000    | 0.0005     |
 | MRVI         | Maravai LifeSciences Holdings                             | BBG00Y1DFV91 | usd | 1       | 0.01       |
 | DAR          | Darling Ingredients Inc                                   | BBG000BN8ZK8 | usd | 1       | 0.01       |
 | PXD          | Pioneer Natural Resources                                 | BBG000BXRPH1 | usd | 1       | 0.01       |
 | PFSI         | PennyMac Financial Services                               | BBG00LMYX123 | usd | 1       | 0.01       |
+| 2313         | Shenzhou International Group                              | BBG000JSJ2F6 | hkd | 10      | 0.05       |
 | HGV          | Hilton Grand Vacations Inc                                | BBG00CBYY6M1 | usd | 1       | 0.01       |
 | SWBI         | Smith & Wesson Brands                                     | BBG000BM0QL7 | usd | 1       | 0.01       |
 | CENT         | Central Garden & Pet Co                                   | BBG000BFD605 | usd | 1       | 0.01       |
 | AYI          | Acuity Brands                                             | BBG000BJ5HK0 | usd | 1       | 0.01       |
 | ASGN         | ASGN Inc                                                  | BBG000CRN8N8 | usd | 1       | 0.01       |
 | SU           | Suncor Energy                                             | BBG000BRK7L6 | usd | 1       | 0.01       |
+| TLS          | Telos Corporation                                         | BBG000BK34C7 | usd | 1       | 0.01       |
 | DNOW         | NOW Inc                                                   | BBG005BLN209 | usd | 1       | 0.01       |
 | RSTI         | Российские сети                                           | BBG004S682J4 | rub | 1000    | 0.0001     |
 | CHDN         | Churchill Downs Inc                                       | BBG000BGXMG9 | usd | 1       | 0.01       |
 | PHM          | PulteGroup                                                | BBG000BR54L0 | usd | 1       | 0.01       |
 | ESPR         | Esperion Therapeutics Inc                                 | BBG004KB3S72 | usd | 1       | 0.01       |
 | VRSK         | Verisk Analytics                                          | BBG000BCZL41 | usd | 1       | 0.01       |
+| FLYW         | Flywire                                                   | BBG002030NC4 | usd | 1       | 0.01       |
 | CC           | Chemours Company                                          | BBG005H82GB2 | usd | 1       | 0.01       |
 | EAF          | GrafTech International Ltd                                | BBG00KDYT8C4 | usd | 1       | 0.01       |
 | MRKZ         | Россети Северо-Запад                                      | BBG000TJ6F42 | rub | 10000   | 0.00005    |
@@ -1178,9 +1222,11 @@
 | ATO          | Atmos Energy Corp                                         | BBG000BRNGM2 | usd | 1       | 0.01       |
 | APTK         | Аптечная сеть 36,6                                        | BBG000K3STR7 | rub | 10      | 0.002      |
 | 9618         | JD.com                                                    | BBG00VC6RYV6 | hkd | 10      | 0.2        |
+| INVA         | Innoviva Inc                                              | BBG000CG9XT7 | usd | 1       | 0.01       |
 | COST         | Costco Wholesale                                          | BBG000F6H8W8 | usd | 1       | 0.01       |
 | CVX          | Chevron                                                   | BBG000K4ND22 | usd | 1       | 0.01       |
 | SYNA         | Synaptics Inc                                             | BBG000BQV1S2 | usd | 1       | 0.01       |
+| 388          | Hong Kong Exchanges and Clearing                          | BBG000BGW354 | hkd | 1       | 0.2        |
 | MMI          | Marcus & Millichap Inc                                    | BBG005GBRSR6 | usd | 1       | 0.01       |
 | AIV          | Apartment Investment & Management REIT                    | BBG000DD3510 | usd | 1       | 0.01       |
 | EGP          | EastGroup Properties REIT                                 | BBG000BHRBT4 | usd | 1       | 0.01       |
@@ -1189,13 +1235,12 @@
 | RJF          | Raymond James Financial                                   | BBG000BS73J1 | usd | 1       | 0.01       |
 | AIT          | Applied Industrial Technologies                           | BBG000BBHHP9 | usd | 1       | 0.01       |
 | ROCK         | Gibraltar Industries Inc                                  | BBG000BKQDQ7 | usd | 1       | 0.01       |
-| LFC          | China Life Insurance                                      | BBG000BBK4B9 | usd | 1       | 0.01       |
 | DVN          | Devon Energy                                              | BBG000BBVJZ8 | usd | 1       | 0.01       |
 | CON@DE       | Continental AG                                            | BBG000BBZBV5 | eur | 1       | 0.01       |
-| CTXS         | Citrix Systems                                            | BBG000FQ6PY6 | usd | 1       | 0.01       |
 | AVA          | Avista Corporation                                        | BBG000BCNF74 | usd | 1       | 0.01       |
 | ARWR         | Arrowhead Pharmaceuticals Inc                             | BBG000BRVKH0 | usd | 1       | 0.01       |
 | CME          | CME GROUP                                                 | BBG000BHLYP4 | usd | 1       | 0.01       |
+| VERU         | Veru Inc                                                  | BBG000G12J78 | usd | 1       | 0.01       |
 | AXGN         | Axogen Inc                                                | BBG000BN46R9 | usd | 1       | 0.01       |
 | FANG         | Diamondback Energy Inc                                    | BBG002PHSYX9 | usd | 1       | 0.01       |
 | CZR          | Caesars Entertainment Corporation                         | BBG0074Q3NK6 | usd | 1       | 0.01       |
@@ -1224,6 +1269,7 @@
 | RYTM         | Rhythm Pharmaceuticals Inc                                | BBG007DLZ601 | usd | 1       | 0.01       |
 | PYPL         | PayPal Holdings                                           | BBG0077VNXV6 | usd | 1       | 0.01       |
 | DOV          | Dover                                                     | BBG000BHB3M6 | usd | 1       | 0.01       |
+| LICY         | Li-Cycle Holdings                                         | BBG0122LQVR9 | usd | 1       | 0.01       |
 | THRM         | Gentherm Inc                                              | BBG000BQLM34 | usd | 1       | 0.01       |
 | KTOS         | Kratos Defense & Security Solutions                       | BBG000C1HQ43 | usd | 1       | 0.01       |
 | 1113         | CK Asset Holdings                                         | BBG007WDD4B5 | hkd | 10      | 0.05       |
@@ -1235,14 +1281,16 @@
 | AZPN         | Aspen Technology                                          | BBG017J18W74 | usd | 1       | 0.01       |
 | SPSC         | SPS Commerce Inc                                          | BBG000PZGB75 | usd | 1       | 0.01       |
 | OSH          | Oak Street Health                                         | BBG00W0L8GW3 | usd | 1       | 0.01       |
+| 2600         | Aluminum Corp of China                                    | BBG000CN0Y73 | hkd | 100     | 0.01       |
 | AMEH         | Apollo Medical Holdings                                   | BBG000H7ZK57 | usd | 1       | 0.01       |
 | PNFP         | Pinnacle Financial Partners In                            | BBG000C1XKF6 | usd | 1       | 0.01       |
 | TRU          | TransUnion                                                | BBG002Q7J5Z1 | usd | 1       | 0.01       |
+| 881          | Zhongsheng                                                | BBG000QCN464 | hkd | 10      | 0.05       |
 | VEON         | VEON                                                      | BBG000QCW561 | usd | 1       | 0.01       |
 | ARCH         | Arch Coal Inc                                             | BBG00DZB5D77 | usd | 1       | 0.01       |
 | SO           | Southern                                                  | BBG000BT9DW0 | usd | 1       | 0.01       |
-| FORM         | FormFactor Inc                                            | BBG000D1Y3P1 | usd | 1       | 0.01       |
 | STOR         | STORE Capital Corp REIT                                   | BBG00265T6Q4 | usd | 1       | 0.01       |
+| FORM         | FormFactor Inc                                            | BBG000D1Y3P1 | usd | 1       | 0.01       |
 | ROK          | Rockwell Automation                                       | BBG000BBCDZ2 | usd | 1       | 0.01       |
 | TFII         | TFI International                                         | BBG000HJS1F0 | usd | 1       | 0.01       |
 | TGKD         | Квадра                                                    | BBG000F6H7K3 | rub | 100000  | 0.000005   |
@@ -1253,9 +1301,7 @@
 | ZI           | ZoomInfo Technologies Inc                                 | BBG00S1HJ3M8 | usd | 1       | 0.01       |
 | BLMN         | Bloomin Brands, Inc.                                      | BBG002VZ68Y2 | usd | 1       | 0.01       |
 | ATRA         | Atara Biotherapeutics Inc                                 | BBG005Q3MQY4 | usd | 1       | 0.01       |
-| ELY          | Callaway Golf Company                                     | BBG000CPCVY1 | usd | 1       | 0.01       |
 | HLI          | Houlihan Lokey, Inc.                                      | BBG000CZTB66 | usd | 1       | 0.01       |
-| DWNI@DE      | Deutsche Wohnen SE                                        | BBG000GM6Y84 | eur | 1       | 0.01       |
 | PLD          | Prologis REIT                                             | BBG000B9Z0J8 | usd | 1       | 0.01       |
 | PIPR         | Piper Sandler Companies                                   | BBG000FQXC75 | usd | 1       | 0.01       |
 | UBS          | UBS Group                                                 | BBG007DJM539 | usd | 1       | 0.01       |
@@ -1285,7 +1331,9 @@
 | GCHE         | Группа Черкизово                                          | BBG000RTHVK7 | rub | 1       | 0.5        |
 | WB           | Weibo Corporation                                         | BBG0065XPGX9 | usd | 1       | 0.01       |
 | LNZLP        | Лензолото - привилегированные акции                       | BBG000SR0YS4 | rub | 1       | 5          |
+| 9866         | NIO Inc                                                   | BBG015PB0HH9 | hkd | 10      | 0.1        |
 | CCSI         | Consensus Cloud Solutions                                 | BBG0105XBRH0 | usd | 1       | 0.01       |
+| RVMD         | REVOLUTION Medicines Inc                                  | BBG00829F4P8 | usd | 1       | 0.01       |
 | WKHS         | Workhorse Group Inc                                       | BBG000BDPB15 | usd | 1       | 0.01       |
 | BAX          | Baxter International                                      | BBG000BCVJ77 | usd | 1       | 0.01       |
 | ADBE         | Adobe                                                     | BBG000BB5006 | usd | 1       | 0.01       |
@@ -1315,9 +1363,7 @@
 | FNF          | Fidelity National Financial, Inc.                         | BBG006N7S6K9 | usd | 1       | 0.01       |
 | FIVN         | Five9 Inc                                                 | BBG001KHJM17 | usd | 1       | 0.01       |
 | SNGSP        | Сургутнефтегаз - привилегированные акции                  | BBG004S681M2 | rub | 100     | 0.005      |
-| MANT         | ManTech International Corp VA                             | BBG000BGF8B5 | usd | 1       | 0.01       |
 | ESE          | ESCO Technologies Inc.                                    | BBG000C4S3P3 | usd | 1       | 0.01       |
-| GSKY         | GreenSky Inc                                              | BBG00KT2SCV8 | usd | 1       | 0.01       |
 | BAND         | Bandwidth Inc                                             | BBG001K003W2 | usd | 1       | 0.01       |
 | TSVT         | 2seventy bio                                              | BBG00YV1J622 | usd | 1       | 0.01       |
 | NEE          | NextEra Energy                                            | BBG000BJSBJ0 | usd | 1       | 0.01       |
@@ -1361,15 +1407,14 @@
 | EXAS         | Exact Sciences Corp                                       | BBG000CWL0F5 | usd | 1       | 0.01       |
 | JCI          | Johnson Controls                                          | BBG000BVWLJ6 | usd | 1       | 0.01       |
 | TXG          | 10X Genomics Inc                                          | BBG007WX14X0 | usd | 1       | 0.01       |
-| REGI         | Renewable Energy Group Inc                                | BBG0016SSV00 | usd | 1       | 0.01       |
 | VOYA         | Voya Financial                                            | BBG000BCWKD6 | usd | 1       | 0.01       |
 | ISRG         | Intuitive Surgical                                        | BBG000BJPDZ1 | usd | 1       | 0.01       |
 | LI           | Li Auto                                                   | BBG00W0KZD98 | usd | 1       | 0.01       |
-| PHOR@GS      | PhosAgro PJSC                                             | BBG001R16GZ5 | usd | 1       | 0.01       |
+| LYEL         | Lyell Immunopharma                                        | BBG00RNXFN14 | usd | 1       | 0.01       |
+| GRBK         | Green Brick Partners                                      | BBG000QGYG84 | usd | 1       | 0.01       |
 | AXTA         | Axalta Coating Systems                                    | BBG0060CPLJ5 | usd | 1       | 0.01       |
 | HOOD         | Robinhood Markets, Inc.                                   | BBG008NMBXN8 | usd | 1       | 0.01       |
 | TCS          | TCS Group (Tinkoff Bank holder)                           | BBG005DXJS36 | usd | 1       | 0.01       |
-| KAP@GS       | NAC Kazatomprom JSC                                       | BBG00MJM7K82 | usd | 1       | 0.01       |
 | ATR          | AptarGroup                                                | BBG000BGX2S0 | usd | 1       | 0.01       |
 | GWW          | WW Grainger                                               | BBG000BKR1D6 | usd | 1       | 0.01       |
 | SUPN         | Supernus Pharmaceuticals Inc                              | BBG000BP0HX7 | usd | 1       | 0.01       |
@@ -1378,20 +1423,21 @@
 | MDLZ         | Mondelez                                                  | BBG000D4LWF6 | usd | 1       | 0.01       |
 | JEF          | Jefferies Financial Group                                 | BBG000BNHSP9 | usd | 1       | 0.01       |
 | TDS          | Telephone & Data Systems Inc                              | BBG000BV0VK7 | usd | 1       | 0.01       |
+| JAMF         | Jamf Holding Corp                                         | BBG00VSYYVB8 | usd | 1       | 0.01       |
 | SHLS         | Shoals Technologies Group, Inc.                           | BBG00YQ82275 | usd | 1       | 0.01       |
+| DNA          | Ginkgo Bioworks Holdings                                  | BBG00YPS1KY3 | usd | 1       | 0.01       |
 | TTM          | Tata Motors                                               | BBG000PVGDH9 | usd | 1       | 0.01       |
 | DK           | Delek US Holdings Inc                                     | BBG00FZYFVC5 | usd | 1       | 0.01       |
 | CMG          | Chipotle Mexican Grill                                    | BBG000QX74T1 | usd | 1       | 0.01       |
 | BX           | Blackstone                                                | BBG000BH0106 | usd | 1       | 0.01       |
 | NWS          | News Corp                                                 | BBG0035M2ZB7 | usd | 1       | 0.01       |
 | FHI          | Federated Hermes                                          | BBG000BP0929 | usd | 1       | 0.01       |
-| DRE          | Duke Realty REIT                                          | BBG000BHD8S7 | usd | 1       | 0.01       |
 | BRO          | Brown & Brown                                             | BBG000BWSGF4 | usd | 1       | 0.01       |
 | RASP         | Распадская                                                | BBG004S68696 | rub | 10      | 0.05       |
 | DAVA         | Endava АДР                                                | BBG00LBLBBJ7 | usd | 1       | 0.01       |
 | PBA          | Pembina Pipeline Corporation                              | BBG001732GF9 | usd | 1       | 0.01       |
-| MGM          | MGM Resorts International                                 | BBG000C2BXK4 | usd | 1       | 0.01       |
 | MPW          | Medical Properties REIT                                   | BBG000BGRB25 | usd | 1       | 0.01       |
+| MGM          | MGM Resorts International                                 | BBG000C2BXK4 | usd | 1       | 0.01       |
 | RIOT         | Riot Blockchain                                           | BBG000BQ4512 | usd | 1       | 0.01       |
 | VEEV         | Veeva Systems Inc                                         | BBG001CGB489 | usd | 1       | 0.01       |
 | NCR          | NCR Corp                                                  | BBG000BMXK89 | usd | 1       | 0.01       |
@@ -1405,8 +1451,8 @@
 | HQY          | HealthEquity Inc                                          | BBG000TYXCT9 | usd | 1       | 0.01       |
 | BVB@DE       | Borussia Dortmund GmbH & Co KG                            | BBG000D54JC4 | eur | 1       | 0.01       |
 | EWBC         | East West Ban                                             | BBG000CR20B1 | usd | 1       | 0.01       |
-| PUM@DE       | PUMA SE                                                   | BBG000BLMTR3 | eur | 1       | 0.01       |
 | NVTK         | НОВАТЭК                                                   | BBG00475KKY8 | rub | 1       | 0.2        |
+| PUM@DE       | PUMA SE                                                   | BBG000BLMTR3 | eur | 1       | 0.01       |
 | GATX         | GATX Corporation                                          | BBG000BKGXQ4 | usd | 1       | 0.01       |
 | EXLS         | ExlService Holdings Inc                                   | BBG000NS3P30 | usd | 1       | 0.01       |
 | HCC          | Warrior Met Coal                                          | BBG00GD1JMV4 | usd | 1       | 0.01       |
@@ -1429,15 +1475,15 @@
 | APPS         | Digital Turbine Inc                                       | BBG000HZ3562 | usd | 1       | 0.01       |
 | UNKL         | ЮУНК                                                      | BBG002YFXL29 | rub | 1       | 10         |
 | VVV          | Valvoline                                                 | BBG003DNHV56 | usd | 1       | 0.01       |
-| GRUB         | АДР Just Eat Takeaway.com N.V.                            | BBG010R8C3Y4 | usd | 1       | 0.01       |
 | ALXO         | ALX Oncology Holdings Inc                                 | BBG00VR8SDG8 | usd | 1       | 0.01       |
+| 6969         | Smoore International                                      | BBG00VSF90M3 | hkd | 100     | 0.02       |
 | KRG          | Kite Realty Group REIT                                    | BBG000BC2KW8 | usd | 1       | 0.01       |
 | NKNC         | Нижнекамскнефтехим                                        | BBG000GQSRR5 | rub | 10      | 0.05       |
 | KNSL         | Kinsale Capital Group                                     | BBG00D8JD9Z9 | usd | 1       | 0.01       |
 | SRPT         | Sarepta Therapeutics Inc                                  | BBG000BCJ161 | usd | 1       | 0.01       |
 | NTES         | NetEase Inc                                               | BBG000BX72V8 | usd | 1       | 0.01       |
 | PTON         | Peloton Interactive Inc                                   | BBG00JG0FFZ2 | usd | 1       | 0.01       |
-| AQUA         | Русская аквакультура                                      | BBG000W325F7 | rub | 1       | 0.5        |
+| AQUA         | ИНАРКТИКА                                                 | BBG000W325F7 | rub | 1       | 0.5        |
 | MGPI         | MGP Ingredients                                           | BBG000BXK6C5 | usd | 1       | 0.01       |
 | BEN          | Franklin Resources                                        | BBG000BD0TF8 | usd | 1       | 0.01       |
 | FLO          | Flowers Foods, Inc.                                       | BBG000BB4D72 | usd | 1       | 0.01       |
@@ -1448,16 +1494,15 @@
 | ICUI         | ICU Medical Inc                                           | BBG000CQV2N4 | usd | 1       | 0.01       |
 | U            | Unity Software                                            | BBG0056JW5G6 | usd | 1       | 0.01       |
 | VRSB         | ТНС энерго Воронеж                                        | BBG000BX7DH0 | rub | 10      | 0.2        |
-| FLOW         | SPX FLOW Inc                                              | BBG007FL7ZD2 | usd | 1       | 0.01       |
 | JACK         | Jack in the Box                                           | BBG000GZYVY1 | usd | 1       | 0.01       |
 | BIIB         | Biogen                                                    | BBG000C17X76 | usd | 1       | 0.01       |
 | MDU          | MDU Resources Group, Inc.                                 | BBG000BNX3R4 | usd | 1       | 0.01       |
 | WWW          | Wolverine World Wide Inc                                  | BBG000BX2YN2 | usd | 1       | 0.01       |
 | CFG          | Citizens Financial Group                                  | BBG006Q0HY77 | usd | 1       | 0.01       |
 | BYND         | Beyond Meat Inc                                           | BBG003CVJP50 | usd | 1       | 0.01       |
-| TPTX         | Turning Point Therapeutics Inc                            | BBG00NPL9WH7 | usd | 1       | 0.01       |
 | INGR         | Ingredion Inc                                             | BBG000BXPZB7 | usd | 1       | 0.01       |
 | COO          | The Cooper Companies                                      | BBG000BG3445 | usd | 1       | 0.01       |
+| VTNR         | Vertex Energy, Inc.                                       | BBG000BGGXH3 | usd | 1       | 0.01       |
 | FICO         | Fair Isaac Corp                                           | BBG000DW76Y6 | usd | 1       | 0.01       |
 | LYLT         | Loyalty Ventures                                          | BBG012QVD574 | usd | 1       | 0.01       |
 | WEX          | WEX Inc                                                   | BBG000BVZP59 | usd | 1       | 0.01       |
@@ -1469,7 +1514,6 @@
 | WAB          | Wabtec Corp.                                              | BBG000BDD940 | usd | 1       | 0.01       |
 | BKI          | Black Knight Inc                                          | BBG00GX77LW3 | usd | 1       | 0.01       |
 | TXN          | Texas Instruments                                         | BBG000BVV7G1 | usd | 1       | 0.01       |
-| ARNA         | Arena Pharmaceuticals Inc                                 | BBG000BKXBV7 | usd | 1       | 0.01       |
 | CLOV         | Clover Health Investments, Corp.                          | BBG00SHY90J5 | usd | 1       | 0.01       |
 | NKLA         | Nikola                                                    | BBG00L4CWQ45 | usd | 1       | 0.01       |
 | MLM          | Martin Marietta Materials                                 | BBG000BGYMH7 | usd | 1       | 0.01       |
@@ -1481,6 +1525,7 @@
 | HSIC         | Henry Schein                                              | BBG000BNMMJ3 | usd | 1       | 0.01       |
 | MANH         | Manhattan Associates Inc                                  | BBG000BFV758 | usd | 1       | 0.01       |
 | ES           | Eversource Energy                                         | BBG000BQ87N0 | usd | 1       | 0.01       |
+| 1024         | Kuaishou Technology                                       | BBG00YYT9BD6 | hkd | 10      | 0.05       |
 | PEN          | Penumbra Inc                                              | BBG001BP92V1 | usd | 1       | 0.01       |
 | RF           | Regions Financial                                         | BBG000Q3JN03 | usd | 1       | 0.01       |
 | OHI          | Omega Healthcare Investors REIT                           | BBG000BGBTC2 | usd | 1       | 0.01       |
@@ -1518,6 +1563,7 @@
 | FITB         | Fifth Third Bancorp                                       | BBG000BJL3N0 | usd | 1       | 0.01       |
 | LPRO         | Open Lending Corp                                         | BBG00VDHLSQ6 | usd | 1       | 0.01       |
 | BIDU         | Baidu                                                     | BBG000QXWHD1 | usd | 1       | 0.01       |
+| 2331         | Li-Ning                                                   | BBG000PTX047 | hkd | 10      | 0.05       |
 | CLVT         | Clarivate                                                 | BBG00P1919G5 | usd | 1       | 0.01       |
 | EOG          | EOG Resources                                             | BBG000BZ9223 | usd | 1       | 0.01       |
 | CSX          | CSX Corp                                                  | BBG000BGJRC8 | usd | 1       | 0.01       |
@@ -1530,6 +1576,8 @@
 | LANC         | Lancaster Colony                                          | BBG000BN1M88 | usd | 1       | 0.01       |
 | RIDE         | Lordstown Motors Corp                                     | BBG00N6NL712 | usd | 1       | 0.01       |
 | PPC          | Pilgrim's Pride Corp                                      | BBG000BFLXV3 | usd | 1       | 0.01       |
+| KGC          | Kinross Gold                                              | BBG000BB2DM7 | usd | 1       | 0.01       |
+| ATEN         | A10 Networks Inc                                          | BBG0060K22C1 | usd | 1       | 0.01       |
 | EBAY         | eBay                                                      | BBG000C43RR5 | usd | 1       | 0.01       |
 | DAL          | Delta Air Lines                                           | BBG000R7Z112 | usd | 1       | 0.01       |
 | AMSF         | AMERISAFE, Inc.                                           | BBG000Q0JJQ0 | usd | 1       | 0.01       |
@@ -1558,6 +1606,7 @@
 | TREE         | LendingTree Inc                                           | BBG000TVRB50 | usd | 1       | 0.01       |
 | V            | Visa                                                      | BBG000PSKYX7 | usd | 1       | 0.01       |
 | ETR          | Entergy Corporation                                       | BBG000C1FQS9 | usd | 1       | 0.01       |
+| GEN          | NortonLifeLock Inc                                        | BBG000BH2JM1 | usd | 1       | 0.01       |
 | FDS          | FactSet Research Systems Inc                              | BBG000BDJL83 | usd | 1       | 0.01       |
 | NAVI         | Navient                                                   | BBG004MN1R41 | usd | 1       | 0.01       |
 | GBCI         | Glacier Ban                                               | BBG000C3KB84 | usd | 1       | 0.01       |
@@ -1573,6 +1622,7 @@
 | EXPI         | eXp World Holdings                                        | BBG001DCTG63 | usd | 1       | 0.01       |
 | AXNX         | Axonics                                                   | BBG0067QVJ50 | usd | 1       | 0.01       |
 | EXEL         | Exelixis Inc                                              | BBG000BQ4WF8 | usd | 1       | 0.01       |
+| ISEE         | IVERIC bio                                                | BBG0019K7J31 | usd | 1       | 0.01       |
 | LYV          | Live Nation Entertainment Inc                             | BBG000FQ7YR4 | usd | 1       | 0.01       |
 | CFR          | Cullen/Frost Bankers                                      | BBG000C2PL98 | usd | 1       | 0.01       |
 | DCPH         | Deciphera Pharmaceuticals Inc                             | BBG00HMJ9H54 | usd | 1       | 0.01       |
@@ -1584,10 +1634,13 @@
 | MSCI         | MSCI Inc                                                  | BBG000RTDY25 | usd | 1       | 0.01       |
 | ROG          | Rogers Corp                                               | BBG000BS9HN3 | usd | 1       | 0.01       |
 | PDCO         | Patterson                                                 | BBG000BQY289 | usd | 1       | 0.01       |
+| PCVX         | Vaxcyte Inc                                               | BBG009PHHPL8 | usd | 1       | 0.01       |
 | BRKR         | Bruker Corp                                               | BBG000CL1FG7 | usd | 1       | 0.01       |
 | FNV          | Franco Nevada Corporation                                 | BBG000RD3CL8 | usd | 1       | 0.01       |
 | RGA          | Reinsurance Group of America I                            | BBG000BDLCQ0 | usd | 1       | 0.01       |
+| LNC          | Lincoln National Corp                                     | BBG000BNC3Y9 | usd | 1       | 0.01       |
 | FE           | FirstEnergy                                               | BBG000BB6M98 | usd | 1       | 0.01       |
+| 1093         | CSPC Pharmaceutical                                       | BBG000C3N3B5 | hkd | 100     | 0.01       |
 | UPRO         | Юнипро                                                    | BBG004S686W0 | rub | 1000    | 0.001      |
 | WERN         | Werner Enterprises Inc                                    | BBG000BWPP85 | usd | 1       | 0.01       |
 | LHA@DE       | Deutsche Lufthansa AG                                     | BBG000BC6M41 | eur | 1       | 0.01       |
@@ -1609,7 +1662,6 @@
 | MTX          | Minerals Technologies Inc.                                | BBG000BB61F7 | usd | 1       | 0.01       |
 | MPWR         | Monolithic Power Systems                                  | BBG000C30L48 | usd | 1       | 0.01       |
 | CCL          | Carnival                                                  | BBG000BF6LY3 | usd | 1       | 0.01       |
-| SAIL         | SailPoint Technologies Holdings                           | BBG00J0BBZL0 | usd | 1       | 0.01       |
 | PBI          | Pitney Bowes                                              | BBG000BQTMJ9 | usd | 1       | 0.01       |
 | SI           | Silvergate Capital Corp.                                  | BBG00MMM95S7 | usd | 1       | 0.01       |
 | GPC          | Genuine Parts                                             | BBG000BKL348 | usd | 1       | 0.01       |
@@ -1624,15 +1676,16 @@
 | TNET         | TriNet Group Inc                                          | BBG000BR2040 | usd | 1       | 0.01       |
 | SCSC         | ScanSource Inc                                            | BBG000BHTPZ4 | usd | 1       | 0.01       |
 | CMCSA        | Comcast                                                   | BBG000BFT2L4 | usd | 1       | 0.01       |
-| MGNT@GS      | Magnit PJSC                                               | BBG000VFBQG4 | usd | 1       | 0.01       |
 | MSNG         | Мосэнерго                                                 | BBG004S687W8 | rub | 1000    | 0.0005     |
 | SSTK         | Shutterstock Inc                                          | BBG002ZCK2V9 | usd | 1       | 0.01       |
 | CRS          | Carpenter Technology Corp                                 | BBG000BGCQT9 | usd | 1       | 0.01       |
 | AFKS         | АФК Система                                               | BBG004S68614 | rub | 100     | 0.001      |
 | GOLD         | Barrick Gold                                              | BBG000BB07P9 | usd | 1       | 0.01       |
 | PGTI         | PGT Innovations Inc                                       | BBG000FX3Y66 | usd | 1       | 0.01       |
+| 2015         | Li Auto                                                   | BBG0120WC125 | hkd | 10      | 0.1        |
 | LECO         | Lincoln Electric Holdings                                 | BBG000BB72K8 | usd | 1       | 0.01       |
 | PB           | Prosperity Bancshares                                     | BBG000BHY4D9 | usd | 1       | 0.01       |
+| 836          | China Resources Power                                     | BBG000C1DC75 | hkd | 100     | 0.02       |
 | ENOV         | Enovis                                                    | BBG000C5Z443 | usd | 1       | 0.01       |
 | LASR         | nLight Inc                                                | BBG0020BCPX5 | usd | 1       | 0.01       |
 | CCJ          | Cameco Corporation                                        | BBG000DSZTN6 | usd | 1       | 0.01       |
@@ -1641,7 +1694,6 @@
 | BFAM         | Bright Horizons Family Solutio                            | BBG003LFWP05 | usd | 1       | 0.01       |
 | TJX          | TJX                                                       | BBG000BV8DN6 | usd | 1       | 0.01       |
 | CLR          | Continental Resources Inc                                 | BBG000BHBGN6 | usd | 1       | 0.01       |
-| ZY           | Zymergen Inc.                                             | BBG0077HPN74 | usd | 1       | 0.01       |
 | CARS         | Cars.com Inc                                              | BBG000HGTH33 | usd | 1       | 0.01       |
 | TYL          | Tyler Technologies Inc                                    | BBG000BVWZF9 | usd | 1       | 0.01       |
 | TDC          | Teradata                                                  | BBG000R0L5J4 | usd | 1       | 0.01       |
@@ -1686,6 +1738,7 @@
 | BOOT         | Boot Barn Holdings Inc                                    | BBG0077SYZV6 | usd | 1       | 0.01       |
 | QNST         | QuinStreet Inc                                            | BBG000S9XXB8 | usd | 1       | 0.01       |
 | ALSN         | Allison Transmission Holdings                             | BBG001KY3845 | usd | 1       | 0.01       |
+| COHU         | Cohu Inc.                                                 | BBG000DKMJ86 | usd | 1       | 0.01       |
 | OGKB         | Вторая генерирующая компания оптового рынка электроэне... | BBG000RK52V1 | rub | 1000    | 0.0001     |
 | IPG          | IPG                                                       | BBG000C90DH9 | usd | 1       | 0.01       |
 | NATI         | National Instruments                                      | BBG000DZK6N6 | usd | 1       | 0.01       |
@@ -1696,6 +1749,7 @@
 | NYCB         | New York Community Bancorp                                | BBG000BVXPZ8 | usd | 1       | 0.01       |
 | TRNO         | Terreno REIT                                              | BBG000PV3J62 | usd | 1       | 0.01       |
 | LOPE         | Grand Canyon Education Inc                                | BBG000FV28W9 | usd | 1       | 0.01       |
+| GOGL         | Golden Ocean Group                                        | BBG000BP83H8 | usd | 1       | 0.01       |
 | WTTR         | Select Energy Services Inc                                | BBG00G4Y2DC1 | usd | 1       | 0.01       |
 | MTRN         | Materion Corp                                             | BBG000BDTT76 | usd | 1       | 0.01       |
 | BBBY         | Bed Bath & Beyond                                         | BBG000CSY9H9 | usd | 1       | 0.01       |
@@ -1704,15 +1758,17 @@
 | RCUS         | Arcus Biosciences                                         | BBG00DQD26W3 | usd | 1       | 0.01       |
 | ARE          | Alexandria Real Estate Equities REIT                      | BBG000BC33T9 | usd | 1       | 0.01       |
 | LULU         | Lululemon Athletica Inc                                   | BBG000R8ZVD1 | usd | 1       | 0.01       |
+| PI           | Impinj Inc                                                | BBG000GRK2Z7 | usd | 1       | 0.01       |
 | OMCL         | Omnicell Inc                                              | BBG000BTNGZ4 | usd | 1       | 0.01       |
+| 241          | Alibaba Health Information Technology                     | BBG000BDZJK6 | hkd | 100     | 0.01       |
 | COLM         | Columbia Sportswear Company                               | BBG000BKKQ84 | usd | 1       | 0.01       |
 | CHX          | ChampionX Corporation                                     | BBG00JH9TZ56 | usd | 1       | 0.01       |
 | IRGZ         | Иркутскэнерго                                             | BBG000NL6ZD9 | rub | 100     | 0.02       |
-| MIME         | Mimecast Limited                                          | BBG00B6W26V8 | usd | 1       | 0.01       |
 | WAL          | Western Alliance Bancorp                                  | BBG000Q1KFH4 | usd | 1       | 0.01       |
 | ARMK         | Aramark                                                   | BBG001KY4N87 | usd | 1       | 0.01       |
 | FVRR         | Fiverr International                                      | BBG002YSC5M7 | usd | 1       | 0.01       |
 | LSTR         | Landstar System                                           | BBG000BB2KN0 | usd | 1       | 0.01       |
+| 9868         | XPeng                                                     | BBG011LRHTM7 | hkd | 10      | 0.05       |
 | CLF          | Cleveland-Cliffs                                          | BBG000BFRF55 | usd | 1       | 0.01       |
 | FTI          | TechnipFMC                                                | BBG00DL8NMV2 | usd | 1       | 0.01       |
 | SP           | SP Plus Corp                                              | BBG000BJ91B1 | usd | 1       | 0.01       |
@@ -1728,10 +1784,12 @@
 | TPX          | Tempur Sealy International Inc                            | BBG000PXGT62 | usd | 1       | 0.01       |
 | PINS         | Pinterest Inc                                             | BBG002583CV8 | usd | 1       | 0.01       |
 | HUBS         | HubSpot Inc                                               | BBG000N7MZ06 | usd | 1       | 0.01       |
+| 1368         | Xtep                                                      | BBG000PJKKM9 | hkd | 100     | 0.02       |
 | AAN          | The Aarons Company                                        | BBG00WCNDCZ6 | usd | 1       | 0.01       |
 | DELL         | Dell Technologies Inc                                     | BBG00DW3SZS1 | usd | 1       | 0.01       |
 | AER          | AerCap Holdings                                           | BBG000Q9FZL4 | usd | 1       | 0.01       |
 | WRK          | WestRock                                                  | BBG008NXC572 | usd | 1       | 0.01       |
+| RXDX         | Prometheus Biosciences                                    | BBG00PPP6G54 | usd | 1       | 0.01       |
 | UBSI         | United Bankshares, Inc.                                   | BBG000BVXC87 | usd | 1       | 0.01       |
 | MO           | Altria Group                                              | BBG000BP6LJ8 | usd | 1       | 0.01       |
 | LGND         | Ligand Pharmaceuticals Inc                                | BBG000BKF014 | usd | 1       | 0.01       |
@@ -1747,11 +1805,11 @@
 | BEAM         | Beam Therapeutics                                         | BBG00KXC8646 | usd | 1       | 0.01       |
 | ESS          | Essex Property REIT                                       | BBG000CGJMB9 | usd | 1       | 0.01       |
 | DKNG         | DraftKings                                                | BBG0134WCM78 | usd | 1       | 0.01       |
+| NLY          | Annaly Capital Management REIT                            | BBG000BJFJ98 | usd | 1       | 0.01       |
 | EVRG         | Evergy, Inc                                               | BBG00H433CR2 | usd | 1       | 0.01       |
 | BCPC         | Balchem Corp                                              | BBG000BCY878 | usd | 1       | 0.01       |
 | FCN          | FTI Consulting Inc                                        | BBG000K88H58 | usd | 1       | 0.01       |
 | POR          | Portland General Electric                                 | BBG000BCRMW7 | usd | 1       | 0.01       |
-| NLSN         | Nielsen Holdings plc                                      | BBG0088CYPX8 | usd | 1       | 0.01       |
 | EME          | EMCOR Group                                               | BBG000BBRPL4 | usd | 1       | 0.01       |
 | KLAC         | KLA-Tencor                                                | BBG000BMTFR4 | usd | 1       | 0.01       |
 | CAR          | Avis Budget Group                                         | BBG000FLPRH1 | usd | 1       | 0.01       |
@@ -1764,6 +1822,7 @@
 | HASI         | Hannon Armstrong REIT                                     | BBG0044K5DM4 | usd | 1       | 0.01       |
 | HTHT         | H World Group                                             | BBG000QFPM65 | usd | 1       | 0.01       |
 | OFIX         | Orthofix Medical Inc                                      | BBG000G1C210 | usd | 1       | 0.01       |
+| JOBY         | Joby Aviation                                             | BBG00X2MYTC2 | usd | 1       | 0.01       |
 | VNA@DE       | Vonovia SE                                                | BBG000BT0ZM1 | eur | 1       | 0.01       |
 | TMO          | Thermo Fisher Scientific                                  | BBG000BVDLH9 | usd | 1       | 0.01       |
 | DXC          | DXC Technology                                            | BBG00FN64XT9 | usd | 1       | 0.01       |
@@ -1776,6 +1835,7 @@
 | CBSH         | Commerce Bancshares                                       | BBG000BF3G77 | usd | 1       | 0.01       |
 | ALNY         | Alnylam Pharmaceuticals Inc                               | BBG000BFGNJ5 | usd | 1       | 0.01       |
 | ARCC         | Ares Capital Corp                                         | BBG000PD6X77 | usd | 1       | 0.01       |
+| 2628         | China Life Insurance                                      | BBG000FD8023 | hkd | 100     | 0.02       |
 | GH           | Guardant Health Inc                                       | BBG006D97VY9 | usd | 1       | 0.01       |
 | VNDA         | Vanda Pharmaceuticals Inc                                 | BBG000HT5MG6 | usd | 1       | 0.01       |
 | CNC          | Centene Corporation                                       | BBG000BDXCJ5 | usd | 1       | 0.01       |
@@ -1788,7 +1848,6 @@
 | KNX          | Knight-Swift Transportation                               | BBG000BFC848 | usd | 1       | 0.01       |
 | ACI          | Albertsons Companies                                      | BBG009KG1750 | usd | 1       | 0.01       |
 | APLS         | Apellis Pharmaceuticals                                   | BBG007KGRPY4 | usd | 1       | 0.01       |
-| LKOD@GS      | LUKOIL PJSC                                               | BBG000NN8497 | usd | 1       | 0.01       |
 | SPT          | Sprout Social                                             | BBG001K1CT23 | usd | 1       | 0.01       |
 | TDY          | Teledyne Technologies Inc                                 | BBG000BMT9T6 | usd | 1       | 0.01       |
 | CIEN         | Ciena Corp                                                | BBG000BP1152 | usd | 1       | 0.01       |
@@ -1800,7 +1859,6 @@
 | MXL          | MaxLinear Inc                                             | BBG000BB6R33 | usd | 1       | 0.01       |
 | NSSC         | Napco Security Technologies                               | BBG000BQ6CT5 | usd | 1       | 0.01       |
 | VRNT         | Verint Systems Inc                                        | BBG000BCBYT2 | usd | 1       | 0.01       |
-| MBT          | АДР МТС                                                   | BBG000CSZKR2 | usd | 1       | 0.01       |
 | NMTP         | НМТП                                                      | BBG004S68BR5 | rub | 100     | 0.005      |
 | CRSP         | CRISPR Therapeutics AG                                    | BBG00DBBGRX1 | usd | 1       | 0.01       |
 | MRC          | MRC Global Inc                                            | BBG000BKLTM1 | usd | 1       | 0.01       |
@@ -1808,6 +1866,7 @@
 | CCI          | Crown Castle REIT                                         | BBG000FV1Z23 | usd | 1       | 0.01       |
 | ADI          | Analog Devices                                            | BBG000BB6G37 | usd | 1       | 0.01       |
 | VTRS         | Viatris Inc                                               | BBG00Y4RQNH4 | usd | 1       | 0.01       |
+| RITM         | Rithm Capital REIT                                        | BBG003T1GM03 | usd | 1       | 0.01       |
 | IR           | Ingersoll-Rand                                            | BBG002R1CW27 | usd | 1       | 0.01       |
 | VIR          | Vir Biotechnology                                         | BBG00H2QQ8T5 | usd | 1       | 0.01       |
 | TGKA         | ТГК-1                                                     | BBG000QFH687 | rub | 100000  | 0.000002   |
@@ -1834,20 +1893,22 @@
 | JJSF         | J&J Snack Foods Corp                                      | BBG000BMGPW0 | usd | 1       | 0.01       |
 | TRIP         | TripAdvisor                                               | BBG001M8HHB7 | usd | 1       | 0.01       |
 | LIN          | Linde                                                     | BBG00GVR8YQ9 | usd | 1       | 0.01       |
+| MLNK         | MeridianLink                                              | BBG002ZYMKQ5 | usd | 1       | 0.01       |
 | REX          | REX American Resources Corp                               | BBG000D2ZK61 | usd | 1       | 0.01       |
 | CR           | Crane Holdings                                            | BBG017BXPZ85 | usd | 1       | 0.01       |
 | KRTX         | Karuna Therapeutics Inc                                   | BBG00NN875G0 | usd | 1       | 0.01       |
 | STLA         | Stellantis N.V.                                           | BBG0078ZLDG9 | usd | 1       | 0.01       |
 | CP           | Canadian Pacific Railway                                  | BBG000BCVMH9 | usd | 1       | 0.01       |
-| AMEZ         | Ашинский метзавод                                         | BBG000RJWGC4 | rub | 100     | 0.005      |
 | VET          | Vermilion Energy                                          | BBG000PL3C78 | usd | 1       | 0.01       |
+| AMEZ         | Ашинский метзавод                                         | BBG000RJWGC4 | rub | 100     | 0.005      |
 | SFIX         | Stitch Fix                                                | BBG0046L1KL9 | usd | 1       | 0.01       |
+| 669          | Techtronic Industries                                     | BBG000BFGXV9 | hkd | 10      | 0.05       |
 | FOXA         | Twenty-First Century Fox (A)                              | BBG00JHNJW99 | usd | 1       | 0.01       |
 | PRAA         | PRA Group Inc                                             | BBG000BNTW77 | usd | 1       | 0.01       |
 | COWN         | Cowen, Inc.                                               | BBG000ND1SB0 | usd | 1       | 0.01       |
 | TGKBP        | ТГК-2 - акции привилегированные                           | BBG000Q7GJ60 | rub | 100000  | 0.00001    |
+| ENVX         | Enovix                                                    | BBG00YC53854 | usd | 1       | 0.01       |
 | TPG          | TPG                                                       | BBG0145FSNR1 | usd | 1       | 0.01       |
-| PTR          | PetroChina                                                | BBG000BR85F1 | usd | 1       | 0.01       |
 | AZEK         | AZEK Company                                              | BBG00RPJPN67 | usd | 1       | 0.01       |
 | UNH          | UnitedHealth                                              | BBG000CH5208 | usd | 1       | 0.01       |
 | TGNA         | TEGNA                                                     | BBG000BK5DP1 | usd | 1       | 0.01       |
@@ -1857,6 +1918,7 @@
 | CNTLP        | Центральный Телеграф - акции привилегированные            | BBG0027F0Y27 | rub | 100     | 0.02       |
 | TTE          | TotalEnergies SE                                          | BBG000CHZ857 | usd | 1       | 0.01       |
 | PWR          | Quanta Services                                           | BBG000BBL8V7 | usd | 1       | 0.01       |
+| 9999         | NetEase                                                   | BBG00V6PS1F0 | hkd | 10      | 0.1        |
 | DCI          | Donaldson Co                                              | BBG000BGZP70 | usd | 1       | 0.01       |
 | SHL@DE       | Siemens Healthineers AG                                   | BBG00KY6K4L0 | eur | 1       | 0.01       |
 | MCHP         | Microchip Technology                                      | BBG000BHCP19 | usd | 1       | 0.01       |
@@ -1872,6 +1934,7 @@
 | HUBG         | Hub Group Inc                                             | BBG000G9W6L0 | usd | 1       | 0.01       |
 | SEDG         | SolarEdge Technologies Inc                                | BBG0084BBZY6 | usd | 1       | 0.01       |
 | DE           | Deere & Company                                           | BBG000BH1NH9 | usd | 1       | 0.01       |
+| HIMS         | Hims & Hers Health                                        | BBG00Q53VYM7 | usd | 1       | 0.01       |
 | PANW         | Palo Alto Networks                                        | BBG0014GJCT9 | usd | 1       | 0.01       |
 | DLB          | Dolby Laboratories Inc                                    | BBG000DGLTG5 | usd | 1       | 0.01       |
 | IT           | Gartner                                                   | BBG000BB65D0 | usd | 1       | 0.01       |
@@ -1884,21 +1947,25 @@
 | WU           | Western Union                                             | BBG000BB5373 | usd | 1       | 0.01       |
 | PNW          | Pinnacle West Capital                                     | BBG000BRDSX5 | usd | 1       | 0.01       |
 | MODV         | ModivCare Inc.                                            | BBG000P1B7C8 | usd | 1       | 0.01       |
-| CELH         | Celsius Holdings                                          | BBG000NY37X4 | usd | 1       | 0.01       |
 | OLLI         | Ollie's Bargain Outlet Holding                            | BBG0098VVDT9 | usd | 1       | 0.01       |
+| CELH         | Celsius Holdings                                          | BBG000NY37X4 | usd | 1       | 0.01       |
 | MTLRP        | Мечел - Привилегированные акции                           | BBG004S68FR6 | rub | 10      | 0.05       |
 | LPX          | Louisiana-Pacific Corporation                             | BBG000BNF508 | usd | 1       | 0.01       |
 | HP           | Helmerich & Payne                                         | BBG000BLCPY4 | usd | 1       | 0.01       |
+| 2688         | ENN Energy                                                | BBG000N6X3L4 | hkd | 10      | 0.1        |
+| 3888         | Kingsoft                                                  | BBG000TF4XZ9 | hkd | 10      | 0.05       |
 | ATRO         | Astronics Corp                                            | BBG000BCLBY5 | usd | 1       | 0.01       |
 | LHCG         | LHC Group Inc                                             | BBG000G7W420 | usd | 1       | 0.01       |
 | TRMK         | Трубная Металлургическая Компания                         | BBG004TC84Z8 | rub | 10      | 0.02       |
 | ABT          | Abbott                                                    | BBG000B9ZXB4 | usd | 1       | 0.01       |
 | CACC         | Credit Acceptance Corp                                    | BBG000CS0D96 | usd | 1       | 0.01       |
 | ZUO          | Zuora Inc                                                 | BBG000BT3HG5 | usd | 1       | 0.01       |
+| CUZ          | Cousins Properties REIT                                   | BBG000CW9BM7 | usd | 1       | 0.01       |
 | ANIP         | ANI Pharmaceuticals Inc                                   | BBG000KK1L04 | usd | 1       | 0.01       |
 | HR           | Healthcare Realty Trust REIT                              | BBG000PRJCX9 | usd | 1       | 0.01       |
 | IFX@DE       | Infineon Technologies AG                                  | BBG000C8L273 | eur | 1       | 0.01       |
 | SWKS         | Skyworks Solutions                                        | BBG000KLB4Q1 | usd | 1       | 0.01       |
+| 1801         | Innovent Biologics                                        | BBG00M8832B5 | hkd | 10      | 0.05       |
 | AIN          | Albany International Corp.                                | BBG000BRWWH3 | usd | 1       | 0.01       |
 | GD           | General Dynamics                                          | BBG000BK67C7 | usd | 1       | 0.01       |
 | AME          | AMETEK                                                    | BBG000B9XG87 | usd | 1       | 0.01       |
@@ -1916,7 +1983,6 @@
 | LOGI         | Logitech International SA                                 | BBG000BQNNP6 | usd | 1       | 0.01       |
 | CLH          | Clean Harbors Inc                                         | BBG000BFRRX8 | usd | 1       | 0.01       |
 | UPWK         | Upwork Inc                                                | BBG00FBJ6390 | usd | 1       | 0.01       |
-| GCP          | GCP Applied Technologies Inc                              | BBG0082W8Q12 | usd | 1       | 0.01       |
 | RRGB         | Red Robin Gourmet Burgers Inc                             | BBG000MXH9C1 | usd | 1       | 0.01       |
 | HRL          | Hormel Foods                                              | BBG000BLF8D2 | usd | 1       | 0.01       |
 | ETRN         | Equitrans Midstream Corporation                           | BBG00K53L394 | usd | 1       | 0.01       |
@@ -1959,7 +2025,6 @@
 | GRPH         | Graphite Bio, Inc.                                        | BBG00XDH4NZ2 | usd | 1       | 0.01       |
 | MNST         | Monster Beverage                                          | BBG008NVB1C0 | usd | 1       | 0.01       |
 | CLX          | The Clorox Company                                        | BBG000BFS7D3 | usd | 1       | 0.01       |
-| FOE          | Ferro Corp                                                | BBG000BJQK11 | usd | 1       | 0.01       |
 | BLKB         | Blackbaud Inc                                             | BBG000BGGTW5 | usd | 1       | 0.01       |
 | KRKNP        | Саратовский НПЗ - акции привилегированные                 | BBG002B2J5X0 | rub | 1       | 20         |
 | APTV         | Aptiv                                                     | BBG001QD41M9 | usd | 1       | 0.01       |
@@ -1977,6 +2042,7 @@
 | ISKJ         | ИСКЧ                                                      | BBG000N16BP3 | rub | 10      | 0.02       |
 | CLDT         | Chatham Lodging REIT                                      | BBG000PT6BR8 | usd | 1       | 0.01       |
 | GOOG         | Alphabet Class C                                          | BBG009S3NB30 | usd | 1       | 0.01       |
+| RLAY         | Relay Therapeutics Inc                                    | BBG00DSS08K9 | usd | 1       | 0.01       |
 | LNTH         | Lantheus Holdings Inc                                     | BBG006Q52RD0 | usd | 1       | 0.01       |
 | HEI@DE       | HeidelbergCement AG                                       | BBG000BWRTS3 | eur | 1       | 0.01       |
 | PCAR         | PACCAR                                                    | BBG000BQVTF5 | usd | 1       | 0.01       |
@@ -1984,7 +2050,7 @@
 | VMEO         | Vimeo                                                     | BBG00ZNSSKP3 | usd | 1       | 0.01       |
 
 
-## Bonds available. Total: [660]
+## Bonds available. Total: [642]
 
 | Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |
 |--------------|-----------------------------------------------------------|--------------|-----|---------|------------|
@@ -1995,10 +2061,10 @@
 | RU000A1014B9 | О'КЕЙ выпуск 3                                            | BBG000000006 | rub | 1       | 0.01       |
 | RU000A1022E6 | ПР-Лизинг 002P-01                                         | ISSUANCEPRLS | rub | 1       | 0.01       |
 | RU000A0ZZ8A2 | ПЮДМ БО-П1                                                | BBG00A0ZZ8A2 | rub | 1       | 0.01       |
-| RU000A0JT965 | Роснефть выпуск 5                                         | BBG003LQ7J76 | rub | 1       | 0.01       |
 | RU000A100DC4 | МСБ-Лизинг 002P выпуск 2                                  | BBG00PNLY692 | rub | 1       | 0.01       |
 | RU000A0ZYT40 | ПАО НК Роснефть 002P-04                                   | BBG00K2JQWT1 | rub | 1       | 0.01       |
 | RU000A1046N6 | Асфальтобетонный завод № 1 выпуск 2                       | TCS00A1046N6 | rub | 1       | 0.01       |
+| SU29017RMFS9 | ОФЗ 29017                                                 | BBG00XV43CN9 | rub | 1       | 0.001      |
 | RU000A103N84 | Россельхозбанк выпуск 4                                   | BBG012G45RC0 | rub | 1       | 0.01       |
 | RU000A101GD3 | ГТЛК выпуск 16                                            | BBG00S1L7459 | rub | 1       | 0.01       |
 | RU000A1008D7 | РЖД 001Р выпуск 14                                        | BBG00NTDT6H6 | rub | 1       | 0.01       |
@@ -2014,11 +2080,11 @@
 | RU000A102X18 | Гарант-Инвест БО 002P-3                                   | TCS00A102X18 | rub | 1       | 0.01       |
 | RU000A102LD1 | Черкизово выпуск 4                                        | TCS00A102LD1 | rub | 1       | 0.01       |
 | RU000A103N19 | АПРИ Флай Плэнинг БО-П5                                   | BBG012F27YT0 | rub | 1       | 0.01       |
+| RU000A105146 | ПИК-Корпорация выпуск 5                                   | TCS00A105146 | usd | 1       | 0.0001     |
 | RU000A102BK7 | О'КЕЙ выпуск 4                                            | TCS00A102BK7 | rub | 1       | 0.01       |
 | RU000A103935 | re:Store выпуск 1                                         | TCS00A103935 | rub | 1       | 0.01       |
 | RU000A0ZYDU3 | Свердловская область выпуск 4                             | BBG00HY5JWH4 | rub | 1       | 0.01       |
 | SU26230RMFS1 | ОФЗ 26230                                                 | BBG00PBZNWM4 | rub | 1       | 0.001      |
-| RU000A0JVVA7 | Роснано выпуск 6                                          | BBG00B8SVRD7 | rub | 1       | 0.01       |
 | RU000A101483 | Быстроденьги 001P-01                                      | BBG000000009 | rub | 1       | 0.01       |
 | XS2243636219 | Gazprom Perp EUR                                          | BBG00XV188K2 | eur | 1       | 0.0001     |
 | RU000A1043L7 | МФК Эйрлоанс выпуск 1                                     | TCS00A1043L7 | rub | 1       | 0.01       |
@@ -2027,14 +2093,11 @@
 | RU000A102FT9 | АФК Система выпуск 17                                     | TCS00A102FT9 | rub | 1       | 0.01       |
 | XS1589106910 | Credit Bank of Moscow                                     | BBG00G9DSXZ5 | usd | 1       | 0.0001     |
 | RU000A1004K1 | Европлан БО 05                                            | BBG00NHJGKN2 | rub | 1       | 0.01       |
-| RU000A0ZYEQ9 | Сэтл Групп выпуск 1                                       | BBG00HXHKRV2 | rub | 1       | 0.01       |
-| RU000A1015P6 | Обувь России 001P выпуск 2                                | BBG00R4Y73X1 | rub | 1       | 0.01       |
 | RU000A104BC0 | Калининградская область выпуск 4                          | BBG0148NSWQ2 | rub | 1       | 0.01       |
 | RU000A104VS4 | Ростелеком 002P выпуск 8                                  | TCS00A104VS4 | rub | 1       | 0.01       |
 | RU000A105518 | Европлан 001Р-05                                          | TCS00A105518 | rub | 1       | 0.01       |
 | ISSUANCEBRUS | Брусника 001P-01                                          | ISSUANCEBRUS | rub | 1       | 0          |
 | RU000A100VS2 | Атомстройкомплекс выпуск 1                                | BBGHUYNYA015 | rub | 1       | 0.01       |
-| RU000A100YK3 | Камаз БО-П05                                              | BBG00QPVPLY5 | rub | 1       | 0.01       |
 | SU29009RMFS6 | ОФЗ 29009                                                 | BBG007Z5F748 | rub | 1       | 0.001      |
 | RU000A1020S0 | Первое коллекторское бюро выпуск 2                        | BBG00WMMJMN2 | rub | 1       | 0.01       |
 | RU000A0JWDN6 | РУСАЛ Братск выпуск 1                                     | BBG00CNJBLC4 | rub | 1       | 0.01       |
@@ -2050,10 +2113,8 @@
 | RU000A100XU4 | РЕСО-Лизинг БО-П выпуск 7                                 | BBG00QN37PX1 | rub | 1       | 0.01       |
 | RU000A103F27 | Центральная ППК выпуск 3                                  | TCS00A103F27 | rub | 1       | 0.01       |
 | RU000A1017J5 | Газпром нефть ПАО 003P-02R                                | BBG00R4XLRN5 | rub | 1       | 0.01       |
-| RU000A100A58 | МТС выпуск 8                                              | BBG00NZHSKP1 | rub | 1       | 0.01       |
 | RU000A100HU7 | МТС выпуск 10                                             | BBG00PN9H616 | rub | 1       | 0.01       |
 | RU000A1008V9 | Роснано выпуск 8                                          | BBG00NTXZ6S3 | rub | 1       | 0.01       |
-| RU000A100W29 | Роделен выпуск 2                                          | BBG00QJ5M7P3 | rub | 1       | 0.01       |
 | RU000A0JVUK8 | АФК Система выпуск 1                                      | BBG00B4MWD80 | rub | 1       | 0.01       |
 | RU000A0ZYNY4 | ГТЛК выпуск 7                                             | BBG00JRTXBC1 | rub | 1       | 0.01       |
 | RU000A1051T3 | МТС 001P-22                                               | TCS00A1051T3 | rub | 1       | 0.01       |
@@ -2069,12 +2130,13 @@
 | RU000A104WS2 | Whoosh выпуск 1                                           | TCS00A104WS2 | rub | 1       | 0.01       |
 | RU000A0JWST1 | ГТЛК выпуск 8                                             | BBG00DQFVRK3 | rub | 1       | 0.01       |
 | RU000A1030T7 | Москва выпуск 73                                          | BBG010JBJ976 | rub | 1       | 0.01       |
+| RU000A0ZYL48 | Магаданская область выпуск 1                              | BBG00JHSCRH7 | rub | 1       | 0.01       |
 | XS2010044621 | Sibur                                                     | BBG00Q994JS7 | usd | 1       | 0.0001     |
 | SU26227RMFS7 | ОФЗ 26227                                                 | BBG00NQBGZX5 | rub | 1       | 0.001      |
-| RU000A0ZYJ91 | ФСК ЕЭС БО-4                                              | BBG00JDS8JM8 | rub | 1       | 0.01       |
+| RU000A0ZYJ91 | Россети БО-4                                              | BBG00JDS8JM8 | rub | 1       | 0.01       |
 | RU000A101HJ8 | Магнит 002Р выпуск 1                                      | BBG00RVD9KF7 | rub | 1       | 0.01       |
+| RU000A0ZYG60 | Саратовская область выпуск 1                              | BBG00J8B8QK7 | rub | 1       | 0.01       |
 | RU000A102RF3 | ХКФ Банк выпуск 7                                         | BBG00Z84TTZ2 | rub | 1       | 0.01       |
-| RU000A0ZYC98 | МегаФон БО-1 выпуск 3                                     | BBG00HTR61W7 | rub | 1       | 0.01       |
 | RU000A101EF3 | Металлоинвест БО выпуск 4                                 | BBG00RQ1DXY5 | rub | 1       | 0.01       |
 | SU26237RMFS6 | ОФЗ 26237                                                 | BBG011FJ6573 | rub | 1       | 0.001      |
 | XS2099763075 | Credit Bank of Moscow                                     | BBG00RHTYB60 | usd | 1       | 0.0001     |
@@ -2087,18 +2149,15 @@
 | RU000A1032X5 | ТЕХНО Лизинг выпуск 4                                     | BBG0110WZC19 | rub | 1       | 0.01       |
 | RU000A0JXPG2 | ГТЛК выпуск 4                                             | BBG00GGS6C84 | rub | 1       | 0.01       |
 | RU000A100303 | Нафтатранс Плюс выпуск 1                                  | BBG00N8SH448 | rub | 1       | 0.01       |
-| RU000A0JWG05 | X5 выпуск 6                                               | BBG00CSJ8ZX9 | rub | 1       | 0.01       |
 | XS1514045886 | Lukoil                                                    | BBG00F3406Z2 | usd | 1       | 0.0001     |
-| RU000A0ZYA66 | Эталон выпуск 2                                           | BBG00HNGJ8K1 | rub | 1       | 0.01       |
 | RU000A101PV6 | ТД РКС-Сочи выпуск 1                                      | BBG00V316KF8 | rub | 1       | 0.01       |
-| RU000A100AD8 | Россети Московский регион выпуск 1                        | BBG00NZJ4J03 | rub | 1       | 0.01       |
+| RU000A1033B9 | Республика Якутия                                         | BBG0113H9XT2 | rub | 1       | 0.01       |
 | RU000A1043K9 | Нижегородская область выпуск 16                           | BBG013PZT8B6 | rub | 1       | 0.01       |
 | RU000A103117 | М.Видео выпуск 1                                          | TCS00A103117 | rub | 1       | 0.01       |
 | XS0191754729 | Gazprom                                                   | BBG00008WPG3 | usd | 1       | 0.0001     |
 | RU000A1002C2 | РЖД 001Р выпуск 12                                        | BBG00N6MD6M2 | rub | 1       | 0.01       |
 | RU000A101YV8 | Позитив Текнолоджиз выпуск 1                              | TCS00A101YV8 | rub | 1       | 0.01       |
 | RU000A101PU8 | Трансмашхолдинг ПБО-05                                    | BBG00V3L02Q8 | rub | 1       | 0.01       |
-| RU000A102F85 | ЧТПЗ выпуск 6                                             | BBG00YCZ0M41 | rub | 1       | 0.01       |
 | XS1634369224 | Belarus                                                   | BBG00GXQKMJ9 | usd | 1       | 0.0001     |
 | RU000A103PC2 | Автобан-Финанс выпуск 3                                   | BBG012JC0J32 | rub | 1       | 0.01       |
 | XS2159874002 | Lukoil                                                    | BBG00TJF05J0 | usd | 1       | 0.0001     |
@@ -2109,9 +2168,11 @@
 | XS0971721450 | Russia 2023                                               | BBG00580HCP7 | usd | 1       | 0.0001     |
 | RU000A0JXU48 | ВЭБ.РФ ПБО-001P-08                                        | BBG00H14B6Z8 | usd | 1       | 0.0001     |
 | RU000A101FH6 | МТС выпуск 14                                             | BBG00RTTRKD7 | rub | 1       | 0.01       |
+| RU000A105CM4 | Новотранс выпуск 3                                        | TCS00A105CM4 | rub | 1       | 0.01       |
 | SU52003RMFS9 | ОФЗ 52003                                                 | BBG00XD2M5S2 | rub | 1       | 0.001      |
 | RU000A103CW8 | МФК Займер выпуск 2                                       | BBG011QKQ291 | rub | 1       | 0.01       |
 | RU000A101S08 | Казахстан выпуск 12                                       | BBG011MDDKK2 | rub | 1       | 0.01       |
+| SU29020RMFS3 | ОФЗ 29020                                                 | BBG00Y4SQ1Y1 | rub | 1       | 0.001      |
 | XS1752568144 | Phosagro                                                  | BBG00JRK86V8 | usd | 1       | 0.0001     |
 | RU000A1040E8 | Freedom Finance                                           | BBG013J0LT31 | usd | 1       | 0.0001     |
 | RU000A102FR3 | Сбербанк                                                  | BBG00YHVQ768 | rub | 1       | 0.01       |
@@ -2133,45 +2194,38 @@
 | RU000A102LW1 | Асфальтобетонный завод № 1 выпуск 1                       | BBG00YS45GT4 | rub | 1       | 0.01       |
 | RU000A0ZYGM3 | Орловская область 2017                                    | BBG00JC8FQL0 | rub | 1       | 0.01       |
 | ISSUANCERESO | РЕСО-Лизинг БО-П выпуск 03                                | ISSUANCERESO | rub | 1       | 0          |
-| RU000A100TF3 | Русал Братск БО-001Р выпуск 3                             | BBG00Q9BCQ70 | rub | 1       | 0.01       |
-| RU000A103UY6 | Калита выпуск 3                                           | BBG012XXXX33 | rub | 1       | 0.01       |
 | SU26220RMFS2 | ОФЗ 26220                                                 | BBG00FX0RDF5 | rub | 1       | 0.001      |
 | RU000A102AB8 | Завод КриалЭнергоСтрой выпуск 2                           | BBG00Y1Q22N4 | rub | 1       | 0.01       |
+| SU29018RMFS7 | ОФЗ 29018                                                 | BBG00Y28DH67 | rub | 1       | 0.001      |
 | RU000A0JWHN7 | Ярославская область выпуск 14                             | BBG00CXHTFY7 | rub | 1       | 0.01       |
 | RU000A1018C8 | Трансмашхолдинг ПБО-04                                    | BBG00R6WV4J0 | rub | 1       | 0.01       |
 | RU000A102HB3 | Роснано БО-002P выпуск 5                                  | BBG00YJKKTF8 | rub | 1       | 0.01       |
 | RU000A103125 | ДОМ.РФ ИА БО-001Р-07                                      | TCS00A103125 | rub | 1       | 0.01       |
-| RU000A100YP2 | Т.Г. Шевченко выпуск 1                                    | BBG000000005 | rub | 1       | 0.01       |
 | RU000A0JUMH3 | Газпромбанк                                               | BBG006JCSQ92 | rub | 1       | 0.01       |
 | RU000A0ZYWY5 | МТС выпуск 6                                              | BBG00K64TZR2 | rub | 1       | 0.01       |
 | RU000A101RW0 | Казахстан выпуск 8                                        | BBG011MDBQV9 | rub | 1       | 0.01       |
-| RU000A102ZS9 | ЭБИС выпуск 4                                             | BBG01016PHF2 | rub | 1       | 0.01       |
-| RU000A0JXQ28 | ФПК выпуск 1                                              | BBG00GH62KJ5 | rub | 1       | 0.01       |
-| RU000A102CZ3 | Онлайн Микрофинанс выпуск 2                               | BBG00Y8XPNY9 | rub | 1       | 0.01       |
 | RU000A1042W6 | ВЭБ.РФ ПБО-2 выпуск 31                                    | TCS00A1042W6 | rub | 1       | 0.01       |
+| RU000A102CZ3 | Онлайн Микрофинанс выпуск 2                               | BBG00Y8XPNY9 | rub | 1       | 0.01       |
 | RU000A0JVWJ6 | ГТЛК выпуск 6                                             | BBG00B8SX525 | rub | 1       | 0.01       |
 | RU000A1015E0 | Белуга Групп БО-П03                                       | BBG00R2FH979 | rub | 1       | 0.01       |
 | RU000A101MC3 | Магнит 002Р выпуск 2                                      | BBG00TJW91Z5 | rub | 1       | 0.01       |
 | RU000A0JTM28 | Башнефть выпуск 6                                         | BBG0043FH1D9 | rub | 1       | 0.01       |
 | SU26212RMFS9 | ОФЗ 26212                                                 | BBG00425VG07 | rub | 1       | 0.001      |
 | RU000A1015S0 | ЭнергоТехСервис выпуск 1                                  | BBG000000008 | rub | 1       | 0.01       |
-| RU000A0JT940 | Роснефть выпуск 4                                         | BBG003LLR9S4 | rub | 1       | 0.01       |
 | RU000A102A07 | Альфа-Банк 002Р выпуск 8                                  | BBG00Y1BKK93 | rub | 1       | 0.01       |
 | XS1533915721 | Evraz                                                     | BBG00G4V94J3 | usd | 1       | 0.0001     |
 | XS0921331509 | MTS International Funding                                 | BBG004M1PTN8 | usd | 1       | 0.0001     |
 | SU29008RMFS8 | ОФЗ 29008                                                 | BBG007Z5DZS2 | rub | 1       | 0.001      |
 | RU000A101012 | АФК Система выпуск 12                                     | BBG00QTDV828 | rub | 1       | 0.01       |
 | RU000A101HU5 | Брусника выпуск 1                                         | RU000A101HU5 | rub | 1       | 0.01       |
-| RU000A101178 | АПРИ Флай Плэнинг БО-П3                                   | BBG00QXGQYZ9 | rub | 1       | 0.01       |
 | RU000A102JZ8 | Альфа-Банк 002Р выпуск 9                                  | BBG00YMT3ZH8 | rub | 1       | 0.01       |
-| RU000A100UU0 | РН Банк БО-1P выпуск 6                                    | BBG00QDF85H6 | rub | 1       | 0.01       |
-| RU000A1029P7 | ЭР-Телеком Холдинг выпуск 4                               | TCS00A1029P7 | rub | 1       | 0.01       |
-| RU000A101WB4 | ЧТПЗ выпуск 5                                             | BBG00W1P2G59 | rub | 1       | 0.01       |
+| RU000A1057D4 | Металлоинвест CNY 1Р-02                                   | TCS00A1057D4 | cny | 1       | 0.0001     |
+| SU29016RMFS1 | ОФЗ 29016                                                 | BBG00XP7VH57 | rub | 1       | 0.001      |
 | RU000A100VG7 | СУЭК-Финанс выпуск 3                                      | BBG00QFLCT66 | rub | 1       | 0.01       |
 | RU000A100PB0 | ЖКХ Якутии выпуск 1                                       | BBGYAKUTV001 | rub | 1       | 0.01       |
 | RU000A103FP5 | МКБ 001Р выпуск 3                                         | BBG011Y7LMW6 | rub | 1       | 0.01       |
-| RU000A0ZYFC6 | МТС выпуск 3                                              | BBG00J3MJ9F0 | rub | 1       | 0.01       |
 | RU000A101SM9 | Камаз                                                     | BBG00VDF8F10 | rub | 1       | 0.01       |
+| RU000A0ZYXV9 | Газпром нефть                                             | BBG00KB9KX71 | rub | 1       | 0.01       |
 | RU000A0JXFS8 | Газпром капитал выпуск 5                                  | BBG00FZMB3Y3 | rub | 1       | 0.01       |
 | RU000A0JXN21 | АФК Система выпуск 6                                      | BBG00GF6BJZ2 | rub | 1       | 0.01       |
 | RU000A1037S4 | С-Инновации выпуск 2                                      | BBG011CFWBP2 | rub | 1       | 0.01       |
@@ -2193,9 +2247,9 @@
 | RU000A104FX7 | А Девелопмент                                             | BBG014VTFQJ8 | rub | 1       | 0.01       |
 | RU000A103WQ8 | Сэтл Групп выпуск 4                                       | TCS00A103WQ8 | rub | 1       | 0.01       |
 | RU000A1032P1 | СФО ВТБ РКС-1 выпуск 1                                    | BBG011DV0155 | rub | 1       | 0.01       |
+| RU000A105AD7 | Сегежа Групп 002P-07R                                     | TCS00A105AD7 | rub | 1       | 0.01       |
 | RU000A100MG6 | Сэтл Групп выпуск 2                                       | BBG00PT0ZT82 | rub | 1       | 0.01       |
 | RU000A0JVA10 | ГТЛК БО-04                                                | BBG0089PCRC1 | rub | 1       | 0.01       |
-| RU000A100YW8 | Тойота Банк выпуск 3                                      | BBG00QPHPRQ2 | rub | 1       | 0.01       |
 | RU000A1035D0 | Синара - Транспортные Машины выпуск 1                     | TCS00A1035D0 | rub | 1       | 0.01       |
 | RU000A0JWXF0 | Красноярский край  выпуск 12                              | BBG00F171QY3 | rub | 1       | 0.01       |
 | VTBperp      | VTB Perp                                                  | BBG003824NB3 | usd | 1       | 0.01       |
@@ -2214,11 +2268,13 @@
 | RU000A102Y66 | Легенда выпуск 4                                          | TCS00A102Y66 | rub | 1       | 0.01       |
 | RU000A0ZYU39 | Эталон-Финанс выпуск 2                                    | BBG00K1Y24S8 | rub | 1       | 0.01       |
 | RU000A101UD4 | Электрощит-Стройсистема выпуск 2                          | BBG00VSYBL16 | rub | 1       | 0.01       |
+| RU000A105AJ4 | МФК Лайм-Займ выпуск 2                                    | TCS00A105AJ4 | rub | 1       | 0.01       |
 | RU000A102SK1 | Боржоми выпуск 1                                          | BBG00ZGVRGJ1 | rub | 1       | 0.01       |
 | RU000A101R33 | Лента БО-001P выпуск 4                                    | BBG00V92S1V0 | rub | 1       | 0.01       |
 | RU000A104Z71 | Биннофарм Групп                                           | TCS00A104Z71 | rub | 1       | 0.01       |
 | RU000A102VK5 | ВИС Финанс выпуск 2                                       | TCS00A102VK5 | rub | 1       | 0.01       |
 | RU000A1029F8 | Лизинг-Трейд выпуск 2                                     | BBG00XZ93N78 | rub | 1       | 0.01       |
+| RU000A0JVM81 | Оренбургская область выпуск 3                             | BBG009LB6H99 | rub | 1       | 0.01       |
 | XS1843443273 | Evraz                                                     | BBG00NQ976S0 | usd | 1       | 0.0001     |
 | RU000A104UA4 | Сегежа                                                    | TCS00A104UA4 | rub | 1       | 0.01       |
 | RU000A1037C8 | Урожай выпуск 2                                           | BBG011C669D9 | rub | 1       | 0.01       |
@@ -2251,17 +2307,15 @@
 | SU26240RMFS0 | ОФЗ 26240                                                 | BBG011MLGP84 | rub | 1       | 0.001      |
 | RU000A100HH4 | Газпромбанк 001P выпуск 11                                | BBG00PMK99X0 | rub | 1       | 0.01       |
 | RU000A1030N0 | ФЭС-Агро выпуск 2                                         | BBG0107RVMG1 | rub | 1       | 0.01       |
-| RU000A101KJ2 | Калита выпуск 1                                           | BBG00SY31CX0 | rub | 1       | 0.01       |
+| RU000A104WF9 | Славнефть                                                 | TCS00A104WF9 | rub | 1       | 0.01       |
 | SU26238RMFS4 | ОФЗ 26238                                                 | BBG011FJ4HS6 | rub | 1       | 0.001      |
 | RU000A0ZYFB8 | Красноярский край  выпуск 14                              | BBG00J5KYZN8 | rub | 1       | 0.01       |
 | XS0864383723 | Novatek                                                   | BBG003PNSC99 | usd | 1       | 0.0001     |
 | RU000A103D37 | Тинькофф Ипотечный Агент выпуск 1                         | TCS00A103D37 | rub | 1       | 0.01       |
 | XS2124187571 | Gazprom                                                   | BBG00RRSRHF6 | usd | 1       | 0.0001     |
 | RU000A104JV3 | Айди Коллект выпуск 2                                     | TCS00A104JV3 | rub | 1       | 0.01       |
-| RU000A100YR8 | Роснано БО-002P выпуск 3                                  | BBG00QPRTZJ6 | rub | 1       | 0.01       |
 | RU000A101FY1 | МОЭСК 001P выпуск 2                                       | BBG00RVF4P66 | rub | 1       | 0.01       |
 | SU26228RMFS5 | ОФЗ 26228                                                 | BBG00NZHWSQ8 | rub | 1       | 0.001      |
-| RU000A100X77 | Кредит Европа Банк выпуск 3                               | BBG00QKHL1Q8 | rub | 1       | 0.01       |
 | RU000A1034P7 | ВТБ СУБ выпуск 5                                          | BBG01172JM41 | rub | 1       | 0.01       |
 | XS1589324075 | GMK NorNickel                                             | BBG00GCZK5M5 | usd | 1       | 0.0001     |
 | RU000A1011Q3 | Новосибирская область                                     | BBG00QXSLFN2 | rub | 1       | 0.01       |
@@ -2271,22 +2325,20 @@
 | RU000A0ZZVE6 | Russia 2025 EUR                                           | BBG00MNX53Q3 | eur | 1       | 0.0001     |
 | RU000A100L63 | Белуга Групп БО-П02                                       | BBG00PYL6030 | rub | 1       | 0.01       |
 | RU000A101S99 | Кировский завод выпуск 1                                  | BBG00VCVRQQ4 | rub | 1       | 0.01       |
+| RU000A0ZYKJ1 | Санкт-Петербург выпуск 2                                  | BBG00JHB0ZL4 | rub | 1       | 0.01       |
 | RU000A102F28 | РОСБАНК БО-002P выпуск 8                                  | BBG00YCM0MW9 | rub | 1       | 0.01       |
 | RU000A1053P7 | Сегежа 002P выпуск 5                                      | TCS00A1053P7 | rub | 1       | 0.01       |
 | RU000A101MT7 | Детский мир выпуск 6                                      | BBG00TQG4212 | rub | 1       | 0.01       |
 | RU000A100D89 | Республика Беларусь выпуск 7                              | BBG00TQHNK64 | rub | 1       | 0.01       |
 | RU000A1001L5 | ЮАИЗ выпуск 1                                             | BBG00N58ZYV9 | rub | 1       | 0.01       |
-| RU000A100WC4 | МКБ 001P выпуск 1                                         | BBG00QHSP5W8 | rub | 1       | 0.01       |
 | RU000A101XN7 | АФК Система выпуск 14                                     | BBG00WCMMJ92 | rub | 1       | 0.01       |
 | RU000A101QF7 | Ритейл Бел Финанс 001P-01                                 | BBG00V92X4F6 | rub | 1       | 0.01       |
 | RU000A1034X1 | Лизинг трейд выпуск 3                                     | BBG00A1034X1 | rub | 1       | 0.01       |
 | RU000A0ZYHX8 | Санкт-Петербург выпуск 1                                  | BBG00JCTFXS2 | rub | 1       | 0.01       |
 | RU000A105104 | РУСАЛ выпуск 5                                            | TCS00A105104 | cny | 1       | 0.0001     |
-| RU000A0JWV63 | Россельхозбанк 08Т1                                       | BBG00DYFTK31 | rub | 1       | 0.01       |
 | RU000A103SZ7 | Аэрофьюэлз выпуск 2                                       | BBG012R5Y2V7 | rub | 1       | 0.01       |
 | RU000A1024W4 | Черкизово выпуск БО-001P-03                               | BBG00XH3GY82 | rub | 1       | 0.01       |
 | RU000A101TS4 | Джи-групп выпуск 1                                        | BBG00VQNQ8P9 | rub | 1       | 0.01       |
-| RU000A1045V1 | ЭБИС выпуск 5                                             | BBG013VR70Y3 | rub | 1       | 0.01       |
 | RU000A104AQ2 | ДОМ.РФ Социальные облигации 02                            | TCS00A104AQ2 | rub | 1       | 0.01       |
 | RU000A102H83 | Ренессанс Кредит выпуск 4                                 | BBG00YJKHN65 | rub | 1       | 0.01       |
 | RU000A102GY7 | Хэдхантер выпуск 1                                        | TCS00A102GY7 | rub | 1       | 0.01       |
@@ -2315,19 +2367,19 @@
 | RU000A1038D4 | Трансмашхолдинг ПБО-06                                    | TCS00A1038D4 | rub | 1       | 0.01       |
 | RU000A101C89 | Сбер Банк 001P-SBER15                                     | BBG00RKBQ4D2 | rub | 1       | 0.01       |
 | RU000A105054 | ММЦБ выпуск 2                                             | TCS00A105054 | rub | 1       | 0.01       |
-| GMKN1022     | MMC Finance DAC                                           | BBG00B59DR33 | usd | 1       | 0.01       |
 | SU26226RMFS9 | ОФЗ 26226                                                 | BBG00N8J90K7 | rub | 1       | 0.001      |
 | RU000A103C95 | АФК Система выпуск 21                                     | TCS00A103C95 | rub | 1       | 0.01       |
 | RU000A0JXSD3 | Волгоградская область выпуск 7                            | BBG00GSNVXC3 | rub | 1       | 0.01       |
-| RU000A104ZC9 | КАМАЗ                                                     | TCS00A104ZC9 | rub | 1       | 0.01       |
 | RU000A1030U5 | ЭкономЛизинг выпуск 3                                     | BBG0109ZMRP0 | rub | 1       | 0.01       |
+| RU000A104ZC9 | КАМАЗ                                                     | TCS00A104ZC9 | rub | 1       | 0.01       |
 | RU000A104FG2 | Сегежа 002P выпуск 3                                      | TCS00A104FG2 | rub | 1       | 0.01       |
 | RU000A0JXYS9 | Краснодарский край выпуск 1                               | BBG00HDD93V9 | rub | 1       | 0.01       |
 | RU000A1054W1 | Полюс CNY 01                                              | TCS00A1054W1 | cny | 1       | 0.0001     |
 | SU46022RMFS8 | ОФЗ 46022                                                 | BBG0000LFC18 | rub | 1       | 0.001      |
-| RU000A102NK2 | Обувь России 001P выпуск 4                                | BBG00YZ2MHK8 | rub | 1       | 0.01       |
+| RU000A103HG0 | АйДи Коллект выпуск 1                                     | BBG01236NFW3 | rub | 1       | 0.01       |
 | RU000A0ZZGT5 | РЖД 001Р выпуск 8                                         | BBG00LPNW7Y7 | rub | 1       | 0.01       |
 | RU000A100HY9 | РЖД 001Р выпуск 16                                        | BBG00PV1JCS0 | rub | 1       | 0.01       |
+| RU000A1056U0 | Газпром 2027                                              | TCS00A1056U0 | usd | 1       | 0.01       |
 | XS2010044381 | GTLK                                                      | BBG00QDT3B79 | usd | 1       | 0.0001     |
 | RU000A102JB9 | ДОМ.РФ ИА 09                                              | TCS00A102JB9 | rub | 1       | 0.01       |
 | RU000A0ZYJT2 | ДОМ.РФ ИА 002P                                            | BBG00JGG2N11 | rub | 1       | 0.01       |
@@ -2343,6 +2395,7 @@
 | RU000A0ZZES2 | Газпром БО-22                                             | BBG00LLM12G8 | rub | 1       | 0.01       |
 | RU000A1008J4 | АФК Система выпуск 10                                     | BBG00NRGHQQ0 | rub | 1       | 0.01       |
 | RU000A1015A8 | Детский мир выпуск 5                                      | BBG00R2FKDT2 | rub | 1       | 0.01       |
+| RU000A0ZZ117 | Сбер Банк                                                 | BBG00L17FGJ4 | rub | 1       | 0.01       |
 | XS1713473608 | GTLK                                                      | BBG00NV9NH48 | usd | 1       | 0.0001     |
 | RU000A1018K1 | Татнефть БО-001P выпуск 1                                 | BBG00R72VWS3 | rub | 1       | 0.01       |
 | RU000A100FE5 | ГТЛК выпуск 14                                            | BBG00PGVLT83 | rub | 1       | 0.01       |
@@ -2363,10 +2416,10 @@
 | PLZL0223     | Polyus                                                    | BBG00FWXCM88 | usd | 1       | 0.01       |
 | RU000A100JH0 | Ритейл Бел Финанс  выпуск 1                               | BBG00PNW0B21 | rub | 1       | 0.01       |
 | RU000A103N43 | ДОМ.РФ ИА БО выпуск 9                                     | TCS00A103N43 | rub | 1       | 0.01       |
-| RU000A100782 | Лента БО-001P выпуск 2                                    | BBG00NNMVRW6 | rub | 1       | 0.01       |
+| RU000A105CS1 | Селигдар выпуск 1                                         | TCS00A105CS1 | rub | 1       | 0.01       |
 | RU000A102895 | Новосибирская область выпуск 21                           | BBG00XX7H140 | rub | 1       | 0.01       |
 | RU000A101939 | МТС выпуск 13                                             | BBG00R7THC95 | rub | 1       | 0.01       |
-| RU000A100YG1 | ГК Самолет выпуск 7                                       | BBG00QPG1GD8 | rub | 1       | 0.01       |
+| RU000A103SV6 | Росгеология выпуск 1                                      | BBG012SPY2V2 | rub | 1       | 0.01       |
 | RU000A103Q08 | HENDERSON выпуск 1                                        | TCS00A103Q08 | rub | 1       | 0.01       |
 | RU000A104V75 | Почта России                                              | TCS00A104V75 | rub | 1       | 0.01       |
 | XS1878009866 | BCS Structured Products 20jun2023                         | TCS878009866 | usd | 1       | 0.0001     |
@@ -2377,14 +2430,12 @@
 | RU000A102RN7 | Ренессанс Кредит выпуск 6                                 | TCS00A102RN7 | rub | 1       | 0.01       |
 | RU000A103M10 | Балтийский лизинг БО-П04                                  | BBG012BTL6Y4 | rub | 1       | 0.01       |
 | RZD0527      | Russian Railways                                          | BBG00P5B0SC9 | eur | 1       | 0.01       |
-| RU000A1021B4 | Обувь России 001P выпуск 3                                | BBG00WS5KGV5 | rub | 1       | 0.01       |
 | RU000A102234 | ТЕХНО Лизинг выпуск 3                                     | BBG00WYH0LS7 | rub | 1       | 0.01       |
 | RU000A103QL1 | Росагролизинг выпуск 3                                    | BBG012NW2KW6 | rub | 1       | 0.01       |
 | RU000A1014S3 | Новотранс выпуск 1                                        | BBG00R2HQKS7 | rub | 1       | 0.01       |
 | RU000A102986 | СУЭК-Финанс выпуск 6                                      | BBG00XZ95JN7 | rub | 1       | 0.01       |
 | RU000A101YD6 | Легенда выпуск 3                                          | BBG00WH3QVR8 | rub | 1       | 0.01       |
 | TTEL0225     | Turk Telekomunikasyon A.S.                                | BBG00NBJSLV4 | usd | 1       | 0.01       |
-| RU000A0ZYDS7 | Газпром нефть ПАО 001P-03R                                | BBG00J1Z0ZM7 | rub | 1       | 0.01       |
 | GAZP1124     | Gazprom                                                   | BBG00J7PCW56 | eur | 1       | 0.01       |
 | RU000A100238 | МТС выпуск 7                                              | BBG00N6FS8J1 | rub | 1       | 0.01       |
 | RU000A103372 | АФК Система выпуск 20                                     | BBG0110X9D23 | rub | 1       | 0.01       |
@@ -2395,14 +2446,12 @@
 | RU000A0ZZYL5 | Калужская СК выпуск 1                                     | BBG00MTS7DY5 | rub | 1       | 0.01       |
 | RU000A102S80 | Альфа-Банк 002Р выпуск 10                                 | BBG00ZCTLKQ9 | rub | 1       | 0.01       |
 | RU000A103JR3 | Джи-групп выпуск 2                                        | BBG0124VD0W1 | rub | 1       | 0.01       |
-| RU000A0ZYDH0 | ФСК ЕЭС БО-3                                              | BBG00HY74TD7 | rub | 1       | 0.01       |
+| RU000A0ZYDH0 | Россети БО-3                                              | BBG00HY74TD7 | rub | 1       | 0.01       |
 | RU000A103GL2 | МФК ЦФП выпуск 2                                          | BBG0120X4T49 | rub | 1       | 0.01       |
 | RU000A1020W2 | Светофор Групп выпуск 2                                   | BBG00WMMMHJ4 | rub | 1       | 0.01       |
 | RU000A101XS6 | МОЭК выпуск 4                                             | BBG00WFCV2B5 | rub | 1       | 0.01       |
-| RU000A102101 | ЭБИС выпуск 3                                             | BBG00WPJ81Z1 | rub | 1       | 0.01       |
 | RU000A1030X9 | Сэтл Групп выпуск 3                                       | TCS00A1030X9 | rub | 1       | 0.01       |
 | VAKI0324     | Vakifbank                                                 | BBG00NPGTY64 | usd | 1       | 0.01       |
-| RU000A1011C3 | Русал Братск БО-001Р выпуск 4                             | BBG00QXGPWQ4 | rub | 1       | 0.01       |
 | RU000A1030Y7 | РН Банк БО-1P выпуск 8                                    | BBG0107GHR16 | rub | 1       | 0.01       |
 | XS0971721963 | Russia 2043                                               | BBG00580HD20 | usd | 1       | 0.0001     |
 | RU000A0ZYCM2 | Красноярский край  выпуск 13                              | BBG00HVY2MS2 | rub | 1       | 0.01       |
@@ -2419,7 +2468,6 @@
 | RU000A102J57 | Теплоэнерго выпуск 1                                      | BBG00YLQVM01 | rub | 1       | 0.01       |
 | RU000A0ZYWU3 | АФК Система выпуск 8                                      | BBG00K4MR057 | rub | 1       | 0.01       |
 | RU000A102KG6 | ГК Пионер-001Р выпуск 5                                   | BBG00YN4P9Q6 | rub | 1       | 0.01       |
-| RU000A0ZYAQ7 | КарМани БО выпуск 1                                       | BBG00HS78YK1 | rub | 1       | 0.01       |
 | RU000A102TA0 | Росагролизинг выпуск 2                                    | BBG00ZHZ4Q86 | rub | 1       | 0.01       |
 | RU000A102QP4 | РЖД 001Р выпуск 21                                        | BBG00Z6BQMY7 | rub | 1       | 0.01       |
 | RU000A102T63 | ЛСР выпуск 6                                              | RU000A102T63 | rub | 1       | 0.01       |
@@ -2427,7 +2475,6 @@
 | RU000A100YE6 | ТрансКонтейнер ПБО выпуск 1                               | BBG00QPG0TF9 | rub | 1       | 0.01       |
 | XS2384475930 | Credit Bank of Moscow                                     | BBG012G07QT0 | usd | 1       | 0.0001     |
 | RU000A103NY1 | РН Банк БО-1P выпуск 9                                    | BBG012G2MQN5 | rub | 1       | 0.01       |
-| XS0997544860 | Gazpromneft                                               | BBG005MCTC09 | usd | 1       | 0.0001     |
 | RU000A103YM3 | Сбер Банк 002P выпуск 1                                   | BBG013J0F816 | rub | 1       | 0.01       |
 | RU000A100PE4 | РЕСО-Лизинг БО-П выпуск 6                                 | BBG00PXMNQ97 | rub | 1       | 0.01       |
 | RU000A103828 | ЭнергоТехСервис выпуск 4                                  | TCS00A103828 | rub | 1       | 0.01       |
@@ -2446,6 +2493,8 @@
 | RU000A1010M4 | РЖД ОАО БО 001Р-17R                                       | BBG00QTH5DF3 | rub | 1       | 0.01       |
 | RU000A102W68 | ХК Финанс выпуск 6                                        | BBG00ZSJ8ZX8 | rub | 1       | 0.01       |
 | RU000A102GJ8 | Газпромбанк выпуск 18                                     | BBG00YHX6J06 | rub | 1       | 0.01       |
+| SU29013RMFS8 | ОФЗ 29013                                                 | BBG00T22WKV5 | rub | 1       | 0.001      |
+| RU000A1057A0 | Металлоинвест CNY 1Р-01                                   | TCS00A1057A0 | cny | 1       | 0.0001     |
 | RU000A1029T9 | СофтЛайн Трейд выпуск 4                                   | TCS00A1029T9 | rub | 1       | 0.01       |
 | RU000A104B53 | АСПЭК-Домстрой выпуск 1                                   | BBG0149NW6B9 | rub | 1       | 0.01       |
 | RU000A0ZYX28 | Sovcombank                                                | BBG00K87T9V6 | usd | 100     | 0.0001     |
@@ -2460,11 +2509,13 @@
 | RU000A0JXU14 | Russia 2047                                               | BBG00H0HV5C5 | usd | 1       | 0.0001     |
 | RU000A103QK3 | VK выпуск 1                                               | TCS00A103QK3 | rub | 1       | 0.01       |
 | RU000A101RV2 | Казахстан выпуск 7                                        | BBG00XH4RHP6 | rub | 1       | 0.01       |
+| RU000A105C44 | РУСАЛ                                                     | TCS00A105C44 | cny | 1       | 0.0001     |
 | RU000A102K39 | РЕСО-Лизинг БО-П выпуск 8                                 | BBG00YMTR6J4 | rub | 1       | 0.01       |
 | RU000A0JXRD5 | Почта России выпуск 2                                     | BBG00GSG5RB1 | rub | 1       | 0.01       |
 | RU000A104C60 | ВТБ                                                       | BBG01496DQ23 | rub | 1       | 0.01       |
 | RU000A0JW1K9 | Томская область выпуск 55                                 | BBG00BQZW6R1 | rub | 1       | 0.01       |
 | RU000A100GW5 | Alfa Bank                                                 | BBG00PNDYR58 | rub | 1       | 0.01       |
+| RU000A0JX0B9 | Московская область выпуск 10                              | BBG00FBB67V3 | rub | 1       | 0.01       |
 | RU000A0JWZY6 | АФК Система выпуск 5                                      | BBG00FB978L6 | rub | 1       | 0.01       |
 | RU000A1051U1 | МТС Банк выпуск 2                                         | TCS00A1051U1 | rub | 1       | 0.01       |
 | RU000A103RD6 | ДОМ.РФ Социальные облигации выпуск 1                      | TCS00A103RD6 | rub | 1       | 0.01       |
@@ -2496,7 +2547,6 @@
 | RU000A102GD1 | ДОМ.РФ ИА 08                                              | TCS00A102GD1 | rub | 1       | 0.01       |
 | RU000A103WZ9 | NexTouch выпуск 1                                         | BBG0136Y8NS2 | rub | 1       | 0.01       |
 | RU000A1037L9 | Бифорком Тек выпуск 1                                     | BBG011CG00T5 | rub | 1       | 0.01       |
-| RU000A100W52 | СуперОкс выпуск 1                                         | BBG00QKPJVK3 | rub | 1       | 0.01       |
 | RU000A0JTMK9 | РусГидро выпуск 8                                         | BBG00440D136 | rub | 1       | 0.01       |
 | RU000A0JW5E3 | ПКТ выпуск 2                                              | BBG00C7PQK43 | rub | 1       | 0.01       |
 | RU000A103943 | Аэрофлот выпуск 1                                         | TCS00A103943 | rub | 1       | 0.01       |
@@ -2507,8 +2557,7 @@
 | RU000A100Q35 | ПР-Лизинг выпуск 3                                        | BBG00PZ6T956 | rub | 1       | 0.01       |
 | RU000A101RP4 | Казахстан выпуск 1                                        | BBG00XH4N488 | rub | 1       | 0.01       |
 | RU000A102V51 | Нафтатранс Плюс выпуск 3                                  | BBG00ZQYML62 | rub | 1       | 0.01       |
-| RU000A0JXJE0 | Гидромашсервис БО выпуск 1                                | BBG00FZYDS70 | rub | 1       | 0.01       |
-| RU000A1009B9 | Детский мир выпуск 7                                      | BBG00NWBZTW2 | rub | 1       | 0.01       |
+| RU000A105A61 | Норильский Никель БО-001Р выпуск 2                        | TCS00A105A61 | rub | 1       | 0.01       |
 | RU000A102M45 | ДиректЛизинг выпуск 6                                     | BBG00YRFB429 | rub | 1       | 0.01       |
 | RU000A100VQ6 | Норильский Никель БО-001Р выпуск 1                        | BBG00QG1PSL0 | rub | 1       | 0.01       |
 | SU24021RMFS6 | ОФЗ 24021                                                 | BBG00RKDZWG3 | rub | 1       | 0.001      |
@@ -2530,7 +2579,7 @@
 | SU29012RMFS0 | ОФЗ 29012                                                 | BBG00FFH2Z75 | rub | 1       | 0.001      |
 | RU000A101KK0 | Роснано БО-002P выпуск 4                                  | BBG00SXFWRX7 | rub | 1       | 0.01       |
 | RU000A0JXS59 | Почта России выпуск 3                                     | BBG00GTQYBZ5 | rub | 1       | 0.01       |
-| RU000A102TT0 | Русская Аквакультура выпуск 1                             | BBG00ZLFQKZ4 | rub | 1       | 0.01       |
+| RU000A102TT0 | ИНАРКТИКА выпуск 1                                        | BBG00ZLFQKZ4 | rub | 1       | 0.01       |
 | RU000A100HE1 | Азбука Вкуса выпуск 1                                     | BBG00PM8S500 | rub | 1       | 0.01       |
 | XS0088543193 | Russia 2028                                               | BBG0000644P5 | usd | 1       | 0.0001     |
 | RU000A101QL5 | ГТЛК выпуск 17                                            | BBG00V6NXQF4 | rub | 1       | 0.01       |
@@ -2542,6 +2591,7 @@
 | RU000A101CQ4 | СУЭК-Финанс выпуск 5                                      | BBG00RLS6TT4 | rub | 1       | 0.01       |
 | SU52001RMFS3 | ОФЗ 52001                                                 | BBG009J6Q4B7 | rub | 1       | 0.001      |
 | XS0114288789 | Russia 2030                                               | BBG000056Z49 | usd | 1000    | 0.0001     |
+| RU000A1050H0 | ЕАБР                                                      | TCS00A1050H0 | rub | 1       | 0.01       |
 | RU000A101QW2 | Сбер Банк                                                 | BBG00V9STNC5 | rub | 1       | 0.01       |
 | RU000A105112 | РУСАЛ выпуск 06                                           | TCS00A105112 | cny | 1       | 0.0001     |
 | RU000A103PX8 | ЛСР выпуск 7                                              | TCS00A103PX8 | rub | 1       | 0.01       |
@@ -2554,18 +2604,18 @@
 | SU26225RMFS1 | ОФЗ 26225                                                 | BBG00K53FX22 | rub | 1       | 0.001      |
 | SU26224RMFS4 | ОФЗ 26224                                                 | BBG00K53FBX6 | rub | 1       | 0.001      |
 | RU000A102CD0 | ХК Финанс выпуск 5                                        | BBG00Y7KXWY9 | rub | 1       | 0.01       |
+| RU000A105EW9 | Сегежа 3P-01R CNY                                         | TCS00A105EW9 | cny | 1       | 0.0001     |
 | RU000A102H91 | Автодор БО-3 выпуск 1                                     | BBG00YJJPT66 | rub | 1       | 0.01       |
 | RU000A1006B5 | ТД Мясничий выпуск 3                                      | BBG00NLMJ541 | rub | 1       | 0.01       |
 | RU000A103UL3 | Татнефтехим 001P выпуск 1                                 | BBG012Y8J8C8 | rub | 1       | 0.01       |
 | RU000A103G91 | ПРОМОМЕД ДМ выпуск 2                                      | TCS00A103G91 | rub | 1       | 0.01       |
 | RU000A100BB0 | Русал Братск БО-001P выпуск 1                             | BBG00P33Q8B6 | rub | 1       | 0.01       |
 | XS0559915961 | VEB                                                       | BBG0018V9PN0 | usd | 1       | 0.0001     |
+| RU000A1057S2 | Роснефть CNY                                              | TCS00A1057S2 | cny | 1       | 0.0001     |
 | RU000A1043N3 | КАМАЗ БО-П09                                              | BBG013RRTP42 | rub | 1       | 0.01       |
-| RU000A100V79 | Тинькофф Банк выпуск 3                                    | BBG00QDTJQD2 | rub | 1       | 0.01       |
 | RU000A102S23 | Агрофирма-племзавод Победа выпуск 1                       | BBG00ZCTRLC6 | rub | 1       | 0.01       |
 | RU000A0ZZZ17 | НКНХ выпуск 1                                             | BBG00MT69C64 | rub | 1       | 0.01       |
 | RU000A0ZYYN4 | Russia 2029                                               | BBG00KB9VG76 | usd | 1       | 0.0001     |
-| RU000A100YT4 | Экспобанк БО выпуск 2                                     | BBG00QPVNQS3 | rub | 1       | 0.01       |
 | RU000A103N76 | ИКС 5 Финанс 002Р выпуск 1                                | BBG012F7Y8K5 | rub | 1       | 0.01       |
 | RU000A0ZZEM5 | Ярославская область выпуск 16                             | BBG00LLCGZL5 | rub | 1       | 0.01       |
 | RU000A1031K4 | ДОМ.РФ ИА БО-001Р-08                                      | TCS00A1031K4 | rub | 1       | 0.01       |
@@ -2593,17 +2643,15 @@
 | RU000A0ZZWJ3 | ОбъединениеАгроЭлита выпуск 1                             | TCS00A0ZZWJ3 | rub | 1       | 0.01       |
 | RU000A1043E2 | Новосибирская область выпуск 22                           | TCS00A1043E2 | rub | 1       | 0.01       |
 | RU000A102TJ1 | ТМК 001Р выпуск 3                                         | TCS00A102TJ1 | rub | 1       | 0.01       |
-| RU000A1023L9 | Калита выпуск 2                                           | BBG00X6ZL3Z5 | rub | 1       | 0.01       |
-| ALFAperp     | Alfa Bond Issuance PLC                                    | BBG00JS9D851 | usd | 1       | 0.01       |
+| XS1760786340 | Alfa Bond Issuance PLC                                    | BBG00JS9D851 | usd | 1       | 0.0001     |
 | RU000A1049M2 | Инкаб выпуск 1                                            | TCS00A1049M2 | rub | 1       | 0.01       |
 | RU000A103DY2 | БЭЛТИ-ГРАНД выпуск 4                                      | BBG011RXTDD0 | rub | 1       | 0.01       |
 | RU000A103CD8 | ЛК Дельта выпуск 1                                        | TCS00A103CD8 | rub | 1       | 0.01       |
-| RU000A103W91 | Обувь России 002P выпуск 1                                | BBG0132XRL10 | rub | 1       | 0.01       |
 | RU000A0JX0Z8 | Ямало-Ненецкий АО выпуск 2                                | BBG00FGC1ZM9 | rub | 1       | 0.01       |
 | RU000A100GY1 | ВЭБ.РФПБО-001Р-17                                         | BBG00PMHXRL3 | rub | 1       | 0.01       |
-| XS0830192711 | Газпром нефть                                             | BBG003CQ4DT8 | usd | 1       | 0.0001     |
+| RU000A1055Y4 | Почта России                                              | TCS00A1055Y4 | rub | 1       | 0.01       |
 | RU000A102VW0 | Элемент Лизинг 001P выпуск 3                              | TCS00A102VW0 | rub | 1       | 0.01       |
-| RU000A100UG9 | ХКФ Банк выпуск 6                                         | BBG00QB5VPL5 | rub | 1       | 0.01       |
+| RU000A104Y15 | Белуга Групп                                              | TCS00A104Y15 | rub | 1       | 0.01       |
 | RU000A100ZL8 | ЛСР выпуск 5                                              | BBG00QRKJF13 | rub | 1       | 0.01       |
 | RU000A104SU6 | МТС                                                       | TCS00A104SU6 | rub | 1       | 0.01       |
 | RU000A101XD8 | МаксимаТелеком выпуск 1                                   | TCS00A101XD8 | rub | 1       | 0.01       |
@@ -2615,11 +2663,11 @@
 | RU000A101JF2 | Онлайн Микрофинанс выпуск БО-2                            | BBG00SKZW8N0 | rub | 1       | 0.01       |
 | RU000A0ZYLF7 | ФПК выпуск 2                                              | BBG00JGKV6T7 | rub | 1       | 0.01       |
 | RU000A0JW1P8 | ГТЛК выпуск 7                                             | BBG00BRZQ4Y4 | rub | 1       | 0.01       |
-| RU000A0ZYEM8 | Самолет                                                   | BBG00HZZDWP4 | rub | 1       | 0.01       |
 | RU000A100QA0 | ГК Самолет выпуск 6                                       | BBG00Q58ZXF2 | rub | 1       | 0.01       |
 | RU000A1049K6 | Альфа-Банк 002Р выпуск 16                                 | BBG014578XG1 | rub | 1       | 0.01       |
 | RU000A103PE8 | Промсвязьбанк 003P выпуск 7                               | BBG012J4Q4W3 | rub | 1       | 0.01       |
 | RU000A102SX4 | АФК Система выпуск 19                                     | BBG00ZHPT667 | rub | 1       | 0.01       |
+| RU000A105C28 | Черкизово выпуск БО-001Р-05                               | TCS00A105C28 | rub | 1       | 0.01       |
 | SU26235RMFS0 | ОФЗ 26235                                                 | BBG00Y04Q3V7 | rub | 1       | 0.001      |
 | RU000A1047S3 | Первое коллекторское бюро 001Р выпуск 3                   | BBG0140BZS87 | rub | 1       | 0.01       |
 | RU000A103WR6 | ЭР-Телеком Холдинг БО-02 выпуск 1                         | BBG0135CF469 | rub | 1       | 0.01       |
@@ -2628,6 +2676,7 @@
 | RU000A1043G7 | Сегежа 002P выпуск 2                                      | TCS00A1043G7 | rub | 1       | 0.01       |
 | RU000A103S30 | ДиректЛизинг выпуск 7                                     | BBG012R0C9K9 | rub | 1       | 0.01       |
 | RU000A0JWM56 | Самарская область выпуск 12                               | BBG00D5L3Q99 | rub | 1       | 0.01       |
+| SU29021RMFS1 | ОФЗ 29021                                                 | TCS00A105B11 | rub | 1       | 0.001      |
 | RU000A0ZYX69 | ФПК выпуск 3                                              | BBG00K7DT3F5 | rub | 1       | 0.01       |
 | RU000A100Y50 | СУЭК-Финанс выпуск 4                                      | BBG00QNGNMR8 | rub | 1       | 0.01       |
 | SU26219RMFS4 | ОФЗ 26219                                                 | BBG00D6Q7LY6 | rub | 1       | 0.001      |
@@ -2638,7 +2687,6 @@
 | RU000A102SG9 | Селектел выпуск 1                                         | TCS00A102SG9 | rub | 1       | 0.01       |
 | RU000A102TL7 | МФК Займер выпуск 1                                       | BBG00ZJX2024 | rub | 1       | 0.01       |
 | RU000A1023K1 | АФК Система выпуск 15                                     | BBG00X5FK880 | rub | 1       | 0.01       |
-| RU000A0ZYBV5 | ЛСР выпуск 3                                              | BBG00HTSM1G5 | rub | 1       | 0.01       |
 | RU000A101GW3 | ЛЕГЕНДА выпуск 2                                          | TCS00A101GW3 | rub | 1       | 0.01       |
 | RU000A102KQ5 | ТД РКС-Сочи 002Р-1                                        | BBG00YQ0FTY9 | rub | 1       | 0.01       |
 | RU000A103VD8 | МСБ-Лизинг 002P выпуск 5                                  | BBG012YS2TP2 | rub | 1       | 0.01       |
@@ -2650,168 +2698,292 @@
 | RU000A0ZYG52 | Ростелеком выпуск 3                                       | BBG00J7HHGH1 | rub | 1       | 0.01       |
 
 
-## Etfs available. Total: [91]
+## Etfs available. Total: [199]
 
 | Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |
 |--------------|-----------------------------------------------------------|--------------|-----|---------|------------|
+| GDX          | VanEck Gold Miners ETF                                    | BBG000PLNQN7 | usd | 1       | 0.01       |
+| TIP          | iShares TIPS Bond ETF                                     | BBG000C01W49 | usd | 1       | 0.01       |
+| VOT          | Vanguard Mid-Cap Growth ETF                               | BBG000Q1ZB87 | usd | 1       | 0.01       |
+| RSP          | Invesco S&P 500 Equal Weight ETF                          | BBG00KJR2MY7 | usd | 1       | 0.01       |
 | FXRE         | FinEx Фонды недвижимости REIT                             | BBG013N16YX7 | rub | 1       | 0.01       |
+| LIT          | Global X Lithium & Battery Tech ETF                       | BBG000BF74Y0 | usd | 1       | 0.01       |
+| VEU          | Vanguard FTSE All-World ex-US ETF                         | BBG000HMNZV5 | usd | 1       | 0.01       |
 | FXDE         | FinEx Акции немецких компаний                             | BBG005H7MXN2 | rub | 1       | 0.005      |
 | FXUS         | FinEx Акции американских компаний                         | BBG005HLSZ23 | rub | 1       | 0.01       |
 | AKNX         | Альфа-Капитал Технологии 100                              | BBG00NNQMD85 | usd | 1       | 0.01       |
+| EZA          | iShares MSCI South Africa ETF                             | BBG000PNJ9F5 | usd | 1       | 0.01       |
 | AKEU         | Альфа-Капитал Европа 600                                  | BBG00Q3HQJ74 | eur | 1       | 0.01       |
 | SBRB         | Первая – Фонд Корпоративные облигации                     | TCS00A100P44 | rub | 1       | 0.001      |
-| VTBU         | РСХБ – Корп еврооблигации РФ                              | BBG00RPRPBY4 | usd | 10      | 0.001      |
+| IBB          | iShares Biotechnology ETF                                 | BBG000FS8GY0 | usd | 1       | 0.01       |
+| RSHU         | РСХБ – Корп еврооблигации РФ                              | BBG00RPRPBY4 | usd | 10      | 0.001      |
+| EWA          | iShares MSCI Australia ETF                                | BBG000BDNJ29 | usd | 1       | 0.01       |
 | SBCB         | Первая - Фонд Российские еврооблигации                    | BBG00NB6KGN0 | usd | 1       | 0.01       |
 | TBUY         | Тинькофф BuyBack Leaders                                  | TCS00A103VL1 | usd | 100     | 0.0001     |
 | FXKZ         | FinEx Акции казахстанских компаний                        | BBG00M8C8Y03 | rub | 1       | 0.1        |
 | TGRN         | Тинькофф Green Economy                                    | TCS00A1039P6 | usd | 100     | 0.0001     |
+| CQQQ         | Invesco China Technology ETF                              | BBG00KXH51H5 | usd | 1       | 0.01       |
 | AKMD         | Альфа-Капитал Медицина                                    | BBG011MM3NT8 | rub | 1       | 0.02       |
+| SCHE         | Schwab Emerging Markets Equity ETF                        | BBG000Q5QG14 | usd | 1       | 0.01       |
+| IWF          | iShares Russell 1000 Growth ET                            | BBG000BTR7Z0 | usd | 1       | 0.01       |
+| AGG          | iShares Core U.S. Aggregate Bond ETF                      | BBG000Q123R0 | usd | 1       | 0.01       |
 | SBCS         | Первая – Фонд Консервативный смарт                        | BBG011C8J9N0 | rub | 1       | 0.001      |
 | AKVG         | Альфа-Капитал Видеоигры                                   | BBG013RTJNG1 | rub | 1       | 0.02       |
+| VWO          | Vanguard FTSE Emerging Markets ETF                        | BBG000HT88C8 | usd | 1       | 0.01       |
+| VSS          | Vanguard FTSE All-World ex-US Small-Cap ETF               | BBG000D6RYS7 | usd | 1       | 0.01       |
 | SBHI         | Первая–Фонд Халяльные инвестиции                          | BBG013RTHWK8 | rub | 1       | 0.002      |
+| IYW          | iShares U.S. Technology ETF                               | BBG000CF9GL4 | usd | 1       | 0.01       |
+| EEM          | iShares MSCI Emerging Markets ETF                         | BBG000M0P5L2 | usd | 1       | 0.01       |
+| MDY          | SPDR S&P Midcap 400 ETF Trust                             | BBG000BBNQB7 | usd | 1       | 0.01       |
+| DIA          | SPDR Dow Jones Industrial Average ETF Trust               | BBG000BTDS98 | usd | 1       | 0.01       |
 | AMRE         | АТОН Российские акции +                                   | TCS00A102XX4 | rub | 1       | 0.1        |
 | EQMX         | ВИМ – Индекс МосБиржи                                     | TCS00A101EJ5 | rub | 1       | 0.05       |
+| IWO          | iShares Russell 2000 Growth ETF                           | BBG000C17LW4 | usd | 1       | 0.01       |
 | FXRU         | FinEx Еврооблигации рос. компаний (USD)                   | BBG005N1KZX4 | rub | 1       | 0.01       |
+| DVY          | iShares Select Dividend ETF                               | BBG000C1L679 | usd | 1       | 0.01       |
 | SBSP         | Первая – Фонд Американские акции                          | BBG00NTZWLM4 | rub | 1       | 0.2        |
+| SPY          | SPDR S&P 500 ETF Trust                                    | BBG000BDTBL9 | usd | 1       | 0.01       |
+| VIS          | Vanguard Industrials ETF                                  | BBG000HX9TN0 | usd | 1       | 0.01       |
+| VOO          | Vanguard S&P 500 ETF                                      | BBG0015VYNT4 | usd | 1       | 0.01       |
 | TSPX         | Тинькофф USA 500                                          | TCS00A102EQ8 | usd | 100     | 0.0001     |
 | RU000A1022Z1 | ЗПИФ ПАРУС-ОЗН                                            | TCS00A1022Z1 | rub | 1       | 1          |
 | FXRD         | FinEx Облигации с рублевыми дивидендами                   | BBG01236BLK6 | rub | 1       | 0.01       |
 | FXDM         | FinEx Акции компаний развитых стран без США               | TCS0BMDKNM37 | rub | 1       | 0.01       |
 | FXRW         | FinEx Акции глобального рынка                             | BBG00R980XY3 | rub | 1       | 0.0001     |
+| IWN          | iShares Russell 2000 Value ETF                            | BBG000C16Z27 | usd | 1       | 0.01       |
 | SBPS         | Первая – Фонд Прогрессивный смарт                         | BBG011C8JMM2 | rub | 1       | 0.002      |
+| VXUS         | Vanguard Total International Stock ETF                    | BBG001F8JPC4 | usd | 1       | 0.01       |
+| XLV          | The Health Care Select Sector SPDR Fund                   | BBG000BHVSG6 | usd | 1       | 0.01       |
+| ITOT         | iShares Core S&P Total U.S. Stock Market ETF              | BBG000HSHTP0 | usd | 1       | 0.01       |
+| XHB          | SPDR S&P Homebuilders ETF                                 | BBG000MQSW88 | usd | 1       | 0.01       |
+| IWD          | iShares Russell 1000 Value ETF                            | BBG000CG9VP5 | usd | 1       | 0.01       |
+| SCHA         | Schwab U.S. Small-Cap ETF                                 | BBG000PS0FX0 | usd | 1       | 0.01       |
 | TUSD         | Тинькофф Вечный портфель USD                              | BBG000000000 | usd | 100     | 0.0001     |
-| VTBH         | РСХБ – Корп облигации США                                 | BBG00PVNWFM6 | usd | 10      | 0.001      |
+| RSHH         | РСХБ – Корп облигации США                                 | BBG00PVNWFM6 | usd | 10      | 0.001      |
+| HYG          | iShares iBoxx $ High Yield Corporate Bond ETF             | BBG000R2T3H9 | usd | 1       | 0.01       |
 | TEUR         | Тинькофф Вечный портфель EUR                              | BBG000000002 | eur | 100     | 0.0001     |
 | TPAS         | Тинькофф PAN-ASIA                                         | TCS00A103VK3 | usd | 100     | 0.0001     |
 | FXMM         | FinEx Казначейские облигации США                          | BBG006GYFHV6 | rub | 1       | 0.1        |
 | FXWO         | FinEx Акции глобального рынка                             | BBG00R9805F5 | rub | 1       | 0.0001     |
 | FXTB         | FinEx Казначейские облигации США (USD)                    | BBG00NRFC2X2 | rub | 1       | 0.01       |
+| MCHI         | iShares MSCI China ETF                                    | BBG001LRJJH4 | usd | 1       | 0.01       |
 | FXIT         | FinEx Акции компаний IT-сектора США                       | BBG005HLTYH9 | rub | 1       | 1          |
+| XLF          | The Financial Select Sector SPDR Fund                     | BBG000BJ29X7 | usd | 1       | 0.01       |
+| IGV          | iShares Expanded Tech-Software Sector ETF                 | BBG000BGQ921 | usd | 1       | 0.01       |
 | TMOS         | Тинькофф iMOEX                                            | BBG333333333 | rub | 1       | 0.002      |
+| REMX         | VanEck Rare Earth/Strategic Metals ETF                    | BBG0018555F4 | usd | 1       | 0.01       |
 | LQDT         | ВИМ - Ликвидность                                         | BBG00RPRPX12 | rub | 1       | 0.0001     |
+| GXC          | SPDR S&P China ETF                                        | BBG000Q8R7Y1 | usd | 1       | 0.01       |
+| TUR          | iShares MSCI Turkey ETF                                   | BBG000TZCSF9 | usd | 1       | 0.01       |
 | FXEM         | FinEx Развивающиеся страны без Китая и Индии              | BBG013T81ZQ6 | rub | 1       | 0.01       |
 | SBWS         | Первая – Фонд Взвешенный смарт                            | BBG011C8J503 | rub | 1       | 0.002      |
+| OEF          | iShares S&P 100 ETF                                       | BBG000DDXQR3 | usd | 1       | 0.01       |
 | TGLD         | Тинькофф Золото                                           | BBG222222222 | usd | 100     | 0.0001     |
 | TBRU         | Тинькофф Bonds RUB                                        | TCS00A1039N1 | rub | 1       | 0.001      |
+| VO           | Vanguard Mid-Cap ETF                                      | BBG000HX76S7 | usd | 1       | 0.01       |
 | FXFA         | FinEx Облигаций развитых рынков                           | BBG00ZXX3KF9 | rub | 1       | 0.01       |
+| FXI          | iShares China Large-Cap ETF                               | BBG000Q8RVM1 | usd | 1       | 0.01       |
+| JNK          | SPDR Bloomberg High Yield Bond ETF                        | BBG000NXDKM8 | usd | 1       | 0.01       |
 | TEUS         | Тинькофф Eurostocks 50                                    | TCS00A103VE6 | eur | 100     | 0.0001     |
+| SLV          | iShares Silver Trust                                      | BBG000NDCRW7 | usd | 1       | 0.01       |
+| IWP          | iShares Russell Mid-Cap Growth ETF                        | BBG000BW05W9 | usd | 1       | 0.01       |
+| SCHB         | Schwab U.S. Broad Market ETF                              | BBG000PRZSP5 | usd | 1       | 0.01       |
+| SPLV         | Invesco S&P 500 Low Volatility ETF                        | BBG001P2KBP1 | usd | 1       | 0.01       |
+| SMH          | VanEck Semiconductor ETF                                  | BBG000BV7ZQ5 | usd | 1       | 0.01       |
+| IWB          | iShares Russell 1000 ETF                                  | BBG000CF7ZN2 | usd | 1       | 0.01       |
 | FXES         | FinEx Видеоигры и Киберспорт                              | BBG011Q55QS3 | rub | 1       | 0.01       |
+| FEZ          | SPDR EURO STOXX 50 ETF                                    | BBG000PG8230 | usd | 1       | 0.01       |
+| IUSV         | iShares Core S&P U.S. Value ETF                           | BBG000C183Y1 | usd | 1       | 0.01       |
+| EWC          | iShares MSCI Canada ETF                                   | BBG000BJSXB0 | usd | 1       | 0.01       |
 | TSST         | Тинькофф ESG Leaders                                      | TCS00A103VM9 | usd | 100     | 0.0001     |
 | FXBC         | FinEx Экосистема Блокчейн                                 | BBG01526SWY3 | rub | 1       | 0.01       |
-| AKGD         | Альфа-Капитал Золото                                      | BBG014M8NBM4 | rub | 1       | 0.01       |
+| XSD          | SPDR S&P Semiconductor ETF                                | BBG000MQVF45 | usd | 1       | 0.01       |
+| VIG          | Vanguard Dividend Appreciation ETF                        | BBG000P5G869 | usd | 1       | 0.01       |
+| AKGD         | Альфа-Капитал Золото                                      | BBG014M8NBM4 | rub | 1       | 0.02       |
+| LQD          | iShares iBoxx $ Investment Grade Corporate Bond ETF       | BBG000BBV9N3 | usd | 1       | 0.01       |
+| EWQ          | iShares MSCI France ETF                                   | BBG000BJX6S5 | usd | 1       | 0.01       |
+| ANGL         | VanEck Fallen Angel High Yield Bond ETF                   | BBG002VZY764 | usd | 1       | 0.01       |
 | SBBE         | Первая – Фонд Блокчейн Экономика                          | TCS00A104B87 | rub | 1       | 0.001      |
 | SCZ          | iShares MSCI EAFE Small-Cap ETF                           | BBG000T1G7X6 | usd | 1       | 0.01       |
+| XLB          | The Materials Select Sector SPDR Fund                     | BBG000BHNNF7 | usd | 1       | 0.01       |
 | AKME         | Альфа-Капитал Управляемые Российские Акции                | BBG00YRW4B42 | rub | 1       | 0.02       |
+| IYE          | iShares U.S. Energy ETF                                   | BBG000BXXRG1 | usd | 1       | 0.01       |
+| XLP          | The Consumer Staples Select Sector SPDR Fund              | BBG000BJ10N8 | usd | 1       | 0.01       |
+| IXG          | iShares Global Financials ETF                             | BBG000L77B26 | usd | 1       | 0.01       |
 | FXIM         | FinEx Акции компаний IT-сектора США                       | BBG00Y6D0N45 | usd | 10      | 0.001      |
+| MGK          | Vanguard Mega Cap Growth ETF                              | BBG000V1FPR1 | usd | 1       | 0.01       |
 | AKEB         | Альфа-Капитал Управляемые еврооблигации                   | BBG013RTJSX1 | rub | 1       | 0.05       |
+| ITB          | iShares U.S. Home Construction ETF                        | BBG000PB3SM8 | usd | 1       | 0.01       |
+| INDA         | iShares MSCI India ETF                                    | BBG002DMN3L7 | usd | 1       | 0.01       |
+| EWZ          | iShares MSCI Brazil ETF                                   | BBG000CPLR52 | usd | 1       | 0.01       |
+| IYF          | iShares U.S. Financials ETF                               | BBG000CGFWK1 | usd | 1       | 0.01       |
+| EWU          | iShares MSCI United Kingdom ETF                           | BBG000BK6997 | usd | 1       | 0.01       |
 | TSOX         | Тинькофф Semiconductors                                   | TCS00A103VF3 | usd | 100     | 0.0001     |
+| VGK          | Vanguard FTSE Europe ETF                                  | BBG000HT8SM3 | usd | 1       | 0.01       |
+| GLD          | SPDR Gold Trust                                           | BBG000CRF6Q8 | usd | 1       | 0.01       |
+| BOTZ         | Global X Robotics & Artificial Intelligence ETF           | BBG00DSB42G0 | usd | 1       | 0.01       |
+| TLT          | iShares 20+ Year Treasury Bond ETF                        | BBG000BJKYW3 | usd | 1       | 0.01       |
 | TEMS         | Тинькофф Emerging Markets                                 | TCS00A103VJ5 | usd | 100     | 0.0001     |
+| IJH          | iShares Core S&P Mid-Cap ETF                              | BBG000BWC7P0 | usd | 1       | 0.01       |
 | AKSC         | Альфа-Капитал Космос                                      | BBG012T4JCQ9 | rub | 1       | 0.02       |
 | SBGB         | Первая – Фонд Государственные облигации                   | BBG00NJ6XQ74 | rub | 1       | 0.001      |
 | TRRE         | Тинькофф ЖК Republic-REDS                                 | TCS00A104UC0 | rub | 1       | 1          |
-| AKMB         | Альфа-Капитал Управляемые облигации                       | BBG00V7649K4 | rub | 1       | 0.0001     |
+| AKMB         | Альфа-Капитал Управляемые облигации                       | BBG00V7649K4 | rub | 1       | 0.0002     |
+| VPL          | Vanguard FTSE Pacific ETF                                 | BBG000HTCFY3 | usd | 1       | 0.01       |
+| VBR          | Vanguard Small-Cap Value ETF                              | BBG000HX5MQ6 | usd | 1       | 0.01       |
+| EWS          | iShares MSCI Singapore ETF                                | BBG000BK4VM5 | usd | 1       | 0.01       |
+| EWW          | iShares MSCI Mexico ETF                                   | BBG000BK42M9 | usd | 1       | 0.01       |
+| RU000A104KU3 | ЗПИФ ПАРУС-Нордвей                                        | TCS00A104KU3 | rub | 1       | 1          |
+| EFV          | iShares MSCI EAFE Value ETF                               | BBG000GLBJK9 | usd | 1       | 0.01       |
 | SBRS         | Первая – Фонд Осторожный смарт                            | BBG011C8HRT6 | rub | 1       | 0.001      |
 | TRAI         | Тинькофф AI-Robotics                                      | TCS00A103VG1 | usd | 100     | 0.0001     |
 | FXRB         | FinEx Еврооблигации рос. компаний (RUB)                   | BBG004HNZFH2 | rub | 1       | 0.001      |
 | AKQU         | Альфа-Капитал Квант                                       | BBG012VJJFG7 | usd | 1       | 0.01       |
 | TFNX         | Тинькофф FinTech                                          | TCS00A103VH9 | usd | 100     | 0.0001     |
-| VTBA         | РСХБ - Акции компаний США                                 | BBG00PGVPH30 | usd | 10      | 0.001      |
+| RSHA         | РСХБ - Акции компаний США                                 | BBG00PGVPH30 | usd | 10      | 0.001      |
+| KBE          | SPDR S&P Bank ETF                                         | BBG000KMKPY3 | usd | 1       | 0.01       |
+| VTI          | Vanguard Total Stock Market ETF                           | BBG000HR9779 | usd | 1       | 0.01       |
 | IEV          | iShares Europe ETF                                        | BBG000BXV152 | usd | 1       | 0.01       |
-| KBWB         | Invesco KBW Bank ETF                                      | BBG0027F1TD5 | usd | 1       | 0.01       |
 | TCBR         | Тинькофф CyberSecurity                                    | TCS00A103VN7 | usd | 100     | 0.0001     |
+| XLI          | The Industrial Select Sector SPDR Fund                    | BBG000BJ2RF7 | usd | 1       | 0.01       |
+| IWM          | iShares Russell 2000 ETF                                  | BBG000CGC9C4 | usd | 1       | 0.01       |
 | GOLD         | ВИМ Фонд Золото                                           | BBG00V9V16J8 | rub | 1       | 0.0001     |
-| ESGD         | iShares ESG Aware MSCI EAFE ETF                           | BBG00D7BBRR8 | usd | 1       | 0.01       |
 | FXGD         | FinEx Золото                                              | BBG005DXDPK9 | rub | 1       | 0.01       |
 | FXRL         | FinEx Акции российских компаний                           | BBG0073DLHS1 | rub | 1       | 0.005      |
 | EWI          | iShares MSCI Italy ETF                                    | BBG000BK2V65 | usd | 1       | 0.01       |
+| EMB          | iShares J.P. Morgan USD Emerging Markets Bond ETF         | BBG000NXKWH0 | usd | 1       | 0.01       |
+| VXF          | Vanguard Extended Market ETF                              | BBG000LNZ4P1 | usd | 1       | 0.01       |
 | AMRB         | АТОН Российские облигации +                               | TCS00A102XY2 | rub | 1       | 0.1        |
 | AKSF         | Альфа-Капитал Стратегия будущего                          | BBG0151LJYV0 | rub | 1       | 0.01       |
+| SDY          | SPDR S&P Dividend ETF                                     | BBG000KN18M3 | usd | 1       | 0.01       |
 | FXIP         | FinEx Облигации TIPS (RUB)                                | BBG011C7ZVQ2 | rub | 1       | 0.01       |
+| IVV          | iShares Core S&P 500 ETF                                  | BBG000BVZ4F5 | usd | 1       | 0.01       |
+| XLU          | The Utilities Select Sector SPDR Fund                     | BBG000BJ7G75 | usd | 1       | 0.01       |
+| RPV          | Invesco S&P 500 Pure Value ETF                            | BBG00KJR2WB0 | usd | 1       | 0.01       |
 | SPSB         | SPDR Portfolio Short Term Corporate Bond ETF              | BBG000Q1MZ15 | usd | 1       | 0.01       |
+| QQQ          | Invesco QQQ Trust, Series 1                               | BBG000BSWKH7 | usd | 1       | 0.01       |
+| VTV          | Vanguard Value ETF                                        | BBG000HWV1X7 | usd | 1       | 0.01       |
+| IGSB         | iShares 1-5 Year Investment Grade Corporate Bond ETF      | BBG000QN2BW8 | usd | 1       | 0.01       |
+| ILF          | iShares Latin America 40 ETF                              | BBG000KWYDJ0 | usd | 1       | 0.01       |
+| SCHG         | Schwab U.S. Large-Cap Growth ETF                          | BBG000Q0CS41 | usd | 1       | 0.01       |
+| VV           | Vanguard Large-Cap ETF                                    | BBG000HSZ812 | usd | 1       | 0.01       |
+| EWM          | iShares MSCI Malaysia ETF                                 | BBG000BK3L48 | usd | 1       | 0.01       |
+| COPX         | Global X Copper Miners ETF                                | BBG000QRNHZ0 | usd | 1       | 0.01       |
+| SPDW         | SPDR Portfolio Developed World ex-US ETF                  | BBG000Q8SV13 | usd | 1       | 0.01       |
+| EPP          | iShares MSCI Pacific ex Japan ETF                         | BBG000BJ1XP4 | usd | 1       | 0.01       |
 | TSPV         | Тинькофф SPAC                                             | TCS00A102YC6 | usd | 100     | 0.0001     |
+| SOXX         | iShares Semiconductor ETF                                 | BBG000JP3063 | usd | 1       | 0.01       |
+| IEMG         | iShares Core MSCI Emerging Markets ETF                    | BBG003HC3CQ0 | usd | 1       | 0.01       |
 | OBLG         | ВИМ – Корпоративные облигации                             | BBG00MF4JRQ8 | rub | 1       | 0.02       |
+| VDE          | Vanguard Energy ETF                                       | BBG000HTG205 | usd | 1       | 0.01       |
+| THD          | iShares MSCI Thailand ETF                                 | BBG000VD5B51 | usd | 1       | 0.01       |
+| IJR          | iShares Core S&P Small-Cap ETF                            | BBG000BWCNN7 | usd | 1       | 0.01       |
 | TBEU         | Тинькофф Еврооблигации EUR                                | TCS00A103TD2 | eur | 100     | 0.0001     |
-| IYT          | iShares US Transportation ETF                             | BBG000BPNZB6 | usd | 1       | 0.01       |
+| IYT          | iShares U.S. Transportation ETF                           | BBG000BPNZB6 | usd | 1       | 0.01       |
 | AKCH         | Альфа-Капитал Китайские Акции                             | BBG00YM3BX27 | rub | 1       | 0.02       |
 | AKSP         | Альфа-Капитал S&P 500                                     | BBG00P5M77Y0 | usd | 1       | 0.01       |
 | TIPO         | Тинькофф Индекс IPO                                       | TCS00A102EM7 | usd | 100     | 0.0001     |
-| RU000A104172 | ЗПИФ ПАРУС-Сберлог                                        | TCS00A104172 | rub | 1       | 0.1        |
+| VEA          | Vanguard FTSE Developed Markets ETF                       | BBG000QVFB47 | usd | 1       | 0.01       |
+| RU000A104172 | ЗПИФ ПАРУС-Сберлог                                        | TCS00A104172 | rub | 1       | 1          |
 | EWP          | iShares MSCI Spain ETF                                    | BBG000BK58Q1 | usd | 1       | 0.01       |
 | TRUR         | Тинькофф Вечный портфель RUB                              | BBG000000001 | rub | 1       | 0.01       |
 | TECH         | Тинькофф Technology                                       | BBG111111111 | usd | 100     | 0.0001     |
 | TBIO         | Тинькофф Biotech                                          | TCS00A102EK1 | usd | 100     | 0.0001     |
 | SBDS         | Первая – Фонд Динамичный смарт                            | BBG011C8G9X2 | rub | 1       | 0.002      |
+| IWR          | iShares Russell Mid-Cap ETF                               | BBG000JWXHK2 | usd | 1       | 0.01       |
+| DXJ          | WisdomTree Japan Hedged Equity Fund                       | BBG000BT12H9 | usd | 1       | 0.01       |
 | FXCN         | FinEx Акции китайских компаний                            | BBG005VKB7D7 | rub | 1       | 0.5        |
-| VTBE         | РСХБ – Фонд Акций развивающихся стран                     | BBG00PVNWQ15 | usd | 10      | 0.001      |
+| EIDO         | iShares MSCI Indonesia ETF                                | BBG000QVL5M3 | usd | 1       | 0.01       |
+| RSHE         | РСХБ – Фонд Акций развивающихся стран                     | BBG00PVNWQ15 | usd | 10      | 0.001      |
+| IXC          | iShares Global Energy ETF                                 | BBG000L74NQ7 | usd | 1       | 0.01       |
+| OIH          | VanEck Oil Services ETF                                   | BBG000D02J82 | usd | 1       | 0.01       |
+| HDV          | iShares Core High Dividend ETF                            | BBG001LRJC70 | usd | 1       | 0.01       |
+| EPI          | WisdomTree India Earnings Fund                            | BBG000VC1C55 | usd | 1       | 0.01       |
 | SBMX         | Первая – Фонд Топ Российских акций                        | BBG00M0C8YM7 | rub | 1       | 0.001      |
 | FXTP         | FinEx Облигации TIPS                                      | TCS0BNYK7X86 | rub | 1       | 0.01       |
 
 
-## Futures available. Total: [366]
+## Futures available. Total: [450]
 
 | Ticker       | Full name                                                 | FIGI         | Cur | Lot     | Step       |
 |--------------|-----------------------------------------------------------|--------------|-----|---------|------------|
+| YNM3         | YNDF-6.23 Яндекс                                          | FUTYNDF06230 | rub | 1       | 1          |
 | SFU2         | SPYF-9.22 S&P 500                                         | FUTSPYF09220 | rub | 1       | 0.01       |
 | SGM2         | SNGP-6.22 Сургутнефтегаз (привилегированные)              | FUTSNGP06220 | rub | 1       | 1          |
 | ALZ2         | ALRS-12.22 Алроса                                         | FUTALRS12220 | rub | 1       | 1          |
-| NMM2         | NLMK-6.22 НЛМК                                            | FUTNLMK06220 | rub | 1       | 0          |
+| AFH3         | AFLT-3.23 Аэрофлот                                        | FUTAFLT03230 | rub | 1       | 1          |
+| AKH3         | AFKS-3.23 АФК Система                                     | FUTAFKS03230 | rub | 1       | 1          |
+| NMM2         | NLMK-6.22 НЛМК                                            | FUTNLMK06220 | rub | 1       | 1          |
 | SNU2         | SNGR-9.22 Сургутнефтегаз (обыкновенные)                   | FUTSNGR09220 | rub | 1       | 1          |
 | SiM4         | Si-6.24 Курс доллар - рубль                               | FUTSI0624000 | rub | 1       | 1          |
-| NGH2         | NG-3.22 Природный газ                                     | FUTNG0322000 | rub | 1       | 0          |
+| NGH2         | NG-3.22 Природный газ                                     | FUTNG0322000 | rub | 1       | 0.001      |
 | MTZ2         | MTSI-12.22 МТС                                            | FUTMTSI12220 | rub | 1       | 1          |
+| SiU4         | Si-9.24 Курс доллар - рубль                               | FUTSI0924000 | rub | 1       | 1          |
+| GKH3         | GMKN-3.23 Норильский никель                               | FUTGMKN03230 | rub | 1       | 1          |
 | VIU2         | RVI-9.22 Волатильность российского рынка                  | FUTRVI092200 | rub | 1       | 0.05       |
+| MAH3         | MMI-3.23 Индекс Металлов и добычи                         | FUTMMI032300 | rub | 1       | 1          |
 | RBM2         | RGBI-6.22 Индекс Государственных облигаций                | FUTRGBI06220 | rub | 1       | 1          |
-| HYM2         | HYDR-6.22 РусГидро                                        | FUTHYDR06220 | rub | 1       | 0          |
-| VIF2         | RVI-1.22 Волатильность российского рынка                  | FUTRVI012200 | rub | 1       | 0          |
+| HYM2         | HYDR-6.22 РусГидро                                        | FUTHYDR06220 | rub | 1       | 1          |
+| VIF2         | RVI-1.22 Волатильность российского рынка                  | FUTRVI012200 | rub | 1       | 0.05       |
+| MLH3         | MAIL-3.23 VK                                              | FUTMAIL03230 | rub | 1       | 1          |
 | PZU2         | PLZL-9.22 Полюс Золото                                    | FUTPLZL09220 | rub | 1       | 1          |
-| AKM2         | AFKS-6.22 АФК Система (обыкновенные)                      | FUTAFKS06220 | rub | 1       | 0          |
+| AKM2         | AFKS-6.22 АФК Система (обыкновенные)                      | FUTAFKS06220 | rub | 1       | 1          |
 | DYH2         | DSKY-3.22 Детский мир                                     | FUTDSKY03220 | rub | 1       | 1          |
 | TTU2         | TATN-9.22 Татнефть                                        | FUTTATN09220 | rub | 1       | 1          |
+| NMH3         | NLMK-3.23 НЛМК                                            | FUTNLMK03230 | rub | 1       | 1          |
+| SPH3         | SBPR-3.23 Сбер Банк (привилегированные)                   | FUTSBPR03230 | rub | 1       | 1          |
 | MAU2         | MMI-9.22 Индекс Металлов и добычи                         | FUTMMI092200 | rub | 1       | 1          |
 | RIM3         | RTS-6.23 Индекс РТС                                       | FUTRTS062300 | rub | 1       | 10         |
 | AUZ2         | AUDU-12.22 Курс Австралийский доллар - Доллар США         | FUTAUDU12220 | rub | 1       | 0.0001     |
 | NlJ2         | Nl-4.22 Никель                                            | FUTNL0422000 | rub | 1       | 5          |
 | MMU4         | MXI-9.24 Индекс МосБиржи (мини)                           | FUTMXI092400 | rub | 1       | 0.05       |
-| MCH2         | MTLR-3.22 Мечел (обыкновенные)                            | FUTMTLR03220 | rub | 1       | 0          |
-| LKM2         | LKOH-6.22 Лукойл                                          | FUTLKOH06220 | rub | 1       | 0          |
-| AFH2         | AFLT-3.22  Аэрофлот                                       | FUTAFLT03220 | rub | 1       | 0          |
+| MCH2         | MTLR-3.22 Мечел (обыкновенные)                            | FUTMTLR03220 | rub | 1       | 1          |
+| LKM2         | LKOH-6.22 Лукойл                                          | FUTLKOH06220 | rub | 1       | 1          |
+| AFH2         | AFLT-3.22  Аэрофлот                                       | FUTAFLT03220 | rub | 1       | 1          |
 | GKZ2         | GMKN-12.22 Норильский никель                              | FUTGMKN12220 | rub | 1       | 1          |
-| CoK2         | Co-5.22 Медь                                              | FUTCO0522000 | rub | 1       | 0          |
+| CoK2         | Co-5.22 Медь                                              | FUTCO0522000 | rub | 1       | 0.5        |
 | SPM2         | SBPR-6.22 Сбер Банк (привилегированные)                   | FUTSBPR06220 | rub | 1       | 1          |
 | GZM3         | GAZR-6.23 Газпром                                         | FUTGAZR06230 | rub | 1       | 1          |
-| SOM2         | SIBN-6.22 Газпром нефть                                   | FUTSIBN06220 | rub | 1       | 0          |
-| AFM2         | AFLT-6.22 Аэрофлот                                        | FUTAFLT06220 | rub | 1       | 0          |
+| SOM2         | SIBN-6.22 Газпром нефть                                   | FUTSIBN06220 | rub | 1       | 1          |
+| AFM2         | AFLT-6.22 Аэрофлот                                        | FUTAFLT06220 | rub | 1       | 1          |
 | PZM2         | PLZL-6.22 Полюс Золото                                    | FUTPLZL06220 | rub | 1       | 1          |
 | CHU2         | CHMF-9.22 Северсталь                                      | FUTCHMF09220 | rub | 1       | 1          |
-| MXH2         | MIX-3.22 Индекс МосБиржи                                  | FUTMIX032200 | rub | 1       | 0          |
+| MXH2         | MIX-3.22 Индекс МосБиржи                                  | FUTMIX032200 | rub | 1       | 25         |
 | MMM3         | MXI-6.23 Индекс МосБиржи (мини)                           | FUTMXI062300 | rub | 1       | 0.05       |
+| CoX2         | Co-11.22 Медь                                             | FUTCO1122000 | rub | 1       | 0.5        |
 | AKU2         | AFKS-9.22 АФК Система                                     | FUTAFKS09220 | rub | 1       | 1          |
+| JPH3         | UJPY-3.23 Курс доллар США - Японская йена                 | FUTUJPY03230 | rub | 1       | 0.01       |
 | MCZ2         | MTLR-12.22 Мечел                                          | FUTMTLR12220 | rub | 1       | 1          |
 | NlU2         | Nl-9.22 Никель                                            | FUTNL0922000 | rub | 1       | 5          |
 | BRF3         | BR-1.23 Нефть Brent                                       | FUTBR0123000 | rub | 1       | 0.01       |
+| ALH3         | ALRS-3.23 АЛРОСА                                          | FUTALRS03230 | rub | 1       | 1          |
 | SiH4         | Si-3.24 Курс доллар - рубль                               | FUTSI0324000 | rub | 1       | 1          |
-| NGG2         | NG-2.22 Природный газ                                     | FUTNG0222000 | rub | 1       | 0          |
-| VIQ2         | RVI-8.22 Волатильность российского рынка                  | FUTRVI082200 | rub | 1       | 0.05       |
-| PIH2         | PIKK-3.22 ПИК                                             | FUTPIKK03220 | rub | 1       | 0          |
+| NGG2         | NG-2.22 Природный газ                                     | FUTNG0222000 | rub | 1       | 0.001      |
+| VIQ2         | RVI-8.22 Волатильность российского рынка                  | FUTRVI082200 | rub | 1       | 0          |
+| PIH2         | PIKK-3.22 ПИК                                             | FUTPIKK03220 | rub | 1       | 1          |
 | PIU2         | PIKK-9.22 ПИК                                             | FUTPIKK09220 | rub | 1       | 1          |
 | SVZ2         | SILV-12.22 Серебро                                        | FUTSILV12220 | rub | 1       | 0.01       |
+| TTH3         | TATN-3.23 Татнефть                                        | FUTTATN03230 | rub | 1       | 1          |
 | VBU2         | VTBR-9.22 ВТБ                                             | FUTVTBR09220 | rub | 1       | 1          |
+| GZU3         | GAZR-9.23 Газпром                                         | FUTGAZR09230 | rub | 1       | 1          |
 | AUU2         | AUDU-9.22 Курс Австралийский доллар - Доллар США          | FUTAUDU09220 | rub | 1       | 0.0001     |
+| SFU3         | SPYF-9.23 S&P 500                                         | FUTSPYF09230 | rub | 1       | 0.01       |
 | POU2         | POLY-9.22 Polymetal                                       | FUTPOLY09220 | rub | 1       | 1          |
-| GUH2         | GBPU-3.22 Курс Фунт стерлингов - Доллар                   | FUTGBPU03220 | rub | 1       | 0          |
+| RMU3         | RTSM-9.23 Индекс РТС (мини)                               | FUTRTSM09230 | rub | 1       | 0.5        |
+| GUH2         | GBPU-3.22 Курс Фунт стерлингов - Доллар                   | FUTGBPU03220 | rub | 1       | 0.0001     |
 | NlQ2         | Nl-8.22 Никель                                            | FUTNL0822000 | rub | 1       | 5          |
 | RNH5         | ROSN-3.25 Роснефть                                        | FUTROSN03250 | rub | 1       | 1          |
 | MMZ4         | MXI-12.24 Индекс МосБиржи (мини)                          | FUTMXI122400 | rub | 1       | 0.05       |
-| TNM2         | TRNF-6.22 Транснефть (привилегированные)                  | FUTTRNF06220 | rub | 1       | 0          |
-| RIM2         | RTS-6.22 Индекс РТС                                       | FUTRTS062200 | rub | 1       | 0          |
+| TNM2         | TRNF-6.22 Транснефть (привилегированные)                  | FUTTRNF06220 | rub | 1       | 1          |
+| RIM2         | RTS-6.22 Индекс РТС                                       | FUTRTS062200 | rub | 1       | 10         |
 | RNU5         | ROSN-9.25 Роснефть                                        | FUTROSN09250 | rub | 1       | 1          |
 | BRV2         | BR-10.22 Нефть Brent                                      | FUTBR1022000 | rub | 1       | 0.01       |
 | RTZ2         | RTKM-12.22 Ростелеком                                     | FUTRTKM12220 | rub | 1       | 1          |
-| BRH2         | BR-3.22 Нефть Brent                                       | FUTBR0322000 | rub | 1       | 0          |
+| BRH2         | BR-3.22 Нефть Brent                                       | FUTBR0322000 | rub | 1       | 0.01       |
 | AKZ2         | AFKS-12.22 АФК Система                                    | FUTAFKS12220 | rub | 1       | 1          |
 | EuU3         | Eu-9.23 Курс евро - рубль                                 | FUTEU0923000 | rub | 1       | 1          |
 | MEZ2         | MOEX-12.22 Московская биржа                               | FUTMOEX12220 | rub | 1       | 1          |
-| MLM2         | MAIL-6.22 VK                                              | FUTMAIL06220 | rub | 1       | 0          |
+| MLM2         | MAIL-6.22 VK                                              | FUTMAIL06220 | rub | 1       | 1          |
 | OGZ2         | OGI-12.22 Индекс Нефти и газа                             | FUTOGI122200 | rub | 1       | 1          |
 | GDM2         | GOLD-6.22 Золото                                          | FUTGOLD06220 | rub | 1       | 0.1        |
 | NKU2         | NOTK-9.22 Новатэк                                         | FUTNOTK09220 | rub | 1       | 1          |
@@ -2826,95 +2998,127 @@
 | BRX2         | BR-11.22 Нефть Brent                                      | FUTBR1122000 | rub | 1       | 0.01       |
 | RNM3         | ROSN-6.23 Роснефть                                        | FUTROSN06230 | rub | 1       | 1          |
 | YNU2         | YNDF-9.22 Яндекс                                          | FUTYNDF09220 | rub | 1       | 1          |
-| RTH2         | RTKM-3.22 Ростелеком                                      | FUTRTKM03220 | rub | 1       | 0          |
+| RTH2         | RTKM-3.22 Ростелеком                                      | FUTRTKM03220 | rub | 1       | 1          |
+| IRH3         | IRAO-3.23 Интер РАО ЕЭС                                   | FUTIRAO03230 | rub | 1       | 1          |
 | GUZ2         | GBPU-12.22 Курс Фунт стерлингов - Доллар                  | FUTGBPU12220 | rub | 1       | 0.0001     |
 | PTH3         | PLT-3.23 Платина                                          | FUTPLT032300 | rub | 1       | 0.1        |
 | SSH2         | SMLT-3.22 ГК Самолет                                      | FUTSMLT03220 | rub | 1       | 1          |
 | SNM2         | SNGR-6.22 Сургутнефтегаз                                  | FUTSNGR06220 | rub | 1       | 1          |
 | SFM3         | SPYF-6.23 S&P 500                                         | FUTSPYF06230 | rub | 1       | 0.01       |
+| TNH3         | TRNF-3.23 Транснефть (привилегированные)                  | FUTTRNF03230 | rub | 1       | 1          |
 | RIU3         | RTS-9.23 Индекс РТС                                       | FUTRTS092300 | rub | 1       | 10         |
 | SSM2         | SMLT-6.22 ГК Самолет                                      | FUTSMLT06220 | rub | 1       | 1          |
 | BRM3         | BR-6.23 Нефть Brent                                       | FUTBR0623000 | rub | 1       | 0.01       |
 | GZH5         | GAZR-3.25 Газпром                                         | FUTGAZR03250 | rub | 1       | 1          |
-| GKM2         | GMKN-6.22 Норильский никель                               | FUTGMKN06220 | rub | 1       | 0          |
+| GKM2         | GMKN-6.22 Норильский никель                               | FUTGMKN06220 | rub | 1       | 1          |
 | GZM4         | GAZR-6.24 Газпром                                         | FUTGAZR06240 | rub | 1       | 1          |
 | MTU2         | MTSI-9.22 МТС                                             | FUTMTSI09220 | rub | 1       | 1          |
 | GDZ2         | GOLD-12.22 Золото                                         | FUTGOLD12220 | rub | 1       | 0.1        |
 | REU2         | RSTI-9.22 Российские сети                                 | FUTRSTI09220 | rub | 1       | 1          |
-| EuH2         | Eu-3.22 Курс евро - рубль                                 | BBG00X869ZD4 | rub | 1       | 0          |
+| W4F3         | WHEAT-1.23 Индекс Пшеницы                                 | FUTWHEA01230 | rub | 1       | 10         |
+| EuH2         | Eu-3.22 Курс евро - рубль                                 | BBG00X869ZD4 | rub | 1       | 1          |
 | NGQ2         | NG-8.22 Природный газ                                     | FUTNG0822000 | rub | 1       | 0.001      |
 | HYU2         | HYDR-9.22 РусГидро                                        | FUTHYDR09220 | rub | 1       | 1          |
 | GDM3         | GOLD-6.23 Золото                                          | FUTGOLD06230 | rub | 1       | 0.1        |
+| MMU3         | MXI-9.23 Индекс МосБиржи (мини)                           | FUTMXI092300 | rub | 1       | 0.05       |
 | MMU2         | MXI-9.22 Индекс МосБиржи (мини)                           | FUTMXI092200 | rub | 1       | 0.05       |
-| SVM2         | SILV-6.22 Серебро                                         | FUTSILV06220 | rub | 1       | 0          |
+| SGH3         | SNGP-3.23 Сургутнефтегаз (привилегированные)              | FUTSNGP03230 | rub | 1       | 1          |
+| SVM2         | SILV-6.22 Серебро                                         | FUTSILV06220 | rub | 1       | 0.01       |
 | CHZ2         | CHMF-12.22 Северсталь                                     | FUTCHMF12220 | rub | 1       | 1          |
 | MLU2         | MAIL-9.22 VK                                              | FUTMAIL09220 | rub | 1       | 1          |
-| BRJ2         | BR-4.22 Нефть Brent                                       | FUTBR0422000 | rub | 1       | 0          |
+| GKM3         | GMKN-6.23 Норильский никель                               | FUTGMKN06230 | rub | 1       | 1          |
+| BRJ2         | BR-4.22 Нефть Brent                                       | FUTBR0422000 | rub | 1       | 0.01       |
 | RSU2         | RTSS-9.22 Индекс голубых фишек                            | FUTRTSS09220 | rub | 1       | 1          |
-| BRG2         | BR-2.22 Нефть Brent                                       | FUTBR0222000 | rub | 1       | 0          |
+| BRG2         | BR-2.22 Нефть Brent                                       | FUTBR0222000 | rub | 1       | 0.01       |
 | MGU2         | MAGN-9.22 ММК                                             | FUTMAGN09220 | rub | 1       | 1          |
-| SPH2         | SBPR-3.22 Сбер Банк (привилегированные)                   | FUTSBPR03220 | rub | 1       | 0          |
+| SPH2         | SBPR-3.22 Сбер Банк (привилегированные)                   | FUTSBPR03220 | rub | 1       | 1          |
 | USDRUBF      | USDRUBF Доллар - Рубль                                    | FUTUSDRUBF00 | rub | 1       | 0.01       |
 | EURRUBF      | EURRUBF Евро - Рубль                                      | FUTEURRUBF00 | rub | 1       | 0.01       |
 | MMU5         | MXI-9.25 Индекс МосБиржи (мини)                           | FUTMXI092500 | rub | 1       | 0.05       |
+| VBH3         | VTBR-3.23 ВТБ                                             | FUTVTBR03230 | rub | 1       | 1          |
 | MNZ2         | MGNT-12.22 Магнит                                         | FUTMGNT12220 | rub | 1       | 1          |
 | MMH5         | MXI-3.25 Индекс МосБиржи (мини)                           | FUTMXI032500 | rub | 1       | 0.05       |
+| NlZ2         | Nl-12.22 Никель                                           | FUTNL1222000 | rub | 1       | 5          |
 | NAM3         | NASD-6.23 Nasdaq 100                                      | FUTNASD06230 | rub | 1       | 1          |
 | RNU4         | ROSN-9.24 Роснефть                                        | FUTROSN09240 | rub | 1       | 1          |
 | LKM3         | LKOH-6.23 Лукойл                                          | FUTLKOH06230 | rub | 1       | 1          |
-| VIM2         | RVI-6.22 Волатильность российского рынка                  | FUTRVI062200 | rub | 1       | 0          |
+| FSH3         | FEES-3.23 ФСК ЕЭС                                         | FUTFEES03230 | rub | 1       | 1          |
+| VIM2         | RVI-6.22 Волатильность российского рынка                  | FUTRVI062200 | rub | 1       | 0.05       |
 | RNZ2         | ROSN-12.22 Роснефть                                       | FUTROSN12220 | rub | 1       | 1          |
 | MMZ2         | MXI-12.22 Индекс МосБиржи (мини)                          | FUTMXI122200 | rub | 1       | 0.05       |
-| JPH2         | UJPY-3.22 Курс доллар США - Японская йена                 | FUTUJPY03220 | rub | 1       | 0          |
+| POH3         | POLY-3.23 Polymetal                                       | FUTPOLY03230 | rub | 1       | 1          |
+| JPH2         | UJPY-3.22 Курс доллар США - Японская йена                 | FUTUJPY03220 | rub | 1       | 0.01       |
 | AUM2         | AUDU-6.22 Курс Австралийский доллар - Доллар США          | FUTAUDU06220 | rub | 1       | 0.0001     |
-| SFM2         | SPYF-6.22 SPDR S&P 500 ETF Trust                          | FUTSPYF06220 | rub | 1       | 0          |
+| SFM2         | SPYF-6.22 SPDR S&P 500 ETF Trust                          | FUTSPYF06220 | rub | 1       | 0.01       |
 | RIM4         | RTS-6.24 Индекс РТС                                       | FUTRTS062400 | rub | 1       | 10         |
-| MMM2         | MXI-6.22 Индекс МосБиржи (мини)                           | FUTMXI062200 | rub | 1       | 0          |
+| PZH3         | PLZL-3.23 Полюс Золото                                    | FUTPLZL03230 | rub | 1       | 1          |
+| MMM2         | MXI-6.22 Индекс МосБиржи (мини)                           | FUTMXI062200 | rub | 1       | 0.05       |
 | NAU3         | NASD-9.23 Nasdaq 100                                      | FUTNASD09230 | rub | 1       | 1          |
-| CAH2         | UCAD-3.22 Курс Доллар США - Канадский доллар              | FUTUCAD03220 | rub | 1       | 0          |
+| CAH2         | UCAD-3.22 Курс Доллар США - Канадский доллар              | FUTUCAD03220 | rub | 1       | 0.0001     |
 | ALU2         | ALRS-9.22 Алроса                                          | FUTALRS09220 | rub | 1       | 1          |
-| CHM2         | CHMF-6.22 Северсталь                                      | FUTCHMF06220 | rub | 1       | 0          |
+| BRQ3         | BR-8.23 Нефть Brent                                       | FUTBR0823000 | rub | 1       | 0.01       |
+| CHM2         | CHMF-6.22 Северсталь                                      | FUTCHMF06220 | rub | 1       | 1          |
 | W4U2         | WHEAT-9.22 Индекс Пшеницы                                 | FUTWHEA09220 | rub | 1       | 10         |
 | LKZ2         | LKOH-12.22 Лукойл                                         | FUTLKOH12220 | rub | 1       | 1          |
 | NAZ2         | NASD-12.22 Nasdaq 100                                     | FUTNASD12220 | rub | 1       | 1          |
+| NGG3         | NG-2.23 Природный газ                                     | FUTNG0223000 | rub | 1       | 0.001      |
 | YNM2         | YNDF-6.22 Яндекс                                          | FUTYNDF06220 | rub | 1       | 1          |
-| MTM2         | MTSI-6.22 МТС                                             | FUTMTSI06220 | rub | 1       | 0          |
+| MTM2         | MTSI-6.22 МТС                                             | FUTMTSI06220 | rub | 1       | 1          |
 | CSZ2         | CNI-12.22 Индекс Потребительского сектора                 | FUTCNI122200 | rub | 1       | 1          |
 | PTU2         | PLT-9.22 Платина                                          | FUTPLT092200 | rub | 1       | 0.1        |
 | RLZ2         | RUAL-12.22 РУСАЛ                                          | FUTRUAL12220 | rub | 1       | 1          |
 | PHU2         | PHOR-9.22 ФосАгро                                         | FUTPHOR09220 | rub | 1       | 1          |
+| PIH3         | PIKK-3.23 ПИК                                             | FUTPIKK03230 | rub | 1       | 1          |
 | CAU2         | UCAD-9.22 Курс Доллар США - Канадский доллар              | FUTUCAD09220 | rub | 1       | 0.0001     |
-| GUM2         | GBPU-6.22 Курс Фунт стерлингов - Доллар                   | FUTGBPU06220 | rub | 1       | 0          |
+| GUM2         | GBPU-6.22 Курс Фунт стерлингов - Доллар                   | FUTGBPU06220 | rub | 1       | 0.0001     |
 | IRH2         | IRAO-3.22 Интер РАО ЕЭС                                   | FUTIRAO03220 | rub | 1       | 1          |
 | SAN2         | SUGR-7.22 Сахар                                           | FUTSUGR07220 | rub | 1       | 0.01       |
-| CoN2         | Co-7.22 Медь                                              | FUTCO0722000 | rub | 1       | 0          |
-| YNH2         | YNDF-3.22 Яндекс                                          | FUTYNDF03220 | rub | 1       | 0          |
+| CoN2         | Co-7.22 Медь                                              | FUTCO0722000 | rub | 1       | 0.5        |
+| YNH2         | YNDF-3.22 Яндекс                                          | FUTYNDF03220 | rub | 1       | 1          |
 | RIZ2         | RTS-12.22 Индекс РТС                                      | FUTRTS122200 | rub | 1       | 10         |
 | RNZ4         | ROSN-12.24 Роснефть                                       | FUTROSN12240 | rub | 1       | 1          |
-| MNH2         | MGNT-3.22 Магнит                                          | FUTMGNT03220 | rub | 1       | 0          |
+| PTM3         | PLT-6.23 Платина                                          | FUTPLT062300 | rub | 1       | 0.1        |
+| OGH3         | OGI-3.23 Индекс Нефти и газа                              | FUTOGI032300 | rub | 1       | 1          |
+| MNH2         | MGNT-3.22 Магнит                                          | FUTMGNT03220 | rub | 1       | 1          |
+| CoZ2         | Co-12.22 Медь                                             | FUTCO1222000 | rub | 1       | 0.5        |
 | PDH3         | PLD-3.23 Палладий                                         | FUTPLD032300 | rub | 1       | 0.01       |
+| SVU3         | SILV-9.23 Серебро                                         | FUTSILV09230 | rub | 1       | 0.01       |
 | PTM2         | PLT-6.22 Платина                                          | FUTPLT062200 | rub | 1       | 0.1        |
 | RIZ3         | RTS-12.23 Индекс РТС                                      | FUTRTS122300 | rub | 1       | 10         |
 | SRH3         | SBRF-3.23 Сбер Банк (обыкновенные)                        | FUTSBRF03230 | rub | 1       | 1          |
-| MEM2         | MOEX-6.22 Московская биржа                                | FUTMOEX06220 | rub | 1       | 0          |
+| MEM2         | MOEX-6.22 Московская биржа                                | FUTMOEX06220 | rub | 1       | 1          |
+| BRU3         | BR-9.23 Нефть Brent                                       | FUTBR0923000 | rub | 1       | 0.01       |
 | SiH3         | Si-3.23 Курс доллар - рубль                               | FUTSI0323000 | rub | 1       | 1          |
+| SNH3         | SNGR-3.23 Сургутнефтегаз (обыкновенные)                   | FUTSNGR03230 | rub | 1       | 1          |
 | FSM2         | FEES-6.22 ФСК ЕЭС                                         | FUTFEES06220 | rub | 1       | 1          |
-| SRM2         | SBRF-6.22 Сбер Банк (обыкновенные)                        | FUTSBRF06220 | rub | 1       | 0          |
-| FNU2         | FNI-9.22 Индекс Финансов                                  | FUTFNI092200 | rub | 1       | 1          |
-| LKH2         | LKOH-3.22 Лукойл                                          | FUTLKOH03220 | rub | 1       | 0          |
-| SNH2         | SNGR-3.22 Сургутнефтегаз                                  | FUTSNGR03220 | rub | 1       | 0          |
-| EDH2         | ED-3.22 Курс евро - доллар                                | FUTED0322000 | rub | 1       | 0          |
+| W4G3         | WHEAT-2.23 Индекс Пшеницы                                 | FUTWHEA02230 | rub | 1       | 10         |
+| MXU3         | MIX-9.23 Индекс МосБиржи                                  | FUTMIX092300 | rub | 1       | 25         |
+| SRM2         | SBRF-6.22 Сбер Банк (обыкновенные)                        | FUTSBRF06220 | rub | 1       | 1          |
+| FNU2         | FNI-9.22 Индекс Финансов                                  | FUTFNI092200 | rub | 1       | 0          |
+| REH3         | RSTI-3.23 Российские сети                                 | FUTRSTI03230 | rub | 1       | 1          |
+| LKH2         | LKOH-3.22 Лукойл                                          | FUTLKOH03220 | rub | 1       | 1          |
+| SNH2         | SNGR-3.22 Сургутнефтегаз                                  | FUTSNGR03220 | rub | 1       | 1          |
+| EuH4         | Eu-3.24 Курс евро - рубль                                 | FUTEU0324000 | rub | 1       | 1          |
+| EDH2         | ED-3.22 Курс евро - доллар                                | FUTED0322000 | rub | 1       | 0.0001     |
 | PHM2         | PHOR-6.22 ФосАгро                                         | FUTPHOR06220 | rub | 1       | 1          |
-| RMH2         | RTSM-3.22 Индекс РТС (мини)                               | FUTRTSM03220 | rub | 1       | 0          |
+| EDM3         | ED-6.23 Курс евро-доллар                                  | FUTED0623000 | rub | 1       | 0.0001     |
+| GDU3         | GOLD-9.23 Золото                                          | FUTGOLD09230 | rub | 1       | 0.1        |
+| RMH2         | RTSM-3.22 Индекс РТС (мини)                               | FUTRTSM03220 | rub | 1       | 0.5        |
 | EDH3         | ED-3.23 Курс евро-доллар                                  | FUTED0323000 | rub | 1       | 0.0001     |
+| W4H3         | WHEAT-3.23 Индекс Пшеницы                                 | FUTWHEA03230 | rub | 1       | 10         |
 | CFH2         | UCHF-3.22 Курс доллар США - Швейцарский франк             | FUTUCHF03220 | rub | 1       | 0.0001     |
 | GDH3         | GOLD-3.23 Золото                                          | FUTGOLD03230 | rub | 1       | 0.1        |
+| CRH3         | CNY-3.23 Курс Юань - Рубль                                | FUTCNY032300 | rub | 1       | 0.001      |
 | CAM2         | UCAD-6.22 Курс Доллар США - Канадский доллар              | FUTUCAD06220 | rub | 1       | 0.0001     |
-| VIK2         | RVI-5.22 Волатильность российского рынка                  | FUTRVI052200 | rub | 1       | 0          |
+| RTH3         | RTKM-3.23 Ростелеком                                      | FUTRTKM03230 | rub | 1       | 1          |
+| VIK2         | RVI-5.22 Волатильность российского рынка                  | FUTRVI052200 | rub | 1       | 0.05       |
+| MNH3         | MGNT-3.23 Магнит                                          | FUTMGNT03230 | rub | 1       | 1          |
+| OZH3         | OZON-3.23 Озон                                            | FUTOZON03230 | rub | 1       | 1          |
 | W4V2         | WHEAT-10.22 Индекс Пшеницы                                | FUTWHEA10220 | rub | 1       | 10         |
 | GZH3         | GAZR-3.23 Газпром                                         | FUTGAZR03230 | rub | 1       | 1          |
 | CSU2         | CNI-9.22 Индекс Потребительского сектора                  | FUTCNI092200 | rub | 1       | 1          |
 | TTM2         | TATN-6.22 Татнефть                                        | FUTTATN06220 | rub | 1       | 1          |
+| RIU4         | RTS-9.24 Индекс РТС                                       | FUTRTS092400 | rub | 1       | 10         |
 | MXZ2         | MIX-12.22 Индекс МосБиржи                                 | FUTMIX122200 | rub | 1       | 25         |
 | YNZ2         | YNDF-12.22 Яндекс                                         | FUTYNDF12220 | rub | 1       | 1          |
 | RMM3         | RTSM-6.23 Индекс РТС (мини)                               | FUTRTSM06230 | rub | 1       | 0.5        |
@@ -2922,7 +3126,7 @@
 | DYZ2         | DSKY-12.22 Детский мир                                    | FUTDSKY12220 | rub | 1       | 1          |
 | HOH2         | HOME-3.22 Индекс московской недвижимости                  | FUTHOME03220 | rub | 1       | 10         |
 | SRM3         | SBRF-6.23 Сбер Банк (обыкновенные)                        | FUTSBRF06230 | rub | 1       | 1          |
-| EuM2         | Eu-6.22 Курс евро - рубль                                 | BBG00YHPF166 | rub | 1       | 0          |
+| EuM2         | Eu-6.22 Курс евро - рубль                                 | BBG00YHPF166 | rub | 1       | 1          |
 | EDU2         | ED-9.22 Курс евро - доллар                                | FUTED0922000 | rub | 1       | 0.0001     |
 | PHZ2         | PHOR-12.22 ФосАгро                                        | FUTPHOR12220 | rub | 1       | 1          |
 | OGU2         | OGI-9.22 Индекс Нефти и газа                              | FUTOGI092200 | rub | 1       | 1          |
@@ -2934,64 +3138,79 @@
 | SGZ2         | SNGP-12.22 Сургутнефтегаз (привилегированные)             | FUTSNGP12220 | rub | 1       | 1          |
 | RLH2         | RUAL-3.22 РУСАЛ                                           | FUTRUAL03220 | rub | 1       | 1          |
 | FVZ2         | FIVE-12.22 X5 RetailGroup                                 | FUTFIVE12220 | rub | 1       | 1          |
+| VBM3         | VTBR-6.23 ВТБ                                             | FUTVTBR06230 | rub | 1       | 1          |
 | IRZ2         | IRAO-12.22 Интер РАО ЕЭС                                  | FUTIRAO12220 | rub | 1       | 1          |
 | RLU2         | RUAL-9.22 РУСАЛ                                           | FUTRUAL09220 | rub | 1       | 1          |
 | MEU2         | MOEX-9.22 Московская биржа                                | FUTMOEX09220 | rub | 1       | 1          |
-| TTH2         | TATN-3.22 Татнефть                                        | FUTTATN03220 | rub | 1       | 1          |
-| ALM2         | ALRS-6.22 Алроса                                          | FUTALRS06220 | rub | 1       | 0          |
-| REM2         | RSTI-6.22 Российские сети (обыкновенные)                  | FUTRSTI06220 | rub | 1       | 0          |
+| TTH2         | TATN-3.22 Татнефть                                        | FUTTATN03220 | rub | 1       | 0          |
+| ALM2         | ALRS-6.22 Алроса                                          | FUTALRS06220 | rub | 1       | 1          |
+| REM2         | RSTI-6.22 Российские сети (обыкновенные)                  | FUTRSTI06220 | rub | 1       | 1          |
 | SOU2         | SIBN-9.22 Газпром нефть                                   | FUTSIBN09220 | rub | 1       | 1          |
-| RNM2         | ROSN-6.22 Роснефть                                        | FUTROSN06220 | rub | 1       | 0          |
+| RNM2         | ROSN-6.22 Роснефть                                        | FUTROSN06220 | rub | 1       | 1          |
 | GZH2         | GAZR-3.22 Газпром                                         | FUTGAZR03220 | rub | 1       | 1          |
 | SRU2         | SBRF-9.22 Сбер Банк (обыкновенные)                        | FUTSBRF09220 | rub | 1       | 1          |
 | EuH3         | Eu-3.23 Курс евро - рубль                                 | FUTEU0323000 | rub | 1       | 1          |
 | LKH3         | LKOH-3.23 Лукойл                                          | FUTLKOH03230 | rub | 1       | 1          |
 | RIU2         | RTS-9.22 Индекс РТС                                       | FUTRTS092200 | rub | 1       | 10         |
 | NAH3         | NASD-3.23 Nasdaq 100                                      | FUTNASD03230 | rub | 1       | 1          |
-| PDM2         | PLD-6.22 Палладий                                         | FUTPLD062200 | rub | 1       | 0          |
+| AFM3         | AFLT-6.23 Аэрофлот                                        | FUTAFLT06230 | rub | 1       | 1          |
+| LKU3         | LKOH-9.23 Лукойл                                          | FUTLKOH09230 | rub | 1       | 1          |
+| PDM2         | PLD-6.22 Палладий                                         | FUTPLD062200 | rub | 1       | 0.01       |
 | MCU2         | MTLR-9.22 Мечел                                           | FUTMTLR09220 | rub | 1       | 1          |
 | VIG2         | RVI-2.22 Волатильность российского рынка                  | FUTRVI022200 | rub | 1       | 0.05       |
-| NlG2         | Nl-2.22 Никель                                            | FUTNL0222000 | rub | 1       | 0          |
+| DYH3         | DSKY-3.23 Детский мир                                     | FUTDSKY03230 | rub | 1       | 1          |
+| NlG2         | Nl-2.22 Никель                                            | FUTNL0222000 | rub | 1       | 5          |
 | POZ2         | POLY-12.22 Polymetal                                      | FUTPOLY12220 | rub | 1       | 1          |
 | GKU2         | GMKN-9.22 Норильский никель                               | FUTGMKN09220 | rub | 1       | 1          |
 | PTZ2         | PLT-12.22 Платина                                         | FUTPLT122200 | rub | 1       | 0.1        |
-| MGM2         | MAGN-6.22 ММК                                             | FUTMAGN06220 | rub | 1       | 0          |
+| MGM2         | MAGN-6.22 ММК                                             | FUTMAGN06220 | rub | 1       | 1          |
 | LKU2         | LKOH-9.22 Лукойл                                          | FUTLKOH09220 | rub | 1       | 1          |
 | NlV2         | Nl-10.22 Никель                                           | FUTNL1022000 | rub | 1       | 5          |
 | EuM3         | Eu-6.23 Курс евро - рубль                                 | FUTEU0623000 | rub | 1       | 1          |
 | SSU2         | SMLT-9.22 ГК Самолет                                      | FUTSMLT09220 | rub | 1       | 1          |
 | SFH3         | SPYF-3.23 S&P 500                                         | FUTSPYF03230 | rub | 1       | 0.01       |
 | PDZ2         | PLD-12.22 Палладий                                        | FUTPLD122200 | rub | 1       | 0.01       |
+| TTM3         | TATN-6.23 Татнефть                                        | FUTTATN06230 | rub | 1       | 1          |
 | NGF3         | NG-1.23 Природный газ                                     | FUTNG0123000 | rub | 1       | 0.001      |
 | CAZ2         | UCAD-12.22 Курс Доллар США - Канадский доллар             | FUTUCAD12220 | rub | 1       | 0.0001     |
-| JPM2         | UJPY-6.22 Курс доллар США - Японская йена                 | FUTUJPY06220 | rub | 1       | 0          |
+| JPM2         | UJPY-6.22 Курс доллар США - Японская йена                 | FUTUJPY06220 | rub | 1       | 0.01       |
 | TTZ2         | TATN-12.22 Татнефть                                       | FUTTATN12220 | rub | 1       | 1          |
-| RSM2         | RTSS-6.22 Индекс голубых фишек                            | FUTRTSS06220 | rub | 1       | 0          |
-| SiH2         | Si-3.22 Курс доллар - рубль                               | BBG00SF88HL5 | rub | 1       | 0          |
+| RSM2         | RTSS-6.22 Индекс голубых фишек                            | FUTRTSS06220 | rub | 1       | 1          |
+| SiH2         | Si-3.22 Курс доллар - рубль                               | BBG00SF88HL5 | rub | 1       | 1          |
+| MTH3         | MTSI-3.23 МТС                                             | FUTMTSI03230 | rub | 1       | 1          |
+| SSH3         | SMLT-3.23 ГК Самолет                                      | FUTSMLT03230 | rub | 1       | 1          |
+| GUH3         | GBPU-3.23 Курс Фунт стерлингов - Доллар                   | FUTGBPU03230 | rub | 1       | 0.0001     |
 | IRM2         | IRAO-6.22 Интер РАО ЕЭС                                   | FUTIRAO06220 | rub | 1       | 1          |
-| DYU2         | DSKY-9.22 Детский мир                                     | FUTDSKY09220 | rub | 1       | 1          |
+| MEH3         | MOEX-3.23 Московская биржа                                | FUTMOEX03230 | rub | 1       | 1          |
+| DYU2         | DSKY-9.22 Детский мир                                     | FUTDSKY09220 | rub | 1       | 0          |
 | MMH3         | MXI-3.23 Индекс МосБиржи (мини)                           | FUTMXI032300 | rub | 1       | 0.05       |
-| NMH2         | NLMK-3.22 НЛМК                                            | FUTNLMK03220 | rub | 1       | 0          |
+| NMH2         | NLMK-3.22 НЛМК                                            | FUTNLMK03220 | rub | 1       | 1          |
 | NlH2         | Nl-3.22 Никель                                            | FUTNL0322000 | rub | 1       | 5          |
 | SiZ3         | Si-12.23 Курс доллар - рубль                              | FUTSI1223000 | rub | 1       | 1          |
-| MLH2         | MAIL-3.22 VK                                              | FUTMAIL03220 | rub | 1       | 0          |
+| MLH2         | MAIL-3.22 VK                                              | FUTMAIL03220 | rub | 1       | 1          |
 | RMU2         | RTSM-9.22 Индекс РТС (мини)                               | FUTRTSM09220 | rub | 1       | 0.5        |
 | AFZ2         | AFLT-12.22  Аэрофлот                                      | FUTAFLT12220 | rub | 1       | 1          |
-| SFH2         | SPYF-3.22 SPDR S&P 500 ETF Trust                          | FUTSPYF03220 | rub | 1       | 0          |
+| SFH2         | SPYF-3.22 SPDR S&P 500 ETF Trust                          | FUTSPYF03220 | rub | 1       | 0.01       |
 | EuZ2         | Eu-12.22 Курс евро - рубль                                | FUTEU1222000 | rub | 1       | 1          |
+| NMM3         | NLMK-6.23 НЛМК                                            | FUTNLMK06230 | rub | 1       | 1          |
+| FVH3         | FIVE-3.23 X5 RetailGroup                                  | FUTFIVE03230 | rub | 1       | 1          |
 | CNYRUBF      | CNYRUBF Юань - Рубль                                      | FUTCNYRUBF00 | rub | 1       | 0.01       |
 | HOZ2         | HOME-12.22 Индекс московской недвижимости                 | FUTHOME12220 | rub | 1       | 10         |
-| RNH2         | ROSN-3.22 Роснефть                                        | FUTROSN03220 | rub | 1       | 0          |
+| RNH2         | ROSN-3.22 Роснефть                                        | FUTROSN03220 | rub | 1       | 1          |
 | RIH4         | RTS-3.24 Индекс РТС                                       | FUTRTS032400 | rub | 1       | 10         |
 | IRU2         | IRAO-9.22 Интер РАО ЕЭС                                   | FUTIRAO09220 | rub | 1       | 1          |
 | HOU2         | HOME-9.22 Индекс московской недвижимости                  | FUTHOME09220 | rub | 1       | 10         |
-| NGJ2         | NG-4.22 Природный газ                                     | FUTNG0422000 | rub | 1       | 0          |
+| NlX2         | Nl-11.22 Никель                                           | FUTNL1122000 | rub | 1       | 5          |
+| CSH3         | CNI-3.23 Индекс Потребительского сектора                  | FUTCNI032300 | rub | 1       | 1          |
+| NGJ2         | NG-4.22 Природный газ                                     | FUTNG0422000 | rub | 1       | 0.001      |
 | SFZ2         | SPYF-12.22 S&P 500                                        | FUTSPYF12220 | rub | 1       | 0.01       |
 | SiM3         | Si-6.23 Курс доллар - рубль                               | FUTSI0623000 | rub | 1       | 1          |
 | MEH2         | MOEX-3.22 Московская биржа                                | FUTMOEX03220 | rub | 1       | 1          |
+| CRM3         | CNY-6.23 Курс Юань - Рубль                                | FUTCNY062300 | rub | 1       | 0.001      |
+| PHH3         | PHOR-3.23 ФосАгро                                         | FUTPHOR03230 | rub | 1       | 1          |
 | MMM4         | MXI-6.24 Индекс МосБиржи (мини)                           | FUTMXI062400 | rub | 1       | 0.05       |
-| MGH2         | MAGN-3.22 ММК                                             | FUTMAGN03220 | rub | 1       | 0          |
-| HOM2         | HOME-6.22 Индекс московской недвижимости                  | FUTHOME06220 | rub | 1       | 0          |
+| MGH2         | MAGN-3.22 ММК                                             | FUTMAGN03220 | rub | 1       | 1          |
+| HOM2         | HOME-6.22 Индекс московской недвижимости                  | FUTHOME06220 | rub | 1       | 10         |
 | FNZ2         | FNI-12.22 Индекс Финансов                                 | FUTFNI122200 | rub | 1       | 1          |
 | SiU2         | Si-9.22 Курс доллар - рубль                               | BBG00X86FJ70 | rub | 1       | 1          |
 | REH2         | RSTI-3.22 Российские сети (обыкновенные)                  | FUTRSTI03220 | rub | 1       | 1          |
@@ -2999,122 +3218,143 @@
 | FSZ2         | FEES-12.22 ФСК ЕЭС                                        | FUTFEES12220 | rub | 1       | 1          |
 | W4X2         | WHEAT-11.22 Индекс Пшеницы                                | FUTWHEA11220 | rub | 1       | 10         |
 | SPZ2         | SBPR-12.22 Сбер Банк (привилегированные)                  | FUTSBPR12220 | rub | 1       | 1          |
-| BRN2         | BR-7.22 Нефть Brent                                       | FUTBR0722000 | rub | 1       | 0          |
+| BRN2         | BR-7.22 Нефть Brent                                       | FUTBR0722000 | rub | 1       | 0.01       |
 | EDZ2         | ED-12.22 Курс евро-доллар                                 | FUTED1222000 | rub | 1       | 0.0001     |
-| NlK2         | Nl-5.22 Никель                                            | FUTNL0522000 | rub | 1       | 0          |
+| NlK2         | Nl-5.22 Никель                                            | FUTNL0522000 | rub | 1       | 5          |
 | NGK2         | NG-5.22 Природный газ                                     | FUTNG0522000 | rub | 1       | 0.001      |
 | SPU2         | SBPR-9.22 Сбер Банк (привилегированные)                   | FUTSBPR09220 | rub | 1       | 1          |
 | RTU2         | RTKM-9.22 Ростелеком                                      | FUTRTKM09220 | rub | 1       | 1          |
-| AUH2         | AUDU-3.22 Курс Австралийский доллар - Доллар США          | FUTAUDU03220 | rub | 1       | 0          |
-| CoM2         | Co-6.22 Медь                                              | FUTCO0622000 | rub | 1       | 0          |
+| AUH2         | AUDU-3.22 Курс Австралийский доллар - Доллар США          | FUTAUDU03220 | rub | 1       | 0.0001     |
+| PDM3         | PLD-6.23 Палладий                                         | FUTPLD062300 | rub | 1       | 0.01       |
+| CoM2         | Co-6.22 Медь                                              | FUTCO0622000 | rub | 1       | 0.5        |
+| RLH3         | RUAL-3.23 РУСАЛ                                           | FUTRUAL03230 | rub | 1       | 1          |
 | TNZ2         | TRNF-12.22 Транснефть (привилегированные)                 | FUTTRNF12220 | rub | 1       | 1          |
-| FSH2         | FEES-3.22 ФСК ЕЭС                                         | FUTFEES03220 | rub | 1       | 0          |
+| YNH3         | YNDF-3.23 Яндекс                                          | FUTYNDF03230 | rub | 1       | 1          |
+| SRU3         | SBRF-9.23 Сбер Банк (обыкновенные)                        | FUTSBRF09230 | rub | 1       | 1          |
+| FSH2         | FEES-3.22 ФСК ЕЭС                                         | FUTFEES03220 | rub | 1       | 1          |
 | PDH2         | PLD-3.22 Палладий                                         | FUTPLD032200 | rub | 1       | 0.01       |
+| HOH3         | HOME-3.23 Индекс московской недвижимости                  | FUTHOME03230 | rub | 1       | 10         |
 | NMU2         | NLMK-9.22 НЛМК                                            | FUTNLMK09220 | rub | 1       | 1          |
 | BRK3         | BR-5.23 Нефть Brent                                       | FUTBR0523000 | rub | 1       | 0.01       |
 | SiZ2         | Si-12.22 Курс доллар - рубль                              | BBG00YHPF1H4 | rub | 1       | 1          |
-| FVM2         | FIVE-6.22 X5 RetailGroup                                  | FUTFIVE06220 | rub | 1       | 0          |
+| FVM2         | FIVE-6.22 X5 RetailGroup                                  | FUTFIVE06220 | rub | 1       | 1          |
 | NGU2         | NG-9.22 Природный газ                                     | FUTNG0922000 | rub | 1       | 0.001      |
-| RTM2         | RTKM-6.22 Ростелеком                                      | FUTRTKM06220 | rub | 1       | 0          |
-| OZM2         | OZON-6.22 Озон                                            | FUTOZON06220 | rub | 1       | 0          |
-| CSM2         | CNI-6.22 Индекс Потребительского сектора                  | FUTCNI062200 | rub | 1       | 0          |
+| RTM2         | RTKM-6.22 Ростелеком                                      | FUTRTKM06220 | rub | 1       | 1          |
+| OZM2         | OZON-6.22 Озон                                            | FUTOZON06220 | rub | 1       | 1          |
+| CSM2         | CNI-6.22 Индекс Потребительского сектора                  | FUTCNI062200 | rub | 1       | 1          |
 | SiU3         | Si-9.23 Курс доллар - рубль                               | FUTSI0923000 | rub | 1       | 1          |
-| VBM2         | VTBR-6.22 ВТБ                                             | FUTVTBR06220 | rub | 1       | 0          |
+| VBM2         | VTBR-6.22 ВТБ                                             | FUTVTBR06220 | rub | 1       | 1          |
 | MXU2         | MIX-9.22 Индекс МосБиржи                                  | FUTMIX092200 | rub | 1       | 25         |
 | GZU5         | GAZR-9.25 Газпром                                         | FUTGAZR09250 | rub | 1       | 1          |
 | GDU2         | GOLD-9.22 Золото                                          | FUTGOLD09220 | rub | 1       | 0.1        |
-| DYM2         | DSKY-6.22 Детский мир                                     | FUTDSKY06220 | rub | 1       | 0          |
+| DYM2         | DSKY-6.22 Детский мир                                     | FUTDSKY06220 | rub | 1       | 1          |
 | POH2         | POLY-3.22 Polymetal                                       | FUTPOLY03220 | rub | 1       | 1          |
 | SSZ2         | SMLT-12.22 ГК Самолет                                     | FUTSMLT12220 | rub | 1       | 1          |
+| AUH3         | AUDU-3.23 Курс Австралийский доллар - Доллар США          | FUTAUDU03230 | rub | 1       | 0.0001     |
 | CoU2         | Co-9.22 Медь                                              | FUTCO0922000 | rub | 1       | 0.5        |
-| NlM2         | Nl-6.22 Никель                                            | FUTNL0622000 | rub | 1       | 0          |
+| NlM2         | Nl-6.22 Никель                                            | FUTNL0622000 | rub | 1       | 5          |
 | NKM2         | NOTK-6.22 Новатэк                                         | FUTNOTK06220 | rub | 1       | 1          |
 | MMH2         | MXI-3.22 Индекс МосБиржи (мини)                           | FUTMXI032200 | rub | 1       | 0.05       |
 | MGZ2         | MAGN-12.22 ММК                                            | FUTMAGN12220 | rub | 1       | 1          |
-| CYM2         | CY-6.22 Курс Юань - Рубль                                 | FUTCY0622000 | rub | 1       | 0          |
+| CYM2         | CY-6.22 Курс Юань - Рубль                                 | FUTCY0622000 | rub | 1       | 0.0005     |
 | SVU2         | SILV-9.22 Серебро                                         | FUTSILV09220 | rub | 1       | 0.01       |
 | SAV2         | SUGR-10.22 Сахар                                          | FUTSUGR10220 | rub | 1       | 0.01       |
-| NGN2         | NG-7.22 Природный газ                                     | FUTNG0722000 | rub | 1       | 0          |
+| NGN2         | NG-7.22 Природный газ                                     | FUTNG0722000 | rub | 1       | 0.001      |
+| NKH3         | NOTK-3.23 Новатэк                                         | FUTNOTK03230 | rub | 1       | 1          |
 | ALH2         | ALRS-3.22 Алроса                                          | FUTALRS03220 | rub | 1       | 1          |
-| VIN2         | RVI-7.22 Волатильность российского рынка                  | FUTRVI072200 | rub | 1       | 0          |
-| GKH2         | GMKN-3.22 Норильский никель                               | FUTGMKN03220 | rub | 1       | 0          |
+| VIN2         | RVI-7.22 Волатильность российского рынка                  | FUTRVI072200 | rub | 1       | 0.05       |
+| GKH2         | GMKN-3.22 Норильский никель                               | FUTGMKN03220 | rub | 1       | 1          |
 | SOZ2         | SIBN-12.22 Газпром нефть                                  | FUTSIBN12220 | rub | 1       | 1          |
-| OZH2         | OZON-3.22 Озон                                            | FUTOZON03220 | rub | 1       | 0          |
-| SRH2         | SBRF-3.22 Сбер Банк (обыкновенные)                        | FUTSBRF03220 | rub | 1       | 0          |
+| OZH2         | OZON-3.22 Озон                                            | FUTOZON03220 | rub | 1       | 1          |
+| SRH2         | SBRF-3.22 Сбер Банк (обыкновенные)                        | FUTSBRF03220 | rub | 1       | 1          |
+| CHH3         | CHMF-3.23 Северсталь                                      | FUTCHMF03230 | rub | 1       | 1          |
 | BRG3         | BR-2.23 Нефть Brent                                       | FUTBR0223000 | rub | 1       | 0.01       |
 | NGX2         | NG-11.22 Природный газ                                    | FUTNG1122000 | rub | 1       | 0.001      |
-| PTH2         | PLT-3.22 Платина                                          | FUTPLT032200 | rub | 1       | 0          |
+| VIV2         | RVI-10.22 Волатильность российского рынка                 | FUTRVI102200 | rub | 1       | 0.05       |
+| FNH3         | FNI-3.23 Индекс Финансов                                  | FUTFNI032300 | rub | 1       | 1          |
+| PTH2         | PLT-3.22 Платина                                          | FUTPLT032200 | rub | 1       | 0.1        |
 | SAH3         | SUGR-3.23 Сахар                                           | FUTSUGR03230 | rub | 1       | 0.01       |
 | EuU2         | Eu-9.22 Курс евро - рубль                                 | BBG00ZMKXM17 | rub | 1       | 1          |
 | HYH2         | HYDR-3.22 РусГидро                                        | FUTHYDR03220 | rub | 1       | 1          |
-| EDM2         | ED-6.22 Курс евро - доллар                                | FUTED0622000 | rub | 1       | 0          |
-| MNM2         | MGNT-6.22 Магнит                                          | FUTMGNT06220 | rub | 1       | 0          |
+| EDM2         | ED-6.22 Курс евро - доллар                                | FUTED0622000 | rub | 1       | 0.0001     |
+| MNM2         | MGNT-6.22 Магнит                                          | FUTMGNT06220 | rub | 1       | 1          |
 | OZZ2         | OZON-12.22 Озон                                           | FUTOZON12220 | rub | 1       | 1          |
 | BRQ2         | BR-8.22 Нефть Brent                                       | FUTBR0822000 | rub | 1       | 0.01       |
-| BRK2         | BR-5.22 Нефть Brent                                       | FUTBR0522000 | rub | 1       | 0          |
+| MCH3         | MTLR-3.23 Мечел                                           | FUTMTLR03230 | rub | 1       | 1          |
+| BRK2         | BR-5.22 Нефть Brent                                       | FUTBR0522000 | rub | 1       | 0.01       |
 | SNZ2         | SNGR-12.22 Сургутнефтегаз (обыкновенные)                  | FUTSNGR12220 | rub | 1       | 1          |
 | FVU2         | FIVE-9.22 X5 RetailGroup                                  | FUTFIVE09220 | rub | 1       | 1          |
 | BRN3         | BR-7.23 Нефть Brent                                       | FUTBR0723000 | rub | 1       | 0.01       |
-| NGM2         | NG-6.22 Природный газ                                     | FUTNG0622000 | rub | 1       | 0          |
-| PHH2         | PHOR-3.22 ФосАгро                                         | FUTPHOR03220 | rub | 1       | 0          |
+| NGM2         | NG-6.22 Природный газ                                     | FUTNG0622000 | rub | 1       | 0.001      |
+| PHH2         | PHOR-3.22 ФосАгро                                         | FUTPHOR03220 | rub | 1       | 1          |
 | CoQ2         | Co-8.22 Медь                                              | FUTCO0822000 | rub | 1       | 0.5        |
 | GZU2         | GAZR-9.22 Газпром                                         | FUTGAZR09220 | rub | 1       | 1          |
-| SOH2         | SIBN-3.22 Газпром нефть                                   | FUTSIBN03220 | rub | 1       | 0          |
-| SGH2         | SNGP-3.22 Сургутнефтегаз (привилегированные)              | FUTSNGP03220 | rub | 1       | 0          |
+| SOH2         | SIBN-3.22 Газпром нефть                                   | FUTSIBN03220 | rub | 1       | 1          |
+| SGH2         | SNGP-3.22 Сургутнефтегаз (привилегированные)              | FUTSNGP03220 | rub | 1       | 1          |
 | RNH3         | ROSN-3.23 Роснефть                                        | FUTROSN03230 | rub | 1       | 1          |
-| CRZ2         | CNY-12.22 Курс Юань - Рубль                               | FUTCNY122200 | rub | 1       | 0.01       |
+| CRZ2         | CNY-12.22 Курс Юань - Рубль                               | FUTCNY122200 | rub | 1       | 0.001      |
 | W4Z2         | WHEAT-12.22 Индекс Пшеницы                                | FUTWHEA12220 | rub | 1       | 10         |
-| FNM2         | FNI-6.22 Индекс Финансов                                  | FUTFNI062200 | rub | 1       | 0          |
-| NlN2         | Nl-7.22 Никель                                            | FUTNL0722000 | rub | 1       | 0          |
-| POM2         | POLY-6.22 Polymetal                                       | FUTPOLY06220 | rub | 1       | 0          |
-| MXM2         | MIX-6.22 Индекс МосБиржи                                  | FUTMIX062200 | rub | 1       | 0          |
-| MTH2         | MTSI-3.22 МТС                                             | FUTMTSI03220 | rub | 1       | 0          |
+| FNM2         | FNI-6.22 Индекс Финансов                                  | FUTFNI062200 | rub | 1       | 1          |
+| NlN2         | Nl-7.22 Никель                                            | FUTNL0722000 | rub | 1       | 5          |
+| POM2         | POLY-6.22 Polymetal                                       | FUTPOLY06220 | rub | 1       | 1          |
+| MXM2         | MIX-6.22 Индекс МосБиржи                                  | FUTMIX062200 | rub | 1       | 25         |
+| MTH2         | MTSI-3.22 МТС                                             | FUTMTSI03220 | rub | 1       | 1          |
 | BRZ2         | BR-12.22 Нефть Brent                                      | FUTBR1222000 | rub | 1       | 0.01       |
-| VIJ2         | RVI-4.22 Волатильность российского рынка                  | FUTRVI042200 | rub | 1       | 0          |
+| MTM3         | MTSI-6.23 МТС                                             | FUTMTSI06230 | rub | 1       | 1          |
+| VIJ2         | RVI-4.22 Волатильность российского рынка                  | FUTRVI042200 | rub | 1       | 0.05       |
 | NGZ2         | NG-12.22 Природный газ                                    | FUTNG1222000 | rub | 1       | 0.001      |
-| MCM2         | MTLR-6.22 Мечел (обыкновенные)                            | FUTMTLR06220 | rub | 1       | 0          |
-| SAK2         | SUGR-5.22 Сахар                                           | FUTSUGR05220 | rub | 1       | 0          |
+| MCM2         | MTLR-6.22 Мечел (обыкновенные)                            | FUTMTLR06220 | rub | 1       | 1          |
+| SAK2         | SUGR-5.22 Сахар                                           | FUTSUGR05220 | rub | 1       | 0.01       |
+| VIX2         | RVI-11.22 Волатильность российского рынка                 | FUTRVI112200 | rub | 1       | 0.05       |
 | RIH3         | RTS-3.23 Индекс РТС                                       | FUTRTS032300 | rub | 1       | 10         |
 | CRU2         | CNY-9.22 Курс Юань - Рубль                                | FUTCNY092200 | rub | 1       | 0.01       |
 | CoV2         | Co-10.22 Медь                                             | FUTCO1022000 | rub | 1       | 0.5        |
-| CFM2         | UCHF-6.22 Курс доллар США - Швейцарский франк             | FUTUCHF06220 | rub | 1       | 0          |
+| CFM2         | UCHF-6.22 Курс доллар США - Швейцарский франк             | FUTUCHF06220 | rub | 1       | 0.0001     |
 | SGU2         | SNGP-9.22 Сургутнефтегаз (привилегированные)              | FUTSNGP09220 | rub | 1       | 1          |
-| MAM2         | MMI-6.22 Индекс Металлов и добычи                         | FUTMMI062200 | rub | 1       | 0          |
+| MAM2         | MMI-6.22 Индекс Металлов и добычи                         | FUTMMI062200 | rub | 1       | 1          |
 | RMZ2         | RTSM-12.22 Индекс РТС (мини)                              | FUTRTSM12220 | rub | 1       | 0.5        |
-| RIH2         | RTS-3.22 Индекс РТС                                       | FUTRTS032200 | rub | 1       | 0          |
-| BRU2         | BR-9.22 Нефть Brent                                       | FUTBR0922000 | rub | 1       | 0          |
-| PIM2         | PIKK-6.22 ПИК                                             | FUTPIKK06220 | rub | 1       | 0          |
-| GZM2         | GAZR-6.22 Газпром                                         | FUTGAZR06220 | rub | 1       | 0          |
-| SAH2         | SUGR-3.22 Сахар                                           | FUTSUGR03220 | rub | 1       | 0          |
+| RIH2         | RTS-3.22 Индекс РТС                                       | FUTRTS032200 | rub | 1       | 10         |
+| BRU2         | BR-9.22 Нефть Brent                                       | FUTBR0922000 | rub | 1       | 0.01       |
+| PIM2         | PIKK-6.22 ПИК                                             | FUTPIKK06220 | rub | 1       | 1          |
+| GZM2         | GAZR-6.22 Газпром                                         | FUTGAZR06220 | rub | 1       | 1          |
+| SAH2         | SUGR-3.22 Сахар                                           | FUTSUGR03220 | rub | 1       | 0.01       |
 | CRM2         | CNY-6.22 Курс Юань - Рубль                                | FUTCNY062200 | rub | 1       | 0.01       |
-| NGF2         | NG-1.22 Природный газ                                     | FUTNG0122000 | rub | 1       | 0          |
+| NGF2         | NG-1.22 Природный газ                                     | FUTNG0122000 | rub | 1       | 0.001      |
 | RLM2         | RUAL-6.22 РУСАЛ                                           | FUTRUAL06220 | rub | 1       | 1          |
 | OGM2         | OGI-6.22 Индекс Нефти и газа                              | FUTOGI062200 | rub | 1       | 1          |
 | MLZ2         | MAIL-12.22 VK                                             | FUTMAIL12220 | rub | 1       | 1          |
 | GZZ4         | GAZR-12.24 Газпром                                        | FUTGAZR12240 | rub | 1       | 1          |
+| HOM3         | HOME-6.23 Индекс московской недвижимости                  | FUTHOME06230 | rub | 1       | 10         |
 | AKH2         | AFKS-3.22 АФК Система - обыкновенные акции                | FUTAFKS03220 | rub | 1       | 1          |
 | GZZ2         | GAZR-12.22 Газпром                                        | FUTGAZR12220 | rub | 1       | 1          |
-| PZH2         | PLZL-3.22 Полюс Золото                                    | FUTPLZL03220 | rub | 1       | 0          |
-| GDH2         | GOLD-3.22 Золото                                          | FUTGOLD03220 | rub | 1       | 0          |
+| HYH3         | HYDR-3.23 РусГидро                                        | FUTHYDR03230 | rub | 1       | 1          |
+| PZH2         | PLZL-3.22 Полюс Золото                                    | FUTPLZL03220 | rub | 1       | 1          |
+| GDH2         | GOLD-3.22 Золото                                          | FUTGOLD03220 | rub | 1       | 0.1        |
 | BRH3         | BR-3.23 Нефть Brent                                       | FUTBR0323000 | rub | 1       | 0.01       |
 | PDU2         | PLD-9.22 Палладий                                         | FUTPLD092200 | rub | 1       | 0.01       |
 | FSU2         | FEES-9.22 ФСК ЕЭС                                         | FUTFEES09220 | rub | 1       | 1          |
 | TNU2         | TRNF-9.22 Транснефть (привилегированные)                  | FUTTRNF09220 | rub | 1       | 1          |
+| RNU3         | ROSN-9.23 Роснефть                                        | FUTROSN09230 | rub | 1       | 1          |
 | GZU4         | GAZR-9.24 Газпром                                         | FUTGAZR09240 | rub | 1       | 1          |
+| MGH3         | MAGN-3.23 ММК                                             | FUTMAGN03230 | rub | 1       | 1          |
 | PIZ2         | PIKK-12.22 ПИК                                            | FUTPIKK12220 | rub | 1       | 1          |
+| SOH3         | SIBN-3.23 Газпром нефть                                   | FUTSIBN03230 | rub | 1       | 1          |
 | HYZ2         | HYDR-12.22 РусГидро                                       | FUTHYDR12220 | rub | 1       | 1          |
-| SVH2         | SILV-3.22 Серебро                                         | FUTSILV03220 | rub | 1       | 0          |
-| VBH2         | VTBR-3.22 ВТБ                                             | FUTVTBR03220 | rub | 1       | 0          |
+| SVH2         | SILV-3.22 Серебро                                         | FUTSILV03220 | rub | 1       | 0.01       |
+| VBH2         | VTBR-3.22 ВТБ                                             | FUTVTBR03220 | rub | 1       | 1          |
 | RMH3         | RTSM-3.23 Индекс РТС (мини)                               | FUTRTSM03230 | rub | 1       | 0.5        |
+| RBZ2         | RGBI-12.22 Индекс Государственных облигаций               | FUTRGBI12220 | rub | 1       | 1          |
 | RMM2         | RTSM-6.22 Индекс РТС (мини)                               | FUTRTSM06220 | rub | 1       | 0.5        |
 | RBU2         | RGBI-9.22 Индекс Государственных облигаций                | FUTRGBI09220 | rub | 1       | 1          |
 | MAZ2         | MMI-12.22 Индекс Металлов и добычи                        | FUTMMI122200 | rub | 1       | 1          |
-| VIH2         | RVI-3.22 Волатильность российского рынка                  | FUTRVI032200 | rub | 1       | 0          |
+| MNM3         | MGNT-6.23 Магнит                                          | FUTMGNT06230 | rub | 1       | 1          |
+| VIH2         | RVI-3.22 Волатильность российского рынка                  | FUTRVI032200 | rub | 1       | 0.05       |
 | SVH3         | SILV-3.23 Серебро                                         | FUTSILV03230 | rub | 1       | 0.01       |
+| ALM3         | ALRS-6.23 АЛРОСА                                          | FUTALRS06230 | rub | 1       | 1          |
 | PZZ2         | PLZL-12.22 Полюс Золото                                   | FUTPLZL12220 | rub | 1       | 1          |
-| FVH2         | FIVE-3.22 X5 RetailGroup                                  | FUTFIVE03220 | rub | 1       | 0          |
+| FVH2         | FIVE-3.22 X5 RetailGroup                                  | FUTFIVE03220 | rub | 1       | 1          |
 | MXH3         | MIX-3.23 Индекс МосБиржи                                  | FUTMIX032300 | rub | 1       | 25         |
 | BRM2         | BR-6.22 Нефть Brent                                       | FUTBR0622000 | rub | 1       | 0.01       |
-| SiM2         | Si-6.22 Курс доллар - рубль                               | BBG00VHGV1J0 | rub | 1       | 0          |
+| SiM2         | Si-6.22 Курс доллар - рубль                               | BBG00VHGV1J0 | rub | 1       | 1          |
 | GUU2         | GBPU-9.22 Курс Фунт стерлингов - Доллар                   | FUTGBPU09220 | rub | 1       | 0.0001     |
 

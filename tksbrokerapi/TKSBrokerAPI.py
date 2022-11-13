@@ -834,13 +834,14 @@ class TinkoffBrokerServer:
                 if "couponQuantityPerYear" in iJSON.keys() and iJSON["couponQuantityPerYear"]:
                     info.append("| Number of coupon payments per year:                         | {:<54} |\n".format(iJSON["couponQuantityPerYear"]))
 
-                iExt = self.ExtendBondsData(instruments=iJSON["figi"], xlsx=False)  # extended bonds data
+                if iJSON["figi"]:
+                    iExt = self.ExtendBondsData(instruments=iJSON["figi"], xlsx=False)  # extended bonds data
 
-                info.extend([
-                    "| Days last to maturity date:                                 | {:<54} |\n".format(iExt["daysToMaturity"][0]),
-                    "| Coupons yield (average coupon daily yield * 365):           | {:<54} |\n".format("{:.2f}%".format(iExt["couponsYield"][0])),
-                    "| Current price yield (average daily yield * 365):            | {:<54} |\n".format("{:.2f}%".format(iExt["currentYield"][0])),
-                ])
+                    info.extend([
+                        "| Days last to maturity date:                                 | {:<54} |\n".format(iExt["daysToMaturity"][0]),
+                        "| Coupons yield (average coupon daily yield * 365):           | {:<54} |\n".format("{:.2f}%".format(iExt["couponsYield"][0])),
+                        "| Current price yield (average daily yield * 365):            | {:<54} |\n".format("{:.2f}%".format(iExt["currentYield"][0])),
+                    ])
 
                 if "aciValue" in iJSON.keys() and iJSON["aciValue"]:
                     info.append("| Current accumulated coupon income (ACI):                    | {:<54} |\n".format("{:.2f} {}".format(
@@ -1154,7 +1155,7 @@ class TinkoffBrokerServer:
             self.body = str({"figi": self.figi, "depth": self.depth})
             pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")  # Response fields: https://tinkoff.github.io/investAPI/marketdata/#getorderbookresponse
 
-            if pricesResponse:
+            if pricesResponse and not ("code" in pricesResponse.keys() or "message" in pricesResponse.keys() or "description" in pricesResponse.keys()):
                 # list of dicts with sellers orders:
                 prices["buy"] = [{"price": round(NanoToFloat(item["price"]["units"], item["price"]["nano"]), 6), "quantity": int(item["quantity"])} for item in pricesResponse["asks"]]
 
@@ -3938,22 +3939,23 @@ class TinkoffBrokerServer:
 
                 # Widen raw data with calendar data from `rawCalendar` values:
                 calendarData = []
-                for item in iData["rawCalendar"]["events"]:
-                    calendarData.append({
-                        "couponDate": item["couponDate"],
-                        "couponNumber": int(item["couponNumber"]),
-                        "fixDate": item["fixDate"] if "fixDate" in item.keys() else "",
-                        "payCurrency": item["payOneBond"]["currency"],
-                        "payOneBond": NanoToFloat(item["payOneBond"]["units"], item["payOneBond"]["nano"]),
-                        "couponType": TKS_COUPON_TYPES[item["couponType"]],
-                        "couponStartDate": item["couponStartDate"],
-                        "couponEndDate": item["couponEndDate"],
-                        "couponPeriod": item["couponPeriod"],
-                    })
+                if "events" in iData["rawCalendar"].keys():
+                    for item in iData["rawCalendar"]["events"]:
+                        calendarData.append({
+                            "couponDate": item["couponDate"],
+                            "couponNumber": int(item["couponNumber"]),
+                            "fixDate": item["fixDate"] if "fixDate" in item.keys() else "",
+                            "payCurrency": item["payOneBond"]["currency"],
+                            "payOneBond": NanoToFloat(item["payOneBond"]["units"], item["payOneBond"]["nano"]),
+                            "couponType": TKS_COUPON_TYPES[item["couponType"]],
+                            "couponStartDate": item["couponStartDate"],
+                            "couponEndDate": item["couponEndDate"],
+                            "couponPeriod": item["couponPeriod"],
+                        })
 
-                # if maturity date is unknown then uses the latest date in bond payment calendar for it:
-                if "maturityDate" not in iData.keys():
-                    iData["maturityDate"] = datetime.strptime(calendarData[0]["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_DATE_TIME_FORMAT) if calendarData else ""
+                    # if maturity date is unknown then uses the latest date in bond payment calendar for it:
+                    if "maturityDate" not in iData.keys():
+                        iData["maturityDate"] = datetime.strptime(calendarData[0]["couponDate"], TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_DATE_TIME_FORMAT) if calendarData else ""
 
                 # Widen raw data with Coupon Rate.
                 # This is sum of all coupon payments divided on nominal price and expire days sum and then multiple on 365 days and 100%:
@@ -3985,7 +3987,7 @@ class TinkoffBrokerServer:
                     bonds = pd.concat([bonds, pd.DataFrame.from_records(data=[iData], columns=colNames)], axis=0, ignore_index=True)
 
             else:
-                uLogger.warning("Instrument with ticker [{}] and FIGI [{}] is not a bond!".format(instrument["ticker"], instrument["figi"]))
+                uLogger.warning("Instrument is not a bond!")
 
             processed = round(100 * (i + 1) / iCount, 1)
             if tooLong and processed % 5 == 0:
@@ -4064,36 +4066,37 @@ class TinkoffBrokerServer:
                 else:
                     calendar = pd.concat([calendar, pd.DataFrame.from_records(data=[cData], columns=colID)], axis=0, ignore_index=True)
 
-        calendar = calendar.sort_values(by=["couponDate"], axis=0, ascending=True)  # sort all payments for all bonds by payment date
+        if calendar is not None:
+            calendar = calendar.sort_values(by=["couponDate"], axis=0, ascending=True)  # sort all payments for all bonds by payment date
 
-        # Saving calendar from Pandas DataFrame to XLSX sheet:
-        if xlsx:
-            xlsxCalendarFile = self.calendarFile.replace(".md", ".xlsx") if self.calendarFile.endswith(".md") else self.calendarFile + ".xlsx"
+            # Saving calendar from Pandas DataFrame to XLSX sheet:
+            if xlsx:
+                xlsxCalendarFile = self.calendarFile.replace(".md", ".xlsx") if self.calendarFile.endswith(".md") else self.calendarFile + ".xlsx"
 
-            with pd.ExcelWriter(
-                    path=xlsxCalendarFile,
-                    date_format=TKS_DATE_FORMAT,
-                    datetime_format=TKS_DATE_TIME_FORMAT,
-                    mode="w",
-            ) as writer:
-                humanReadable = calendar.copy(deep=True)
-                humanReadable["couponDate"] = humanReadable["couponDate"].apply(lambda x: x.split("T")[0])
-                humanReadable["fixDate"] = humanReadable["fixDate"].apply(lambda x: x.split("T")[0])
-                humanReadable["couponStartDate"] = humanReadable["couponStartDate"].apply(lambda x: x.split("T")[0])
-                humanReadable["couponEndDate"] = humanReadable["couponEndDate"].apply(lambda x: x.split("T")[0])
-                humanReadable.columns = colNames  # human-readable column names
+                with pd.ExcelWriter(
+                        path=xlsxCalendarFile,
+                        date_format=TKS_DATE_FORMAT,
+                        datetime_format=TKS_DATE_TIME_FORMAT,
+                        mode="w",
+                ) as writer:
+                    humanReadable = calendar.copy(deep=True)
+                    humanReadable["couponDate"] = humanReadable["couponDate"].apply(lambda x: x.split("T")[0])
+                    humanReadable["fixDate"] = humanReadable["fixDate"].apply(lambda x: x.split("T")[0])
+                    humanReadable["couponStartDate"] = humanReadable["couponStartDate"].apply(lambda x: x.split("T")[0])
+                    humanReadable["couponEndDate"] = humanReadable["couponEndDate"].apply(lambda x: x.split("T")[0])
+                    humanReadable.columns = colNames  # human-readable column names
 
-                humanReadable.to_excel(
-                    writer,
-                    sheet_name="Bond payments calendar",
-                    index=False,
-                    encoding="UTF-8",
-                    freeze_panes=(1, 2),
-                )  # saving as XLSX-file with freeze first row and column as headers
+                    humanReadable.to_excel(
+                        writer,
+                        sheet_name="Bond payments calendar",
+                        index=False,
+                        encoding="UTF-8",
+                        freeze_panes=(1, 2),
+                    )  # saving as XLSX-file with freeze first row and column as headers
 
-                del humanReadable  # release df in memory
+                    del humanReadable  # release df in memory
 
-            uLogger.info("XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxCalendarFile)))
+                uLogger.info("XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxCalendarFile)))
 
         return calendar
 
@@ -4119,7 +4122,7 @@ class TinkoffBrokerServer:
 
         calendar = self.CreateBondsCalendar(extBonds, xlsx=True)  # generate Pandas DataFrame with full calendar data
 
-        if not calendar.empty:
+        if not (calendar is None or calendar.empty):
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
 
             info = [
