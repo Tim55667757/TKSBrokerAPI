@@ -380,6 +380,12 @@ class TinkoffBrokerServer:
         See also: `Overview()` with parameter `details="analytics"`.
         """
 
+        self.overviewBondsCalendarFile = "overview-calendar.md"
+        """Filename where only the bonds calendar section will be saved. Default: `overview-calendar.md`.
+
+        See also: `Overview()` with parameter `details="calendar"`.
+        """
+
         self.reportFile = "deals.md"
         """Filename where history of deals and trade statistics will be saved. Default: `deals.md`.
 
@@ -907,7 +913,7 @@ class TinkoffBrokerServer:
                 info.append("| Minimum lot to buy:                                         | {:<54} |\n".format(iJSON["lot"]))
 
             if "step" in iJSON.keys() and iJSON["step"] != 0:
-                info.append("| Minimum price increment (step):                             | {:<54} |\n".format(iJSON["step"]))
+                info.append("| Minimum price increment (step):                             | {:<54} |\n".format("{} {}".format(iJSON["step"], iJSON["currency"] if "currency" in iJSON.keys() else "")))
 
             # Add bond payment calendar:
             if iJSON["type"] == "Bonds":
@@ -1363,7 +1369,7 @@ class TinkoffBrokerServer:
 
     def GetUniqueFIGIs(self, instruments: list[str]) -> list:
         """
-        Creating list with unique instrument FIGIs from input list of tickers or FIGIs.
+        Creating list with unique instrument FIGIs from input list of tickers (priority) or FIGIs.
 
         :param instruments: list of strings with tickers or FIGIs.
         :return: list with unique instrument FIGIs only.
@@ -1613,9 +1619,10 @@ class TinkoffBrokerServer:
         :param details: how detailed should the information be? You should specify one of strings:
                         `full` - shows full available information about portfolio status (by default),
                         `positions` - shows only open positions,
+                        `orders` - shows only sections of open limits and stop orders.
                         `digest` - show a short digest of the portfolio status,
                         `analytics` - shows only the analytics section and the distribution of the portfolio by various categories,
-                        `orders` - shows only sections of open limits and stop orders.
+                        `calendar` - shows only the bonds calendar section (if these present in portfolio),
         :return: dictionary with client's raw portfolio and some statistics.
         """
         if self.accountId is None or not self.accountId:
@@ -1663,11 +1670,12 @@ class TinkoffBrokerServer:
                 "distrBySectors": {},  # portfolio distribution by sectors
                 "distrByCurrencies": {},  # portfolio distribution by currencies
                 "distrByCountries": {},  # portfolio distribution by countries
+                "bondsCalendar": None,  # bonds payment calendar as Pandas DataFrame (if these present in portfolio)
             }
         }
 
         details = details.lower()
-        availableDetails = ["full", "positions", "digest", "analytics", "orders"]
+        availableDetails = ["full", "positions", "orders", "analytics", "calendar", "digest"]
         if details not in availableDetails:
             details = "full"
             uLogger.debug("Requested incorrect details! The `details` must be one of this strings: {}. Details parameter set to `full` be default.".format(availableDetails))
@@ -2261,93 +2269,89 @@ class TinkoffBrokerServer:
                             view["stat"]["totalChangesPercentRUB"],
                         ),
                         "\n## Portfolio distribution by assets\n"
-                        "\n| Type       | Uniques | Percent | Current cost       |\n",
-                        "|------------|---------|---------|--------------------|\n",
+                        "\n| Type                               | Uniques | Percent | Current cost       |\n",
+                        "|------------------------------------|---------|---------|--------------------|\n",
                     ])
 
                     for key in view["analytics"]["distrByAssets"].keys():
                         if view["analytics"]["distrByAssets"][key]["cost"] > 0:
-                            info.append("| {:<10} | {:<7} | {:<7} | {:<18} |\n".format(
+                            info.append("| {:<34} | {:<7} | {:<7} | {:<18} |\n".format(
                                 key,
                                 view["analytics"]["distrByAssets"][key]["uniques"],
                                 "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByAssets"][key]["cost"]),
                             ))
 
-                    maxLenNames = 3 + max([len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"]) for company in view["analytics"]["distrByCompanies"].keys()])
+                    aSepLine = "|----------------------------------------------|---------|--------------------|\n"
+
                     info.extend([
                         "\n## Portfolio distribution by companies\n"
-                        "\n| Company{} | Percent | Current cost       |\n".format(" " * (maxLenNames - 7)),
-                        "|--------{}-|---------|--------------------|\n".format("-" * (maxLenNames - 7)),
+                        "\n| Company                                      | Percent | Current cost       |\n",
+                        aSepLine,
                     ])
 
                     for company in view["analytics"]["distrByCompanies"].keys():
                         if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
-                            nameLen = len(company) + len(view["analytics"]["distrByCompanies"][company]["ticker"])
-                            info.append("| {} | {:<7} | {:<18} |\n".format(
-                                "{}{}{}".format(
+                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                                "{}{}".format(
                                     "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
                                     company,
-                                    "" if nameLen == maxLenNames else "{}".format(" " * (maxLenNames - nameLen - 3) if view["analytics"]["distrByCompanies"][company]["ticker"] else " " * (maxLenNames - nameLen)),
                                 ),
                                 "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
                             ))
 
-                    maxLenSectors = max([len(sector) for sector in view["analytics"]["distrBySectors"].keys()])
                     info.extend([
                         "\n## Portfolio distribution by sectors\n"
-                        "\n| Sector{} | Percent | Current cost       |\n".format(" " * (maxLenSectors - 6)),
-                        "|-------{}-|---------|--------------------|\n".format("-" * (maxLenSectors - 6)),
+                        "\n| Sector                                       | Percent | Current cost       |\n",
+                        aSepLine,
                     ])
 
                     for sector in view["analytics"]["distrBySectors"].keys():
                         if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
-                            info.append("| {}{} | {:<7} | {:<18} |\n".format(
+                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
                                 sector,
-                                "" if len(sector) == maxLenSectors else " " * (maxLenSectors - len(sector)),
                                 "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrBySectors"][sector]["cost"]),
                             ))
 
-                    maxLenMoney = 3 + max([len(currency) + len(view["analytics"]["distrByCurrencies"][currency]["name"]) for currency in view["analytics"]["distrByCurrencies"].keys()])
                     info.extend([
                         "\n## Portfolio distribution by currencies\n"
-                        "\n| Instruments currencies{} | Percent | Current cost       |\n".format(" " * (maxLenMoney - 22)),
-                        "|-----------------------{}-|---------|--------------------|\n".format("-" * (maxLenMoney - 22)),
+                        "\n| Instruments currencies                       | Percent | Current cost       |\n",
+                        aSepLine,
                     ])
 
                     for curr in view["analytics"]["distrByCurrencies"].keys():
                         if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
-                            nameLen = 3 + len(curr) + len(view["analytics"]["distrByCurrencies"][curr]["name"])
-                            info.append("| {} | {:<7} | {:<18} |\n".format(
-                                "[{}] {}{}".format(
-                                    curr,
-                                    view["analytics"]["distrByCurrencies"][curr]["name"],
-                                    "" if nameLen == maxLenMoney else " " * (maxLenMoney - nameLen),
-                                ),
+                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                                "[{}] {}".format(curr, view["analytics"]["distrByCurrencies"][curr]["name"]),
                                 "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCurrencies"][curr]["cost"]),
                             ))
 
-                    maxLenCountry = max(17, max([len(country) for country in view["analytics"]["distrByCountries"].keys()]))
                     info.extend([
                         "\n## Portfolio distribution by countries\n"
-                        "\n| Assets by country{} | Percent | Current cost       |\n".format(" " * (maxLenCountry - 17)),
-                        "|------------------{}-|---------|--------------------|\n".format("-" * (maxLenCountry - 17)),
+                        "\n| Assets by country                            | Percent | Current cost       |\n",
+                        aSepLine,
                     ])
 
                     for country in view["analytics"]["distrByCountries"].keys():
                         if view["analytics"]["distrByCountries"][country]["cost"] > 0:
-                            nameLen = len(country)
-                            info.append("| {} | {:<7} | {:<18} |\n".format(
-                                "{}{}".format(
-                                    country,
-                                    "" if nameLen == maxLenCountry else " " * (maxLenCountry - nameLen),
-                                ),
+                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                                country,
                                 "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCountries"][country]["cost"]),
                             ))
+
+            if details in ["full", "calendar"]:
+                # -- Show bonds payment calendar section:
+                if view["stat"]["Bonds"]:
+                    bondTickers = [item["ticker"] for item in view["stat"]["Bonds"]]
+                    view["analytics"]["bondsCalendar"] = self.ExtendBondsData(instruments=bondTickers, xlsx=False)
+                    info.append("\n" + self.ShowBondsCalendar(extBonds=view["analytics"]["bondsCalendar"], show=False))
+
+                else:
+                    info.append("\n# Bond payments calendar\n\nNo bonds in the portfolio to create payments calendar\n")
 
             infoText = "".join(info)
 
@@ -2367,6 +2371,9 @@ class TinkoffBrokerServer:
 
             elif details == "analytics" and self.overviewAnalyticsFile:
                 filename = self.overviewAnalyticsFile
+
+            elif details == "calendar" and self.overviewBondsCalendarFile:
+                filename = self.overviewBondsCalendarFile
 
             else:
                 filename = ""
@@ -4470,6 +4477,7 @@ def ParseArgs():
     parser.add_argument("--overview-positions", action="store_true", help="Action: shows only open positions. Also, you can define `--output` key to save this information to file, default: `overview-positions.md`.")
     parser.add_argument("--overview-orders", action="store_true", help="Action: shows only sections of open limits and stop orders. Also, you can define `--output` key to save orders to file, default: `overview-orders.md`.")
     parser.add_argument("--overview-analytics", action="store_true", help="Action: shows only the analytics section and the distribution of the portfolio by various categories. Also, you can define `--output` key to save this information to file, default: `overview-analytics.md`.")
+    parser.add_argument("--overview-calendar", action="store_true", help="Action: shows only the bonds calendar section (if these present in portfolio). Also, you can define `--output` key to save this information to file, default: `overview-calendar.md`.")
 
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
     parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. This action may be used together with the `--render-chart` key. Also, you can define `--output` key to save history candlesticks to file.")
@@ -4663,6 +4671,12 @@ def Main(**kwargs):
                     trader.overviewAnalyticsFile = args.output
 
                 trader.Overview(show=True, details="analytics")
+
+            elif args.overview_calendar:
+                if args.output is not None:
+                    trader.overviewAnalyticsFile = args.output
+
+                trader.Overview(show=True, details="calendar")
 
             elif args.deals is not None:
                 if args.output is not None:
