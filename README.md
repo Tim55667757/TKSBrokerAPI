@@ -12,6 +12,9 @@
 
 ❗ Если вам не хватает возможностей платформы или какого-либо примера в документации, для лучшего понимания работы платформы TKSBrokerAPI (в консоли или как Python API), то опишите ваш случай в разделе 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, пожалуйста. По мере возможности постараемся реализовать нужную функциональность и добавить примеры в очередном релизе.
 
+[![open-issues](http://isitmaintained.com/badge/open/tim55667757/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aopen+is%3Aissue+sort%3Acreated-desc)
+[![resolution-time](http://isitmaintained.com/badge/resolution/tim55667757/TKSBrokerAPI.svg)](https://isitmaintained.com/project/tim55667757/TKSBrokerAPI)
+
 **Полезные ссылки**
 
 * 📚 [Документация и примеры на английском (documentation and examples in english here)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)

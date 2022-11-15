@@ -12,6 +12,9 @@
 
 ❗ If you are missing some feature of the platform or some specific example in the documentation to understand how to work with the TKSBrokerAPI module (in the CLI or as a Python API), then describe your case in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. As far as possible, we will try to implement the desired feature and add examples in the next release.
 
+[![open-issues](http://isitmaintained.com/badge/open/tim55667757/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aopen+is%3Aissue+sort%3Acreated-desc)
+[![resolution-time](http://isitmaintained.com/badge/resolution/tim55667757/TKSBrokerAPI.svg)](https://isitmaintained.com/project/tim55667757/TKSBrokerAPI)
+
 **Useful links**
 
 * 📚 [See documentation and examples in russian here (документация и примеры на русском)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md)
