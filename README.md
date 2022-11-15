@@ -810,7 +810,7 @@ TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:17:15,214] # Main information:
 | Current limit price, min / max:                         | 8.112 rub / 8.874 rub                                   |
 | Actual price, sell / buy:                               | N/A rub / N/A rub                                       |
 | Minimum lot to buy:                                     | 1000                                                    |
-| Minimum price increment (step):                         | 0.001                                                   |
+| Minimum price increment (step):                         | 0.001 rub                                               |
 
 TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:17:15,217] Info about instrument with ticker [CNYRUB_TOM] and FIGI [BBG0013HRTL0] was saved to file: [info.md]
 ```
@@ -870,7 +870,7 @@ TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:18:29,219] # Main information:
 | Current limit price, min / max:                         | 132.51 usd / 135.77 usd                                 |
 | Actual price, sell / buy:                               | 130.69 usd / 135. usd                                   |
 | Minimum lot to buy:                                     | 1                                                       |
-| Minimum price increment (step):                         | 0.01                                                    |
+| Minimum price increment (step):                         | 0.01 usd                                                |
 
 TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:18:29,219] Info about instrument with ticker [IBM] and FIGI [BBG000BLNNH6] was saved to file: [info.md]
 TKSBrokerAPI.py     L:4301 DEBUG   [2022-10-28 00:18:29,219] All operations were finished success (summary code is 0).
@@ -938,7 +938,7 @@ TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information:
 | Current limit price, min / max:                             | 61.12% / 142.6% (458.40 rub / 1069.50 rub)             |
 | Actual price, sell / buy:                                   | N/A% / N/A% (0.00 rub / 0.00 rub)                      |
 | Minimum lot to buy:                                         | 1                                                      |
-| Minimum price increment (step):                             | 0.01                                                   |
+| Minimum price increment (step):                             | 0.01 rub                                               |
 
 # Bond payments calendar
 
@@ -1004,7 +1004,7 @@ TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:21:23,551] # Main information:
 | Current limit price, min / max:                         | 0.0591 usd / 0.0795 usd                                 |
 | Actual price, sell / buy:                               | N/A usd / N/A usd                                       |
 | Minimum lot to buy:                                     | 100                                                     |
-| Minimum price increment (step):                         | 0.0001                                                  |
+| Minimum price increment (step):                         | 0.0001 usd                                              |
 
 TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:21:23,552] Info about instrument with ticker [TGLD] and FIGI [BBG222222222] was saved to file: [info.md]
 ```
@@ -1158,7 +1158,16 @@ TKSBrokerAPI.py     L:1024 INFO    [2022-07-27 00:25:43,611] Price list for all 
 
 Чтобы посмотреть состояние портфеля и статистику распределения активов (по типам, компаниям, секторам, валютам и странам), используется ключ `--overview` (`-o`). Дополнительно можно указать ключ `--output` и задать имя файла, куда сохранить отчёт о состоянии портфеля в формате Markdown (по умолчанию `overview.md` в текущей рабочей директории). Ключ `--verbosity=10` выведет всю отладочную информацию в консоль (можно его не указывать).
 
-Также вы можете использовать другие ключи вместо ключа `--overview`, начиная с TKSBrokerAPI v1.3.70: ключ `--overview-digest` показывает краткий дайджест состояния портфеля, ключ `--overview-positions` показывает только открытые позиции, без всего остального, ключ `--overview-orders` показывает только секцию открытых лимитных и стоп ордеров, ключ `--overview-analytics` показывает только секцию аналитики и распределения портфеля по различным категориям. Ключ `--output` также переопределяет для них выходной файл.
+Также вы можете использовать дополнительные ключи вместо ключа `--overview`, начиная с TKSBrokerAPI v1.3.70:
+- ключ `--overview-digest` показывает краткий дайджест состояния портфеля,
+- ключ `--overview-positions` показывает только открытые позиции, без всего остального,
+- ключ `--overview-orders` показывает только секцию открытых лимитных и стоп ордеров,
+- ключ `--overview-analytics` показывает только секцию аналитики и распределения портфеля по различным категориям.
+
+Начиная с TKSBrokerAPI v1.5.* добавлен ещё один ключ:
+- `--overview-calendar`, который показывает только секцию календаря выплат по облигациям (если они присутствуют в портфеле пользователя, смотрите также разделы "[Получить обогащённые данные по облигациям](#Получить-обогащённые-данные-по-облигациям)" и "[Построить календарь выплат по облигациям](#Построить-календарь-выплат-по-облигациям)").
+
+Ключ `--output` также переопределяет выходной файл и для дополнительных ключей.
 
 <details>
   <summary>Команда для отображения портфеля пользователя</summary>
@@ -1301,6 +1310,54 @@ TKSBrokerAPI.py     L:1821 INFO    [2022-08-10 22:06:27,150] Statistics of clien
 | [RU] Российская Федерация          | 16.67%  | 67612.93 rub
 | [CN] Китайская Народная Республика | 44.53%  | 180665.99 rub
 | [US] Соединенные Штаты Америки     | 1.96%   | 7948.93 rub
+
+# Bond payments calendar
+
+| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |
+|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|
+|   √   | 2020-10-28      | TCS00A101YV8 | RU000A101YV8 | 1   | 28.67 rub     | Constant  | 91     | 2020-10-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2021-01-27      | TCS00A101YV8 | RU000A101YV8 | 2   | 28.67 rub     | Constant  | 91     | 2021-01-26        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2021-04-28      | TCS00A101YV8 | RU000A101YV8 | 3   | 28.67 rub     | Constant  | 91     | 2021-04-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2021-07-28      | TCS00A101YV8 | RU000A101YV8 | 4   | 28.67 rub     | Constant  | 91     | 2021-07-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2021-10-27      | TCS00A101YV8 | RU000A101YV8 | 5   | 28.67 rub     | Constant  | 91     | 2021-10-26        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2022-01-26      | TCS00A101YV8 | RU000A101YV8 | 6   | 28.67 rub     | Constant  | 91     | 2022-01-25        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2022-04-27      | TCS00A101YV8 | RU000A101YV8 | 7   | 28.67 rub     | Constant  | 91     | 2022-04-26        |
+|       |                 |              |              |     |               |           |        |                   |
+|   √   | 2022-07-27      | TCS00A101YV8 | RU000A101YV8 | 8   | 28.67 rub     | Constant  | 91     | 2022-07-26        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2022-10-26      | TCS00A101YV8 | RU000A101YV8 | 9   | 28.67 rub     | Constant  | 91     | 2022-10-25        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-01-25      | TCS00A101YV8 | RU000A101YV8 | 10  | 21.5 rub      | Constant  | 91     | 2023-01-24        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-02-01      | TCS00A105104 | RU000A105104 | 1   | 19.45 cny     | Variable  | 182    | 2023-01-31        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-04-26      | TCS00A101YV8 | RU000A101YV8 | 11  | 14.34 rub     | Constant  | 91     | 2023-04-25        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-07-26      | TCS00A101YV8 | RU000A101YV8 | 12  | 7.17 rub      | Constant  | 91     | 2023-07-25        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2023-08-02      | TCS00A105104 | RU000A105104 | 2   | 19.45 cny     | Variable  | 182    | 2023-08-01        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2024-01-31      | TCS00A105104 | RU000A105104 | 3   | 19.45 cny     | Variable  | 182    | 2024-01-30        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2024-07-31      | TCS00A105104 | RU000A105104 | 4   | 19.45 cny     | Variable  | 182    | 2024-07-30        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2025-01-29      | TCS00A105104 | RU000A105104 | 5   | 0 cny         | Variable  | 182    | 2025-01-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2025-07-30      | TCS00A105104 | RU000A105104 | 6   | 0 cny         | Variable  | 182    | 2025-07-29        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2026-01-28      | TCS00A105104 | RU000A105104 | 7   | 0 cny         | Variable  | 182    | 2026-01-27        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2026-07-29      | TCS00A105104 | RU000A105104 | 8   | 0 cny         | Variable  | 182    | 2026-07-28        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2027-01-27      | TCS00A105104 | RU000A105104 | 9   | 0 cny         | Variable  | 182    | 2027-01-26        |
+|       |                 |              |              |     |               |           |        |                   |
+|   —   | 2027-07-28      | TCS00A105104 | RU000A105104 | 10  | 0 cny         | Variable  | 182    | 2027-07-27        |
 
 TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio is saved to file: [portfolio.md]
 TKSBrokerAPI.py     L:3132 DEBUG   [2022-08-10 22:06:27,153] All operations with Tinkoff Server using Open API are finished success (summary code is 0).
