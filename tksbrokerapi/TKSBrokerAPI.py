@@ -130,7 +130,7 @@ def GetDatesAsString(start: str = None, end: str = None) -> tuple:
     If `start=None`, `end=None` then return dates from yesterday to the end of the day.
     If `start=some_date_1`, `end=None` then return dates from `some_date_1` to the end of the day.
     If `start=some_date_1`, `end=some_date_2` then return dates from start of `some_date_1` to end of `some_date_2`.
-    Start day may be negative integer numbers: `-1`, `-2`, `-3` - how many days ago.
+    Start day may be negative integer numbers: `-1`, `-2`, `-3` — how many days ago.
 
     Also, you can use keywords for start if `end=None`:
     `today` (from 00:00:00 to the end of current day),
@@ -526,9 +526,9 @@ class TinkoffBrokerServer:
                     uLogger.debug("    - headers:\n{}".format(response.headers))
 
                 # Server returns some headers:
-                # - `x-ratelimit-limit` - shows the settings of the current user limit for this method.
-                # - `x-ratelimit-remaining` - the number of remaining requests of this type per minute.
-                # - `x-ratelimit-reset` - time in seconds before resetting the request counter.
+                # - `x-ratelimit-limit` — shows the settings of the current user limit for this method.
+                # - `x-ratelimit-remaining` — the number of remaining requests of this type per minute.
+                # - `x-ratelimit-reset` — time in seconds before resetting the request counter.
                 # See: https://tinkoff.github.io/investAPI/grpc/#kreya
                 if "x-ratelimit-remaining" in response.headers.keys() and response.headers["x-ratelimit-remaining"] == "0":
                     rateLimitWait = int(response.headers["x-ratelimit-reset"])
@@ -1239,7 +1239,7 @@ class TinkoffBrokerServer:
         This method get and show information about all available broker instruments for current user account.
         If `instrumentsFile` string is not empty then also save information to this file.
 
-        :param show: if `True` then print results to console, if `False` - print only to file.
+        :param show: if `True` then print results to console, if `False` — print only to file.
         :return: multi-lines string with all available broker instruments
         """
         if not self.iList:
@@ -1294,7 +1294,7 @@ class TinkoffBrokerServer:
         If `searchResultsFile` string is not empty then also save information to this file.
 
         :param pattern: string with part of ticker, FIGI or instrument's name.
-        :param show: if `True` then print results to console, if `False` - return list of result only.
+        :param show: if `True` then print results to console, if `False` — return list of result only.
         :return: list of dictionaries with all found instruments.
         """
         if not self.iList:
@@ -1415,11 +1415,13 @@ class TinkoffBrokerServer:
     def GetListOfPrices(self, instruments: list, show: bool = False) -> list:
         """
         This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
+
         See limits: https://tinkoff.github.io/investAPI/limits/
+
         If `pricesFile` string is not empty then also save information to this file.
 
         :param instruments: list of strings with tickers or FIGIs.
-        :param show: if `True` then prints prices to console, if `False` - prints only to file `pricesFile`.
+        :param show: if `True` then prints prices to console, if `False` — prints only to file `pricesFile`.
         :return: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
                  One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
@@ -1446,7 +1448,7 @@ class TinkoffBrokerServer:
 
         :param iList: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
                       One item is dict returned by `SearchByTicker(requestPrice=True)` or by `SearchByFIGI(requestPrice=True)` methods.
-        :param show: if `True` then prints prices to console, if `False` - prints only to file `pricesFile`.
+        :param show: if `True` then prints prices to console, if `False` — prints only to file `pricesFile`.
         :return: multilines text in Markdown format as a table contains current prices.
         """
         infoText = ""
@@ -1493,7 +1495,9 @@ class TinkoffBrokerServer:
     def RequestTradingStatus(self) -> dict:
         """
         Requesting trading status for the instrument defined by `figi` variable.
+
         REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetTradingStatus
+
         Documentation: https://tinkoff.github.io/investAPI/marketdata/#gettradingstatusrequest
 
         :return: dictionary with trading status attributes. Response example:
@@ -1518,7 +1522,9 @@ class TinkoffBrokerServer:
     def RequestPortfolio(self) -> dict:
         """
         Requesting actual user's portfolio for current `accountId`.
+
         REST API for user portfolio: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPortfolio
+
         Documentation: https://tinkoff.github.io/investAPI/operations/#portfoliorequest
 
         :return: dictionary with user's portfolio.
@@ -1541,7 +1547,9 @@ class TinkoffBrokerServer:
     def RequestPositions(self) -> dict:
         """
         Requesting open positions by currencies and instruments for current `accountId`.
+
         REST API for open positions: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetPositions
+
         Documentation: https://tinkoff.github.io/investAPI/operations/#positionsrequest
 
         :return: dictionary with open positions by instruments.
@@ -1564,7 +1572,9 @@ class TinkoffBrokerServer:
     def RequestPendingOrders(self) -> list:
         """
         Requesting current actual pending orders for current `accountId`.
+
         REST API for pending (market) orders: https://tinkoff.github.io/investAPI/swagger-ui/#/OrdersService/OrdersService_GetOrders
+
         Documentation: https://tinkoff.github.io/investAPI/orders/#getordersrequest
 
         :return: list of dictionaries with pending orders.
@@ -1586,7 +1596,9 @@ class TinkoffBrokerServer:
     def RequestStopOrders(self) -> list:
         """
         Requesting current actual stop orders for current `accountId`.
+
         REST API for opened stop-orders: https://tinkoff.github.io/investAPI/swagger-ui/#/StopOrdersService/StopOrdersService_GetStopOrders
+
         Documentation: https://tinkoff.github.io/investAPI/stoporders/#getstopordersrequest
 
         :return: list of dictionaries with stop orders.
@@ -1609,20 +1621,20 @@ class TinkoffBrokerServer:
         """
         Get portfolio: all open positions, orders and some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
-        are defined then also save information to file.
+        and `overviewBondsCalendarFile` are defined then also save information to file.
 
         WARNING! It is not recommended to run this method too many times in a loop! The server receives
         many requests about the state of the portfolio, and then, based on the received data, a large number
         of calculation and statistics are collected.
 
         :param show: if `False` then only dictionary returns, if `True` then show more debug information.
-        :param details: how detailed should the information be? You should specify one of strings:
-                        `full` - shows full available information about portfolio status (by default),
-                        `positions` - shows only open positions,
-                        `orders` - shows only sections of open limits and stop orders.
-                        `digest` - show a short digest of the portfolio status,
-                        `analytics` - shows only the analytics section and the distribution of the portfolio by various categories,
-                        `calendar` - shows only the bonds calendar section (if these present in portfolio),
+        :param details: how detailed should the information be?
+        - `full` — shows full available information about portfolio status (by default),
+        - `positions` — shows only open positions,
+        - `orders` — shows only sections of open limits and stop orders.
+        - `digest` — show a short digest of the portfolio status,
+        - `analytics` — shows only the analytics section and the distribution of the portfolio by various categories,
+        - `calendar` — shows only the bonds calendar section (if these present in portfolio),
         :return: dictionary with client's raw portfolio and some statistics.
         """
         if self.accountId is None or not self.accountId:
