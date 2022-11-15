@@ -3002,7 +3002,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             #     лимитный ордер на весь объём позиции по цене на 0.1% выше, чем текущая рыночная цена. Это нужно для того, чтобы позиция 
             #     закрылась с профитом, с большой вероятностью в течение текущей торговой сессии.
 
-            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking closure rules...".format(trader.ticker))
+            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(trader.ticker))
 
             # Получаем информацию по инструменту из списка текущих открытых позиций в портфеле пользователя:
             iData = trader.GetInstrumentFromPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio

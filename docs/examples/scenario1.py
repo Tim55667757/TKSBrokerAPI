@@ -191,7 +191,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             #     limit order with all volumes 0.1% higher than the current price so that the position is closed
             #     with a profit with a high probability during the current session.
 
-            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking closure rules...".format(trader.ticker))
+            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(trader.ticker))
 
             # Getting instrument from list of instruments in user portfolio:
             iData = trader.GetInstrumentFromPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
