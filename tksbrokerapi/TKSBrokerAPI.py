@@ -1887,16 +1887,20 @@ class TinkoffBrokerServer:
         }
 
         # --- pending orders sector data:
-        uniquePendingOrders = []
-        uniquePendingOrdersFIGIs = []
-        for item in view["raw"]["orders"]:
-            if item["figi"] not in uniquePendingOrdersFIGIs:
-                uniquePendingOrdersFIGIs.append(item["figi"])
-                uniquePendingOrders.append(item)
+        uniquePendingOrdersFIGIs = []  # unique FIGIs of pending orders to avoid many times price requests
+        uniquePendingOrders = {}  # unique instruments with FIGIs as dictionary keys
 
-        for item in uniquePendingOrders:
+        for item in view["raw"]["orders"]:
             self.figi = item["figi"]
-            instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
+
+            if item["figi"] not in uniquePendingOrdersFIGIs:
+                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
+
+                uniquePendingOrdersFIGIs.append(item["figi"])
+                uniquePendingOrders[item["figi"]] = instrument
+
+            else:
+                instrument = uniquePendingOrders[item["figi"]]
 
             if instrument:
                 action = TKS_ORDER_DIRECTIONS[item["direction"]]
@@ -1935,16 +1939,20 @@ class TinkoffBrokerServer:
                 })
 
         # --- stop orders sector data:
-        uniqueStopOrders = []
-        uniqueStopOrdersFIGIs = []
-        for item in view["raw"]["stopOrders"]:
-            if item["figi"] not in uniqueStopOrdersFIGIs:
-                uniqueStopOrdersFIGIs.append(item["figi"])
-                uniqueStopOrders.append(item)
+        uniqueStopOrdersFIGIs = []  # unique FIGIs of stop orders to avoid many times price requests
+        uniqueStopOrders = {}  # unique instruments with FIGIs as dictionary keys
 
-        for item in uniqueStopOrders:
+        for item in view["raw"]["stopOrders"]:
             self.figi = item["figi"]
-            instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI
+
+            if item["figi"] not in uniqueStopOrdersFIGIs:
+                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
+
+                uniqueStopOrdersFIGIs.append(item["figi"])
+                uniqueStopOrders[item["figi"]] = instrument
+
+            else:
+                instrument = uniqueStopOrders[item["figi"]]
 
             if instrument:
                 action = TKS_STOP_ORDER_DIRECTIONS[item["direction"]]
@@ -2046,8 +2054,10 @@ class TinkoffBrokerServer:
 
         # portfolio distribution by currencies:
         if "rub" not in view["analytics"]["distrByCurrencies"].keys():
-            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
             view["analytics"]["distrByCurrencies"]["rub"] = {"name": "Российский рубль", "cost": 0, "percent": 0}
+
+            if self.moreDebug:
+                uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by currencies` section. Server not returned current available rubles!")
 
         view["analytics"]["distrByCurrencies"].update(byCurr)
         view["analytics"]["distrByCurrencies"]["rub"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
@@ -2055,8 +2065,10 @@ class TinkoffBrokerServer:
 
         # portfolio distribution by countries:
         if "[RU] Российская Федерация" not in view["analytics"]["distrByCountries"].keys():
-            uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
             view["analytics"]["distrByCountries"]["[RU] Российская Федерация"] = {"cost": 0, "percent": 0}
+
+            if self.moreDebug:
+                uLogger.debug("Fast hack to avoid issues #71 in `Portfolio distribution by countries` section. Server not returned current available rubles!")
 
         view["analytics"]["distrByCountries"].update(byCountry)
         view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["cost"] += view["analytics"]["distrByAssets"]["Ruble"]["cost"]
@@ -2960,14 +2972,14 @@ class TinkoffBrokerServer:
                 NanoToFloat(response["executedOrderPrice"]["units"], response["executedOrderPrice"]["nano"]), response["executedOrderPrice"]["currency"],
             ))
 
+            if tp > 0:
+                self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
+
+            if sl > 0:
+                self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
+
         else:
             uLogger.warning("Not `oK` status received! Market order not executed. See full debug log or try again and open order later.")
-
-        if tp > 0:
-            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
-
-        if sl > 0:
-            self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
 
         return response
 
@@ -4506,7 +4518,7 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("=-" * 60)
+    uLogger.debug("=-" * 50)
     uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
         start.strftime(TKS_PRINT_DATE_TIME_FORMAT),
         start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
@@ -4530,8 +4542,8 @@ def Main(**kwargs):
             uLogger.debug("User requested current TKSBrokerAPI major.minor.build version: [{}]".format(buildVersion))
 
         else:
-            # Init class for trading with Tinkoff Broker: TODO: rename `server` to `trader`
-            server = TinkoffBrokerServer(
+            # Init class for trading with Tinkoff Broker:
+            trader = TinkoffBrokerServer(
                 token=args.token,
                 accountId=args.account_id,
                 useCache=not args.no_cache,
@@ -4540,48 +4552,48 @@ def Main(**kwargs):
             # --- set some options:
 
             if args.more:
-                server.moreDebug = True
+                trader.moreDebug = True
                 uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
 
             if args.ticker:
-                if args.ticker in server.aliasesKeys:
-                    server.ticker = server.aliases[args.ticker]  # Replace some tickers with its aliases
+                if args.ticker in trader.aliasesKeys:
+                    trader.ticker = trader.aliases[args.ticker]  # Replace some tickers with its aliases
 
                 else:
-                    server.ticker = args.ticker
+                    trader.ticker = args.ticker
 
             if args.figi:
-                server.figi = args.figi
+                trader.figi = args.figi
 
             if args.depth is not None:
-                server.depth = args.depth
+                trader.depth = args.depth
 
             # --- do one command:
 
             if args.list:
                 if args.output is not None:
-                    server.instrumentsFile = args.output
+                    trader.instrumentsFile = args.output
 
-                server.ShowInstrumentsInfo(show=True)
+                trader.ShowInstrumentsInfo(show=True)
 
             elif args.list_xlsx:
-                server.DumpInstrumentsAsXLSX(forceUpdate=False)
+                trader.DumpInstrumentsAsXLSX(forceUpdate=False)
 
             elif args.bonds_xlsx is not None:
                 if args.output is not None:
-                    server.bondsXLSXFile = args.output
+                    trader.bondsXLSXFile = args.output
 
                 if len(args.bonds_xlsx) == 0:
-                    server.ExtendBondsData(instruments=server.iList["Bonds"].keys(), xlsx=True)  # request bonds with all available tickers
+                    trader.ExtendBondsData(instruments=trader.iList["Bonds"].keys(), xlsx=True)  # request bonds with all available tickers
 
                 else:
-                    server.ExtendBondsData(instruments=args.bonds_xlsx, xlsx=True)  # request list of given bonds
+                    trader.ExtendBondsData(instruments=args.bonds_xlsx, xlsx=True)  # request list of given bonds
 
             elif args.search:
                 if args.output is not None:
-                    server.searchResultsFile = args.output
+                    trader.searchResultsFile = args.output
 
-                server.SearchInstruments(pattern=args.search[0], show=True)
+                trader.SearchInstruments(pattern=args.search[0], show=True)
 
             elif args.info:
                 if not (args.ticker or args.figi):
@@ -4589,75 +4601,75 @@ def Main(**kwargs):
                     raise Exception("Ticker or FIGI required")
 
                 if args.output is not None:
-                    server.infoFile = args.output
+                    trader.infoFile = args.output
 
                 if args.ticker:
-                    server.SearchByTicker(requestPrice=True, show=True)  # show info and current prices by ticker name
+                    trader.SearchByTicker(requestPrice=True, show=True)  # show info and current prices by ticker name
 
                 else:
-                    server.SearchByFIGI(requestPrice=True, show=True)  # show info and current prices by FIGI id
+                    trader.SearchByFIGI(requestPrice=True, show=True)  # show info and current prices by FIGI id
 
             elif args.calendar is not None:
                 if args.output is not None:
-                    server.calendarFile = args.output
+                    trader.calendarFile = args.output
 
                 if len(args.calendar) == 0:
-                    bondsData = server.ExtendBondsData(instruments=server.iList["Bonds"].keys(), xlsx=False)  # request bonds with all available tickers
+                    bondsData = trader.ExtendBondsData(instruments=trader.iList["Bonds"].keys(), xlsx=False)  # request bonds with all available tickers
 
                 else:
-                    bondsData = server.ExtendBondsData(instruments=args.calendar, xlsx=False)  # request list of given bonds
+                    bondsData = trader.ExtendBondsData(instruments=args.calendar, xlsx=False)  # request list of given bonds
 
-                server.ShowBondsCalendar(extBonds=bondsData, show=True)  # shows bonds payment calendar only
+                trader.ShowBondsCalendar(extBonds=bondsData, show=True)  # shows bonds payment calendar only
 
             elif args.price:
                 if not (args.ticker or args.figi):
                     uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
                     raise Exception("Ticker or FIGI required")
 
-                server.GetCurrentPrices(show=True)
+                trader.GetCurrentPrices(show=True)
 
             elif args.prices is not None:
                 if args.output is not None:
-                    server.pricesFile = args.output
+                    trader.pricesFile = args.output
 
-                server.GetListOfPrices(instruments=args.prices, show=True)  # WARNING: too long wait for a lot of instruments prices
+                trader.GetListOfPrices(instruments=args.prices, show=True)  # WARNING: too long wait for a lot of instruments prices
 
             elif args.overview:
                 if args.output is not None:
-                    server.overviewFile = args.output
+                    trader.overviewFile = args.output
 
-                server.Overview(show=True, details="full")
+                trader.Overview(show=True, details="full")
 
             elif args.overview_digest:
                 if args.output is not None:
-                    server.overviewDigestFile = args.output
+                    trader.overviewDigestFile = args.output
 
-                server.Overview(show=True, details="digest")
+                trader.Overview(show=True, details="digest")
 
             elif args.overview_positions:
                 if args.output is not None:
-                    server.overviewPositionsFile = args.output
+                    trader.overviewPositionsFile = args.output
 
-                server.Overview(show=True, details="positions")
+                trader.Overview(show=True, details="positions")
 
             elif args.overview_orders:
                 if args.output is not None:
-                    server.overviewOrdersFile = args.output
+                    trader.overviewOrdersFile = args.output
 
-                server.Overview(show=True, details="orders")
+                trader.Overview(show=True, details="orders")
 
             elif args.overview_analytics:
                 if args.output is not None:
-                    server.overviewAnalyticsFile = args.output
+                    trader.overviewAnalyticsFile = args.output
 
-                server.Overview(show=True, details="analytics")
+                trader.Overview(show=True, details="analytics")
 
             elif args.deals is not None:
                 if args.output is not None:
-                    server.reportFile = args.output
+                    trader.reportFile = args.output
 
                 if 0 <= len(args.deals) < 3:
-                    server.Deals(
+                    trader.Deals(
                         start=args.deals[0] if len(args.deals) >= 1 else None,
                         end=args.deals[1] if len(args.deals) == 2 else None,
                         show=True,  # Always show deals report in console
@@ -4670,10 +4682,10 @@ def Main(**kwargs):
 
             elif args.history is not None:
                 if args.output is not None:
-                    server.historyFile = args.output
+                    trader.historyFile = args.output
 
                 if 0 <= len(args.history) < 3:
-                    dataReceived = server.History(
+                    dataReceived = trader.History(
                         start=args.history[0] if len(args.history) >= 1 else None,
                         end=args.history[1] if len(args.history) == 2 else None,
                         interval="hour" if args.interval is None or not args.interval else args.interval,
@@ -4685,7 +4697,7 @@ def Main(**kwargs):
                     if args.render_chart is not None and dataReceived is not None:
                         iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
 
-                        server.ShowHistoryChart(
+                        trader.ShowHistoryChart(
                             candles=dataReceived,
                             interact=iChart,
                             openInBrowser=False,  # False by default, to avoid issues with `permissions denied` to html-file.
@@ -4696,13 +4708,13 @@ def Main(**kwargs):
                     raise Exception("Incorrect value")
 
             elif args.load_history is not None:
-                histData = server.LoadHistory(filePath=args.load_history)  # load data from file and show history in console
+                histData = trader.LoadHistory(filePath=args.load_history)  # load data from file and show history in console
 
                 if args.render_chart is not None and histData is not None:
                     iChart = False if args.render_chart.lower() == "ni" or args.render_chart.lower() == "non-interact" else True
-                    server.ticker = os.path.basename(args.load_history)  # use filename as ticker name for PriceGenerator's chart
+                    trader.ticker = os.path.basename(args.load_history)  # use filename as ticker name for PriceGenerator's chart
 
-                    server.ShowHistoryChart(
+                    trader.ShowHistoryChart(
                         candles=histData,
                         interact=iChart,
                         openInBrowser=False,  # False by default, to avoid issues with `permissions denied` to html-file.
@@ -4710,7 +4722,7 @@ def Main(**kwargs):
 
             elif args.trade is not None:
                 if 1 <= len(args.trade) <= 5:
-                    server.Trade(
+                    trader.Trade(
                         operation=args.trade[0],
                         lots=int(args.trade[1]) if len(args.trade) >= 2 else 1,
                         tp=float(args.trade[2]) if len(args.trade) >= 3 else 0.,
@@ -4723,7 +4735,7 @@ def Main(**kwargs):
 
             elif args.buy is not None:
                 if 0 <= len(args.buy) <= 4:
-                    server.Buy(
+                    trader.Buy(
                         lots=int(args.buy[0]) if len(args.buy) >= 1 else 1,
                         tp=float(args.buy[1]) if len(args.buy) >= 2 else 0.,
                         sl=float(args.buy[2]) if len(args.buy) >= 3 else 0.,
@@ -4735,7 +4747,7 @@ def Main(**kwargs):
 
             elif args.sell is not None:
                 if 0 <= len(args.sell) <= 4:
-                    server.Sell(
+                    trader.Sell(
                         lots=int(args.sell[0]) if len(args.sell) >= 1 else 1,
                         tp=float(args.sell[1]) if len(args.sell) >= 2 else 0.,
                         sl=float(args.sell[2]) if len(args.sell) >= 3 else 0.,
@@ -4747,7 +4759,7 @@ def Main(**kwargs):
 
             elif args.order:
                 if 4 <= len(args.order) <= 7:
-                    server.Order(
+                    trader.Order(
                         operation=args.order[0],
                         orderType=args.order[1],
                         lots=int(args.order[2]),
@@ -4761,14 +4773,14 @@ def Main(**kwargs):
                     uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.buy_limit:
-                server.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
+                trader.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
 
             elif args.sell_limit:
-                server.SellLimit(lots=int(args.sell_limit[0]), targetPrice=args.sell_limit[1])
+                trader.SellLimit(lots=int(args.sell_limit[0]), targetPrice=args.sell_limit[1])
 
             elif args.buy_stop:
                 if 2 <= len(args.buy_stop) <= 7:
-                    server.BuyStop(
+                    trader.BuyStop(
                         lots=int(args.buy_stop[0]),
                         targetPrice=float(args.buy_stop[1]),
                         limitPrice=float(args.buy_stop[2]) if len(args.buy_stop) >= 3 else 0.,
@@ -4781,7 +4793,7 @@ def Main(**kwargs):
 
             elif args.sell_stop:
                 if 2 <= len(args.sell_stop) <= 7:
-                    server.SellStop(
+                    trader.SellStop(
                         lots=int(args.sell_stop[0]),
                         targetPrice=float(args.sell_stop[1]),
                         limitPrice=float(args.sell_stop[2]) if len(args.sell_stop) >= 3 else 0.,
@@ -4795,10 +4807,10 @@ def Main(**kwargs):
             # elif args.buy_order_grid is not None:
             #     # update order grid work with api v2
             #     if len(args.buy_order_grid) == 2:
-            #         orderParams = server.ParseOrderParameters(operation="Buy", **dict(kw.split('=') for kw in args.buy_order_grid))
+            #         orderParams = trader.ParseOrderParameters(operation="Buy", **dict(kw.split('=') for kw in args.buy_order_grid))
             #
             #         for order in orderParams:
-            #             server.Order(operation="Buy", lots=order["lot"], price=order["price"])
+            #             trader.Order(operation="Buy", lots=order["lot"], price=order["price"])
             #
             #     else:
             #         uLogger.error("To open grid of pending BUY limit-orders (below current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
@@ -4806,19 +4818,19 @@ def Main(**kwargs):
             # elif args.sell_order_grid is not None:
             #     # update order grid work with api v2
             #     if len(args.sell_order_grid) >= 2:
-            #         orderParams = server.ParseOrderParameters(operation="Sell", **dict(kw.split('=') for kw in args.sell_order_grid))
+            #         orderParams = trader.ParseOrderParameters(operation="Sell", **dict(kw.split('=') for kw in args.sell_order_grid))
             #
             #         for order in orderParams:
-            #             server.Order(operation="Sell", lots=order["lot"], price=order["price"])
+            #             trader.Order(operation="Sell", lots=order["lot"], price=order["price"])
             #
             #     else:
             #         uLogger.error("To open grid of pending SELL limit-orders (above current price) you must specified 2 parameters: l(ots)=[L_int,...] p(rices)=[P_float,...]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.close_order is not None:
-                server.CloseOrders(args.close_order)  # close only one order
+                trader.CloseOrders(args.close_order)  # close only one order
 
             elif args.close_orders is not None:
-                server.CloseOrders(args.close_orders)  # close list of orders
+                trader.CloseOrders(args.close_orders)  # close list of orders
 
             elif args.close_trade:
                 if not (args.ticker or args.figi):
@@ -4826,34 +4838,34 @@ def Main(**kwargs):
                     raise Exception("Ticker or FIGI required")
 
                 if args.ticker:
-                    server.CloseTrades([args.ticker])  # close only one trade by ticker (priority)
+                    trader.CloseTrades([args.ticker])  # close only one trade by ticker (priority)
 
                 else:
-                    server.CloseTrades([args.figi])  # close only one trade by FIGI
+                    trader.CloseTrades([args.figi])  # close only one trade by FIGI
 
             elif args.close_trades is not None:
-                server.CloseTrades(args.close_trades)  # close trades for list of tickers
+                trader.CloseTrades(args.close_trades)  # close trades for list of tickers
 
             elif args.close_all is not None:
-                server.CloseAll(*args.close_all)
+                trader.CloseAll(*args.close_all)
 
             elif args.limits:
                 if args.output is not None:
-                    server.withdrawalLimitsFile = args.output
+                    trader.withdrawalLimitsFile = args.output
 
-                server.OverviewLimits(show=True)
+                trader.OverviewLimits(show=True)
 
             elif args.user_info:
                 if args.output is not None:
-                    server.userInfoFile = args.output
+                    trader.userInfoFile = args.output
 
-                server.OverviewUserInfo(show=True)
+                trader.OverviewUserInfo(show=True)
 
             elif args.account:
                 if args.output is not None:
-                    server.userAccountsFile = args.output
+                    trader.userAccountsFile = args.output
 
-                server.OverviewAccounts(show=True)
+                trader.OverviewAccounts(show=True)
 
             else:
                 uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
@@ -4887,7 +4899,7 @@ def Main(**kwargs):
             finish.strftime(TKS_PRINT_DATE_TIME_FORMAT),
             finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
         ))
-        uLogger.debug("=-" * 60)
+        uLogger.debug("=-" * 50)
 
         if not kwargs:
             sys.exit(exitCode)
