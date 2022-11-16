@@ -3573,7 +3573,7 @@ class TinkoffBrokerServer:
 
     def GetInstrumentFromPortfolio(self, portfolio: dict = None) -> dict:
         """
-        Returns instrument is in the user's portfolio if it presents there.
+        Returns instrument from the user's portfolio if it presents there.
         Instrument must be defined by `ticker` (highly priority) or `figi`.
 
         :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
