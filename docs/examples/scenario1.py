@@ -206,7 +206,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
             targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
 
-            # Checking for a sufficient price difference:
+            # Also, checking for a sufficient price difference before sell:
             if curProfit >= TP_LIMIT_DIFF:
                 uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
                     curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
