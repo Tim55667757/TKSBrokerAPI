@@ -3310,23 +3310,20 @@ class TradeScenario(TinkoffBrokerServer):
                 self._curProfit * 100, self.tpLimitDiff * 100,
             ))
 
-    def Run(self):
-        """Секция торгового сценария. Реализация одной торговой итерации."""
+    def Steps(self, **kwargs):
+        """Секция шагов торгового сценария. Реализация одной торговой итерации."""
         self._changes = False  # На начало итерации изменений в портфеле пользователя не было
 
-        for ticker in self.tickers:
-            uLogger.info("--- Ticker [{}], data analysis...".format(ticker))
+        uLogger.info("--- Ticker [{}], data analysis...".format(kwargs["ticker"]))
 
-            # - Шаг 1: запрос текущего портфеля клиента и определение доступных объёмов и валют для торговли
-            self._GetPortfolio()
-            self._CalculateFreeFunds()
+        # - Шаг 1: запрос текущего портфеля клиента и определение доступных объёмов и валют для торговли
+        self._GetPortfolio()
+        self._CalculateFreeFunds()
 
-            # - Шаг 2: запрос стакана цен для текущего инструмента
-            emptyBook = self._GetOrderBook(currentTicker=ticker)
+        # - Шаг 2: запрос стакана цен для текущего инструмента
+        emptyBook = self._GetOrderBook(currentTicker=kwargs["ticker"])
 
-            if emptyBook:
-                continue
-
+        if not emptyBook:
             # Проверяем, есть ли открытые позиции по текущему инструменту, заданному через `ticker`, в портфеле пользователя:
             isInPortfolio = self.IsInPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
@@ -3350,6 +3347,11 @@ class TradeScenario(TinkoffBrokerServer):
 
                 self._CalculateDataForCloseRules()
                 self._Step4()
+
+    def Run(self):
+        """Запуск торговых операций."""
+        for ticker in self.tickers:
+            self.Steps(**{"ticker": ticker})
 
         # - Шаг 5: запрашиваем и отображаем изменения в портфеле пользователя после всех выполненных операций
 
@@ -3413,7 +3415,7 @@ def Trade():
 
     trader.moreDebug = False  # Установите `True` если вам нужно больше отладочной информации, такой как хедеры, сетевые запросы и ответы
 
-    trader.Run()  # Запуск одной итерации торгового сценария со всеми указанными инструментами
+    trader.Run()  # Запуск торговых итераций со всеми указанными инструментами
 
 
 if __name__ == "__main__":

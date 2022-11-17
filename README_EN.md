@@ -3288,23 +3288,20 @@ class TradeScenario(TinkoffBrokerServer):
                 self._curProfit * 100, self.tpLimitDiff * 100,
             ))
 
-    def Run(self):
-        """Trading scenario section. Implementation of one trade iteration."""
+    def Steps(self, **kwargs):
+        """Trading scenario steps section. Implementation of one trade iteration."""
         self._changes = False  # Setting no changes in user portfolio before trade iteration
 
-        for ticker in self.tickers:
-            uLogger.info("--- Ticker [{}], data analysis...".format(ticker))
+        uLogger.info("--- Ticker [{}], data analysis...".format(kwargs["ticker"]))
 
-            # - Step 1: request the client's current portfolio and determining funds available for trading
-            self._GetPortfolio()
-            self._CalculateFreeFunds()
+        # - Step 1: request the client's current portfolio and determining funds available for trading
+        self._GetPortfolio()
+        self._CalculateFreeFunds()
 
-            # - Step 2: request a Depth of Market for the selected instruments
-            emptyBook = self._GetOrderBook(currentTicker=ticker)
+        # - Step 2: request a Depth of Market for the selected instruments
+        emptyBook = self._GetOrderBook(currentTicker=kwargs["ticker"])
 
-            if emptyBook:
-                continue
-
+        if not emptyBook:
             # Checks if instrument (defined by its `ticker`) is in portfolio:
             isInPortfolio = self.IsInPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
@@ -3328,6 +3325,11 @@ class TradeScenario(TinkoffBrokerServer):
 
                 self._CalculateDataForCloseRules()
                 self._Step4()
+
+    def Run(self):
+        """Trade iterations runner."""
+        for ticker in self.tickers:
+            self.Steps(**{"ticker": ticker})
 
         # - Step 5: request the current user's portfolio after all trades and show changes
 
@@ -3391,7 +3393,7 @@ def Trade():
 
     trader.moreDebug = False  # Set to `True` if you need more debug information, such as headers, requests and responses
 
-    trader.Run()  # Starting one iteration of trade with all instruments
+    trader.Run()  # Starting trade iterations with all instruments
 
 
 if __name__ == "__main__":
