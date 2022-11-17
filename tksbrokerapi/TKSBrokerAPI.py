@@ -3586,7 +3586,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            uLogger.debug("Searching instrument with ticker [{}] in opened positions...".format(self.ticker))
             msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
 
             for iType in TKS_INSTRUMENTS:
