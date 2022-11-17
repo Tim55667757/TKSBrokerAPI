@@ -72,10 +72,10 @@ https://github.com/Tim55667757/TKSBrokerAPI#Пример-реализации-а
 from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from math import ceil
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 
 uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
+uLogger.handlers[0].level = 20  # Log level for STDOUT, INFO (20) recommended by default
 
 start = datetime.now(tzutc())
 
