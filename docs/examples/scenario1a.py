@@ -90,7 +90,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from math import ceil
 
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT
 
 
@@ -216,7 +216,7 @@ class TradeScenario(TinkoffBrokerServer):
 
         buyResponse = self.Buy(lots=self.lots, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
 
-        if "message" in buyResponse.keys():
+        if "message" in buyResponse.keys() and buyResponse["message"]:
             uLogger.warning("Server message: {}".format(buyResponse["message"]))
 
         else:
@@ -271,7 +271,7 @@ class TradeScenario(TinkoffBrokerServer):
         # Opening SELL pending limit order:
         sellResponse = self.SellLimit(lots=self._lotsToSell, targetPrice=self._targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
-        if "message" in sellResponse.keys():
+        if "message" in sellResponse.keys() and sellResponse["message"]:
             uLogger.warning("Server message: {}".format(sellResponse["message"]))
 
         else:
@@ -349,7 +349,7 @@ def TimerDecorator(func):
 
     def Wrapper():
         uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-        uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
+        uLogger.handlers[0].level = 20  # Log level for STDOUT, INFO (20) recommended by default
 
         start = datetime.now(tzutc())
 
@@ -386,7 +386,7 @@ def Trade():
     )
 
     # --- Set here any parameters you need for trading:
-    trader.tickers = ["YNDX", "IBM", "GOOGL"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
+    trader.tickers = ["YNDX", "IBM", "GAZP"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
     trader.reserve = 0.05  # We reserve some money when open positions, 5% by default
     trader.lots = 1  # Minimum lots to buy or sell
     trader.tpStopDiff = 0.03  # 3% TP by default for stop-orders
