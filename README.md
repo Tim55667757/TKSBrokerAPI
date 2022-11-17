@@ -2883,10 +2883,10 @@ TKSBrokerAPI.py     L:4116 INFO    [2022-11-05 21:56:24,404] Bond payment calend
 from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from math import ceil
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # основной модуль для выполнения торговых операций
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Основной модуль для выполнения торговых операций: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 
 uLogger.level = 10  # DEBUG (10) уровень логирования, рекомендованный по умолчанию для `TKSBrokerAPI.log`
-uLogger.handlers[0].level = 20  # уровень логирования для вывода в консоль STDOUT, INFO (20) рекомендовано по умолчанию
+uLogger.handlers[0].level = 20  # Уровень логирования для вывода в консоль STDOUT, INFO (20) рекомендовано по умолчанию
 
 start = datetime.now(tzutc())
 
@@ -3099,62 +3099,62 @@ TKSBrokerAPI.py     L:1922 INFO    [2022-08-23 17:35:59,958] Statistics of clien
 # Author: Timur Gilmullin
 
 
-# --- Import, constants and variables initialization section -----------------------------------------------------------
+# --- Секция инициализации: импорты, константы и переменные ------------------------------------------------------------
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from math import ceil
 
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Основной модуль для выполнения торговых операций: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT
 
 
 class TradeScenario(TinkoffBrokerServer):
-    """This class describe methods with trading logic."""
+    """Этот класс описывает методы для логики торгового сценария."""
 
     def __init__(self, userToken: str, userAccount: str = None) -> None:
         """
-        Trade scenario init and parametrize.
+        Инициализация и параметризация торгового сценария.
 
-        :param userToken: Bearer token for Tinkoff Invest API. Or use environment variable `TKS_API_TOKEN`.
-        :param userAccount: string with numeric user account ID in Tinkoff Broker. Or use environment variable `TKS_ACCOUNT_ID`.
+        :param userToken: Bearer token для Tinkoff Invest API. Или используйте переменную окружения `TKS_API_TOKEN`.
+        :param userAccount: строка с номером аккаунта пользователя accountId. Или используйте переменную окружения `TKS_ACCOUNT_ID`.
 
-        See TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
+        Документация на модуль TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
         """
-        super().__init__(token=userToken, accountId=userAccount)  # call parent initialize section `__init__()`
+        super().__init__(token=userToken, accountId=userAccount)  # вызов инициализации параметров `__init__()` основного класса в TKSBrokerAPI
 
-        # Additional trade variables for current scenario:
-        self.tickers = []  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
-        self.reserve = 0.05  # We reserve some money when open positions, 5% by default
-        self.lots = 1  # Minimum lots to buy or sell
-        self.tpStopDiff = 0.03  # 3% TP by default for stop-orders
-        self.tpLimitDiff = 0.025  # 2.5% TP by default for pending limit-orders
-        self.tolerance = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
-        self.depth = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
-        self.volDiff = 0.1  # Enough volumes difference to open position, 10% by default
+        # Дополнительные параметры для текущего торгового сценария:
+        self.tickers = []  # Вы можете задать список инструментов различным образом: перечислить их напрямую или задать как результат некоторой функции фильтрации или скринера
+        self.reserve = 0.05  # Доля резервируемых средств (от 0 до 1), не участвующих в торгах, 0.05 (это 5%) по умолчанию
+        self.lots = 1  # Минимальное число лотов для покупки или продажи
+        self.tpStopDiff = 0.03  # 3% тейк-профит по умолчанию для стоп-ордеров
+        self.tpLimitDiff = 0.025  # 2.5% тейк-профит по умолчанию для отложенных лимитных ордеров
+        self.tolerance = 0.001  # Допустимое отклонение текущей рыночной цены от целевой цены установленных ордеров, 0.1% по умолчанию
+        self.depth = 20  # Насколько глубоко запрашивать стакан цен для анализа текущих объёмов торгов, >= 1
+        self.volDiff = 0.1  # Достаточная разница в объёмах текущих предложений на покупку и продажу для открытия позиции, 10% по умолчанию
 
-        # Self-calculated parameters during the trade process (not for manual setting):
-        self._portfolio = {}  # User portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
-        self._funds = {}  # How much money in different currencies do we have (total - blocked)?
-        self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Current prices
-        self._rawIData = {}  # Raw instruments data
-        self._sumSellers = 0  # current sellers volumes in the DOM
-        self._sumBuyers = 0  # current buyers volumes in the DOM
-        self._iCurr = ""  # Currency of current instrument
-        self._distrByCurr = {}  # Asset distribution by currencies, cost in rub
-        self._assetsCostInRuble = 0  # Cost of all assets in that currency recalc in rub
-        self._currencyFreeCostInRuble = 0  # Free money in that currency recalc in rub
-        self._iData = {}  # Current instrument data from the user's portfolio if it presents there
-        self._lotsToSell = 0  # Not blocked lots of current instrument, available for trading
-        self._averagePrice = 0  # Average price by all lots
-        self._curPriceToSell = 0  # 1st price in the list of buyers orders is the actual price that you can sell
-        self._curProfit = 0  # Changes between current price and average price of instrument
-        self._targetLimit = 0  # Real target + tolerance for placing pending limit order
-        self._changes = False  # True if was changes in the user portfolio
+        # Вычисляемые во время выполнения торгового сценария параметры (не для ручной установки):
+        self._portfolio = {}  # Портфель пользователя. Это словарь с несколькими секциями: {"raw": {...}, "stat": {...}, "analytics": {...}}
+        self._funds = {}  # Сколько денег в различных валютах доступно для торговли? Нужно посчитать (total - blocked), например: {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}
+        self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Актуальные цены брокера для текущего инструмента
+        self._rawIData = {}  # Сырые данные по инструменту с сервера брокера
+        self._sumSellers = 0  # Текущий объём предложений продавцов в стакане (у продавцов можно купить)
+        self._sumBuyers = 0  # Текущий объём предложений покупателей в стакане (покупателям можно продать)
+        self._iCurr = ""  # Валюта текущего инструмента
+        self._distrByCurr = {}  # Распределение активов по валютам, оценка стоимости в рублях
+        self._assetsCostInRuble = 0  # Стоимость активов в валюте инструмента, пересчитанная в рубли
+        self._currencyFreeCostInRuble = 0  # Оценка свободных средств, пересчитанная в рублях, для валюты текущего инструмента
+        self._iData = {}  # Информацию по инструменту из списка текущих открытых позиций в портфеле пользователя
+        self._lotsToSell = 0  # Не заблокированные лоты текущего инструмента, доступные для торговли
+        self._averagePrice = 0  # Средняя цена позиции
+        self._curPriceToSell = 0  # Первая цена в списке ордеров покупателей и есть актуальная цена, по которой можно продать инструмент
+        self._curProfit = 0  # Доля изменения между текущей рыночной ценой и средней позицией по инструменту
+        self._targetLimit = 0  # Целевая цена + упреждение, для размещения отложенного лимитного-ордера
+        self._changes = False  # Устанавливается в `True` если были изменения в портфеле пользователя
 
     def _GetPortfolio(self) -> None:
         """
-        Gets user's portfolio as a dictionary with some sections: `self._portfolio = {"raw": {...}, "stat": {...}, "analytics": {...}}`
+        Получить портфель пользователя. Это словарь с несколькими секциями: {"raw": {...}, "stat": {...}, "analytics": {...}}
         """
         self._portfolio = self.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
@@ -3167,10 +3167,10 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _CalculateFreeFunds(self) -> None:
         """
-        How much money in different currencies do we have (total - blocked)?
+        Сколько денег в различных валютах доступно для торговли? Нужно посчитать (total - blocked).
 
-        Example: `self._funds = {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56},
-                                 "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}`
+        Пример: `self._funds = {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56},
+                                "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}`
         """
         self._funds = self._portfolio["stat"]["funds"]
 
@@ -3178,14 +3178,14 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _GetOrderBook(self, currentTicker: str) -> bool:
         """
-        Gets broker's prices on current instrument.
+        Получить цены брокера для текущего инструмента.
 
-        :param currentTicker: Depth of Market requests for instrument with this ticker.
-        :return: `True` if it is possible to trade (order book not empty).
+        :param currentTicker: биржевой стакан (DOM, Depth of Market) будет запрошен для этого тикера.
+        :return: `True`, если будет возможность торговать (биржевой стакан не пуст).
         """
         emptyBook = True
         self.ticker = currentTicker
-        self.figi = ""  # We don't know FIGI for every ticker, so empty string means to determine it automatically
+        self.figi = ""  # Мы не знаем FIGI для каждого тикера, поэтому указываем здесь пустую строку. В этом случае TKSBrokerAPI определит FIGI автоматически.
 
         self._ordersBook = self.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
 
@@ -3199,26 +3199,26 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _CalculateDataForOpenRules(self):
         """
-        Gets instrument's data and its currency. And then gets distribution by currencies, cost of previously
-        purchased assets and free money in that currency.
+        Получить данные по инструменту и его валюте у брокера. И затем получаем аналитику портфеля:
+        распределение активов по валютам, стоимость ранее купленных активов и доступный свободный остаток.
         """
         uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(self.ticker))
 
         self._rawIData = self.SearchByTicker(requestPrice=False, show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
-        self._iCurr = self._rawIData["currency"]  # currency of current instrument
-        self._distrByCurr = self._portfolio["analytics"]["distrByCurrencies"]  # asset distribution by currencies, cost in rub
-        self._assetsCostInRuble = self._distrByCurr[self._iCurr]["cost"]  # cost of all assets in that currency recalc in rub
-        self._currencyFreeCostInRuble = self._funds[self._iCurr]["freeCostRUB"]  # free money in that currency recalc in rub
+        self._iCurr = self._rawIData["currency"]  # Валюта текущего инструмента
+        self._distrByCurr = self._portfolio["analytics"]["distrByCurrencies"]  # Распределение активов по валютам, оценка стоимости в рублях
+        self._assetsCostInRuble = self._distrByCurr[self._iCurr]["cost"]  # Стоимость активов в валюте инструмента, пересчитанная в рубли
+        self._currencyFreeCostInRuble = self._funds[self._iCurr]["freeCostRUB"]  # Оценка свободных средств, пересчитанная в рублях, для валюты текущего инструмента
 
     def _CalculateDOMSums(self):
-        """Calculates current sellers and buyers volumes in the DOM"""
-        self._sumSellers = sum([x["quantity"] for x in self._ordersBook["buy"]])  # current sellers volumes in the DOM
-        self._sumBuyers = sum([x["quantity"] for x in self._ordersBook["sell"]])  # current buyers volumes in the DOM
+        """Вычислить текущие объёмы предложений продавцов и покупателей в биржевом стакане."""
+        self._sumSellers = sum([x["quantity"] for x in self._ordersBook["buy"]])  # Текущий объём предложений продавцов в стакане (у продавцов можно купить)
+        self._sumBuyers = sum([x["quantity"] for x in self._ordersBook["sell"]])  # Текущий объём предложений покупателей в стакане (покупателям можно продать)
 
     def _OpenBuyMarketPosition(self):
         """
-        Gets current price, then calculates take profit price and validity for stop-order.
-        And then opening BUY market position and creating take profit stop-order.
+        Получаем текущую цену, вычисляем цену потенциального тейк-профита и срок действия для стоп-ордера.
+        И затем открываем BUY позицию по рынку и создаём стоп-ордер по желаемой цене тейк-профита.
         """
         currentPriceToBuy = self._ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
         target = currentPriceToBuy * (1 + self.tpStopDiff)  # take profit price target
@@ -3231,7 +3231,7 @@ class TradeScenario(TinkoffBrokerServer):
 
         buyResponse = self.Buy(lots=self.lots, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
 
-        if "message" in buyResponse.keys():
+        if "message" in buyResponse.keys() and buyResponse["message"]:
             uLogger.warning("Server message: {}".format(buyResponse["message"]))
 
         else:
@@ -3239,13 +3239,13 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _Step3(self):
         """
-        Implementation of Step 3: if the instrument was not purchased earlier, then checking:
-        - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-          of all instruments in this currency, then check:
-          - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-            and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour.
+        - Шаг 3: если инструмент отсутствует в списке текущих открытых позиций пользователя, то проверяем:
+          - если денежный резерв (свободные деньги) в валюте инструмента больше, чем 5% от общей стоимости
+            всех инструментов в этой валюте, то проверяем:
+            - если объёмы покупателей в стакане больше хотя бы на 10% чем объёмы продавцов, тогда покупаем 1 лот инструмента
+              по рынку и размещаем тейк-профит как стоп-ордер на 3% выше, чем текущая цена покупки, с отменой ордера через 1 час;
         """
-        # Also, checking reserve and volumes diff before buy:
+        # Прежде чем совершить сделку, проверяем резервы и разницу объёмов спроса и предложения, в соответствии с заданными параметрами:
         if self._currencyFreeCostInRuble / self._assetsCostInRuble >= self.reserve:
             self._CalculateDOMSums()
 
@@ -3260,33 +3260,34 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _CalculateDataForCloseRules(self):
         """
-        Gets instrument from list of instruments in user portfolio. And then calculates available lots for sale, average price
-        and current price of instrument. And then calculating price to close position without waiting for the take profit.
+        Получить информацию по инструменту из списка текущих открытых позиций в портфеле пользователя. Затем вычисляем
+        количество доступных лотов для продажи, среднюю цену позиции и текущую рыночную цену инструмента. И затем
+        вычисляем цену с упреждением, по которой можно закрыть позицию, не дожидаясь строгого исполнения по цене тейк-профита.
         """
         uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(self.ticker))
 
         self._iData = self.GetInstrumentFromPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
 
-        self._lotsToSell = self._iData["volume"] - self._iData["blocked"]  # not blocked lots of current instrument, available for trading
-        self._averagePrice = self._iData["average"]  # average price by all lots
-        self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # 1st price in the list of buyers orders is the actual price that you can sell
+        self._lotsToSell = self._iData["volume"] - self._iData["blocked"]  # Не заблокированные лоты текущего инструмента, доступные для торговли
+        self._averagePrice = self._iData["average"]  # Средняя цена позиции
+        self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # первая цена в списке ордеров покупателей и есть актуальная цена, по которой можно продать инструмент
 
-        self._curProfit = (self._curPriceToSell - self._averagePrice) / self._averagePrice  # changes between current price and average price of instrument
-        target = self._curPriceToSell * (1 + self.tolerance)  # enough price target to sell
-        self._targetLimit = ceil(target / self._iData["step"]) * self._iData["step"]  # real target + tolerance for placing pending limit order
+        self._curProfit = (self._curPriceToSell - self._averagePrice) / self._averagePrice  # Доля изменения между текущей рыночной ценой и средней позицией по инструменту
+        target = self._curPriceToSell * (1 + self.tolerance)  # Достаточная цена для продажи
+        self._targetLimit = ceil(target / self._iData["step"]) * self._iData["step"]  # Целевая цена + упреждение, для размещения отложенного лимитного-ордера
 
     def _OpenSellMarketPosition(self):
-        """Opening sell market order if enough profit."""
+        """Открыть отложенный лимитный SELL ордер, если уже достигнут достаточный уровень профита."""
         uLogger.info(
             "The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
                 self._curPriceToSell, self._iData["currency"], self._averagePrice, self._iData["currency"],
                 self._curProfit * 100, self.tpLimitDiff * 100,
             ))
 
-        # Opening SELL pending limit order:
+        # Открываем отложенный лимитный SELL ордер:
         sellResponse = self.SellLimit(lots=self._lotsToSell, targetPrice=self._targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
 
-        if "message" in sellResponse.keys():
+        if "message" in sellResponse.keys() and sellResponse["message"]:
             uLogger.warning("Server message: {}".format(sellResponse["message"]))
 
         else:
@@ -3294,12 +3295,12 @@ class TradeScenario(TinkoffBrokerServer):
 
     def _Step4(self):
         """
-        Implementation of Step 4: if the instrument is in the list of open positions, then checking:
-        - if the current price is 2.5% already higher than the average position price, then place pending
-          limit order with all volumes 0.1% higher than the current price so that the position is closed
-          with a profit with a high probability during the current session.
+        - Шаг 4: если по инструменту уже была открыта позиция, то проверяем:
+          - если текущая средняя цена позиции хотя бы на 2.5% выше, чем средняя цена покупки, то размещаем отложенный
+            лимитный ордер на весь объём позиции по цене на 0.1% выше, чем текущая рыночная цена. Это нужно для того, чтобы позиция 
+            закрылась с профитом, с большой вероятностью в течение текущей торговой сессии.
         """
-        # Also, checking for a sufficient price difference before sell:
+        # Проверяем на достаточную разницу в цене для профита, перед продажей:
         if self._curProfit >= self.tpLimitDiff:
             self._OpenSellMarketPosition()
 
@@ -3310,61 +3311,61 @@ class TradeScenario(TinkoffBrokerServer):
             ))
 
     def Run(self):
-        """Trading scenario section. Implementation of one trade iteration."""
-        self._changes = False  # Setting no changes in user portfolio before trade iteration
+        """Секция торгового сценария. Реализация одной торговой итерации."""
+        self._changes = False  # На начало итерации изменений в портфеле пользователя не было
 
         for ticker in self.tickers:
             uLogger.info("--- Ticker [{}], data analysis...".format(ticker))
 
-            # - Step 1: request the client's current portfolio and determining funds available for trading
+            # - Шаг 1: запрос текущего портфеля клиента и определение доступных объёмов и валют для торговли
             self._GetPortfolio()
             self._CalculateFreeFunds()
 
-            # - Step 2: request a Depth of Market for the selected instruments
+            # - Шаг 2: запрос стакана цен для текущего инструмента
             emptyBook = self._GetOrderBook(currentTicker=ticker)
 
             if emptyBook:
                 continue
 
-            # Checks if instrument (defined by its `ticker`) is in portfolio:
+            # Проверяем, есть ли открытые позиции по текущему инструменту, заданному через `ticker`, в портфеле пользователя:
             isInPortfolio = self.IsInPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
             if not isInPortfolio:
 
-                # - Step 3: if the instrument was not purchased earlier, then checking:
-                #   - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-                #     of all instruments in this currency, then check:
-                #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-                #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
+                # - Шаг 3: если инструмент отсутствует в списке текущих открытых позиций пользователя, то проверяем:
+                #   - если денежный резерв (свободные деньги) в валюте инструмента больше, чем 5% от общей стоимости
+                #     всех инструментов в этой валюте, то проверяем:
+                #     - если объёмы покупателей в стакане больше хотя бы на 10% чем объёмы продавцов, тогда покупаем 1 лот инструмента
+                #       по рынку и размещаем тейк-профит как стоп-ордер на 3% выше, чем текущая цена покупки, с отменой ордера через 1 час;
 
                 self._CalculateDataForOpenRules()
                 self._Step3()
 
             else:
 
-                # - Step 4: if the instrument is in the list of open positions, then checking:
-                #   - if the current price is 2.5% already higher than the average position price, then place pending
-                #     limit order with all volumes 0.1% higher than the current price so that the position is closed
-                #     with a profit with a high probability during the current session.
+                # - Шаг 4: если по инструменту уже была открыта позиция, то проверяем:
+                #   - если текущая средняя цена позиции хотя бы на 2.5% выше, чем средняя цена покупки, то размещаем отложенный
+                #     лимитный ордер на весь объём позиции по цене на 0.1% выше, чем текущая рыночная цена. Это нужно для того, чтобы позиция 
+                #     закрылась с профитом, с большой вероятностью в течение текущей торговой сессии.
 
                 self._CalculateDataForCloseRules()
                 self._Step4()
 
-        # - Step 5: request the current user's portfolio after all trades and show changes
+        # - Шаг 5: запрашиваем и отображаем изменения в портфеле пользователя после всех выполненных операций
 
         uLogger.info("--- All trade operations finished.{}".format(" Let's show what we got in the user's portfolio after all trades." if self._changes else ""))
 
-        # Showing detailed user portfolio information if it was changes:
+        # Текущее состояние портфеля пользователя, если в нём были изменения:
         if self._changes:
             self.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
 
 
 def TimerDecorator(func):
-    """Some technical operations before main scenario started and then after main scenario finished."""
+    """Некоторые технические операции перед запуском основного сценария и затем после его окончания."""
 
     def Wrapper():
-        uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-        uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
+        uLogger.level = 10  # DEBUG (10) уровень логирования, рекомендованный по умолчанию для `TKSBrokerAPI.log`
+        uLogger.handlers[0].level = 20  # Уровень логирования для вывода в консоль STDOUT, INFO (20) рекомендовано по умолчанию
 
         start = datetime.now(tzutc())
 
@@ -3385,38 +3386,38 @@ def TimerDecorator(func):
 @TimerDecorator
 def Trade():
     """
-    Initialization of a class instance for a trading scenario and parameterization of the main trading parameters.
+    Инициализация экземпляра класса для торгового сценария и параметризация основных торговых параметров.
 
-    TKSBrokerAPI module documentation:
-    - in english: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+    Документация на модуль TKSBrokerAPI:
+    - на английском: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 
-    TKSBrokerAPI platform documentation:
-    - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-    - in russian: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
+    Документация на платформу TKSBrokerAPI:
+    - на английском: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
+    - на русском: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
     """
-    # --- Main trader object init:
+    # --- Инициализация основного объекта трейдера:
     trader = TradeScenario(
-        userToken="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
-        userAccount="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
+        userToken="",  # Внимание! Установите строку с вашим токеном сюда или используйте переменную окружения `TKS_API_TOKEN`
+        userAccount="",  # Внимание! Установите строку с вашим accountId сюда или используйте переменную окружения `TKS_ACCOUNT_ID`
     )
 
-    # --- Set here any parameters you need for trading:
-    trader.tickers = ["YNDX", "IBM", "GOOGL"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
-    trader.reserve = 0.05  # We reserve some money when open positions, 5% by default
-    trader.lots = 1  # Minimum lots to buy or sell
-    trader.tpStopDiff = 0.03  # 3% TP by default for stop-orders
-    trader.tpLimitDiff = 0.025  # 2.5% TP by default for pending limit-orders
-    trader.tolerance = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
-    trader.depth = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
-    trader.volDiff = 0.1  # Enough volumes difference to open position, 10% by default
+    # --- Установите здесь переменные и константы, необходимые для торговли по вашему алгоритму:
+    trader.tickers = ["YNDX", "IBM", "GAZP"]  # Вы можете задать список инструментов различным образом: перечислить их напрямую или задать как результат некоторой функции фильтрации или скринера
+    trader.reserve = 0.05  # Доля резервируемых средств (от 0 до 1), не участвующих в торгах, 0.05 (это 5%) по умолчанию
+    trader.lots = 1  # Минимальное число лотов для покупки или продажи
+    trader.tpStopDiff = 0.03  # 3% тейк-профит по умолчанию для стоп-ордеров
+    trader.tpLimitDiff = 0.025  # 2.5% тейк-профит по умолчанию для отложенных лимитных ордеров
+    trader.tolerance = 0.001  # Допустимое отклонение текущей рыночной цены от целевой цены установленных ордеров, 0.1% по умолчанию
+    trader.depth = 20  # Насколько глубоко запрашивать стакан цен для анализа текущих объёмов торгов, >= 1
+    trader.volDiff = 0.1  # Достаточная разница в объёмах текущих предложений на покупку и продажу для открытия позиции, 10% по умолчанию
 
-    trader.moreDebug = False  # Set to `True` if you need more debug information, such as headers, requests and responses
+    trader.moreDebug = False  # Установите `True` если вам нужно больше отладочной информации, такой как хедеры, сетевые запросы и ответы
 
-    trader.Run()  # Starting one iteration of trade with all instruments
+    trader.Run()  # Запуск одной итерации торгового сценария со всеми указанными инструментами
 
 
 if __name__ == "__main__":
-    Trade()  # Initialization, parametrization and run trading scenario
+    Trade()  # Инициализация, параметризация и запуск торгового сценария
 ```
 
 </details>
