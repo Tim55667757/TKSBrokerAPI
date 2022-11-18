@@ -3,14 +3,95 @@
 
 
 import pytest
+from datetime import datetime, timedelta
+from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 
 
-class TestTKSBrokerAPIMethods:
+class TestTradeRoutinesMethods:
 
     @pytest.fixture(scope="function", autouse=True)
     def init(self):
         pass
+
+    def test_GetDatesAsStringCheckType(self):
+        result = TradeRoutines.GetDatesAsString(None, None)
+
+        assert isinstance(result, tuple), "Not tuple type returned!"
+        assert isinstance(result[0], str), "Not str type in first parameter returned!"
+        assert isinstance(result[1], str), "Not str type in second parameter returned!"
+
+    def test_GetDatesAsStringPositive(self):
+        now = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)
+        end = now.replace(hour=23, minute=59, second=59, microsecond=0)
+        delta = timedelta(seconds=1)  # diff between expected and actual results must be less than this value
+
+        testData = [
+            (None, None, (
+                now,
+                end,
+            )),
+            ("today", None, (
+                now,
+                end,
+            )),
+            ("yesterday", None, (
+                now - timedelta(days=1),
+                end - timedelta(days=1),
+            )),
+            ("week", None, (
+                now - timedelta(days=6),
+                end,
+            )),
+            ("month", None, (
+                now - timedelta(days=29),
+                end,
+            )),
+            ("year", None, (
+                now - timedelta(days=364),
+                end,
+            )),
+            ("-1", None, (
+                now - timedelta(days=0),
+                end,
+            )),
+            ("-2", None, (
+                now - timedelta(days=1),
+                end,
+            )),
+            ("-365", None, (
+                now - timedelta(days=364),
+                end,
+            )),
+            ("2020-02-20", None, (
+                datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                end,
+            )),
+            ("2020-02-20", "2022-02-22", (
+                datetime.strptime("2020-02-20", "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc()),
+                datetime.strptime("2022-02-22", "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()),
+            )),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.GetDatesAsString(start=test[0], end=test[1])
+
+            dateFormat = "%Y-%m-%dT%H:%M:%SZ"
+            resultDates = (
+                datetime.strptime(result[0], dateFormat).replace(tzinfo=tzutc()),
+                datetime.strptime(result[1], dateFormat).replace(tzinfo=tzutc()),
+            )
+
+            delta0 = resultDates[0] - test[2][0] if resultDates[0] >= test[2][0] else test[2][0] - resultDates[0]
+            delta1 = resultDates[1] - test[2][1] if resultDates[1] >= test[2][1] else test[2][1] - resultDates[1]
+
+            assert delta0 <= delta, 'Expected output ("{}", "{}") and delta must be <= 1 sec!\nActual: `GetDatesAsString(start="{}", end="{}") -> ("{}", "{}")`'.format(
+                test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
+            )
+
+            assert delta1 <= delta, 'Expected output ("{}", "{}") and delta must be <= 1 sec!\nActual: `GetDatesAsString(start="{}", end="{}") -> ("{}", "{}")`'.format(
+                test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
+            )
 
     def test_NanoToFloatCheckType(self):
         assert isinstance(TradeRoutines.NanoToFloat("123", 456789000), float), "Not float type returned!"
