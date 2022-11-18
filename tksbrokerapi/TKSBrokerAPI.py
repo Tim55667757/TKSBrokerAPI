@@ -248,13 +248,16 @@ class TinkoffBrokerServer:
         self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
         self.ticker = ""
-        """String with ticker, e.g. `GOOGL`. Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc. More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
+        """String with ticker, e.g. `GOOGL`. Tickers may be upper case only.
+
+        Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc.
+        More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
 
         See also: `SearchByTicker()`, `SearchInstruments()`.
         """
 
         self.figi = ""
-        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`.
+        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
 
         See also: `SearchByFIGI()`, `SearchInstruments()`.
         """
@@ -4576,14 +4579,16 @@ def Main(**kwargs):
                 uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
 
             if args.ticker:
-                if args.ticker in trader.aliasesKeys:
-                    trader.ticker = trader.aliases[args.ticker]  # Replace some tickers with its aliases
+                ticker = args.ticker.upper()  # Tickers may be upper case only
+
+                if ticker in trader.aliasesKeys:
+                    trader.ticker = trader.aliases[ticker]  # Replace some tickers with its aliases
 
                 else:
-                    trader.ticker = args.ticker
+                    trader.ticker = ticker
 
             if args.figi:
-                trader.figi = args.figi
+                trader.figi = args.figi.upper()  # FIGIs may be upper case only
 
             if args.depth is not None:
                 trader.depth = args.depth
