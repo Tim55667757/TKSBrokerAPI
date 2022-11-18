@@ -722,15 +722,13 @@ class TinkoffBrokerServer:
             if "sector" in iJSON.keys() and iJSON["sector"]:
                 info.append("| Sector:                                                     | {:<54} |\n".format(iJSON["sector"]))
 
-            info.append("| Country of instrument:                                      | {:<54} |\n".format("{}{}".format(
-                "({}) ".format(iJSON["countryOfRisk"]) if "countryOfRisk" in iJSON.keys() and iJSON["countryOfRisk"] else "",
-                iJSON["countryOfRiskName"] if "countryOfRiskName" in iJSON.keys() and iJSON["countryOfRiskName"] else "",
-            )))
+            if "countryOfRisk" in iJSON.keys() and iJSON["countryOfRisk"] and "countryOfRiskName" in iJSON.keys() and iJSON["countryOfRiskName"]:
+                info.append("| Country of instrument:                                      | {:<54} |\n".format("({}) {}".format(iJSON["countryOfRisk"], iJSON["countryOfRiskName"])))
 
             info.extend([
                 splitLine,
                 "| FIGI (Financial Instrument Global Identifier):              | {:<54} |\n".format(iJSON["figi"]),
-                "| Exchange:                                                   | {:<54} |\n".format(iJSON["exchange"]),
+                "| Real exchange [Exchange section]:                           | {:<54} |\n".format("{} [{}]".format(TKS_REAL_EXCHANGES[iJSON["realExchange"]], iJSON["exchange"])),
             ])
 
             if "isin" in iJSON.keys() and iJSON["isin"]:
@@ -763,6 +761,9 @@ class TinkoffBrokerServer:
 
             if "type" in iJSON.keys() and iJSON["type"]:
                 info.append("| Type of the instrument:                                     | {:<54} |\n".format(iJSON["type"]))
+
+                if "shareType" in iJSON.keys() and iJSON["shareType"]:
+                    info.append("| Share type:                                                 | {:<54} |\n".format(TKS_SHARE_TYPES[iJSON["shareType"]]))
 
             if "futuresType" in iJSON.keys() and iJSON["futuresType"]:
                 info.append("| Futures type:                                               | {:<54} |\n".format(iJSON["futuresType"]))

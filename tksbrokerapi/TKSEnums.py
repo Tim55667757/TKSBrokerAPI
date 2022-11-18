@@ -249,3 +249,16 @@ TKS_REAL_EXCHANGES = {
     "REAL_EXCHANGE_OTC": "OTC",
 }
 """The real exchange for the execution of trades, enums: https://tinkoff.github.io/investAPI/instruments/#realexchange"""
+
+TKS_SHARE_TYPES = {
+    "SHARE_TYPE_UNSPECIFIED": "Undefined",
+    "SHARE_TYPE_COMMON": "Ordinary",
+    "SHARE_TYPE_PREFERRED": "Privileged",
+    "SHARE_TYPE_ADR": "American Depositary Receipts (ADR)",
+    "SHARE_TYPE_GDR": "Global Depositary Receipts (GDR)",
+    "SHARE_TYPE_MLP": "Master Limited Partnership (MLP)",
+    "SHARE_TYPE_NY_REG_SHRS": "New York registered shares",
+    "SHARE_TYPE_CLOSED_END_FUND": "Closed investment fund",
+    "SHARE_TYPE_REIT": "Real estate trust",
+}
+"""Share type, enums: https://tinkoff.github.io/investAPI/instruments/#sharetype"""
