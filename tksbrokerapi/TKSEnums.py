@@ -41,13 +41,13 @@ TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
 TKS_TICKER_ALIASES = {
-    "USD": "USD000UTSTOM", "usd": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
-    "EUR": "EUR_RUB__TOM", "eur": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
-    "GBP": "GBPRUB_TOM", "gbp": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
-    "CHF": "CHFRUB_TOM", "chf": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
-    "CNY": "CNYRUB_TOM", "cny": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
-    "HKD": "HKDRUB_TOM", "hkd": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
-    "TRY": "TRYRUB_TOM", "try": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
+    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
+    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
+    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    "HKD": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "TRY": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
 }
 """Some aliases instead official tickers for using in CLI. For example, you can use `"USD"` instead of `"USD000UTSTOM"`."""
 
