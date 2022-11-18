@@ -52,6 +52,7 @@ from multiprocessing.pool import ThreadPool
 import pandas as pd
 
 from TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
+from TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data. See docs here: https://github.com/Tim55667757/PriceGenerator
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
@@ -70,52 +71,6 @@ __version__ = "1.5"  # The "major.minor" version setup here, but build number de
 
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
-
-# --- Main constants:
-
-NANO = 0.000000001  # SI-constant nano = 10^-9
-
-
-def NanoToFloat(units: str, nano: int) -> float:
-    """
-    Convert number in nano-view mode with string parameter `units` and integer parameter `nano` to float view. Examples:
-
-    `NanoToFloat(units="2", nano=500000000) -> 2.5`
-
-    `NanoToFloat(units="0", nano=50000000) -> 0.05`
-
-    :param units: integer string or integer parameter that represents the integer part of number
-    :param nano: integer string or integer parameter that represents the fractional part of number
-    :return: float view of number
-    """
-    return int(units) + int(nano) * NANO
-
-
-def FloatToNano(number: float) -> dict:
-    """
-    Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`. Examples:
-
-    `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
-
-    `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
-
-    :param number: float number
-    :return: nano-type view of number: `{"units": "string", "nano": integer}`
-    """
-    splitByPoint = str(number).split(".")
-    frac = 0
-
-    if len(splitByPoint) > 1:
-        if len(splitByPoint[1]) <= 9:
-            frac = int("{}{}".format(
-                int(splitByPoint[1]),
-                "0" * (9 - len(splitByPoint[1])),
-            ))
-
-    if (number < 0) and (frac > 0):
-        frac = -frac
-
-    return {"units": str(int(number)), "nano": frac}
 
 
 def GetDatesAsString(start: str = None, end: str = None) -> tuple:
