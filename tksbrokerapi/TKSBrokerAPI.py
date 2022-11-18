@@ -37,8 +37,7 @@ import os
 from argparse import ArgumentParser
 from importlib.metadata import version
 
-from datetime import datetime, timedelta
-from dateutil.tz import tzlocal, tzutc
+from dateutil.tz import tzlocal
 from time import sleep
 
 import re
