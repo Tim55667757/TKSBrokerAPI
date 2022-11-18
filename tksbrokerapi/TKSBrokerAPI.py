@@ -11,7 +11,7 @@ the necessary information from the broker. It is easy enough to integrate into v
 
 - **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-- **See examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+- **See CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 - **Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/

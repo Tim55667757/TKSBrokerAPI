@@ -5,6 +5,7 @@
 Module contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+- **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
 - **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
