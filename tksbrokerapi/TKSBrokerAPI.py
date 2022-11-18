@@ -73,74 +73,6 @@ CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
 
 
-def GetDatesAsString(start: str = None, end: str = None) -> tuple:
-    """
-    Create tuple of date and time strings with timezone parsed from user-friendly date.
-
-    User dates format must be like: `%Y-%m-%d`, e.g. `2020-02-03` (3 Feb, 2020).
-
-    Example input: "2022-06-01" "2022-06-20" -> output: ("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")
-    An error exception will occur if input date has incorrect format.
-
-    If `start=None`, `end=None` then return dates from yesterday to the end of the day.
-    If `start=some_date_1`, `end=None` then return dates from `some_date_1` to the end of the day.
-    If `start=some_date_1`, `end=some_date_2` then return dates from start of `some_date_1` to end of `some_date_2`.
-    Start day may be negative integer numbers: `-1`, `-2`, `-3` — how many days ago.
-
-    Also, you can use keywords for start if `end=None`:
-    `today` (from 00:00:00 to the end of current day),
-    `yesterday` (-1 day from 00:00:00 to 23:59:59),
-    `week` (-7 day from 00:00:00 to the end of current day),
-    `month` (-30 day from 00:00:00 to the end of current day),
-    `year` (-365 day from 00:00:00 to the end of current day),
-
-    :return: tuple with 2 strings `(start, end)` dates in UTC ISO time format `%Y-%m-%dT%H:%M:%SZ` for OpenAPI.
-             See date and time format here: `TKSEnums.TKS_DATE_TIME_FORMAT`.
-             Example: `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`. Second string is the end of the last day.
-    """
-    uLogger.debug("Input start day is [{}] (UTC), end day is [{}] (UTC)".format(start, end))
-    s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
-    e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
-
-    # time between start and the end of the current day:
-    if start is None or start.lower() == "today":
-        pass
-
-    # from start of the last day to the end of the last day:
-    elif start.lower() == "yesterday":
-        s -= timedelta(days=1)
-        e -= timedelta(days=1)
-
-    # week (-7 day from 00:00:00 to the end of the current day):
-    elif start.lower() == "week":
-        s -= timedelta(days=6)  # +1 current day already taken into account
-
-    # month (-30 day from 00:00:00 to the end of current day):
-    elif start.lower() == "month":
-        s -= timedelta(days=29)  # +1 current day already taken into account
-
-    # year (-365 day from 00:00:00 to the end of current day):
-    elif start.lower() == "year":
-        s -= timedelta(days=364)  # +1 current day already taken into account
-
-    # -N days ago to the end of current day:
-    elif start.startswith('-') and start[1:].isdigit():
-        s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
-
-    # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
-    else:
-        s = datetime.strptime(start, "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
-        e = datetime.strptime(end, "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
-
-    # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
-    s = s.strftime(TKS_DATE_TIME_FORMAT)
-    e = e.strftime(TKS_DATE_TIME_FORMAT)
-
-    uLogger.debug("Start day converted to UTC ISO format, with Z: [{}], and the end day: [{}]".format(s, e))
-
-    return s, e
-
-
 class TinkoffBrokerServer:
     """
     This class implements methods to work with Tinkoff broker server.
@@ -2363,8 +2295,8 @@ class TinkoffBrokerServer:
         If `reportFile` string is not empty then also save human-readable report.
         Shows some statistical data of closed positions.
 
-        :param start: see docstring in `GetDatesAsString()` method
-        :param end: see docstring in `GetDatesAsString()` method
+        :param start: see docstring in `TradeRoutines.GetDatesAsString()` method.
+        :param end: see docstring in `TradeRoutines.GetDatesAsString()` method.
         :param show: if `True` then also prints all records to the console.
         :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
@@ -2375,7 +2307,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        startDate, endDate = GetDatesAsString(start, end)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
+        startDate, endDate = GetDatesAsString(start, end, userFormat=TKS_DATE_FORMAT, outputFormat=TKS_DATE_TIME_FORMAT)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
 
         uLogger.debug("Requesting history of a client's operations. Wait, please...")
 
@@ -2627,8 +2559,8 @@ class TinkoffBrokerServer:
 
         See also: `LoadHistory()` and `ShowHistoryChart()` methods.
 
-        :param start: see docstring in `GetDatesAsString()` method.
-        :param end: see docstring in `GetDatesAsString()` method.
+        :param start: see docstring in `TradeRoutines.GetDatesAsString()` method.
+        :param end: see docstring in `TradeRoutines.GetDatesAsString()` method.
         :param interval: this is a candle interval. Current available values are `"1min"`, `"5min"`, `"15min"`,
                          `"hour"`, `"day"`. Default: `"hour"`.
         :param onlyMissing: if `True` then add only last missing candles, do not request all history length from `start`.
@@ -2639,7 +2571,7 @@ class TinkoffBrokerServer:
         :return: Pandas DataFrame with prices history. Headers of columns are defined by default:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
-        strStartDate, strEndDate = GetDatesAsString(start, end)  # example: ("2020-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
+        strStartDate, strEndDate = GetDatesAsString(start, end, userFormat=TKS_DATE_FORMAT, outputFormat=TKS_DATE_TIME_FORMAT)  # example: ("2020-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
         headers = ["date", "time", "open", "high", "low", "close", "volume"]  # sequence and names of column headers
         history = None  # empty pandas object for history
 
@@ -2662,7 +2594,7 @@ class TinkoffBrokerServer:
         dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
         dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
         if interval.lower() != "day":
-            dtEnd += timedelta(seconds=1)  # adds 1 sec for requests, because day end returned by `GetDatesAsString()` as 23:59:59
+            dtEnd += timedelta(seconds=1)  # adds 1 sec for requests, because day end returned by `TradeRoutines.GetDatesAsString()` is 23:59:59
 
         delta = dtEnd - dtStart  # current UTC time minus last time in file
         deltaMinutes = delta.days * 1440 + delta.seconds // 60  # minutes between start and end dates
