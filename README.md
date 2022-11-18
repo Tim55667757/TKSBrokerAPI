@@ -779,43 +779,42 @@ TKSBrokerAPI.py     L:1074 INFO    [2022-08-11 22:41:39,040] Full search results
 ```commandline
 $ tksbrokerapi -t CNY -i
 
-TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:17:15,214] # Main information: ticker [CNYRUB_TOM], FIGI [BBG0013HRTL0]
+TKSBrokerAPI.py     L:930  INFO    [2022-11-18 13:58:40,118] # Main information: ticker [CNYRUB_TOM], FIGI [BBG0013HRTL0]
 
-* Actual at: [2022-10-27 21:17] (UTC)
+* Actual at: [2022-11-18 10:58] (UTC)
 
-| Parameters                                              | Values                                                  |
-|---------------------------------------------------------|---------------------------------------------------------|
-| Ticker:                                                 | CNYRUB_TOM                                              |
-| Full name:                                              | Юань                                                    |
-| Country of instrument:                                  |                                                         |
-|                                                         |                                                         |
-| FIGI (Financial Instrument Global Identifier):          | BBG0013HRTL0                                            |
-| Exchange:                                               | FX                                                      |
-| Class Code:                                             | CETS                                                    |
-|                                                         |                                                         |
-| Current broker security trading status:                 | Not available for trading                               |
-|                                                         |                                                         |
-| Buy operations allowed:                                 | Yes                                                     |
-| Sale operations allowed:                                | Yes                                                     |
-| Short positions allowed:                                | Yes                                                     |
-|                                                         |                                                         |
-| Limit orders allowed:                                   | No                                                      |
-| Market orders allowed:                                  | No                                                      |
-| API trade allowed:                                      | Yes                                                     |
-|                                                         |                                                         |
-| Type of the instrument:                                 | Currencies                                              |
-| ISO currency name:                                      | cny                                                     |
-| Payment currency:                                       | rub                                                     |
-|                                                         |                                                         |
-| Previous close price of the instrument:                 | 8.5 rub                                                 |
-| Last deal price of the instrument:                      | 8.47 rub                                                |
-| Changes between last deal price and last close  %       | -0.35                                                   |
-| Current limit price, min / max:                         | 8.112 rub / 8.874 rub                                   |
-| Actual price, sell / buy:                               | N/A rub / N/A rub                                       |
-| Minimum lot to buy:                                     | 1000                                                    |
-| Minimum price increment (step):                         | 0.001 rub                                               |
+| Parameters                                                  | Values                                                 |
+|-------------------------------------------------------------|--------------------------------------------------------|
+| Ticker:                                                     | CNYRUB_TOM                                             |
+| Full name:                                                  | Юань                                                   |
+|                                                             |                                                        |
+| FIGI (Financial Instrument Global Identifier):              | BBG0013HRTL0                                           |
+| Real exchange [Exchange section]:                           | MOEX [FX]                                              |
+| Class Code (exchange section where instrument is traded):   | CETS                                                   |
+|                                                             |                                                        |
+| Current broker security trading status:                     | Normal trading                                         |
+|                                                             |                                                        |
+| Buy operations allowed:                                     | Yes                                                    |
+| Sale operations allowed:                                    | Yes                                                    |
+| Short positions allowed:                                    | Yes                                                    |
+|                                                             |                                                        |
+| Limit orders allowed:                                       | Yes                                                    |
+| Market orders allowed:                                      | Yes                                                    |
+| API trade allowed:                                          | Yes                                                    |
+|                                                             |                                                        |
+| Type of the instrument:                                     | Currencies                                             |
+| ISO currency name:                                          | cny                                                    |
+| Payment currency:                                           | rub                                                    |
+|                                                             |                                                        |
+| Previous close price of the instrument:                     | 8.453 rub                                              |
+| Last deal price of the instrument:                          | 8.473 rub                                              |
+| Changes between last deal price and last close              | 0.24% (+0.02 rub)                                      |
+| Current limit price, min / max:                             | 8.064 rub / 8.857 rub                                  |
+| Actual price, sell / buy:                                   | 8.473 rub / 8.474 rub                                  |
+| Minimum lot to buy:                                         | 1000                                                   |
+| Minimum price increment (step):                             | 0.001 rub                                              |
 
-TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:17:15,217] Info about instrument with ticker [CNYRUB_TOM] and FIGI [BBG0013HRTL0] was saved to file: [info.md]
+TKSBrokerAPI.py     L:939  INFO    [2022-11-18 13:58:40,121] Info about instrument with ticker [CNYRUB_TOM] and FIGI [BBG0013HRTL0] was saved to file: [info.md]
 ```
 
 </details>
@@ -826,59 +825,59 @@ TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:17:15,217] Info about instrume
 ```commandline
 $ tksbrokerapi -v 10 --ticker IBM --info
 
-TKSBrokerAPI.py     L:3964 DEBUG   [2022-10-28 00:18:28,981] >>> TKSBrokerAPI module started at: [2022-10-27 21:18:28] UTC, it is [2022-10-28 00:18:28] local time
-TKSBrokerAPI.py     L:3978 DEBUG   [2022-10-28 00:18:28,983] TKSBrokerAPI major.minor.build version used: [1.3.dev77]
-TKSBrokerAPI.py     L:3979 DEBUG   [2022-10-28 00:18:28,983] Host CPU count: [8]
-TKSBrokerAPI.py     L:210  DEBUG   [2022-10-28 00:18:28,983] Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
-TKSBrokerAPI.py     L:223  DEBUG   [2022-10-28 00:18:28,983] Main account ID [**********] set up from environment variable `TKS_ACCOUNT_ID`
-TKSBrokerAPI.py     L:272  DEBUG   [2022-10-28 00:18:28,983] Broker API server: https://invest-public-api.tinkoff.ru/rest
-TKSBrokerAPI.py     L:408  DEBUG   [2022-10-28 00:18:29,004] Local cache with raw instruments data is used: [dump.json]
-TKSBrokerAPI.py     L:409  DEBUG   [2022-10-28 00:18:29,004] Dump file was last modified [2022-10-27 20:31:18] UTC
-TKSBrokerAPI.py     L:1045 DEBUG   [2022-10-28 00:18:29,004] Requesting current prices for instrument with ticker [IBM] and FIGI [BBG000BLNNH6]...
-TKSBrokerAPI.py     L:1364 DEBUG   [2022-10-28 00:18:29,122] Requesting current trading status, FIGI: [BBG000BLNNH6]. Wait, please...
-TKSBrokerAPI.py     L:1370 DEBUG   [2022-10-28 00:18:29,218] Records about current trading status successfully received
-TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:18:29,219] # Main information: ticker [IBM], FIGI [BBG000BLNNH6]
+TKSBrokerAPI.py     L:4545 DEBUG   [2022-11-18 14:05:00,882] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+TKSBrokerAPI.py     L:4546 DEBUG   [2022-11-18 14:05:00,882] >>> TKSBrokerAPI module started at: [2022-11-18 11:05:00] UTC, it is [2022-11-18 14:05:00] local time
+TKSBrokerAPI.py     L:4560 DEBUG   [2022-11-18 14:05:00,883] TKSBrokerAPI major.minor.build version used: [1.5.dev0]
+TKSBrokerAPI.py     L:4561 DEBUG   [2022-11-18 14:05:00,883] Host CPU count: [8]
+TKSBrokerAPI.py     L:212  DEBUG   [2022-11-18 14:05:00,883] Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:225  DEBUG   [2022-11-18 14:05:00,883] Main account ID [**********] set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:277  DEBUG   [2022-11-18 14:05:00,883] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:444  DEBUG   [2022-11-18 14:05:00,903] Local cache with raw instruments data is used: [dump.json]. Last modified: [2022-11-18 08:28:22] UTC
+TKSBrokerAPI.py     L:1161 DEBUG   [2022-11-18 14:05:00,904] Requesting current prices: ticker [IBM], FIGI [BBG000BLNNH6]. Wait, please...
+TKSBrokerAPI.py     L:1515 DEBUG   [2022-11-18 14:05:01,028] Requesting current trading status, FIGI: [BBG000BLNNH6]. Wait, please...
+TKSBrokerAPI.py     L:930  INFO    [2022-11-18 14:05:01,198] # Main information: ticker [IBM], FIGI [BBG000BLNNH6]
 
-* Actual at: [2022-10-27 21:18] (UTC)
+* Actual at: [2022-11-18 11:05] (UTC)
 
-| Parameters                                              | Values                                                  |
-|---------------------------------------------------------|---------------------------------------------------------|
-| Ticker:                                                 | IBM                                                     |
-| Full name:                                              | IBM                                                     |
-| Sector:                                                 | it                                                      |
-| Country of instrument:                                  | (US) Соединенные Штаты Америки                          |
-|                                                         |                                                         |
-| FIGI (Financial Instrument Global Identifier):          | BBG000BLNNH6                                            |
-| Exchange:                                               | SPB_MORNING                                             |
-| ISIN (International Securities Identification Number):  | US4592001014                                            |
-| Class Code:                                             | SPBXM                                                   |
-|                                                         |                                                         |
-| Current broker security trading status:                 | Normal trading                                          |
-|                                                         |                                                         |
-| Buy operations allowed:                                 | Yes                                                     |
-| Sale operations allowed:                                | Yes                                                     |
-| Short positions allowed:                                | No                                                      |
-|                                                         |                                                         |
-| Limit orders allowed:                                   | Yes                                                     |
-| Market orders allowed:                                  | Yes                                                     |
-| API trade allowed:                                      | Yes                                                     |
-|                                                         |                                                         |
-| Type of the instrument:                                 | Shares                                                  |
-| IPO date:                                               | 1915-11-11 00:00:00                                     |
-| Payment currency:                                       | usd                                                     |
-|                                                         |                                                         |
-| Previous close price of the instrument:                 | 134.77 usd                                              |
-| Last deal price of the instrument:                      | 134.5 usd                                               |
-| Changes between last deal price and last close  %       | -0.20                                                   |
-| Current limit price, min / max:                         | 132.51 usd / 135.77 usd                                 |
-| Actual price, sell / buy:                               | 130.69 usd / 135. usd                                   |
-| Minimum lot to buy:                                     | 1                                                       |
-| Minimum price increment (step):                         | 0.01 usd                                                |
+| Parameters                                                  | Values                                                 |
+|-------------------------------------------------------------|--------------------------------------------------------|
+| Ticker:                                                     | IBM                                                    |
+| Full name:                                                  | IBM                                                    |
+| Sector:                                                     | it                                                     |
+| Country of instrument:                                      | (US) Соединенные Штаты Америки                         |
+|                                                             |                                                        |
+| FIGI (Financial Instrument Global Identifier):              | BBG000BLNNH6                                           |
+| Real exchange [Exchange section]:                           | SPBEX [SPB_MORNING]                                    |
+| ISIN (International Securities Identification Number):      | US4592001014                                           |
+| Class Code (exchange section where instrument is traded):   | SPBXM                                                  |
+|                                                             |                                                        |
+| Current broker security trading status:                     | Normal trading                                         |
+|                                                             |                                                        |
+| Buy operations allowed:                                     | Yes                                                    |
+| Sale operations allowed:                                    | Yes                                                    |
+| Short positions allowed:                                    | No                                                     |
+|                                                             |                                                        |
+| Limit orders allowed:                                       | Yes                                                    |
+| Market orders allowed:                                      | Yes                                                    |
+| API trade allowed:                                          | Yes                                                    |
+|                                                             |                                                        |
+| Type of the instrument:                                     | Shares                                                 |
+| Share type:                                                 | Ordinary                                               |
+| IPO date:                                                   | 1915-11-11 00:00:00                                    |
+| Payment currency:                                           | usd                                                    |
+|                                                             |                                                        |
+| Previous close price of the instrument:                     | 146.09 usd                                             |
+| Last deal price of the instrument:                          | 145.51 usd                                             |
+| Changes between last deal price and last close              | -0.40% (-0.58 usd)                                     |
+| Current limit price, min / max:                             | 144.1 usd / 147.62 usd                                 |
+| Actual price, sell / buy:                                   | 145.51 usd / 146.2 usd                                 |
+| Minimum lot to buy:                                         | 1                                                      |
+| Minimum price increment (step):                             | 0.01 usd                                               |
 
-TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:18:29,219] Info about instrument with ticker [IBM] and FIGI [BBG000BLNNH6] was saved to file: [info.md]
-TKSBrokerAPI.py     L:4301 DEBUG   [2022-10-28 00:18:29,219] All operations were finished success (summary code is 0).
-TKSBrokerAPI.py     L:4308 DEBUG   [2022-10-28 00:18:29,220] >>> TKSBrokerAPI module work duration: [0:00:00.238199]
-TKSBrokerAPI.py     L:4309 DEBUG   [2022-10-28 00:18:29,220] >>> TKSBrokerAPI module finished: [2022-10-27 21:18:29 UTC], it is [2022-10-28 00:18:29] local time
+TKSBrokerAPI.py     L:939  INFO    [2022-11-18 14:05:01,203] Info about instrument with ticker [IBM] and FIGI [BBG000BLNNH6] was saved to file: [info.md]
+TKSBrokerAPI.py     L:4929 DEBUG   [2022-11-18 14:05:01,204] >>> TKSBrokerAPI module work duration: [0:00:00.322308]
+TKSBrokerAPI.py     L:4930 DEBUG   [2022-11-18 14:05:01,204] >>> TKSBrokerAPI module finished: [2022-11-18 11:05:01 UTC], it is [2022-11-18 14:05:01] local time
+TKSBrokerAPI.py     L:4934 DEBUG   [2022-11-18 14:05:01,204] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ```
 
 </details>
@@ -889,11 +888,11 @@ TKSBrokerAPI.py     L:4309 DEBUG   [2022-10-28 00:18:29,220] >>> TKSBrokerAPI mo
 ```commandline
 $ tksbrokerapi -f TCS00A101YV8 --info
 
-TKSBrokerAPI.py     L:4029 INFO    [2022-11-04 20:50:53,226] XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [calendar.xlsx]
-TKSBrokerAPI.py     L:4102 INFO    [2022-11-04 20:50:53,230] Bond payment calendar was saved to file: [calendar.md]
-TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
+TKSBrokerAPI.py     L:4134 INFO    [2022-11-18 14:07:20,658] XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [calendar.xlsx]
+TKSBrokerAPI.py     L:4208 INFO    [2022-11-18 14:07:20,660] Bond payment calendar was saved to file: [calendar.md]
+TKSBrokerAPI.py     L:930  INFO    [2022-11-18 14:07:20,660] # Main information: ticker [RU000A101YV8], FIGI [TCS00A101YV8]
 
-* Actual at: [2022-11-04 17:50] (UTC)
+* Actual at: [2022-11-18 11:07] (UTC)
 
 | Parameters                                                  | Values                                                 |
 |-------------------------------------------------------------|--------------------------------------------------------|
@@ -903,18 +902,18 @@ TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information:
 | Country of instrument:                                      | (RU) Российская Федерация                              |
 |                                                             |                                                        |
 | FIGI (Financial Instrument Global Identifier):              | TCS00A101YV8                                           |
-| Exchange:                                                   | MOEX                                                   |
+| Real exchange [Exchange section]:                           | MOEX [MOEX]                                            |
 | ISIN (International Securities Identification Number):      | RU000A101YV8                                           |
 | Class Code (exchange section where instrument is traded):   | TQCB                                                   |
 |                                                             |                                                        |
-| Current broker security trading status:                     | Not available for trading                              |
+| Current broker security trading status:                     | Normal trading                                         |
 |                                                             |                                                        |
 | Buy operations allowed:                                     | Yes                                                    |
 | Sale operations allowed:                                    | Yes                                                    |
 | Short positions allowed:                                    | No                                                     |
 |                                                             |                                                        |
-| Limit orders allowed:                                       | No                                                     |
-| Market orders allowed:                                      | No                                                     |
+| Limit orders allowed:                                       | Yes                                                    |
+| Market orders allowed:                                      | Yes                                                    |
 | API trade allowed:                                          | Yes                                                    |
 |                                                             |                                                        |
 | Type of the instrument:                                     | Bonds                                                  |
@@ -930,16 +929,16 @@ TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information:
 | Amortization:                                               | Yes                                                    |
 |                                                             |                                                        |
 | Number of coupon payments per year:                         | 4                                                      |
-| Days last to maturity date:                                 | 263                                                    |
+| Days last to maturity date:                                 | 249                                                    |
 | Coupons yield (average coupon daily yield * 365):           | 13.42%                                                 |
-| Current price yield (average daily yield * 365):            | 7.31%                                                  |
-| Current accumulated coupon income (ACI):                    | 2.84 rub                                               |
+| Current price yield (average daily yield * 365):            | 7.12%                                                  |
+| Current accumulated coupon income (ACI):                    | 6.14 rub                                               |
 |                                                             |                                                        |
-| Previous close price of the instrument:                     | 101.75% of nominal price (763.12 rub)                  |
-| Last deal price of the instrument:                          | 101.75% of nominal price (763.12 rub)                  |
-| Changes between last deal price and last close              | 0.00% (0.00 rub)                                       |
-| Current limit price, min / max:                             | 61.12% / 142.6% (458.40 rub / 1069.50 rub)             |
-| Actual price, sell / buy:                                   | N/A% / N/A% (0.00 rub / 0.00 rub)                      |
+| Previous close price of the instrument:                     | 101.19% of nominal price (758.92 rub)                  |
+| Last deal price of the instrument:                          | 101.24% of nominal price (759.30 rub)                  |
+| Changes between last deal price and last close              | 0.05% (+0.38 rub)                                      |
+| Current limit price, min / max:                             | 60.66% / 141.52% (454.95 rub / 1061.40 rub)            |
+| Actual price, sell / buy:                                   | 101.13% / 101.29% (101.13 rub / 101.29 rub)            |
 | Minimum lot to buy:                                         | 1                                                      |
 | Minimum price increment (step):                             | 0.01 rub                                               |
 
@@ -960,7 +959,7 @@ TKSBrokerAPI.py     L:916  INFO    [2022-11-04 20:50:53,230] # Main information:
 |   —   | 2023-04-26      | TCS00A101YV8 | RU000A101YV8 | 11  | 14.34 rub     | Constant  | 91     | 2023-04-25        |
 |   —   | 2023-07-26      | TCS00A101YV8 | RU000A101YV8 | 12  | 7.17 rub      | Constant  | 91     | 2023-07-25        |
 
-TKSBrokerAPI.py     L:925  INFO    [2022-11-04 20:50:53,231] Info about instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8] was saved to file: [info.md]
+TKSBrokerAPI.py     L:939  INFO    [2022-11-18 14:07:20,661] Info about instrument with ticker [RU000A101YV8] and FIGI [TCS00A101YV8] was saved to file: [info.md]
 ```
 
 </details>
@@ -971,45 +970,44 @@ TKSBrokerAPI.py     L:925  INFO    [2022-11-04 20:50:53,231] Info about instrume
 ```commandline
 $ tksbrokerapi --figi BBG222222222 -i
 
-TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:21:23,551] # Main information: ticker [TGLD], FIGI [BBG222222222]
+TKSBrokerAPI.py     L:930  INFO    [2022-11-18 14:11:05,791] # Main information: ticker [TGLD], FIGI [BBG222222222]
 
-* Actual at: [2022-10-27 21:21] (UTC)
+* Actual at: [2022-11-18 11:11] (UTC)
 
-| Parameters                                              | Values                                                  |
-|---------------------------------------------------------|---------------------------------------------------------|
-| Ticker:                                                 | TGLD                                                    |
-| Full name:                                              | Тинькофф Золото                                         |
-| Country of instrument:                                  |                                                         |
-|                                                         |                                                         |
-| FIGI (Financial Instrument Global Identifier):          | BBG222222222                                            |
-| Exchange:                                               | MOEX                                                    |
-| ISIN (International Securities Identification Number):  | RU000A101X50                                            |
-| Class Code:                                             | TQTD                                                    |
-|                                                         |                                                         |
-| Current broker security trading status:                 | Not available for trading                               |
-|                                                         |                                                         |
-| Buy operations allowed:                                 | Yes                                                     |
-| Sale operations allowed:                                | Yes                                                     |
-| Short positions allowed:                                | No                                                      |
-|                                                         |                                                         |
-| Limit orders allowed:                                   | No                                                      |
-| Market orders allowed:                                  | No                                                      |
-| API trade allowed:                                      | Yes                                                     |
-|                                                         |                                                         |
-| Type of the instrument:                                 | Etfs                                                    |
-| Released date:                                          | 2020-07-13 00:00:00                                     |
-| Focusing type:                                          | equity                                                  |
-| Payment currency:                                       | usd                                                     |
-|                                                         |                                                         |
-| Previous close price of the instrument:                 | 0.06960000000000001 usd                                 |
-| Last deal price of the instrument:                      | 0.0692 usd                                              |
-| Changes between last deal price and last close  %       | -0.57                                                   |
-| Current limit price, min / max:                         | 0.0591 usd / 0.0795 usd                                 |
-| Actual price, sell / buy:                               | N/A usd / N/A usd                                       |
-| Minimum lot to buy:                                     | 100                                                     |
-| Minimum price increment (step):                         | 0.0001 usd                                              |
+| Parameters                                                  | Values                                                 |
+|-------------------------------------------------------------|--------------------------------------------------------|
+| Ticker:                                                     | TGLD                                                   |
+| Full name:                                                  | Тинькофф Золото                                        |
+|                                                             |                                                        |
+| FIGI (Financial Instrument Global Identifier):              | BBG222222222                                           |
+| Real exchange [Exchange section]:                           | MOEX [MOEX]                                            |
+| ISIN (International Securities Identification Number):      | RU000A101X50                                           |
+| Class Code (exchange section where instrument is traded):   | TQTD                                                   |
+|                                                             |                                                        |
+| Current broker security trading status:                     | Normal trading                                         |
+|                                                             |                                                        |
+| Buy operations allowed:                                     | Yes                                                    |
+| Sale operations allowed:                                    | Yes                                                    |
+| Short positions allowed:                                    | No                                                     |
+|                                                             |                                                        |
+| Limit orders allowed:                                       | Yes                                                    |
+| Market orders allowed:                                      | Yes                                                    |
+| API trade allowed:                                          | Yes                                                    |
+|                                                             |                                                        |
+| Type of the instrument:                                     | Etfs                                                   |
+| Released date:                                              | 2020-07-13 00:00:00                                    |
+| Focusing type:                                              | equity                                                 |
+| Payment currency:                                           | usd                                                    |
+|                                                             |                                                        |
+| Previous close price of the instrument:                     | 0.0727 usd                                             |
+| Last deal price of the instrument:                          | 0.073 usd                                              |
+| Changes between last deal price and last close              | 0.41% (+0.00 usd)                                      |
+| Current limit price, min / max:                             | 0.062 usd / 0.0833 usd                                 |
+| Actual price, sell / buy:                                   | 0.073 usd / 0.0731 usd                                 |
+| Minimum lot to buy:                                         | 100                                                    |
+| Minimum price increment (step):                             | 0.0001 usd                                             |
 
-TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:21:23,552] Info about instrument with ticker [TGLD] and FIGI [BBG222222222] was saved to file: [info.md]
+TKSBrokerAPI.py     L:939  INFO    [2022-11-18 14:11:05,795] Info about instrument with ticker [TGLD] and FIGI [BBG222222222] was saved to file: [info.md]
 ```
 
 </details>
@@ -1020,63 +1018,63 @@ TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:21:23,552] Info about instrume
 ```commandline
 $ tksbrokerapi --verbosity=10 --ticker PZH2 --info
 
-TKSBrokerAPI.py     L:3964 DEBUG   [2022-10-28 00:22:48,684] >>> TKSBrokerAPI module started at: [2022-10-27 21:22:48] UTC, it is [2022-10-28 00:22:48] local time
-TKSBrokerAPI.py     L:3978 DEBUG   [2022-10-28 00:22:48,685] TKSBrokerAPI major.minor.build version used: [1.3.dev77]
-TKSBrokerAPI.py     L:3979 DEBUG   [2022-10-28 00:22:48,685] Host CPU count: [8]
-TKSBrokerAPI.py     L:210  DEBUG   [2022-10-28 00:22:48,685] Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
-TKSBrokerAPI.py     L:223  DEBUG   [2022-10-28 00:22:48,685] Main account ID [**********] set up from environment variable `TKS_ACCOUNT_ID`
-TKSBrokerAPI.py     L:272  DEBUG   [2022-10-28 00:22:48,685] Broker API server: https://invest-public-api.tinkoff.ru/rest
-TKSBrokerAPI.py     L:408  DEBUG   [2022-10-28 00:22:48,705] Local cache with raw instruments data is used: [dump.json]
-TKSBrokerAPI.py     L:409  DEBUG   [2022-10-28 00:22:48,705] Dump file was last modified [2022-10-27 20:31:18] UTC
-TKSBrokerAPI.py     L:1045 DEBUG   [2022-10-28 00:22:48,705] Requesting current prices for instrument with ticker [PZH2] and FIGI [FUTPLZL03220]...
-TKSBrokerAPI.py     L:1364 DEBUG   [2022-10-28 00:22:48,813] Requesting current trading status, FIGI: [FUTPLZL03220]. Wait, please...
-TKSBrokerAPI.py     L:1370 DEBUG   [2022-10-28 00:22:48,929] Records about current trading status successfully received
-TKSBrokerAPI.py     L:841  INFO    [2022-10-28 00:22:48,929] # Main information: ticker [PZH2], FIGI [FUTPLZL03220]
+TKSBrokerAPI.py     L:4545 DEBUG   [2022-11-18 14:12:29,029] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+TKSBrokerAPI.py     L:4546 DEBUG   [2022-11-18 14:12:29,029] >>> TKSBrokerAPI module started at: [2022-11-18 11:12:29] UTC, it is [2022-11-18 14:12:29] local time
+TKSBrokerAPI.py     L:4560 DEBUG   [2022-11-18 14:12:29,030] TKSBrokerAPI major.minor.build version used: [1.5.dev0]
+TKSBrokerAPI.py     L:4561 DEBUG   [2022-11-18 14:12:29,030] Host CPU count: [8]
+TKSBrokerAPI.py     L:212  DEBUG   [2022-11-18 14:12:29,030] Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/
+TKSBrokerAPI.py     L:225  DEBUG   [2022-11-18 14:12:29,030] Main account ID [2000096541] set up from environment variable `TKS_ACCOUNT_ID`
+TKSBrokerAPI.py     L:277  DEBUG   [2022-11-18 14:12:29,030] Broker API server: https://invest-public-api.tinkoff.ru/rest
+TKSBrokerAPI.py     L:444  DEBUG   [2022-11-18 14:12:29,051] Local cache with raw instruments data is used: [dump.json]. Last modified: [2022-11-18 08:28:22] UTC
+TKSBrokerAPI.py     L:1161 DEBUG   [2022-11-18 14:12:29,051] Requesting current prices: ticker [PZH2], FIGI [FUTPLZL03220]. Wait, please...
+TKSBrokerAPI.py     L:1515 DEBUG   [2022-11-18 14:12:29,178] Requesting current trading status, FIGI: [FUTPLZL03220]. Wait, please...
+TKSBrokerAPI.py     L:930  INFO    [2022-11-18 14:12:29,298] # Main information: ticker [PZH2], FIGI [FUTPLZL03220]
 
-* Actual at: [2022-10-27 21:22] (UTC)
+* Actual at: [2022-11-18 11:12] (UTC)
 
-| Parameters                                              | Values                                                  |
-|---------------------------------------------------------|---------------------------------------------------------|
-| Ticker:                                                 | PZH2                                                    |
-| Full name:                                              | PLZL-3.22 Полюс Золото                                  |
-| Sector:                                                 | SECTOR_MATERIALS                                        |
-| Country of instrument:                                  | (RU) Российская Федерация                               |
-|                                                         |                                                         |
-| FIGI (Financial Instrument Global Identifier):          | FUTPLZL03220                                            |
-| Exchange:                                               | FORTS                                                   |
-| Class Code:                                             | SPBFUT                                                  |
-|                                                         |                                                         |
-| Current broker security trading status:                 | Not available for trading                               |
-|                                                         |                                                         |
-| Buy operations allowed:                                 | Yes                                                     |
-| Sale operations allowed:                                | Yes                                                     |
-| Short positions allowed:                                | Yes                                                     |
-|                                                         |                                                         |
-| Limit orders allowed:                                   | No                                                      |
-| Market orders allowed:                                  | No                                                      |
-| API trade allowed:                                      | Yes                                                     |
-|                                                         |                                                         |
-| Type of the instrument:                                 | Futures                                                 |
-| Futures type:                                           | DELIVERY_TYPE_PHYSICAL_DELIVERY                         |
-| Asset type:                                             | TYPE_SECURITY                                           |
-| Basic asset:                                            | PLZL                                                    |
-| Basic asset size:                                       | 10.00                                                   |
-| Payment currency:                                       | rub                                                     |
-| First trade date:                                       | 2021-09-02 20:59:59                                     |
-| Last trade date:                                        | 2022-03-28 21:00:00                                     |
-| Date of expiration:                                     | 2022-03-30 00:00:00                                     |
-|                                                         |                                                         |
-| Previous close price of the instrument:                 | 108100. rub                                             |
-| Last deal price of the instrument:                      | 108100. rub                                             |
-| Changes between last deal price and last close  %       | 0.00                                                    |
-| Current limit price, min / max:                         | 0. rub / 0. rub                                         |
-| Actual price, sell / buy:                               | N/A rub / N/A rub                                       |
-| Minimum lot to buy:                                     | 1                                                       |
+| Parameters                                                  | Values                                                 |
+|-------------------------------------------------------------|--------------------------------------------------------|
+| Ticker:                                                     | PZH2                                                   |
+| Full name:                                                  | PLZL-3.22 Полюс Золото                                 |
+| Sector:                                                     | SECTOR_MATERIALS                                       |
+| Country of instrument:                                      | (RU) Российская Федерация                              |
+|                                                             |                                                        |
+| FIGI (Financial Instrument Global Identifier):              | FUTPLZL03220                                           |
+| Real exchange [Exchange section]:                           | SPBEX [FORTS]                                          |
+| Class Code (exchange section where instrument is traded):   | SPBFUT                                                 |
+|                                                             |                                                        |
+| Current broker security trading status:                     | Not available for trading                              |
+|                                                             |                                                        |
+| Buy operations allowed:                                     | Yes                                                    |
+| Sale operations allowed:                                    | Yes                                                    |
+| Short positions allowed:                                    | Yes                                                    |
+|                                                             |                                                        |
+| Limit orders allowed:                                       | No                                                     |
+| Market orders allowed:                                      | No                                                     |
+| API trade allowed:                                          | Yes                                                    |
+|                                                             |                                                        |
+| Type of the instrument:                                     | Futures                                                |
+| Futures type:                                               | DELIVERY_TYPE_PHYSICAL_DELIVERY                        |
+| Asset type:                                                 | TYPE_SECURITY                                          |
+| Basic asset:                                                | PLZL                                                   |
+| Basic asset size:                                           | 10.00                                                  |
+| Payment currency:                                           | rub                                                    |
+| First trade date:                                           | 2021-09-02 20:59:59                                    |
+| Last trade date:                                            | 2022-03-28 21:00:00                                    |
+| Date of expiration:                                         | 2022-03-30 00:00:00                                    |
+|                                                             |                                                        |
+| Previous close price of the instrument:                     | 108100 rub                                             |
+| Last deal price of the instrument:                          | 108100 rub                                             |
+| Changes between last deal price and last close              | 0.00% (0.00 rub)                                       |
+| Current limit price, min / max:                             | 0 rub / 0 rub                                          |
+| Actual price, sell / buy:                                   | N/A rub / N/A rub                                      |
+| Minimum lot to buy:                                         | 1                                                      |
+| Minimum price increment (step):                             | 1.0 rub                                                |
 
-TKSBrokerAPI.py     L:850  INFO    [2022-10-28 00:22:48,930] Info about instrument with ticker [PZH2] and FIGI [FUTPLZL03220] was saved to file: [info.md]
-TKSBrokerAPI.py     L:4301 DEBUG   [2022-10-28 00:22:48,930] All operations were finished success (summary code is 0).
-TKSBrokerAPI.py     L:4308 DEBUG   [2022-10-28 00:22:48,930] >>> TKSBrokerAPI module work duration: [0:00:00.246269]
-TKSBrokerAPI.py     L:4309 DEBUG   [2022-10-28 00:22:48,930] >>> TKSBrokerAPI module finished: [2022-10-27 21:22:48 UTC], it is [2022-10-28 00:22:48] local time
+TKSBrokerAPI.py     L:939  INFO    [2022-11-18 14:12:29,302] Info about instrument with ticker [PZH2] and FIGI [FUTPLZL03220] was saved to file: [info.md]
+TKSBrokerAPI.py     L:4929 DEBUG   [2022-11-18 14:12:29,303] >>> TKSBrokerAPI module work duration: [0:00:00.274060]
+TKSBrokerAPI.py     L:4930 DEBUG   [2022-11-18 14:12:29,303] >>> TKSBrokerAPI module finished: [2022-11-18 11:12:29 UTC], it is [2022-11-18 14:12:29] local time
+TKSBrokerAPI.py     L:4934 DEBUG   [2022-11-18 14:12:29,303] =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ```
 
 </details>
