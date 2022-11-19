@@ -2,11 +2,13 @@
 # Author: Timur Gilmullin
 
 """
-Module contains a lot of constants from enums sections of Tinkoff Open API documentation.
+Module contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
 
-About Tinkoff Invest API: https://tinkoff.github.io/investAPI/
-
-Tinkoff Invest API documentation: https://tinkoff.github.io/investAPI/swagger-ui/
+- **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+- **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
+- **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
+- **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
+- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
@@ -40,13 +42,13 @@ TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
 TKS_TICKER_ALIASES = {
-    "USD": "USD000UTSTOM", "usd": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
-    "EUR": "EUR_RUB__TOM", "eur": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
-    "GBP": "GBPRUB_TOM", "gbp": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
-    "CHF": "CHFRUB_TOM", "chf": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
-    "CNY": "CNYRUB_TOM", "cny": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
-    "HKD": "HKDRUB_TOM", "hkd": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
-    "TRY": "TRYRUB_TOM", "try": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
+    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
+    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
+    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    "HKD": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "TRY": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
 }
 """Some aliases instead official tickers for using in CLI. For example, you can use `"USD"` instead of `"USD000UTSTOM"`."""
 
@@ -248,3 +250,16 @@ TKS_REAL_EXCHANGES = {
     "REAL_EXCHANGE_OTC": "OTC",
 }
 """The real exchange for the execution of trades, enums: https://tinkoff.github.io/investAPI/instruments/#realexchange"""
+
+TKS_SHARE_TYPES = {
+    "SHARE_TYPE_UNSPECIFIED": "Undefined",
+    "SHARE_TYPE_COMMON": "Ordinary",
+    "SHARE_TYPE_PREFERRED": "Privileged",
+    "SHARE_TYPE_ADR": "American Depositary Receipts (ADR)",
+    "SHARE_TYPE_GDR": "Global Depositary Receipts (GDR)",
+    "SHARE_TYPE_MLP": "Master Limited Partnership (MLP)",
+    "SHARE_TYPE_NY_REG_SHRS": "New York registered shares",
+    "SHARE_TYPE_CLOSED_END_FUND": "Closed investment fund",
+    "SHARE_TYPE_REIT": "Real estate trust",
+}
+"""Share type, enums: https://tinkoff.github.io/investAPI/instruments/#sharetype"""

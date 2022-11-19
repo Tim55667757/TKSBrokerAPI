@@ -72,10 +72,10 @@ https://github.com/Tim55667757/TKSBrokerAPI#Пример-реализации-а
 from datetime import datetime, timedelta
 from dateutil.tz import tzlocal, tzutc
 from math import ceil
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # main module for trading operations
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 
 uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-uLogger.handlers[0].level = 20  # log level for STDOUT, INFO (20) recommended by default
+uLogger.handlers[0].level = 20  # Log level for STDOUT, INFO (20) recommended by default
 
 start = datetime.now(tzutc())
 
@@ -144,14 +144,14 @@ for ticker in TICKERS_LIST_FOR_TRADING:
         #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
         #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
 
-        # Checks if instrument (defined by it's `ticker`) is in portfolio:
+        # Checks if instrument (defined by its `ticker`) is in portfolio:
         isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
 
         if not isInPortfolio:
             uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
 
             # Getting instrument's data and its currency:
-            rawIData = trader.SearchByTicker(requestPrice=False, show=False, debug=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            rawIData = trader.SearchByTicker(requestPrice=False, show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
             iCurr = rawIData["currency"]  # currency of current instrument
 
             # Getting distribution by currencies, cost of previously purchased assets and free money in that currency:
@@ -191,7 +191,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             #     limit order with all volumes 0.1% higher than the current price so that the position is closed
             #     with a profit with a high probability during the current session.
 
-            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking closure rules...".format(trader.ticker))
+            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(trader.ticker))
 
             # Getting instrument from list of instruments in user portfolio:
             iData = trader.GetInstrumentFromPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
@@ -206,7 +206,7 @@ for ticker in TICKERS_LIST_FOR_TRADING:
             target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
             targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
 
-            # Checking for a sufficient price difference:
+            # Also, checking for a sufficient price difference before sell:
             if curProfit >= TP_LIMIT_DIFF:
                 uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
                     curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
