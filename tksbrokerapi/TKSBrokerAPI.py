@@ -3388,6 +3388,8 @@ class TinkoffBrokerServer:
         This method searches opened trade and orders of instrument throw all portfolio and then use
         `CloseTrades()` and `CloseOrders()` methods to close trade and cancel all orders for that instrument.
 
+        See also: `IsInLimitOrders()`, `GetLimitOrderIDs()`, `IsInStopOrders()`, `GetStopOrderIDs()`, `CloseTrades()` and `CloseOrders()`.
+
         :param instrument: string with ticker.
         """
         if instrument is None or not instrument:
@@ -3420,6 +3422,8 @@ class TinkoffBrokerServer:
 
         This method searches opened trade and orders of instrument throw all portfolio and then use
         `CloseTrades()` and `CloseOrders()` methods to close trade and cancel all orders for that instrument.
+
+        See also: `IsInLimitOrders()`, `GetLimitOrderIDs()`, `IsInStopOrders()`, `GetStopOrderIDs()`, `CloseTrades()` and `CloseOrders()`.
 
         :param instrument: string with FIGI id.
         """
@@ -3584,6 +3588,8 @@ class TinkoffBrokerServer:
         """
         Checks if instrument is in the limit orders list. Instrument must be defined by `ticker` (highly priority) or `figi`.
 
+        See also: `CloseAllByTicker()` and `CloseAllByFIGI()`.
+
         :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
         :return: `True` if limit orders list contains some limit orders for the instrument, `False` otherwise.
         """
@@ -3624,6 +3630,8 @@ class TinkoffBrokerServer:
         """
         Returns list with all `orderID`s of opened pending limit orders for the instrument.
         Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        See also: `CloseAllByTicker()` and `CloseAllByFIGI()`.
 
         :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
         :return: list with `orderID`s of limit orders.
@@ -3667,6 +3675,8 @@ class TinkoffBrokerServer:
         """
         Checks if instrument is in the stop orders list. Instrument must be defined by `ticker` (highly priority) or `figi`.
 
+        See also: `CloseAllByTicker()` and `CloseAllByFIGI()`.
+
         :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
         :return: `True` if stop orders list contains some stop orders for the instrument, `False` otherwise.
         """
@@ -3707,6 +3717,8 @@ class TinkoffBrokerServer:
         """
         Returns list with all `orderID`s of opened stop orders for the instrument.
         Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        See also: `CloseAllByTicker()` and `CloseAllByFIGI()`.
 
         :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
         :return: list with `orderID`s of stop orders.
@@ -4644,7 +4656,7 @@ def ParseArgs():
     parser.add_argument("--close-orders", "--cancel-orders", type=str, nargs="+", help="Action: close one or list of orders by it's `orderId` or `stopOrderId`. You can find out the meaning of these IDs using the key `--overview`.")
     parser.add_argument("--close-trade", "--cancel-trade", action="store_true", help="Action: close only one position for instrument defined by `--ticker` (high priority) or `--figi` keys, including for currencies tickers.")
     parser.add_argument("--close-trades", "--cancel-trades", type=str, nargs="+", help="Action: close positions for list of tickers or FIGIs, including for currencies tickers or FIGIs.")
-    parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations.")
+    parser.add_argument("--close-all", "--cancel-all", type=str, nargs="*", help="Action: close all available (not blocked) opened trades and orders, excluding for currencies. Also you can select one or more keywords case insensitive to specify trades type: `orders`, `shares`, `bonds`, `etfs` and `futures`, but not `currencies`. Currency positions you must closes manually using `--buy`, `--sell`, `--close-trade` or `--close-trades` operations. If the `--close-all` key present with the `--ticker` or `--figi` keys, then positions and all open limit and stop orders for the specified instrument are closed.")
 
     parser.add_argument("--limits", "--withdrawal-limits", "-w", action="store_true", help="Action: show table of funds available for withdrawal for current `accountId`. You can change `accountId` with the key `--account-id`. Also, you can define `--output` key to save this information to file, default: `limits.md`.")
     parser.add_argument("--user-info", "-u", action="store_true", help="Action: show all available user's data (`accountId`s, common user information, margin status and tariff connections limit). Also, you can define `--output` key to save this information to file, default: `user-info.md`.")
