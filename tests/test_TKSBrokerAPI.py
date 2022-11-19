@@ -26,9 +26,12 @@ class TestTKSBrokerAPIMethods:
 
     def test_ConsistentOfVariablesNames(self):
         mainVarNames = [
-            "token", "accountId", "iList",
-            "aliases", "aliasesKeys", "ticker", "figi", "depth", "server", "timeout", "headers", "body",
-            "historyFile", "instrumentsFile", "searchResultsFile", "pricesFile", "overviewFile", "reportFile", "iListDumpFile",
+            "token", "accountId", "version", "aliases", "aliasesKeys", "exclude", "ticker", "figi", "depth",
+            "server", "timeout", "headers", "body", "moreDebug",
+            "historyFile", "htmlHistoryFile", "instrumentsFile", "searchResultsFile", "pricesFile", "infoFile",
+            "bondsXLSXFile", "calendarFile", "overviewFile", "overviewDigestFile", "overviewPositionsFile",
+            "overviewOrdersFile", "overviewAnalyticsFile", "overviewBondsCalendarFile", "reportFile",
+            "withdrawalLimitsFile", "userInfoFile", "userAccountsFile", "iListDumpFile", "iList",
         ]
         actualNames = dir(self.server)
 
