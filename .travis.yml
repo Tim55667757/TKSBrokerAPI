@@ -26,7 +26,7 @@ jobs:
         - pytest tests -v --disable-pytest-warnings
         - echo "---> Running BUILDING stage..."
         - python setup.py sdist bdist_wheel
-        - if [[$TRAVIS_PULL_REQUEST = false]]
+        - if [[x"$TRAVIS_PULL_REQUEST" -eq x"false"]]
           then
         - echo "---> Running PUBLISHING to PyPI stage..."
         - python -m twine upload --verbose dist/* --skip-existing
