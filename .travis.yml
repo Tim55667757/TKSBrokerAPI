@@ -26,13 +26,7 @@ jobs:
         - pytest tests -v --disable-pytest-warnings
         - echo "---> Running BUILDING stage..."
         - python setup.py sdist bdist_wheel
-        - if [[x"$TRAVIS_PULL_REQUEST" -eq x"false"]]
-          then
-        - echo "---> Running PUBLISHING to PyPI stage..."
-        - python -m twine upload --verbose dist/* --skip-existing
-          else
-        - echo "---> SKIPPING PUBLISHING to PyPI stage, because this is Pull Request build"
-          fi
+        - if [[x"$TRAVIS_PULL_REQUEST" -eq x"false"]]; then echo "---> Running PUBLISHING to PyPI stage..."; python -m twine upload --verbose dist/* --skip-existing; else echo "---> SKIPPING PUBLISHING to PyPI stage, because this is Pull Request build"; fi
       after_failure:
         - echo "Some issues occurred. See full logs."
       after_success:
