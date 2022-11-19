@@ -1471,25 +1471,25 @@ class TinkoffBrokerServer:
 
     def RequestPendingOrders(self) -> list:
         """
-        Requesting current actual pending orders for current `accountId`.
+        Requesting current actual pending limit orders for current `accountId`.
 
         REST API for pending (market) orders: https://tinkoff.github.io/investAPI/swagger-ui/#/OrdersService/OrdersService_GetOrders
 
         Documentation: https://tinkoff.github.io/investAPI/orders/#getordersrequest
 
-        :return: list of dictionaries with pending orders.
+        :return: list of dictionaries with pending limit orders.
         """
         if self.accountId is None or not self.accountId:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current actual pending orders. Wait, please...")
+        uLogger.debug("Requesting current actual pending limit orders. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
         rawOrders = self.SendAPIRequest(ordersURL, reqType="POST")["orders"]
 
-        uLogger.debug("[{}] records about pending orders received".format(len(rawOrders)))
+        uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
 
         return rawOrders
 
@@ -1596,7 +1596,7 @@ class TinkoffBrokerServer:
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
-        view["raw"]["orders"] = self.RequestPendingOrders()  # current actual pending orders (list)
+        view["raw"]["orders"] = self.RequestPendingOrders()  # current actual pending limit orders (list)
         view["raw"]["stopOrders"] = self.RequestStopOrders()  # current actual stop orders (list)
 
         # save response headers without "positions" section:
@@ -1806,8 +1806,8 @@ class TinkoffBrokerServer:
             "freeCostRUB": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
         }
 
-        # --- pending orders sector data:
-        uniquePendingOrdersFIGIs = []  # unique FIGIs of pending orders to avoid many times price requests
+        # --- pending limit orders sector data:
+        uniquePendingOrdersFIGIs = []  # unique FIGIs of pending limit orders to avoid many times price requests
         uniquePendingOrders = {}  # unique instruments with FIGIs as dictionary keys
 
         for item in view["raw"]["orders"]:
@@ -2109,7 +2109,7 @@ class TinkoffBrokerServer:
                     info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
 
             if details in ["full", "orders"]:
-                # --- Show pending orders section:
+                # --- Show pending limit orders section:
                 if view["stat"]["orders"]:
                     info.extend([
                         "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
@@ -2898,7 +2898,7 @@ class TinkoffBrokerServer:
                 self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
 
         else:
-            uLogger.warning("Not `oK` status received! Market order not executed. See full debug log or try again and open order later.")
+            uLogger.warning("Not `oK` status received! Market order not executed. See full debug log and try again open order later.")
 
         return response
 
@@ -3134,7 +3134,7 @@ class TinkoffBrokerServer:
                         ))
 
             else:
-                uLogger.warning("Not `oK` status received! Limit order not opened. See full debug log or try again and open order later.")
+                uLogger.warning("Not `oK` status received! Limit order not opened. See full debug log and try again open order later.")
 
         if orderType == "Stop":
             uLogger.debug(
@@ -3193,7 +3193,7 @@ class TinkoffBrokerServer:
                         ))
 
             else:
-                uLogger.warning("Not `oK` status received! Stop order not opened. See full debug log or try again and open order later.")
+                uLogger.warning("Not `oK` status received! Stop order not opened. See full debug log and try again open order later.")
 
         return response
 
@@ -3268,7 +3268,7 @@ class TinkoffBrokerServer:
         Cancel order or list of orders by its `orderId` or `stopOrderId` for current `accountId`.
 
         :param orderIDs: list of integers with `orderId` or `stopOrderId`.
-        :param allOrdersIDs: pre-received lists of all active pending orders.
+        :param allOrdersIDs: pre-received lists of all active pending limit orders.
                              This avoids unnecessary downloading data from the server.
         :param allStopOrdersIDs: pre-received lists of all active stop orders.
         """
@@ -3277,11 +3277,11 @@ class TinkoffBrokerServer:
             raise Exception("Account ID required")
 
         if orderIDs:
-            if allOrdersIDs is None or not allOrdersIDs:
+            if allOrdersIDs is None:
                 rawOrders = self.RequestPendingOrders()
-                allOrdersIDs = [item["orderId"] for item in rawOrders]  # all pending orders ID
+                allOrdersIDs = [item["orderId"] for item in rawOrders]  # all pending limit orders ID
 
-            if allStopOrdersIDs is None or not allStopOrdersIDs:
+            if allStopOrdersIDs is None:
                 rawStopOrders = self.RequestStopOrders()
                 allStopOrdersIDs = [item["stopOrderId"] for item in rawStopOrders]  # all stop orders ID
 
@@ -3336,7 +3336,7 @@ class TinkoffBrokerServer:
         Gets a list of open pending and stop orders and cancel it all.
         """
         rawOrders = self.RequestPendingOrders()
-        allOrdersIDs = [item["orderId"] for item in rawOrders]  # all pending orders ID
+        allOrdersIDs = [item["orderId"] for item in rawOrders]  # all pending limit orders ID
         lenOrders = len(allOrdersIDs)
 
         rawStopOrders = self.RequestStopOrders()
@@ -3380,6 +3380,72 @@ class TinkoffBrokerServer:
             for iType in TKS_INSTRUMENTS:
                 if iType.lower() in lowerArgs and iType != "Currencies":
                     self.CloseAllTrades(iType, overview)  # close all positions of instruments with same type without currencies
+
+    def CloseAllByTicker(self, instrument: str) -> None:
+        """
+        Close all available (not blocked) opened trades and orders for one instrument defined by its ticker.
+
+        This method searches opened trade and orders of instrument throw all portfolio and then use
+        `CloseTrades()` and `CloseOrders()` methods to close trade and cancel all orders for that instrument.
+
+        :param instrument: string with ticker.
+        """
+        if instrument is None or not instrument:
+            uLogger.error("Ticker name must be defined for using this method!")
+            raise Exception("Ticker required")
+
+        overview = self.Overview(show=False)  # get user portfolio with all open trades info
+
+        self.ticker = instrument  # try to set instrument as ticker
+        self.figi = ""
+
+        if self.IsInPortfolio(portfolio=overview):
+            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Wait, please...")
+            self.CloseTrades(instruments=[instrument], portfolio=overview)
+
+        limitAll = [item["orderID"] for item in overview["stat"]["orders"]]  # list of all pending limit order IDs
+        stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
+
+        if limitAll and self.IsInLimitOrders(portfolio=overview):
+            uLogger.debug("Closing all opened pending limit orders for the instrument with ticker [{}]. Wait, please...")
+            self.CloseOrders(orderIDs=self.GetLimitOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
+
+        if stopAll and self.IsInStopOrders(portfolio=overview):
+            uLogger.debug("Closing all opened stop orders for the instrument with ticker [{}]. Wait, please...")
+            self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
+
+    def CloseAllByFIGI(self, instrument: str) -> None:
+        """
+        Close all available (not blocked) opened trades and orders for one instrument defined by its FIGI id.
+
+        This method searches opened trade and orders of instrument throw all portfolio and then use
+        `CloseTrades()` and `CloseOrders()` methods to close trade and cancel all orders for that instrument.
+
+        :param instrument: string with FIGI id.
+        """
+        if instrument is None or not instrument:
+            uLogger.error("FIGI id must be defined for using this method!")
+            raise Exception("FIGI required")
+
+        overview = self.Overview(show=False)  # get user portfolio with all open trades info
+
+        self.ticker = ""
+        self.figi = instrument  # try to set instrument as FIGI id
+
+        if self.IsInPortfolio(portfolio=overview):
+            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Wait, please...")
+            self.CloseTrades(instruments=[instrument], portfolio=overview)
+
+        limitAll = [item["orderID"] for item in overview["stat"]["orders"]]  # list of all pending limit order IDs
+        stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
+
+        if limitAll and self.IsInLimitOrders(portfolio=overview):
+            uLogger.debug("Closing all opened pending limit orders for the instrument with FIGI [{}]. Wait, please...")
+            self.CloseOrders(orderIDs=self.GetLimitOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
+
+        if stopAll and self.IsInStopOrders(portfolio=overview):
+            uLogger.debug("Closing all opened stop orders for the instrument with FIGI [{}]. Wait, please...")
+            self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
 
     @staticmethod
     def ParseOrderParameters(operation, **inputParameters):
@@ -3443,7 +3509,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throwout opened positions...".format(self.ticker))
+            uLogger.debug("Searching instrument with ticker [{}] throw opened positions list...".format(self.ticker))
             msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
 
             for iType in TKS_INSTRUMENTS:
@@ -3454,7 +3520,7 @@ class TinkoffBrokerServer:
                         break
 
         elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self.figi))
             msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
 
             for iType in TKS_INSTRUMENTS:
@@ -3506,6 +3572,172 @@ class TinkoffBrokerServer:
                         result = instrument
                         msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self.figi)
                         break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def IsInLimitOrders(self, portfolio: dict = None) -> bool:
+        """
+        Checks if instrument is in the limit orders list. Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: `True` if limit orders list contains some limit orders for the instrument, `False` otherwise.
+        """
+        result = False
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(show=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self.ticker)
+
+            for instrument in portfolio["stat"]["orders"]:
+                if instrument["ticker"] == self.ticker:
+                    result = True
+                    msg = "Instrument with ticker [{}] is present in limit orders list".format(self.ticker)
+                    break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self.figi)
+
+            for instrument in portfolio["stat"]["orders"]:
+                if instrument["figi"] == self.figi:
+                    result = True
+                    msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self.figi)
+                    break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def GetLimitOrderIDs(self, portfolio: dict = None) -> list[str]:
+        """
+        Returns list with all `orderID`s of opened pending limit orders for the instrument.
+        Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: list with `orderID`s of limit orders.
+        """
+        result = []
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(show=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self.ticker)
+
+            for instrument in portfolio["stat"]["orders"]:
+                if instrument["ticker"] == self.ticker:
+                    result.append(instrument["orderID"])
+
+            if result:
+                msg = "Instrument with ticker [{}] is present in limit orders list".format(self.ticker)
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self.figi)
+
+            for instrument in portfolio["stat"]["orders"]:
+                if instrument["figi"] == self.figi:
+                    result.append(instrument["orderID"])
+
+            if result:
+                msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self.figi)
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def IsInStopOrders(self, portfolio: dict = None) -> bool:
+        """
+        Checks if instrument is in the stop orders list. Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: `True` if stop orders list contains some stop orders for the instrument, `False` otherwise.
+        """
+        result = False
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(show=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self.ticker)
+
+            for instrument in portfolio["stat"]["stopOrders"]:
+                if instrument["ticker"] == self.ticker:
+                    result = True
+                    msg = "Instrument with ticker [{}] is present in stop orders list".format(self.ticker)
+                    break
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self.figi)
+
+            for instrument in portfolio["stat"]["stopOrders"]:
+                if instrument["figi"] == self.figi:
+                    result = True
+                    msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self.figi)
+                    break
+
+        else:
+            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+
+        uLogger.debug(msg)
+
+        return result
+
+    def GetStopOrderIDs(self, portfolio: dict = None) -> list[str]:
+        """
+        Returns list with all `orderID`s of opened stop orders for the instrument.
+        Instrument must be defined by `ticker` (highly priority) or `figi`.
+
+        :param portfolio: dict with user's portfolio data. If `None`, then requests portfolio from `Overview()` method.
+        :return: list with `orderID`s of stop orders.
+        """
+        result = []
+        msg = "Instrument not defined!"
+
+        if portfolio is None or not portfolio:
+            portfolio = self.Overview(show=False)
+
+        if self.ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self.ticker))
+            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self.ticker)
+
+            for instrument in portfolio["stat"]["stopOrders"]:
+                if instrument["ticker"] == self.ticker:
+                    result.append(instrument["orderID"])
+
+            if result:
+                msg = "Instrument with ticker [{}] is present in stop orders list".format(self.ticker)
+
+        elif self.figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self.figi))
+            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self.figi)
+
+            for instrument in portfolio["stat"]["stopOrders"]:
+                if instrument["figi"] == self.figi:
+                    result.append(instrument["orderID"])
+
+            if result:
+                msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self.figi)
 
         else:
             uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
@@ -4775,7 +5007,14 @@ def Main(**kwargs):
                 trader.CloseTrades(args.close_trades)  # close trades for list of tickers
 
             elif args.close_all is not None:
-                trader.CloseAll(*args.close_all)
+                if args.ticker:
+                    trader.CloseAllByTicker(instrument=args.ticker)
+
+                elif args.figi:
+                    trader.CloseAllByFIGI(instrument=args.figi)
+
+                else:
+                    trader.CloseAll(*args.close_all)
 
             elif args.limits:
                 if args.output is not None:
