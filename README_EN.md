@@ -1811,6 +1811,8 @@ To selectively reduce positions, you can use the `--close-all` (`--cancel-all`) 
 - `futures` — close all futures positions,
 - but, you can not specify `currencies` — to close all positions in currencies, due to the reasons described above.
 
+Since TKSBrokerAPI v1.5.* it is possible to use the `--close-all` key with the `--ticker` or `--figi` keys. In this case, positions and all open limit and stop orders for the specified instrument are closed.
+
 <details>
   <summary>Command to cancel one stop order by its ID</summary>
 
