@@ -40,5 +40,5 @@ jobs:
           if [ $TRAVIS_PULL_REQUEST == false ]; then
             echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI - done";
           else
-            echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> [PUBLISHING to PyPI][SKIPPED] - done";
+            echo "All PR stages PRE-BUILDING -> TESTING -> BUILDING -> [PUBLISHING to PyPI][SKIPPED] - done";
           fi
