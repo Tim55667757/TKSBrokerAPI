@@ -373,8 +373,8 @@ class TinkoffBrokerServer:
         :param pause: sleep time in seconds between retries.
         :return: response JSON (dictionary) from broker.
         """
-        if reqType not in ("GET", "POST"):
-            uLogger.error("You can define request type: 'GET' or 'POST'!")
+        if reqType.upper() not in ("GET", "POST"):
+            uLogger.error("You can define request type: `GET` or `POST`!")
             raise Exception("Incorrect value")
 
         if self.moreDebug:
@@ -428,11 +428,21 @@ class TinkoffBrokerServer:
                 if 400 <= response.status_code < 500:
                     msg = "status code: [{}], response body: {}".format(response.status_code, response.text)
                     uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
-                    counter = retry + 1
+
+                    if "code" in response.text and "message" in response.text:
+                        msgDict = self._ParseJSON(rawData=response.text)
+                        uLogger.warning("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
+
+                    counter = retry + 1  # do not retry for 4xx errors
 
                 if 500 <= response.status_code < 600:
                     errMsg = "status code: [{}], response body: {}".format(response.status_code, response.text)
                     uLogger.debug("    - not oK, {}".format(errMsg))
+
+                    if "code" in response.text and "message" in response.text:
+                        errMsgDict = self._ParseJSON(rawData=response.text)
+                        uLogger.warning("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict["message"]))
+
                     counter += 1
 
                     if counter <= retry:
