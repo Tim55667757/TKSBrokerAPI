@@ -9,6 +9,42 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
+### [1.5.* (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/5) — in progress...
+
+##### Digest
+
+In the next version of TKSBrokerAPI, a new section with a bond payments calendar has appeared in the user's portfolio report. It is built automatically if there is at least one bond in the portfolio (key `--overview-calendar`). The `--html` and `--pdf` options have been added to save reports in HTML and PDF formats. In addition, it became possible to close a position and all orders using the `--close-all` key for one instrument specified via `--ticker` or `--figi`.
+
+The trading script [./docs/examples/scenario1.py](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/examples/scenario1.py) has been rewritten in the OOP paradigm: [./docs/examples /scenario1a.py](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/examples/scenario1a.py). Now it is a trading template based on the TKSBrokerAPI platform. It can be used as a basis for developing your own trading scenarios.
+
+An annoying bug has been fixed when trading "on the market" (key `--trade`), when TP/SL orders were opened even if the main market order was not executed. Now, in case of any TP/SL errors, orders are not placed. And also, for the convenience of debugging, you can now specify the `--more` key along with any command. More information will appear in the logs, such as network requests, network responses and their headers.
+
+##### New features
+
+* [#62](https://github.com/Tim55667757/TKSBrokerAPI/issues/62) A bond payment calendar has been added to the user's portfolio status report, which is built automatically if at least one bond is present in the portfolio (method `Overview(details="calendar")`, key `--overview-calendar`).
+* [#80](https://github.com/Tim55667757/TKSBrokerAPI/issues/80) Trading script example [./docs/examples/scenario1.py](https://github.com/Tim55667757/TKSBrokerAPI/blob /master/docs/examples/scenario1.py) additionally rewritten in OOP paradigm: [./docs/examples/scenario1a.py](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/examples/scenario1a.py). These templates can be used as a basis for developing your own trading scenarios based on the TKSBrokerAPI platform.
+* [#48](https://github.com/Tim55667757/TKSBrokerAPI/issues/48) If the `--close-all` key is specified together with one of the keys `--ticker` or `--figi`, then all unblocked volumes of the open position, pending limit and stop orders for the selected instrument will be closed. To support this feature, additional methods were implemented: `CloseAllByTicker()` for closing all positions and orders for the instrument specified by the ticker, `CloseAllByFIGI()` for closing all positions and orders for the instrument specified by the FIGI identifier, `IsInLimitOrders()` is a function that returns `True` if opened pending limit orders are in the portfolio, `GetLimitOrderIDs()` is a function that returns a list of opened pending limit orders, `IsInStopOrders()` is a function that returns `True` if opened stop orders are in the portfolio, `GetStopOrderIDs()` is a function that returns a list of opened stop orders for the instrument.
+* [**IN PROGRESS**] [#83](https://github.com/Tim55667757/TKSBrokerAPI/issues/83) You can now specify the `--html` and `--pdf` keys to generate reports from Markdown to HTML and PDF formats.
+* [#67](https://github.com/Tim55667757/TKSBrokerAPI/issues/67) You can now specify the `--more` key with any other command. It enables more debugging information in all TKSBrokerAPI methods and saves it in the logs. For example, network requests, their responses, and headers are saved.
+
+##### Improvements
+
+* [#74](https://github.com/Tim55667757/TKSBrokerAPI/issues/74) Improved CI/CD script `.travis.yml`. Now, when you run a build from a pull request, only the steps of running unit tests and building the package are performed. And the package do not upload to PyPI. Publishing to PyPI is now only triggered when building directly from a branch or after accepting a pull request.
+* [#39](https://github.com/Tim55667757/TKSBrokerAPI/issues/39) Now all operations of closing positions or orders (keys `--close-***`) support the ability to specify instruments not only through tickers, but also via FIGI identifiers.
+* [#60](https://github.com/Tim55667757/TKSBrokerAPI/issues/60) The `--ticker` and `--figi` keys are now case-insensitive. You can specify their values in the console in any case, and inside the TKSBrokerAPI platform they will be automatically converted to uppercase.
+* [#75](https://github.com/Tim55667757/TKSBrokerAPI/issues/75) If, when launched with the `--limits` key, it turns out that there are no cash limits available for withdrawal, then now an empty table will not be displayed.
+* [#68](https://github.com/Tim55667757/TKSBrokerAPI/issues/68) Added information about the stock type to the share report (`ShowInstrumentInfo()` method, `--info` key) about the type of share: Ordinary, Privileged, American Depositary Receipts (ADR), Global Depositary Receipts (GDR), Master Limited Partnership (MLP), New York registered shares, Closed investment fund and Real estate trust.
+* [#35](https://github.com/Tim55667757/TKSBrokerAPI/issues/35) Headers have been simplified in the "Summary" table in the deals report (key `--deals`).
+* [#51](https://github.com/Tim55667757/TKSBrokerAPI/issues/51) The `NANO` constant, the `NanoToFloat()` and `FloatToNano()` methods have been moved to the new `TradeRoutines` module. This is a library with a set of functions to simplify the implementation of trading strategies based on the TKSBrokerAPI platform.
+* [#52](https://github.com/Tim55667757/TKSBrokerAPI/issues/52) The `GetDatesAsString()` method has also been moved to the `TradeRoutines` module.
+
+##### Bug fixes
+
+* [#66](https://github.com/Tim55667757/TKSBrokerAPI/issues/66) Fixed a bug in the `Trade()` method (key `--trade`). Now, if the main market order for an instrument has not been executed, then TP/SL orders are also not placed for this instrument. In previous versions TP/SL orders were opened even in case of errors when opening a market order to which they are linked, which violated the logic of trading scenarios.
+* [#84](https://github.com/Tim55667757/TKSBrokerAPI/issues/84) Fixed a bug in the `Overview()` method (key `--overview`), which appeared after solving the task [#17]( https://github.com/Tim55667757/TKSBrokerAPI/issues/17). In the limit and stop orders section of the user's portfolio, only the first orders in the list were displayed. Now all open orders are displayed again. In addition, performance has been improved: now for orders for the same instrument, the price is requested only once, which is critical in the case of a large number of open orders.
+* [#81](https://github.com/Tim55667757/TKSBrokerAPI/issues/81) Fixed display of fractional numbers when requesting the order book.
+
+
 ### [1.4.90 (2022-11-07)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.4.90) — released
 
 ##### Digest
