@@ -133,7 +133,7 @@ class TinkoffBrokerServer:
 
         self.exclude = TKS_TICKERS_OR_FIGI_EXCLUDED  # some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there
 
-        self.ticker = ""
+        self._ticker = ""
         """String with ticker, e.g. `GOOGL`. Tickers may be upper case only.
 
         Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc.
@@ -142,7 +142,7 @@ class TinkoffBrokerServer:
         See also: `SearchByTicker()`, `SearchInstruments()`.
         """
 
-        self.figi = ""
+        self._figi = ""
         """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
 
         See also: `SearchByFIGI()`, `SearchInstruments()`.
@@ -345,6 +345,44 @@ class TinkoffBrokerServer:
 
         See also: `LoadHistory()`, `ShowHistoryChart()` and the PriceGenerator project: https://github.com/Tim55667757/PriceGenerator
         """
+
+    @property
+    def ticker(self) -> str:
+        """String with ticker, e.g. `GOOGL`. Tickers may be upper case only.
+
+        Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc.
+        More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
+
+        See also: `SearchByTicker()`, `SearchInstruments()`.
+        """
+        return self._ticker
+
+    @ticker.setter
+    def ticker(self, value):
+        """Setter for string with ticker, e.g. `GOOGL`. Tickers may be upper case only.
+
+        Use alias for `USD000UTSTOM` simple as `USD`, `EUR_RUB__TOM` as `EUR` etc.
+        More tickers aliases here: `TKSEnums.TKS_TICKER_ALIASES`.
+
+        See also: `SearchByTicker()`, `SearchInstruments()`.
+        """
+        self._ticker = str(value).upper()  # Tickers may be upper case only
+
+    @property
+    def figi(self) -> str:
+        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
+
+        See also: `SearchByFIGI()`, `SearchInstruments()`.
+        """
+        return self._figi
+
+    @figi.setter
+    def figi(self, value):
+        """Setter for string with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
+
+        See also: `SearchByFIGI()`, `SearchInstruments()`.
+        """
+        self._figi = str(value).upper()  # FIGI may be upper case only
 
     def _ParseJSON(self, rawData="{}") -> dict:
         """
@@ -598,7 +636,7 @@ class TinkoffBrokerServer:
 
         See also: `SearchByTicker()`, `SearchByFIGI()`, `RequestBondCoupons()`, `ExtendBondsData()`, `ShowBondsCalendar()` and `RequestTradingStatus()`.
 
-        :param iJSON: json data of instrument, example: `iJSON = self.iList["Shares"][self.ticker]`
+        :param iJSON: json data of instrument, example: `iJSON = self.iList["Shares"][self._ticker]`
         :param show: if `True` then also printing information about instrument and its current price.
         :return: multilines text in Markdown format with information about one instrument.
         """
@@ -643,7 +681,7 @@ class TinkoffBrokerServer:
             ])
 
             if iJSON["figi"]:
-                self.figi = iJSON["figi"]
+                self._figi = iJSON["figi"]
                 iJSON = iJSON | self.RequestTradingStatus()
 
                 info.extend([
@@ -846,46 +884,46 @@ class TinkoffBrokerServer:
         """
         tickerJSON = {}
         if self.moreDebug:
-            uLogger.debug("Searching information about instrument by it's ticker [{}] ...".format(self.ticker))
+            uLogger.debug("Searching information about instrument by it's ticker [{}] ...".format(self._ticker))
 
-        if not self.ticker:
-            uLogger.warning("self.ticker variable is not be empty!")
+        if not self._ticker:
+            uLogger.warning("self._ticker variable is not be empty!")
 
         else:
-            if self.ticker in TKS_TICKERS_OR_FIGI_EXCLUDED:
-                uLogger.warning("Instrument with ticker [{}] not allowed for trading!".format(self.ticker))
+            if self._ticker in TKS_TICKERS_OR_FIGI_EXCLUDED:
+                uLogger.warning("Instrument with ticker [{}] not allowed for trading!".format(self._ticker))
                 raise Exception("Instrument not allowed")
 
             if not self.iList:
                 self.iList = self.Listing()
 
-            if self.ticker in self.iList["Shares"].keys():
-                tickerJSON = self.iList["Shares"][self.ticker]
+            if self._ticker in self.iList["Shares"].keys():
+                tickerJSON = self.iList["Shares"][self._ticker]
                 if self.moreDebug:
-                    uLogger.debug("Ticker [{}] found in shares list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in shares list".format(self._ticker))
 
-            elif self.ticker in self.iList["Currencies"].keys():
-                tickerJSON = self.iList["Currencies"][self.ticker]
+            elif self._ticker in self.iList["Currencies"].keys():
+                tickerJSON = self.iList["Currencies"][self._ticker]
                 if self.moreDebug:
-                    uLogger.debug("Ticker [{}] found in currencies list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in currencies list".format(self._ticker))
 
-            elif self.ticker in self.iList["Bonds"].keys():
-                tickerJSON = self.iList["Bonds"][self.ticker]
+            elif self._ticker in self.iList["Bonds"].keys():
+                tickerJSON = self.iList["Bonds"][self._ticker]
                 if self.moreDebug:
-                    uLogger.debug("Ticker [{}] found in bonds list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in bonds list".format(self._ticker))
 
-            elif self.ticker in self.iList["Etfs"].keys():
-                tickerJSON = self.iList["Etfs"][self.ticker]
+            elif self._ticker in self.iList["Etfs"].keys():
+                tickerJSON = self.iList["Etfs"][self._ticker]
                 if self.moreDebug:
-                    uLogger.debug("Ticker [{}] found in etfs list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in etfs list".format(self._ticker))
 
-            elif self.ticker in self.iList["Futures"].keys():
-                tickerJSON = self.iList["Futures"][self.ticker]
+            elif self._ticker in self.iList["Futures"].keys():
+                tickerJSON = self.iList["Futures"][self._ticker]
                 if self.moreDebug:
-                    uLogger.debug("Ticker [{}] found in futures list".format(self.ticker))
+                    uLogger.debug("Ticker [{}] found in futures list".format(self._ticker))
 
         if tickerJSON:
-            self.figi = tickerJSON["figi"]
+            self._figi = tickerJSON["figi"]
 
             if requestPrice:
                 tickerJSON["currentPrice"] = self.GetCurrentPrices(show=False)
@@ -901,7 +939,7 @@ class TinkoffBrokerServer:
 
         else:
             if show:
-                uLogger.warning("Ticker [{}] not found in available broker instrument's list!".format(self.ticker))
+                uLogger.warning("Ticker [{}] not found in available broker instrument's list!".format(self._ticker))
 
         return tickerJSON
 
@@ -915,71 +953,71 @@ class TinkoffBrokerServer:
         """
         figiJSON = {}
         if self.moreDebug:
-            uLogger.debug("Searching information about instrument by it's FIGI [{}] ...".format(self.figi))
+            uLogger.debug("Searching information about instrument by it's FIGI [{}] ...".format(self._figi))
 
-        if not self.figi:
-            uLogger.warning("self.figi variable is not be empty!")
+        if not self._figi:
+            uLogger.warning("self._figi variable is not be empty!")
 
         else:
-            if self.figi in TKS_TICKERS_OR_FIGI_EXCLUDED:
-                uLogger.warning("Instrument with figi [{}] not allowed for trading!".format(self.figi))
+            if self._figi in TKS_TICKERS_OR_FIGI_EXCLUDED:
+                uLogger.warning("Instrument with figi [{}] not allowed for trading!".format(self._figi))
                 raise Exception("Instrument not allowed")
 
             if not self.iList:
                 self.iList = self.Listing()
 
             for item in self.iList["Shares"].keys():
-                if self.figi == self.iList["Shares"][item]["figi"]:
+                if self._figi == self.iList["Shares"][item]["figi"]:
                     figiJSON = self.iList["Shares"][item]
 
                     if self.moreDebug:
-                        uLogger.debug("FIGI [{}] found in shares list".format(self.figi))
+                        uLogger.debug("FIGI [{}] found in shares list".format(self._figi))
 
                     break
 
             if not figiJSON:
                 for item in self.iList["Currencies"].keys():
-                    if self.figi == self.iList["Currencies"][item]["figi"]:
+                    if self._figi == self.iList["Currencies"][item]["figi"]:
                         figiJSON = self.iList["Currencies"][item]
 
                         if self.moreDebug:
-                            uLogger.debug("FIGI [{}] found in currencies list".format(self.figi))
+                            uLogger.debug("FIGI [{}] found in currencies list".format(self._figi))
 
                         break
 
             if not figiJSON:
                 for item in self.iList["Bonds"].keys():
-                    if self.figi == self.iList["Bonds"][item]["figi"]:
+                    if self._figi == self.iList["Bonds"][item]["figi"]:
                         figiJSON = self.iList["Bonds"][item]
 
                         if self.moreDebug:
-                            uLogger.debug("FIGI [{}] found in bonds list".format(self.figi))
+                            uLogger.debug("FIGI [{}] found in bonds list".format(self._figi))
 
                         break
 
             if not figiJSON:
                 for item in self.iList["Etfs"].keys():
-                    if self.figi == self.iList["Etfs"][item]["figi"]:
+                    if self._figi == self.iList["Etfs"][item]["figi"]:
                         figiJSON = self.iList["Etfs"][item]
 
                         if self.moreDebug:
-                            uLogger.debug("FIGI [{}] found in etfs list".format(self.figi))
+                            uLogger.debug("FIGI [{}] found in etfs list".format(self._figi))
 
                         break
 
             if not figiJSON:
                 for item in self.iList["Futures"].keys():
-                    if self.figi == self.iList["Futures"][item]["figi"]:
+                    if self._figi == self.iList["Futures"][item]["figi"]:
                         figiJSON = self.iList["Futures"][item]
 
                         if self.moreDebug:
-                            uLogger.debug("FIGI [{}] found in futures list".format(self.figi))
+                            uLogger.debug("FIGI [{}] found in futures list".format(self._figi))
 
                         break
 
         if figiJSON:
-            self.figi = figiJSON["figi"]
-            self.ticker = figiJSON["ticker"]
+            self._figi = figiJSON["figi"]
+            self._ticker = figiJSON["ticker"]
 
             if requestPrice:
                 figiJSON["currentPrice"] = self.GetCurrentPrices(show=False)
@@ -995,7 +1033,7 @@ class TinkoffBrokerServer:
 
         else:
             if show:
-                uLogger.warning("FIGI [{}] not found in available broker instrument's list!".format(self.figi))
+                uLogger.warning("FIGI [{}] not found in available broker instrument's list!".format(self._figi))
 
         return figiJSON
 
@@ -1037,28 +1075,28 @@ class TinkoffBrokerServer:
             uLogger.error("Depth of Market (DOM) must be >=1!")
             raise Exception("Incorrect value")
 
-        if not (self.ticker or self.figi):
-            uLogger.error("self.ticker or self.figi variables must be defined!")
+        if not (self._ticker or self._figi):
+            uLogger.error("self._ticker or self._figi variables must be defined!")
             raise Exception("Ticker or FIGI required")
 
-        if self.ticker and not self.figi:
+        if self._ticker and not self._figi:
             instrumentByTicker = self.SearchByTicker(requestPrice=False)  # WARNING! requestPrice=False to avoid recursion!
-            self.figi = instrumentByTicker["figi"] if instrumentByTicker else ""
+            self._figi = instrumentByTicker["figi"] if instrumentByTicker else ""
 
-        if not self.ticker and self.figi:
+        if not self._ticker and self._figi:
             instrumentByFigi = self.SearchByFIGI(requestPrice=False)  # WARNING! requestPrice=False to avoid recursion!
-            self.ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
+            self._ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
 
-        if not self.figi:
+        if not self._figi:
             uLogger.error("FIGI is not defined!")
             raise Exception("Ticker or FIGI required")
 
         else:
-            uLogger.debug("Requesting current prices: ticker [{}], FIGI [{}]. Wait, please...".format(self.ticker, self.figi))
+            uLogger.debug("Requesting current prices: ticker [{}], FIGI [{}]. Wait, please...".format(self._ticker, self._figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
             priceURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook"
-            self.body = str({"figi": self.figi, "depth": self.depth})
+            self.body = str({"figi": self._figi, "depth": self.depth})
             pricesResponse = self.SendAPIRequest(priceURL, reqType="POST")  # Response fields: https://tinkoff.github.io/investAPI/marketdata/#getorderbookresponse
 
             if pricesResponse and not ("code" in pricesResponse.keys() or "message" in pricesResponse.keys() or "description" in pricesResponse.keys()):
@@ -1081,7 +1119,7 @@ class TinkoffBrokerServer:
                 prices["closePrice"] = round(NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]), 6) if "closePrice" in pricesResponse.keys() else 0
 
             else:
-                uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
+                uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self._ticker, self._figi))
                 uLogger.debug("Server response: {}".format(pricesResponse))
 
             if show:
@@ -1089,8 +1127,8 @@ class TinkoffBrokerServer:
                     info = [
                         "Orders book actual at [{}] (UTC)\nTicker: [{}], FIGI: [{}], Depth of Market: [{}]\n".format(
                             datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
-                            self.ticker,
-                            self.figi,
+                            self._ticker,
+                            self._figi,
                             self.depth,
                         ),
                         "-" * 60, "\n",
@@ -1130,7 +1168,7 @@ class TinkoffBrokerServer:
                     uLogger.info("Current prices in order book:\n\n{}".format(infoText))
 
                 else:
-                    uLogger.warning("Orders book is empty at this time! Instrument: ticker [{}], FIGI [{}]".format(self.ticker, self.figi))
+                    uLogger.warning("Orders book is empty at this time! Instrument: ticker [{}], FIGI [{}]".format(self._ticker, self._figi))
 
         return prices
 
@@ -1292,17 +1330,17 @@ class TinkoffBrokerServer:
             if iName in TKS_TICKERS_OR_FIGI_EXCLUDED:
                 continue
 
-            self.ticker = iName
+            self._ticker = iName
             iData = self.SearchByTicker(requestPrice=False)  # trying to find instrument by ticker
 
             if not iData:
-                self.ticker = ""
-                self.figi = iName
+                self._ticker = ""
+                self._figi = iName
 
                 iData = self.SearchByFIGI(requestPrice=False)  # trying to find instrument by FIGI
 
                 if not iData:
-                    self.figi = ""
+                    self._figi = ""
                     uLogger.warning("Instrument [{}] not in list of available instruments for current token!".format(iName))
 
             if iData and iData["figi"] not in onlyUniqueFIGIs:
@@ -1334,7 +1372,7 @@ class TinkoffBrokerServer:
         uLogger.debug("Requesting current prices from Tinkoff Broker server...")
 
         iList = []  # trying to get info and current prices about all unique instruments:
-        for self.figi in onlyUniqueFIGIs:
+        for self._figi in onlyUniqueFIGIs:
             iData = self.SearchByFIGI(requestPrice=True)
             iList.append(iData)
 
@@ -1404,13 +1442,13 @@ class TinkoffBrokerServer:
                  `{"figi": "TCS00A103X66", "tradingStatus": "SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING",
                   "limitOrderAvailableFlag": false, "marketOrderAvailableFlag": false, "apiTradeAvailableFlag": true}`
         """
-        if self.figi is None or not self.figi:
+        if self._figi is None or not self._figi:
             uLogger.error("Variable `figi` must be defined for using this method!")
             raise Exception("FIGI required")
 
-        uLogger.debug("Requesting current trading status, FIGI: [{}]. Wait, please...".format(self.figi))
+        uLogger.debug("Requesting current trading status, FIGI: [{}]. Wait, please...".format(self._figi))
 
-        self.body = str({"figi": self.figi, "instrumentId": self.figi})
+        self.body = str({"figi": self._figi, "instrumentId": self._figi})
         tradingStatusURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus"
         tradingStatus = self.SendAPIRequest(tradingStatusURL, reqType="POST")
 
@@ -1611,7 +1649,7 @@ class TinkoffBrokerServer:
         # Type of instrument must be only one of supported types in TKS_INSTRUMENTS
         for item in portfolioResponse["positions"]:
             if item["instrumentType"] == "currency":
-                self.figi = item["figi"]
+                self._figi = item["figi"]
                 curr = self.SearchByFIGI(requestPrice=False)
 
                 # current price of currency in RUB:
@@ -1679,7 +1717,7 @@ class TinkoffBrokerServer:
         byCountry = {unknownCountryName: {"cost": 0, "percent": 0.}}  # distribution by countries (currencies are included in their countries)
 
         for item in portfolioResponse["positions"]:
-            self.figi = item["figi"]
+            self._figi = item["figi"]
             instrument = self.SearchByFIGI(requestPrice=False)  # full raw info about instrument by FIGI
 
             if instrument:
@@ -1811,7 +1849,7 @@ class TinkoffBrokerServer:
         uniquePendingOrders = {}  # unique instruments with FIGIs as dictionary keys
 
         for item in view["raw"]["orders"]:
-            self.figi = item["figi"]
+            self._figi = item["figi"]
 
             if item["figi"] not in uniquePendingOrdersFIGIs:
                 instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
@@ -1863,7 +1901,7 @@ class TinkoffBrokerServer:
         uniqueStopOrders = {}  # unique instruments with FIGIs as dictionary keys
 
         for item in view["raw"]["stopOrders"]:
-            self.figi = item["figi"]
+            self._figi = item["figi"]
 
             if item["figi"] not in uniqueStopOrdersFIGIs:
                 instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
@@ -2517,9 +2555,9 @@ class TinkoffBrokerServer:
                     continue
 
                 else:
-                    self.figi = item["figi"] if item["figi"] else ""
+                    self._figi = item["figi"] if item["figi"] else ""
                     payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
-                    instrument = self.SearchByFIGI(requestPrice=False) if self.figi else {}
+                    instrument = self.SearchByFIGI(requestPrice=False) if self._figi else {}
 
                     # group of deals during one day:
                     if nextDay and item["date"].split("T")[0] != nextDay:
@@ -2531,7 +2569,7 @@ class TinkoffBrokerServer:
 
                     info.append("| {:<19} | {:<12} | {:<12} | {:<10} | {:<9} | {:>15} | {:<10} | {:<66} |\n".format(
                         item["date"].replace("T", " ").replace("Z", "").split(".")[0],
-                        self.figi if self.figi else "—",
+                        self._figi if self._figi else "—",
                         instrument["ticker"] if instrument else "—",
                         instrument["type"] if instrument else "—",
                         item["quantity"] if int(item["quantity"]) > 0 else "—",
@@ -2588,17 +2626,17 @@ class TinkoffBrokerServer:
             uLogger.error("Interval parameter must be string with current available values: `1min`, `5min`, `15min`, `hour` and `day`.")
             raise Exception("Incorrect value")
 
-        if not (self.ticker or self.figi):
+        if not (self._ticker or self._figi):
             uLogger.error("Ticker or FIGI must be defined!")
             raise Exception("Ticker or FIGI required")
 
-        if self.ticker and not self.figi:
+        if self._ticker and not self._figi:
             instrumentByTicker = self.SearchByTicker(requestPrice=False)
-            self.figi = instrumentByTicker["figi"] if instrumentByTicker else ""
+            self._figi = instrumentByTicker["figi"] if instrumentByTicker else ""
 
-        if self.figi and not self.ticker:
+        if self._figi and not self._ticker:
             instrumentByFIGI = self.SearchByFIGI(requestPrice=False)
-            self.ticker = instrumentByFIGI["ticker"] if instrumentByFIGI else ""
+            self._ticker = instrumentByFIGI["ticker"] if instrumentByFIGI else ""
 
         dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
         dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
@@ -2620,7 +2658,7 @@ class TinkoffBrokerServer:
         uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
         uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
         uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
-        uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self.ticker, self.figi))
+        uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self._ticker, self._figi))
 
         tempOld = None  # pandas object for old history, if --only-missing key present
         lastTime = None  # datetime object of last old candle in file
@@ -2663,7 +2701,7 @@ class TinkoffBrokerServer:
                 # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
                 historyURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles"
                 self.body = str({
-                    "figi": self.figi,
+                    "figi": self._figi,
                     "from": blockStart.strftime(TKS_DATE_TIME_FORMAT),
                     "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
                     "interval": TKS_CANDLE_INTERVALS[interval][0]
@@ -2732,7 +2770,7 @@ class TinkoffBrokerServer:
         if self.historyFile is not None:
             if history is not None and not history.empty:
                 history.to_csv(self.historyFile, sep=csvSep, index=False, header=None)
-                uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self.ticker, self.figi, interval, os.path.abspath(self.historyFile)))
+                uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self._ticker, self._figi, interval, os.path.abspath(self.historyFile)))
 
             else:
                 uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
@@ -2803,7 +2841,7 @@ class TinkoffBrokerServer:
 
         elif isinstance(candles, pd.DataFrame):
             self.priceModel.prices = candles  # set candles chain from variable
-            self.priceModel.ticker = self.ticker  # use current TKSBrokerAPI ticker as ticker name in PriceGenerator
+            self.priceModel.ticker = self._ticker  # use current TKSBrokerAPI ticker as ticker name in PriceGenerator
 
             if "datetime" not in candles.columns:
                 self.priceModel.prices["datetime"] = pd.to_datetime(candles.date + ' ' + candles.time, utc=True)  # PriceGenerator uses "datetime" column with date and time
@@ -2862,19 +2900,19 @@ class TinkoffBrokerServer:
         if expDate is None or not expDate:
             expDate = "Undefined"
 
-        if not (self.ticker or self.figi):
+        if not (self._ticker or self._figi):
             uLogger.error("Ticker or FIGI must be defined!")
             raise Exception("Ticker or FIGI required")
 
-        instrument = self.SearchByTicker(requestPrice=True) if self.ticker else self.SearchByFIGI(requestPrice=True)
-        self.ticker = instrument["ticker"]
-        self.figi = instrument["figi"]
+        instrument = self.SearchByTicker(requestPrice=True) if self._ticker else self.SearchByFIGI(requestPrice=True)
+        self._ticker = instrument["ticker"]
+        self._figi = instrument["figi"]
 
-        uLogger.debug("Opening [{}] market order: ticker [{}], FIGI [{}], lots [{}], TP [{:.4f}], SL [{:.4f}], expiration date of TP/SL orders [{}]. Wait, please...".format(operation, self.ticker, self.figi, lots, tp, sl, expDate))
+        uLogger.debug("Opening [{}] market order: ticker [{}], FIGI [{}], lots [{}], TP [{:.4f}], SL [{:.4f}], expiration date of TP/SL orders [{}]. Wait, please...".format(operation, self._ticker, self._figi, lots, tp, sl, expDate))
 
         openTradeURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder"
         self.body = str({
-            "figi": self.figi,
+            "figi": self._figi,
             "quantity": str(lots),
             "direction": "ORDER_DIRECTION_BUY" if operation == "Buy" else "ORDER_DIRECTION_SELL",  # see: TKS_ORDER_DIRECTIONS
             "accountId": str(self.accountId),
@@ -2885,7 +2923,7 @@ class TinkoffBrokerServer:
         if "orderId" in response.keys():
             uLogger.info("[{}] market order [{}] was executed: ticker [{}], FIGI [{}], lots [{}]. Total order price: [{:.4f} {}] (with commission: [{:.2f} {}]). Average price of lot: [{:.2f} {}]".format(
                 operation, response["orderId"],
-                self.ticker, self.figi, lots,
+                self._ticker, self._figi, lots,
                 NanoToFloat(response["totalOrderAmount"]["units"], response["totalOrderAmount"]["nano"]), response["totalOrderAmount"]["currency"],
                 NanoToFloat(response["initialCommission"]["units"], response["initialCommission"]["nano"]), response["initialCommission"]["currency"],
                 NanoToFloat(response["executedOrderPrice"]["units"], response["executedOrderPrice"]["nano"]), response["executedOrderPrice"]["currency"],
@@ -2957,9 +2995,9 @@ class TinkoffBrokerServer:
             allOpened = [item["figi"] for iType in TKS_INSTRUMENTS for item in portfolio["stat"][iType]]
             uLogger.debug("All opened instruments by it's FIGI: {}".format(", ".join(allOpened)))
 
-            for self.figi in uniqueInstruments:
-                if self.figi not in allOpened:
-                    uLogger.warning("Instrument with FIGI [{}] not in open positions list!".format(self.figi))
+            for self._figi in uniqueInstruments:
+                if self._figi not in allOpened:
+                    uLogger.warning("Instrument with FIGI [{}] not in open positions list!".format(self._figi))
                     continue
 
                 # search open trade info about instrument by ticker:
@@ -2969,17 +3007,17 @@ class TinkoffBrokerServer:
                         break
 
                     for item in portfolio["stat"][iType]:
-                        if item["figi"] == self.figi:
+                        if item["figi"] == self._figi:
                             instrument = item
                             break
 
                 if instrument:
-                    self.ticker = instrument["ticker"]
-                    self.figi = instrument["figi"]
+                    self._ticker = instrument["ticker"]
+                    self._figi = instrument["figi"]
 
                     uLogger.debug("Closing trade of instrument: ticker [{}], FIGI[{}], lots [{}]{}. Wait, please...".format(
-                        self.ticker,
-                        self.figi,
+                        self._ticker,
+                        self._figi,
                         int(instrument["volume"]),
                         ", blocked [{}]".format(instrument["blocked"]) if instrument["blocked"] > 0 else "",
                     ))
@@ -2990,7 +3028,7 @@ class TinkoffBrokerServer:
                         if instrument["blocked"] > 0:
                             uLogger.warning("Just for your information: there are [{}] lots blocked for instrument [{}]! Available only [{}] lots to closing trade.".format(
                                 instrument["blocked"],
-                                self.ticker,
+                                self._ticker,
                                 tradeLots,
                             ))
 
@@ -2998,7 +3036,7 @@ class TinkoffBrokerServer:
                         self.Trade(operation="Sell" if instrument["direction"] == "Long" else "Buy", lots=tradeLots)
 
                     else:
-                        uLogger.warning("There are no available lots for instrument [{}] to closing trade at this moment! Try again later or cancel some orders.".format(self.ticker))
+                        uLogger.warning("There are no available lots for instrument [{}] to closing trade at this moment! Try again later or cancel some orders.".format(self._ticker))
 
     def CloseAllTrades(self, iType: str, portfolio: dict = None) -> None:
         """
@@ -3085,25 +3123,25 @@ class TinkoffBrokerServer:
         if expDate is None or not expDate:
             expDate = "Undefined"
 
-        if not (self.ticker or self.figi):
+        if not (self._ticker or self._figi):
             uLogger.error("Tocker or FIGI must be defined!")
             raise Exception("Ticker or FIGI required")
 
         response = {}
-        instrument = self.SearchByTicker(requestPrice=True) if self.ticker else self.SearchByFIGI(requestPrice=True)
-        self.ticker = instrument["ticker"]
-        self.figi = instrument["figi"]
+        instrument = self.SearchByTicker(requestPrice=True) if self._ticker else self.SearchByFIGI(requestPrice=True)
+        self._ticker = instrument["ticker"]
+        self._figi = instrument["figi"]
 
         if orderType == "Limit":
             uLogger.debug(
                 "Creating pending limit-order: ticker [{}], FIGI [{}], action [{}], lots [{}] and the target price [{:.2f} {}]. Wait, please...".format(
-                    self.ticker, self.figi,
+                    self._ticker, self._figi,
                     operation, lots, targetPrice, instrument["currency"],
                 ))
 
             openOrderURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder"
             self.body = str({
-                "figi": self.figi,
+                "figi": self._figi,
                 "quantity": str(lots),
                 "price": FloatToNano(targetPrice),
                 "direction": "ORDER_DIRECTION_BUY" if operation == "Buy" else "ORDER_DIRECTION_SELL",  # see: TKS_ORDER_DIRECTIONS
@@ -3116,7 +3154,7 @@ class TinkoffBrokerServer:
                 uLogger.info(
                     "Limit-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}]".format(
                         response["orderId"],
-                        self.ticker, self.figi,
+                        self._ticker, self._figi,
                         operation, lots, targetPrice, instrument["currency"],
                     ))
 
@@ -3139,7 +3177,7 @@ class TinkoffBrokerServer:
         if orderType == "Stop":
             uLogger.debug(
                 "Creating stop-order: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and local expiration date [{}]. Wait, please...".format(
-                    self.ticker, self.figi,
+                    self._ticker, self._figi,
                     operation, lots,
                     targetPrice, instrument["currency"],
                     limitPrice, instrument["currency"],
@@ -3151,7 +3189,7 @@ class TinkoffBrokerServer:
             stopOrderType = "STOP_ORDER_TYPE_STOP_LOSS" if stopType == "SL" else "STOP_ORDER_TYPE_TAKE_PROFIT" if stopType == "TP" else "STOP_ORDER_TYPE_STOP_LIMIT"
 
             body = {
-                "figi": self.figi,
+                "figi": self._figi,
                 "quantity": str(lots),
                 "price": FloatToNano(limitPrice),
                 "stopPrice": FloatToNano(targetPrice),
@@ -3171,7 +3209,7 @@ class TinkoffBrokerServer:
                 uLogger.info(
                     "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and expiration date in UTC [{}]".format(
                         response["stopOrderId"],
-                        self.ticker, self.figi,
+                        self._ticker, self._figi,
                         operation, lots,
                         targetPrice, instrument["currency"],
                         limitPrice, instrument["currency"],
@@ -3398,8 +3436,8 @@ class TinkoffBrokerServer:
 
         overview = self.Overview(show=False)  # get user portfolio with all open trades info
 
-        self.ticker = instrument  # try to set instrument as ticker
-        self.figi = ""
+        self._ticker = instrument  # try to set instrument as ticker
+        self._figi = ""
 
         if self.IsInPortfolio(portfolio=overview):
             uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Wait, please...")
@@ -3433,8 +3471,8 @@ class TinkoffBrokerServer:
 
         overview = self.Overview(show=False)  # get user portfolio with all open trades info
 
-        self.ticker = ""
-        self.figi = instrument  # try to set instrument as FIGI id
+        self._ticker = ""
+        self._figi = instrument  # try to set instrument as FIGI id
 
         if self.IsInPortfolio(portfolio=overview):
             uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Wait, please...")
@@ -3512,26 +3550,26 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened positions list...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened positions list...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
-                    if instrument["ticker"] == self.ticker:
+                    if instrument["ticker"] == self._ticker:
                         result = True
-                        msg = "Instrument with ticker [{}] is present in open positions".format(self.ticker)
+                        msg = "Instrument with ticker [{}] is present in open positions".format(self._ticker)
                         break
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self._figi)
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
-                    if instrument["figi"] == self.figi:
+                    if instrument["figi"] == self._figi:
                         result = True
-                        msg = "Instrument with FIGI [{}] is present in open positions".format(self.figi)
+                        msg = "Instrument with FIGI [{}] is present in open positions".format(self._figi)
                         break
 
         else:
@@ -3555,26 +3593,26 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] in opened positions...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in open positions".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] in opened positions...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
-                    if instrument["ticker"] == self.ticker:
+                    if instrument["ticker"] == self._ticker:
                         result = instrument
-                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self.ticker, instrument["figi"])
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self._ticker, instrument["figi"])
                         break
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in open positions".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in open positions".format(self._figi)
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
-                    if instrument["figi"] == self.figi:
+                    if instrument["figi"] == self._figi:
                         result = instrument
-                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self.figi)
+                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self._figi)
                         break
 
         else:
@@ -3599,24 +3637,24 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["orders"]:
-                if instrument["ticker"] == self.ticker:
+                if instrument["ticker"] == self._ticker:
                     result = True
-                    msg = "Instrument with ticker [{}] is present in limit orders list".format(self.ticker)
+                    msg = "Instrument with ticker [{}] is present in limit orders list".format(self._ticker)
                     break
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self._figi)
 
             for instrument in portfolio["stat"]["orders"]:
-                if instrument["figi"] == self.figi:
+                if instrument["figi"] == self._figi:
                     result = True
-                    msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self.figi)
+                    msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self._figi)
                     break
 
         else:
@@ -3642,27 +3680,27 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["orders"]:
-                if instrument["ticker"] == self.ticker:
+                if instrument["ticker"] == self._ticker:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with ticker [{}] is present in limit orders list".format(self.ticker)
+                msg = "Instrument with ticker [{}] is present in limit orders list".format(self._ticker)
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self._figi)
 
             for instrument in portfolio["stat"]["orders"]:
-                if instrument["figi"] == self.figi:
+                if instrument["figi"] == self._figi:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self.figi)
+                msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self._figi)
 
         else:
             uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
@@ -3686,24 +3724,24 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["stopOrders"]:
-                if instrument["ticker"] == self.ticker:
+                if instrument["ticker"] == self._ticker:
                     result = True
-                    msg = "Instrument with ticker [{}] is present in stop orders list".format(self.ticker)
+                    msg = "Instrument with ticker [{}] is present in stop orders list".format(self._ticker)
                     break
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self._figi)
 
             for instrument in portfolio["stat"]["stopOrders"]:
-                if instrument["figi"] == self.figi:
+                if instrument["figi"] == self._figi:
                     result = True
-                    msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self.figi)
+                    msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self._figi)
                     break
 
         else:
@@ -3729,27 +3767,27 @@ class TinkoffBrokerServer:
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
-        if self.ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self.ticker))
-            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self.ticker)
+        if self._ticker:
+            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self._ticker))
+            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["stopOrders"]:
-                if instrument["ticker"] == self.ticker:
+                if instrument["ticker"] == self._ticker:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with ticker [{}] is present in stop orders list".format(self.ticker)
+                msg = "Instrument with ticker [{}] is present in stop orders list".format(self._ticker)
 
-        elif self.figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self.figi))
-            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self.figi)
+        elif self._figi:
+            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self._figi))
+            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self._figi)
 
             for instrument in portfolio["stat"]["stopOrders"]:
-                if instrument["figi"] == self.figi:
+                if instrument["figi"] == self._figi:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self.figi)
+                msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self._figi)
 
         else:
             uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
@@ -3997,7 +4035,7 @@ class TinkoffBrokerServer:
 
         See also: `ExtendBondsData()`.
 
-        :param iJSON: raw json data of a bond from broker server, example `iJSON = self.iList["Bonds"][self.ticker]`
+        :param iJSON: raw json data of a bond from broker server, example `iJSON = self.iList["Bonds"][self._ticker]`
                       If raw iJSON is not data of bond then server returns an error [400] with message:
                       `{"code": 3, "message": "instrument type is not bond", "description": "30048"}`.
         :return: dictionary with bond payment calendar. Response example
@@ -4015,7 +4053,7 @@ class TinkoffBrokerServer:
 
         uLogger.debug("Requesting bond payment calendar, {}FIGI: [{}], from: [{}], to: [{}]. Wait, please...".format(
             "ticker: [{}], ".format(iJSON["ticker"]) if "ticker" in iJSON.keys() else "",
-            self.figi,
+            self._figi,
             startDate,
             endDate,
         ))
@@ -4068,7 +4106,7 @@ class TinkoffBrokerServer:
             uLogger.warning("You requested a lot of bonds! Operation will takes more time. Wait, please...")
 
         bonds = None
-        for i, self.figi in enumerate(uniqueInstruments):
+        for i, self._figi in enumerate(uniqueInstruments):
             instrument = self.SearchByFIGI(requestPrice=False)  # raw data about instrument from server
 
             if "type" in instrument.keys() and instrument["type"] == "Bonds":
@@ -4210,7 +4248,7 @@ class TinkoffBrokerServer:
         :return: Pandas DataFrame with only bond payments calendar data. Fields mean: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
-            extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
+            extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=False)
 
         uLogger.debug("Generating bond payments calendar data. Wait, please...")
 
@@ -4291,7 +4329,7 @@ class TinkoffBrokerServer:
         :return: multilines text in Markdown format with bonds payment calendar as a table.
         """
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
-            extBonds = self.ExtendBondsData(instruments=[self.figi, self.ticker], xlsx=False)
+            extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=False)
 
         infoText = "# Bond payments calendar\n\n"
 
@@ -4720,7 +4758,7 @@ def Main(**kwargs):
                 uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
 
             if args.ticker:
-                ticker = args.ticker.upper()  # Tickers may be upper case only
+                ticker = str(args.ticker).upper()  # Tickers may be upper case only
 
                 if ticker in trader.aliasesKeys:
                     trader.ticker = trader.aliases[ticker]  # Replace some tickers with its aliases
@@ -4729,7 +4767,7 @@ def Main(**kwargs):
                     trader.ticker = ticker
 
             if args.figi:
-                trader.figi = args.figi.upper()  # FIGIs may be upper case only
+                trader.figi = str(args.figi).upper()  # FIGIs may be upper case only
 
             if args.depth is not None:
                 trader.depth = args.depth
@@ -5010,20 +5048,20 @@ def Main(**kwargs):
                     raise Exception("Ticker or FIGI required")
 
                 if args.ticker:
-                    trader.CloseTrades([args.ticker])  # close only one trade by ticker (priority)
+                    trader.CloseTrades([str(args.ticker).upper()])  # close only one trade by ticker (priority)
 
                 else:
-                    trader.CloseTrades([args.figi])  # close only one trade by FIGI
+                    trader.CloseTrades([str(args.figi).upper()])  # close only one trade by FIGI
 
             elif args.close_trades is not None:
                 trader.CloseTrades(args.close_trades)  # close trades for list of tickers
 
             elif args.close_all is not None:
                 if args.ticker:
-                    trader.CloseAllByTicker(instrument=args.ticker)
+                    trader.CloseAllByTicker(instrument=str(args.ticker).upper())
 
                 elif args.figi:
-                    trader.CloseAllByFIGI(instrument=args.figi)
+                    trader.CloseAllByFIGI(instrument=str(args.figi).upper())
 
                 else:
                     trader.CloseAll(*args.close_all)
