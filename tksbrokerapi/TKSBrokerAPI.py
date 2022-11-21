@@ -4636,7 +4636,7 @@ class TinkoffBrokerServer:
 
             info.extend([
                 "\n## Current user tariff limits\n",
-                "\nSee also:\n",
+                "\n### See also\n",
                 "* Tinkoff limit policy: https://tinkoff.github.io/investAPI/limits/\n",
                 "* Tinkoff Invest API: https://tinkoff.github.io/investAPI/\n",
                 "  - More about REST API requests: https://tinkoff.github.io/investAPI/swagger-ui/\n",
@@ -4675,6 +4675,13 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("User data was saved to file: [{}]".format(os.path.abspath(self.userInfoFile)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = self.userInfoFile.replace(".md", ".html") if self.userInfoFile.endswith(".md") else self.userInfoFile + ".html"
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="User info", commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return view
 

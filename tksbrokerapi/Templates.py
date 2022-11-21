@@ -87,7 +87,7 @@ COMMON_CSS = """
         font-family: "Segoe UI", "Frutiger", "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", "Arial", sans-serif;
         font-size: 18px;
         color: #333333;
-        margin: 16px 0 8px 44px;
+        margin: 16px 0 8px 52px;
     }
     
     details {
