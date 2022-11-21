@@ -655,7 +655,7 @@ class TinkoffBrokerServer:
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
             info = [
                 "# Main information\n\n",
-                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
                 "| Parameters                                                  | Values                                                 |\n",
                 "|-------------------------------------------------------------|--------------------------------------------------------|\n",
                 "| Ticker:                                                     | {:<54} |\n".format(iJSON["ticker"]),
@@ -1201,7 +1201,7 @@ class TinkoffBrokerServer:
 
         info = [
             "# All available instruments from Tinkoff Broker server for current user token\n\n",
-            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
         ]
 
         # add instruments count by type:
@@ -1261,7 +1261,7 @@ class TinkoffBrokerServer:
         if not self.iList:
             self.iList = self.Listing()
 
-        searchResults = {iType: {} for iType in self.iList}  # same as iList but will contains only filtered instruments
+        searchResults = {iType: {} for iType in self.iList}  # same as iList but will contain only filtered instruments
         compiledPattern = re.compile(pattern, re.IGNORECASE)
 
         for iType in self.iList:
@@ -1276,7 +1276,7 @@ class TinkoffBrokerServer:
         resultsLen = sum([len(searchResults[iType]) for iType in searchResults])
         info = [
             "# Search results\n\n",
-            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
             "* **Search pattern:** [{}]\n".format(pattern),
             "* **Found instruments:** [{}]\n\n".format(resultsLen),
             '**Note:** you can view info about found instruments with key "--info", e.g.: "tksbrokerapi -t TICKER --info" or "tksbrokerapi -f FIGI --info".\n'
@@ -2072,10 +2072,12 @@ class TinkoffBrokerServer:
 
         # --- Prepare text statistics overview in human-readable:
         if show:
+            actualOnDate = datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)
+
             # Whatever the value `details`, header not changes:
             info = [
                 "# Client's portfolio\n\n",
-                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "* **Actual on date:** [{} UTC]\n".format(actualOnDate),
                 "* **Account ID:** [{}]\n".format(self.accountId),
             ]
 
@@ -2188,7 +2190,7 @@ class TinkoffBrokerServer:
                 # --- Show pending limit orders section:
                 if view["stat"]["orders"]:
                     info.extend([
-                        "\n## Opened pending limit-orders: {}\n".format(len(view["stat"]["orders"])),
+                        "\n## Opened pending limit-orders: [{}]\n".format(len(view["stat"]["orders"])),
                         "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)       |\n",
                         "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|-------------------------|\n",
                     ])
@@ -2211,12 +2213,12 @@ class TinkoffBrokerServer:
                         ))
 
                 else:
-                    info.append("\n## Total pending limit-orders: 0\n")
+                    info.append("\n## Total pending limit-orders: [0]\n")
 
                 # --- Show stop orders section:
                 if view["stat"]["stopOrders"]:
                     info.extend([
-                        "\n## Opened stop-orders: {}\n".format(len(view["stat"]["stopOrders"])),
+                        "\n## Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"])),
                         "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
                         "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------|\n",
                     ])
@@ -2242,14 +2244,15 @@ class TinkoffBrokerServer:
                         ))
 
                 else:
-                    info.append("\n## Total stop-orders: 0\n")
+                    info.append("\n## Total stop-orders: [0]\n")
 
             if details in ["full", "analytics"]:
                 # -- Show analytics section:
                 if view["stat"]["portfolioCostRUB"] > 0:
                     info.extend([
-                        "\n# Analytics\n"
-                        "\n* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                        "\n# Analytics\n\n"
+                        "* **Actual on date:** [{} UTC]\n".format(actualOnDate),
+                        "* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
                         "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
                             "+" if view["stat"]["totalChangesRUB"] > 0 else "",
                             view["stat"]["totalChangesRUB"],
@@ -2371,6 +2374,13 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("Client's portfolio was saved to file: [{}]".format(os.path.abspath(filename)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = filename.replace(".md", ".html") if filename.endswith(".md") else filename + ".html"
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="", commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return view
 
@@ -4389,7 +4399,7 @@ class TinkoffBrokerServer:
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
 
             info = [
-                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
                 "| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |\n",
                 "|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|\n",
             ]
