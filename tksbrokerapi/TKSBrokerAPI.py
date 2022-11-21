@@ -50,10 +50,12 @@ from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
 import pandas as pd
 
+from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
+from Templates import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
 from TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
 from TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 
-from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data. See docs here: https://github.com/Tim55667757/PriceGenerator
+from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
 
 import UniLogger as uLog  # Logger for TKSBrokerAPI
@@ -187,6 +189,13 @@ class TinkoffBrokerServer:
 
         self.moreDebug = False
         """Enables more debug information in this class, such as net request and response headers in all methods. `False` by default."""
+
+        self.useHTMLReports = False
+        """
+        If `True` then TKSBrokerAPI generate also HTML reports from Markdown. `False` by default.
+        
+        See also: Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
+        """
 
         self.historyFile = None
         """Full path to the output file where history candles will be saved or updated. Default: `None`, it mean that returns only Pandas DataFrame.
@@ -644,9 +653,10 @@ class TinkoffBrokerServer:
         infoText = ""
 
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
+            header = "Main information: ticker [{}], FIGI [{}]\n\n".format(iJSON["ticker"], iJSON["figi"])
             info = [
-                "# Main information: ticker [{}], FIGI [{}]\n\n".format(iJSON["ticker"], iJSON["figi"]),
-                "* Actual at: [{}] (UTC)\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "# {}".format(header),
+                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                                  | Values                                                 |\n",
                 "|-------------------------------------------------------------|--------------------------------------------------------|\n",
                 "| Ticker:                                                     | {:<54} |\n".format(iJSON["ticker"]),
@@ -856,7 +866,7 @@ class TinkoffBrokerServer:
             # Add bond payment calendar:
             if iJSON["type"] == "Bonds":
                 strCalendar = self.ShowBondsCalendar(extBonds=iExt, show=False)   # bond payment calendar
-                info.extend(["\n", strCalendar])
+                info.extend(["\n#", strCalendar])
 
             infoText += "".join(info)
 
@@ -871,6 +881,13 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("Info about instrument with ticker [{}] and FIGI [{}] was saved to file: [{}]".format(iJSON["ticker"], iJSON["figi"], os.path.abspath(self.infoFile)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = self.infoFile.replace(".md", ".html") if self.infoFile.endswith(".md") else self.infoFile + ".html"
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return infoText
 
@@ -1224,6 +1241,13 @@ class TinkoffBrokerServer:
 
             uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
+            if self.useHTMLReports:
+                htmlFilePath = self.instrumentsFile.replace(".md", ".html") if self.instrumentsFile.endswith(".md") else self.instrumentsFile + ".html"
+                with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                    fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="List of instruments", commonCSS=COMMON_CSS, markdown=infoText))
+
+                uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
+
         return infoText
 
     def SearchInstruments(self, pattern: str, show: bool = True) -> dict:
@@ -1253,9 +1277,10 @@ class TinkoffBrokerServer:
         resultsLen = sum([len(searchResults[iType]) for iType in searchResults])
         info = [
             "# Search results\n\n",
+            "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
             "* **Search pattern:** [{}]\n".format(pattern),
             "* **Found instruments:** [{}]\n\n".format(resultsLen),
-            "**Note:** you can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t TICKER --info` or `tksbrokerapi -f FIGI --info`.\n"
+            '**Note:** you can view info about found instruments with key "--info", e.g.: "tksbrokerapi -t TICKER --info" or "tksbrokerapi -f FIGI --info".\n'
         ]
         infoShort = info[:]
 
@@ -1272,7 +1297,7 @@ class TinkoffBrokerServer:
             for iType in searchResults:
                 iTypeValuesCount = len(searchResults[iType].values())
                 if iTypeValuesCount > 0:
-                    info.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
+                    info.extend(["\n## {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
                     infoShort.extend(["\n### {}: [{}]\n\n".format(iType, iTypeValuesCount), headerLine, splitLine])
 
                     for instrument in searchResults[iType].values():
@@ -1302,6 +1327,14 @@ class TinkoffBrokerServer:
                 fH.write(infoText)
 
             uLogger.info("Full search results were saved to file: [{}]".format(os.path.abspath(self.searchResultsFile)))
+
+            if self.searchResultsFile:
+                htmlFilePath = self.searchResultsFile.replace(".md", ".html") if self.searchResultsFile.endswith(".md") else self.searchResultsFile + ".html"
+                header = "Search results: {}".format(pattern)
+                with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                    fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+
+                uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return searchResults
 
@@ -1350,7 +1383,7 @@ class TinkoffBrokerServer:
 
         return onlyUniqueFIGIs
 
-    def GetListOfPrices(self, instruments: list, show: bool = False) -> list:
+    def GetListOfPrices(self, instruments: list[str], show: bool = False) -> list[dict]:
         """
         This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
 
@@ -1392,13 +1425,15 @@ class TinkoffBrokerServer:
         infoText = ""
 
         if show or self.pricesFile:
+            tickers = []
             info = [
-                "# Actual prices at: [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "# Current prices\n* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
                 "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|-------|\n",
             ]
 
             for item in iList:
+                tickers.append(item["ticker"])
                 info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {:<5} |\n".format(
                     item["ticker"],
                     item["figi"],
@@ -1427,6 +1462,14 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
+
+                if self.pricesFile:
+                    htmlFilePath = self.pricesFile.replace(".md", ".html") if self.pricesFile.endswith(".md") else self.pricesFile + ".html"
+                    header = "Price for tickers: {}".format("[{}], ".join(tickers))
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return infoText
 
@@ -4645,6 +4688,7 @@ def ParseArgs():
     parser.add_argument("--no-cancelled", "--no-canceled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
     parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If `None` then used default files.")
+    parser.add_argument("--html", "--HTML", action="store_true", default=False, help="Option: if key present then TKSBrokerAPI generate also HTML reports from Markdown. False by default.")
 
     parser.add_argument("--interval", type=str, default="hour", help="Option: available values are `1min`, `5min`, `15min`, `hour` and `day`. Used only with `--history` key. This is time period of one candle. Default: `hour` for every history candles.")
     parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. `False` by default.")
@@ -4756,6 +4800,9 @@ def Main(**kwargs):
             if args.more:
                 trader.moreDebug = True
                 uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
+
+            if args.html:
+                trader.useHTMLReports = True
 
             if args.ticker:
                 ticker = str(args.ticker).upper()  # Tickers may be upper case only
