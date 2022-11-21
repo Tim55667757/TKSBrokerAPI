@@ -27,5 +27,4 @@ sys.path.extend([
 pdoc.pdoc(
     Path("tksbrokerapi").resolve(),
     output_directory=Path("docs").resolve(),
-    format="html",
 )

@@ -4,6 +4,7 @@
 # Build requirements:
 twine == 4.0.1
 pytest >= 7.1.2
+pdoc >= 12.3.0
 
 # Packet TKSBrokerAPI requirements:
 requests >= 2.25.1  # Apache-2.0 license
