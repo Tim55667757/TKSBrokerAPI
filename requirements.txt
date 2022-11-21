@@ -4,6 +4,8 @@
 # Build requirements:
 twine == 4.0.1
 pytest >= 7.1.2
+
+# Documentation requirements:
 pdoc >= 12.3.0
 
 # Packet TKSBrokerAPI requirements:
