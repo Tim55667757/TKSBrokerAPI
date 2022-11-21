@@ -2097,7 +2097,7 @@ class TinkoffBrokerServer:
                     "## Open positions\n\n",
                     "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)                   |\n",
                     "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|------------------------------|\n",
-                    "| Ruble                       | {:>31} |          |              |              |                     |                              |\n".format(
+                    "| **Ruble:**                  | {:>31} |          |              |              |                     |                              |\n".format(
                         "{:.2f} ({:.2f}) rub".format(
                             view["stat"]["availableRUB"],
                             view["stat"]["blockedRUB"],
