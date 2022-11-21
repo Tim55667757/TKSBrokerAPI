@@ -68,7 +68,7 @@ uLogger = uLog.UniLogger  # init logger for TKSBrokerAPI
 uLogger.level = 10  # debug level by default for TKSBrokerAPI module
 uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerAPI module
 
-__version__ = "1.5"  # The "major.minor" version setup here, but build number define at the build-server only
+__version__ = "1.6"  # The "major.minor" version setup here, but build number define at the build-server only
 
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
