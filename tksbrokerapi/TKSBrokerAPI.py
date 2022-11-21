@@ -3907,7 +3907,7 @@ class TinkoffBrokerServer:
         if show:
             info = [
                 "# Withdrawal limits\n\n",
-                "* **Actual date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
+                "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
                 "* **Account ID:** [{}]\n".format(self.accountId),
             ]
 
@@ -3948,6 +3948,14 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("Client's withdrawal limits was saved to file: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = self.withdrawalLimitsFile.replace(".md", ".html") if self.withdrawalLimitsFile.endswith(".md") else self.withdrawalLimitsFile + ".html"
+                    header = "Withdrawal limits, account ID: [{}]".format(self.accountId)
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return view
 
