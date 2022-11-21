@@ -31,7 +31,7 @@ class TestTKSBrokerAPIMethods:
             "historyFile", "htmlHistoryFile", "instrumentsFile", "searchResultsFile", "pricesFile", "infoFile",
             "bondsXLSXFile", "calendarFile", "overviewFile", "overviewDigestFile", "overviewPositionsFile",
             "overviewOrdersFile", "overviewAnalyticsFile", "overviewBondsCalendarFile", "reportFile",
-            "withdrawalLimitsFile", "userInfoFile", "userAccountsFile", "iListDumpFile", "iList",
+            "withdrawalLimitsFile", "userInfoFile", "userAccountsFile", "iListDumpFile", "iList", "priceModel",
         ]
         actualNames = dir(self.server)
 
