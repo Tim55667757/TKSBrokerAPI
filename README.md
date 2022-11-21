@@ -1,11 +1,11 @@
-# TKSBrokerAPI — платформа для автоматизации торгов на бирже 
+# TKSBrokerAPI — платформа для автоматизации торговли на бирже 
 
 **[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** — это платформа для упрощения автоматизации торговых сценариев на Python и работы с [Tinkoff Invest API](http://tinkoff.ru/sl/AaX1Et1omnH) сервером через REST-протокол. Платформа TKSBrokerAPI может использоваться в двух вариантах: из консоли (она имеет богатый набор ключей и команд) или её можно использовать как обычный Python модуль через `python import`. TKSBrokerAPI помогает автоматизировать рутинные торговые операции и реализовать торговые сценарии, или упростить получение необходимой для аналитики информации с сервера брокера. Платформа достаточно легко интегрируется в различные CI/CD конвейеры.
 
 [![Build Status](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI.svg?branch=master)](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI)
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
 [![license](https://img.shields.io/pypi/l/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/LICENSE)
-[![release-notes](https://badgen.net/badge/release/notes/orange)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
+[![release-notes](https://badgen.net/badge/release/notes/orange)](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/CHANGELOG.md)
 [![en-doc](https://badgen.net/badge/english/readme/pink)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
 [![api-doc](https://badgen.net/badge/api-doc/TKSBrokerAPI/blue)](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=%D0%94%D0%BE%D0%BD%D0%B0%D1%82%20(%D0%BF%D0%BE%D0%B4%D0%B0%D1%80%D0%BE%D0%BA)%20%D0%B4%D0%BB%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B2%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0%20TKSBrokerAPI&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
@@ -240,8 +240,8 @@ TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio 
   - ключи `--close-trade` (`--cancel-trade`) или `--close-trades` (`--cancel-trades`);
   - API-метод: [`CloseTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseTrades).
 - Отменять все открытые ранее ордера и закрывать текущие позиции по всем инструментам сразу, кроме заблокированных объёмов и позиций по валютам, которые необходимо закрывать отдельно;
-  - ключ `--close-all`, также можно конкретизировать ордера, тип актива или указать через пробел сразу несколько ключевых слов после ключа `--close-all`: `orders`, `shares`, `bonds`, `etfs` или `futures`;
-  - API-методы: [`CloseAll()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAll), [`CloseAllOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllOrders) и [`CloseAllTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllTrades).
+  - ключ `--close-all` (возможно использовать совместно с ключами `--ticker` или `--figi`), также можно конкретизировать ордера, тип актива или указать через пробел сразу несколько ключевых слов после ключа `--close-all`: `orders`, `shares`, `bonds`, `etfs` или `futures`;
+  - API-методы: [`CloseAll()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAll), [`CloseAllByTicker()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllByTicker), [`CloseAllByFIGI()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllByFIGI), [`IsInLimitOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInLimitOrders), [`GetLimitOrderIDs()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetLimitOrderIDs), [`IsInStopOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInStopOrders), [`GetStopOrderIDs()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetStopOrderIDs), [`CloseAllOrders()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllOrders) и [`CloseAllTrades()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CloseAllTrades).
 - Получать лимиты пользователя на доступные для вывода средства;
   - ключ `--limits` (`--withdrawal-limits`, `-w`);
   - API-методы: [`RequestLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.RequestLimits) и [`OverviewLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewLimits).
@@ -257,6 +257,9 @@ TKSBrokerAPI.py     L:1827 INFO    [2022-08-10 22:06:27,153] Client's portfolio 
 - Генерировать календарь выплат по всем сразу или по списку облигаций и сохранять его в файл формата Markdown или в XLSX-файл;
   - общий ключ `--calendar` (`-c`) для построения календаря выплат по купонам;
   - API-методы: [`CreateBondsCalendar()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CreateBondsCalendar) и [`ShowBondsCalendar()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowBondsCalendar).
+- Генерировать HTML-отчёты из любых отчётов формата Markdown;
+  - общий ключ `--html` (`--HTML`), который можно указать с любой из команд: `--list`, `--info`, `--search`, `--prices`, `--deals`, `--limits`, `--calendar`, `--account`, `--user-info`, `--overview`, `--overview-digest`, `--overview-positions`, `--overview-orders`, `--overview-analytics` и `--overview-calendar`;
+  - API-методы: [`Listing()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Listing), [`ShowInstrumentInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.ShowInstrumentInfo), [`SearchInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchInstruments), [`GetListOfPrices()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetListOfPrices), [`Deals()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Deals), [`OverviewLimits()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewLimits), [`CreateBondsCalendar()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.CreateBondsCalendar), [`OverviewAccounts()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewAccounts), [`OverviewUserInfo()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.OverviewUserInfo) и [`Overview()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview) с включенным параметром `TinkoffBrokerServer.useHTMLReports = True`.
 
 
 ## Как установить
@@ -277,7 +280,7 @@ pip show tksbrokerapi
 
 В первом случае инструмент будет доступен в консоли через команду `tksbrokerapi`, а во втором случае вам придётся запускать его как обычный Python-скрипт, через `python TKSBrokerAPI.py` из каталога с исходным кодом.
 
-Далее все примеры написаны для случая, когда TKSBrokerAPI установлен через PyPI.
+❗ **Важное замечание:** модуль TKSBrokerAPI тестировался для `python >= 3.9`. В более ранних версиях будут возникать ошибки. Далее все примеры написаны для случая, когда TKSBrokerAPI установлен через PyPI и запускается в `python == 3.9`.
 
 
 ## Аутентификация
@@ -294,7 +297,7 @@ pip show tksbrokerapi
 
 ❗ **Работа с TINKOFF INVEST API без выпуска и использования токена невозможна**. До начала работы с платформой TKSBrokerAPI, пожалуйста, откройте по ссылке [брокерский счёт в Тинькофф Инвестиции](http://tinkoff.ru/sl/AaX1Et1omnH), а затем выберете нужный вам вид токена и создайте его, как указано по ссылке [в официальной документации](https://tinkoff.github.io/investAPI/token/).
 
-❗ **Важное замечание**: никогда и никому не передавайте свои токены, не используйте их в примерах, а также не сохраняйте их в пабликах и в коде. Токеном может воспользоваться кто угодно, но все операции у брокера будут отображаться от вашего имени. Если вы хотите использовать свои токены для автоматизации в CI/CD-системах, то обязательно пользуйтесь сокрытием переменных окружения ([пример](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) установки "hidden variables" для Travis CI, и [пример](https://docs.gitlab.com/ee/ci/variables/#protected-cicd-variables) установки "protected variables" для GitLab CI).
+❗ **Важное замечание:** никогда и никому не передавайте свои токены, не используйте их в примерах, а также не сохраняйте их в пабликах и в коде. Токеном может воспользоваться кто угодно, но все операции у брокера будут отображаться от вашего имени. Если вы хотите использовать свои токены для автоматизации в CI/CD-системах, то обязательно пользуйтесь сокрытием переменных окружения ([пример](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) установки "hidden variables" для Travis CI, и [пример](https://docs.gitlab.com/ee/ci/variables/#protected-cicd-variables) установки "protected variables" для GitLab CI).
 
 ### Идентификатор счёта пользователя
 
@@ -378,6 +381,8 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
                         False по умолчанию.
   --output OUTPUT       Параметр: строка, которая заменяет стандартный путь вывода в файл
                         для некоторых команд. Если `None`, тогда используется стандартный путь.
+  --html, --HTML        Параметр: если этот ключ задан, то платформа TKSBrokerAPI дополнительно
+                        генерирует HTML-отчёт из Markdown-отчёта. False по умолчанию.
   --interval INTERVAL   Параметр: доступные значения равны `1min`, `5min`, `15min`,
                         `hour` и `day`. Используется только с ключом `--history`.
                         Это временной промежуток одной ценовой свечи. По умолчанию: `hour`.
@@ -561,7 +566,10 @@ https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
                         уточнения типа инструментов: `orders`, `shares`, `bonds`,
                         `etfs` или `futures`, но нельзя использовать `currencies`. Валютные
                         позиции при необходимости вы должны закрыть вручную, используя ключи
-                        `--buy`, `--sell`, `--close-trade` или `--close-trades`.
+                        `--buy`, `--sell`, `--close-trade` или `--close-trades`. Если указать
+                         ключ `--close-all` совместно с ключами `--ticker` или `--figi`, то
+                         в этом случае происходит закрытие позиций и всех открытых лимитных
+                         и стоп ордеров только для указанного инструмента.
   --limits, --withdrawal-limits, -w
                         Команда: показать таблицу доступных для вывода средств в различных валютах
                         для текущего `accountId`. Вы можете поменять `accountId` с ключом `--account-id`.
@@ -1832,6 +1840,8 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 22:18:42,359] TKSBrokerAPI module
 - `futures` — закрыть все позиции по фьючерсам,
 - но, нельзя указывать `currencies` — закрыть все позиции по валютам, из-за причин, описанных выше.
 
+Начиная с TKSBrokerAPI v1.5.* появилась возможность использовать ключ `--close-all` совместно с ключами `--ticker` или `--figi`. В этом случае происходит закрытие позиций и всех открытых лимитных и стоп ордеров только для указанного инструмента.
+
 <details>
   <summary>Команда для отмены одного стоп-ордера по его идентификатору</summary>
 
@@ -2821,7 +2831,7 @@ TKSBrokerAPI.py     L:4116 INFO    [2022-11-05 21:56:24,404] Bond payment calend
 
 С помощью платформы TKSBrokerAPI вы можете реализовать на языке Python любой торговый сценарий. Что бы не использовалось вами в качестве основной системы принятия торговых решений о покупке или продаже (технический анализ, нейросети, парсинг отчётов или слежение за сделками других трейдеров), всё равно вам потребуется выполнять базовые торговые операции: выставлять ордера, открывать и закрывать сделки. Модуль `TKSBrokerAPI` будет выступать как посредник между кодом с логикой торгов и сервисной инфраструктурой брокера Тинькофф Инвестиции, а также выполнять рутинные задачи от вашего имени в [брокерском аккаунте](http://tinkoff.ru/sl/AaX1Et1omnH).
 
-❗ **Важное замечание**: платформа TKSBrokerAPI не предназначена для высокочастотной (HFT) торговли, из-за системы динамического формирования лимитов для пользователей TINKOFF INVEST API (подробнее [по ссылке](https://tinkoff.github.io/investAPI/limits/)). В среднем, это 50-300 запросов в секунду, в зависимости от их типа, что очень мало для требований к скоростям HFT (есть [несколько рекомендаций](https://tinkoff.github.io/investAPI/speedup/) по ускорению исполнения поручений). Однако вы вполне можете использовать её для автоматизации своих интрадей, кратко-, средне- и долгосрочных торговых стратегий.
+❗ **Важное замечание:** платформа TKSBrokerAPI не предназначена для высокочастотной (HFT) торговли, из-за системы динамического формирования лимитов для пользователей TINKOFF INVEST API (подробнее [по ссылке](https://tinkoff.github.io/investAPI/limits/)). В среднем, это 50-300 запросов в секунду, в зависимости от их типа, что очень мало для требований к скоростям HFT (есть [несколько рекомендаций](https://tinkoff.github.io/investAPI/speedup/) по ускорению исполнения поручений). Однако вы вполне можете использовать её для автоматизации своих интрадей, кратко-, средне- и долгосрочных торговых стратегий.
 
 ![](./docs/media/TKSBrokerAPI-flow.png)
 

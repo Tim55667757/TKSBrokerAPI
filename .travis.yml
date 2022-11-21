@@ -36,4 +36,9 @@ jobs:
       after_failure:
         - echo "Some issues occurred. See full logs."
       after_success:
-        - echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI - done"
+        - |
+          if [ $TRAVIS_PULL_REQUEST == false ]; then
+            echo "All stages PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING to PyPI - done";
+          else
+            echo "All PR stages PRE-BUILDING -> TESTING -> BUILDING -> [PUBLISHING to PyPI][SKIPPED] - done";
+          fi

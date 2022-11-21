@@ -75,26 +75,30 @@ setup(
         "api-client",
         "trading-api",
         "trading",
+        "trading-platform",
         "trade",
         "tinkoff",
         "tinkoff-api",
         "python-api",
         "openapi",
+        "platform",
     ],
 
     tests_require=[
-        "pytest>=7.1.2",
-        "requests>=2.25.1",  # Apache-2.0 license
-        "pandas>=1.2.2",
-        "python-dateutil>=2.8.1",  # Apache-2.0 license
-        "PriceGenerator>=1.2.74",  # Apache-2.0 license
+        "pytest >= 7.1.2",
+        "requests >= 2.25.1",  # Apache-2.0 license
+        "pandas >= 1.2.2",
+        "openpyxl >= 3.0.10",
+        "python-dateutil >= 2.8.1",  # Apache-2.0 license
+        "PriceGenerator >= 1.2.74",  # Apache-2.0 license
     ],
 
     install_requires=[
-        "requests>=2.25.1",  # Apache-2.0 license
-        "pandas>=1.2.2",
-        "python-dateutil>=2.8.1",  # Apache-2.0 license
-        "PriceGenerator>=1.2.74",  # Apache-2.0 license
+        "requests >= 2.25.1",  # Apache-2.0 license
+        "pandas >= 1.2.2",
+        "openpyxl >= 3.0.10",
+        "python-dateutil >= 2.8.1",  # Apache-2.0 license
+        "PriceGenerator >= 1.2.74",  # Apache-2.0 license
     ],
 
     packages=[
