@@ -4510,6 +4510,13 @@ class TinkoffBrokerServer:
 
                 uLogger.info("User accounts were saved to file: [{}]".format(os.path.abspath(self.userAccountsFile)))
 
+                if self.useHTMLReports:
+                    htmlFilePath = self.userAccountsFile.replace(".md", ".html") if self.userAccountsFile.endswith(".md") else self.userAccountsFile + ".html"
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="User accounts", commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+
         return view
 
     def OverviewUserInfo(self, show: bool = False) -> dict:
