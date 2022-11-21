@@ -887,7 +887,7 @@ class TinkoffBrokerServer:
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return infoText
 
@@ -1246,7 +1246,7 @@ class TinkoffBrokerServer:
                 with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                     fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="List of instruments", commonCSS=COMMON_CSS, markdown=infoText))
 
-                uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
+                uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return infoText
 
@@ -1328,13 +1328,13 @@ class TinkoffBrokerServer:
 
             uLogger.info("Full search results were saved to file: [{}]".format(os.path.abspath(self.searchResultsFile)))
 
-            if self.searchResultsFile:
+            if self.useHTMLReports:
                 htmlFilePath = self.searchResultsFile.replace(".md", ".html") if self.searchResultsFile.endswith(".md") else self.searchResultsFile + ".html"
                 header = "Search results: {}".format(pattern)
                 with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                     fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
 
-                uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
+                uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return searchResults
 
@@ -1463,13 +1463,13 @@ class TinkoffBrokerServer:
 
                 uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
 
-                if self.pricesFile:
+                if self.useHTMLReports:
                     htmlFilePath = self.pricesFile.replace(".md", ".html") if self.pricesFile.endswith(".md") else self.pricesFile + ".html"
-                    header = "Price for tickers: {}".format("[{}], ".join(tickers))
+                    header = "Price for tickers: {}".format(", ".join(tickers))
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("Report was rendered to HTML-file also: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return infoText
 
@@ -2581,8 +2581,6 @@ class TinkoffBrokerServer:
                 for key in comKeys:
                     info.append(_InfoStr(customStat["brokerCom"], customStat["serviceCom"], customStat["marginCom"], customStat["allTaxes"], key))
 
-                info.append(splitLine1)
-
                 info.extend([
                     "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
                     "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type                                                     |\n",
@@ -2634,6 +2632,14 @@ class TinkoffBrokerServer:
                     fH.write(infoText)
 
                 uLogger.info("History of a client's operations are saved to file: [{}]".format(os.path.abspath(self.reportFile)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = self.reportFile.replace(".md", ".html") if self.reportFile.endswith(".md") else self.reportFile + ".html"
+                    header = "Client's operations: from [{}] to [{}]".format(startDate.split("T")[0], endDate.split("T")[0])
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         return ops, customStat
 
