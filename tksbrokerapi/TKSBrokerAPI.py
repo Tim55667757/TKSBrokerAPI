@@ -653,9 +653,8 @@ class TinkoffBrokerServer:
         infoText = ""
 
         if iJSON is not None and iJSON and isinstance(iJSON, dict):
-            header = "Main information: ticker [{}], FIGI [{}]\n\n".format(iJSON["ticker"], iJSON["figi"])
             info = [
-                "# {}".format(header),
+                "# Main information\n\n",
                 "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Parameters                                                  | Values                                                 |\n",
                 "|-------------------------------------------------------------|--------------------------------------------------------|\n",
@@ -885,7 +884,7 @@ class TinkoffBrokerServer:
                 if self.useHTMLReports:
                     htmlFilePath = self.infoFile.replace(".md", ".html") if self.infoFile.endswith(".md") else self.infoFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Main information", commonCSS=COMMON_CSS, markdown=infoText))
 
                     uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
@@ -1330,9 +1329,8 @@ class TinkoffBrokerServer:
 
             if self.useHTMLReports:
                 htmlFilePath = self.searchResultsFile.replace(".md", ".html") if self.searchResultsFile.endswith(".md") else self.searchResultsFile + ".html"
-                header = "Search results: {}".format(pattern)
                 with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                    fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+                    fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Search results", commonCSS=COMMON_CSS, markdown=infoText))
 
                 uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
@@ -1425,15 +1423,13 @@ class TinkoffBrokerServer:
         infoText = ""
 
         if show or self.pricesFile:
-            tickers = []
             info = [
-                "# Current prices\n* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
+                "# Current prices\n\n* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
                 "|--------------|--------------|------------|-------------|-------------|----------|---------------------|---------------------|-------|\n",
             ]
 
             for item in iList:
-                tickers.append(item["ticker"])
                 info.append("| {:<12} | {:<12} | {:<10} | {:>11} | {:>11} | {:>7}% | {:>19} | {:>19} | {:<5} |\n".format(
                     item["ticker"],
                     item["figi"],
@@ -1465,9 +1461,8 @@ class TinkoffBrokerServer:
 
                 if self.useHTMLReports:
                     htmlFilePath = self.pricesFile.replace(".md", ".html") if self.pricesFile.endswith(".md") else self.pricesFile + ".html"
-                    header = "Price for tickers: {}".format(", ".join(tickers))
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Current prices", commonCSS=COMMON_CSS, markdown=infoText))
 
                     uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
@@ -2635,9 +2630,8 @@ class TinkoffBrokerServer:
 
                 if self.useHTMLReports:
                     htmlFilePath = self.reportFile.replace(".md", ".html") if self.reportFile.endswith(".md") else self.reportFile + ".html"
-                    header = "Client's operations: from [{}] to [{}]".format(startDate.split("T")[0], endDate.split("T")[0])
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Client's operations", commonCSS=COMMON_CSS, markdown=infoText))
 
                     uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
@@ -3951,9 +3945,8 @@ class TinkoffBrokerServer:
 
                 if self.useHTMLReports:
                     htmlFilePath = self.withdrawalLimitsFile.replace(".md", ".html") if self.withdrawalLimitsFile.endswith(".md") else self.withdrawalLimitsFile + ".html"
-                    header = "Withdrawal limits, account ID: [{}]".format(self.accountId)
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle=header, commonCSS=COMMON_CSS, markdown=infoText))
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Withdrawal limits", commonCSS=COMMON_CSS, markdown=infoText))
 
                     uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
@@ -4396,6 +4389,7 @@ class TinkoffBrokerServer:
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
 
             info = [
+                "* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Paid  | Payment date    | FIGI         | Ticker       | No. | Value         | Type      | Period | End registry date |\n",
                 "|-------|-----------------|--------------|--------------|-----|---------------|-----------|--------|-------------------|\n",
             ]
@@ -4440,7 +4434,14 @@ class TinkoffBrokerServer:
                 with open(self.calendarFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Bond payment calendar was saved to file: [{}]".format(os.path.abspath(self.calendarFile)))
+                uLogger.info("Bond payments calendar was saved to file: [{}]".format(os.path.abspath(self.calendarFile)))
+
+                if self.useHTMLReports:
+                    htmlFilePath = self.calendarFile.replace(".md", ".html") if self.calendarFile.endswith(".md") else self.calendarFile + ".html"
+                    with open(htmlFilePath, "w", encoding="UTF-8") as fH:
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Bond payments calendar", commonCSS=COMMON_CSS, markdown=infoText))
+
+                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
         else:
             infoText += "No data\n"
