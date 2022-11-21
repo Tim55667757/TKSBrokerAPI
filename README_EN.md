@@ -1,4 +1,4 @@
-# TKSBrokerAPI. The platform for automation trading scenarios
+# TKSBrokerAPI Trade Automation Platform
 
 **[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is the trading platform for automation and simplifying the implementation of trading scenarios, as well as working with [Tinkoff Invest API](http://tinkoff.ru/sl/AaX1Et1omnH) server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
@@ -381,6 +381,8 @@ options:
                         default.
   --output OUTPUT       Option: replace default paths to output files for some
                         commands. If `None` then used default files.
+  --html, --HTML        Option: if key present then TKSBrokerAPI generate also
+                        HTML reports from Markdown. False by default.
   --interval INTERVAL   Option: available values are `1min`, `5min`, `15min`,
                         `hour` and `day`. Used only with `--history` key. This
                         is time period of one candle. Default: `hour` for
