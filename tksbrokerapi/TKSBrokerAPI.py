@@ -51,7 +51,7 @@ from multiprocessing.pool import ThreadPool
 import pandas as pd
 
 from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
-from Templates import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
+from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
 from TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
 from TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 
