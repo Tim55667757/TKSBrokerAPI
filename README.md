@@ -2740,6 +2740,10 @@ TKSBrokerAPI.py     L:4818 DEBUG   [2022-11-05 17:54:32,953] >>> TKSBrokerAPI mo
 
 ![](./docs/media/calendar.xlsx.png)
 
+При запуске команды `--calendar` с дополнительным ключом `--html`, генерируемый календарь в HTML-формате будет выглядеть примерно так:
+
+![](./docs/media/calendar.html.png)
+
 <details>
   <summary>Команда для построения календаря выплат по нескольким облигациям</summary>
 

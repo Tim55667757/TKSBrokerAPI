@@ -2720,6 +2720,10 @@ An example of a generated XLSX file with a bond payment calendar can be viewed h
 
 ![](./docs/media/calendar.xlsx.png)
 
+If you run `--calendar` command with additional key `--html`, then calendar generates in HTML will be looks like this:
+
+![](./docs/media/calendar.html.png)
+
 <details>
   <summary>Command for building a payment calendar for several bonds</summary>
 
