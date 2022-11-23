@@ -3260,7 +3260,7 @@ class TinkoffBrokerServer:
 
             if "stopOrderId" in response.keys():
                 uLogger.info(
-                    "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and expiration date in UTC [{}]".format(
+                    "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and expiration date [{} UTC]".format(
                         response["stopOrderId"],
                         self._ticker, self._figi,
                         operation, lots,
