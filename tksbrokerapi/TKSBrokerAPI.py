@@ -1563,9 +1563,15 @@ class TinkoffBrokerServer:
 
         self.body = str({"accountId": self.accountId})
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
-        rawOrders = self.SendAPIRequest(ordersURL, reqType="POST")["orders"]
+        rawResponse = self.SendAPIRequest(ordersURL, reqType="POST")
 
-        uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
+        if "orders" in rawResponse.keys():
+            rawOrders = rawResponse["orders"]
+            uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
+
+        else:
+            rawOrders = {"orders": []}
+            uLogger.debug("No pending limit orders returned! rawResponse = {}".format(rawResponse))
 
         return rawOrders
 
@@ -1586,10 +1592,16 @@ class TinkoffBrokerServer:
         uLogger.debug("Requesting current actual stop orders. Wait, please...")
 
         self.body = str({"accountId": self.accountId})
-        ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
-        rawStopOrders = self.SendAPIRequest(ordersURL, reqType="POST")["stopOrders"]
+        stopOrdersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
+        rawResponse = self.SendAPIRequest(stopOrdersURL, reqType="POST")
 
-        uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
+        if "stopOrders" in rawResponse.keys():
+            rawStopOrders = rawResponse["stopOrders"]
+            uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
+
+        else:
+            rawStopOrders = {"stopOrders": []}
+            uLogger.debug("No stop orders returned! rawResponse = {}".format(rawResponse))
 
         return rawStopOrders
 
