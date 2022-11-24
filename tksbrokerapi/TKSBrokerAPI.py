@@ -1570,7 +1570,7 @@ class TinkoffBrokerServer:
             uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
 
         else:
-            rawOrders = {"orders": []}
+            rawOrders = []
             uLogger.debug("No pending limit orders returned! rawResponse = {}".format(rawResponse))
 
         return rawOrders
@@ -1600,7 +1600,7 @@ class TinkoffBrokerServer:
             uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
 
         else:
-            rawStopOrders = {"stopOrders": []}
+            rawStopOrders = []
             uLogger.debug("No stop orders returned! rawResponse = {}".format(rawResponse))
 
         return rawStopOrders
