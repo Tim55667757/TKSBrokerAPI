@@ -550,7 +550,8 @@ class TinkoffBrokerServer:
 
         poolUpdater = ThreadPool(processes=CPU_USAGES)  # create pool for update instruments in parallel mode
         listing = poolUpdater.map(self._IWrapper, iParams)  # execute update operations
-        poolUpdater.close()
+        poolUpdater.close()  # close the thread pool
+        poolUpdater.join()  # wait a moment until all data returns from threads
 
         # Dictionary with all broker instruments: shares, currencies, bonds, etfs and futures.
         # Next in this code: item[0] is "iType" and item[1] is list of available instruments from the result of _IUpdater() method
