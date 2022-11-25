@@ -3221,10 +3221,9 @@ class TinkoffBrokerServer:
 
             if "orderId" in response.keys():
                 uLogger.info(
-                    "Limit-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}]".format(
-                        response["orderId"],
-                        self._ticker, self._figi,
-                        operation, lots, targetPrice, instrument["currency"],
+                    "Limit-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{} {}]".format(
+                        response["orderId"], self._ticker, self._figi, operation, lots,
+                        "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
                     ))
 
                 if "lastPrice" in instrument["currentPrice"].keys() and instrument["currentPrice"]["lastPrice"]:
@@ -3276,12 +3275,10 @@ class TinkoffBrokerServer:
 
             if "stopOrderId" in response.keys():
                 uLogger.info(
-                    "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and expiration date [{} UTC]".format(
-                        response["stopOrderId"],
-                        self._ticker, self._figi,
-                        operation, lots,
-                        targetPrice, instrument["currency"],
-                        limitPrice, instrument["currency"],
+                    "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{} {}], limit price [{} {}], stop-order type [{}] and expiration date [{} UTC]".format(
+                        response["stopOrderId"], self._ticker, self._figi, operation, lots,
+                        "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
+                        "{:.4f}".format(limitPrice).rstrip("0").rstrip("."), instrument["currency"],
                         TKS_STOP_ORDER_TYPES[stopOrderType],
                         datetime.strptime(expDateUTC, TKS_DATE_TIME_FORMAT_EXT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT) if expDateUTC else TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED"],
                     ))
