@@ -9,6 +9,30 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
+### [1.6.* (2022-12-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
+
+##### Digest
+
+Release development in progress...
+
+##### New features
+
+* ...
+
+##### Improvements
+
+* [#92](https://github.com/Tim55667757/TKSBrokerAPI/issues/92) Mutex lock was implemented for the `SendAPIRequest()` method to avoid multiprocessing issues with unavailable resource.
+* [**IN PROGRESS**] [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) TKSBrokerAPI logo was added to the templates of HTML reports.
+* [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Field with not covered funds were added to margin status report (`--user-info` key).
+* [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
+
+##### Bug fixes
+
+* [#93](https://github.com/Tim55667757/TKSBrokerAPI/issues/93) Bug fixed: `KeyError: 'stopOrders' and KeyError: 'orders'` in `RequestPendingOrders()` and `RequestStopOrders()` methods.
+* [#94](https://github.com/Tim55667757/TKSBrokerAPI/issues/94) Bug fixed in `Overview()` method: `KeyError: 'currentNkd'` if instrument is not a bond.
+* [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Bug fixed: broken Overview table in `Lots` column.
+
+
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
 
 ##### Digest
