@@ -2130,18 +2130,18 @@ class TinkoffBrokerServer:
                         ),
                     ]
 
-                def _InfoStr(data: dict, showCurrencyName: bool = False) -> str:
+                def _InfoStr(data: dict, isCurr: bool = False) -> str:
                     return "| {:<27} | {:>31} | {:<8} | {:>12} | {:>12} | {:>19} | {:<28} |\n".format(
                         "{} [{}]".format(data["ticker"], data["figi"]),
                         "{:.2f} ({:.2f}) {}".format(
                             data["volume"],
                             data["blocked"],
                             data["currency"],
-                        ) if showCurrencyName else "{:.0f} ({:.0f})".format(
+                        ) if isCurr else "{:.0f} ({:.0f})".format(
                             data["volume"],
                             data["blocked"],
                         ),
-                        "{:.4f}".format(data["lots"]).rstrip("0").rstrip(".") if showCurrencyName else "{:.0f}".format(data["lots"]),
+                        "—" if isCurr else "{:.4f}".format(data["lots"]).rstrip("0").rstrip("."),
                         "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
                         "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
                         "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
@@ -2157,7 +2157,7 @@ class TinkoffBrokerServer:
                 if view["stat"]["Currencies"]:
                     info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
                     for item in view["stat"]["Currencies"]:
-                        info.append(_InfoStr(item, showCurrencyName=True))
+                        info.append(_InfoStr(item, isCurr=True))
 
                 else:
                     info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
@@ -4551,6 +4551,12 @@ class TinkoffBrokerServer:
         :param show: if `False` then only dictionary returns, if `True` then also print user's data to log.
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
+        overview = self.Overview(show=False)  # Request current user portfolio for the ability to calculate missing funds
+        tmpTicker = self._ticker
+        self._ticker = "RUB000UTSTOM"  # This instrument show in rub how much money cost current margin
+        missing = self.GetInstrumentFromPortfolio(portfolio=overview)
+        self._ticker = tmpTicker
+
         rawUserInfo = self.RequestUserInfo()  # Raw response with common user info
         overviewAccount = self.OverviewAccounts(show=False)  # Raw and parsed accounts data
         rawAccounts = overviewAccount["rawAccounts"]  # Raw response with user accounts data
@@ -4575,8 +4581,9 @@ class TinkoffBrokerServer:
                     "liquid": NanoToFloat(rawMargins[accountId]["liquidPortfolio"]["units"], rawMargins[accountId]["liquidPortfolio"]["nano"]),
                     "start": NanoToFloat(rawMargins[accountId]["startingMargin"]["units"], rawMargins[accountId]["startingMargin"]["nano"]),
                     "min": NanoToFloat(rawMargins[accountId]["minimalMargin"]["units"], rawMargins[accountId]["minimalMargin"]["nano"]),
+                    "diff": NanoToFloat(rawMargins[accountId]["amountOfMissingFunds"]["units"], rawMargins[accountId]["amountOfMissingFunds"]["nano"]),
                     "level": NanoToFloat(rawMargins[accountId]["fundsSufficiencyLevel"]["units"], rawMargins[accountId]["fundsSufficiencyLevel"]["nano"]),
-                    "missing": NanoToFloat(rawMargins[accountId]["amountOfMissingFunds"]["units"], rawMargins[accountId]["amountOfMissingFunds"]["nano"]),
+                    "missing": missing["volume"],
                 }
 
             else:
@@ -4611,6 +4618,7 @@ class TinkoffBrokerServer:
             "rawMargins": rawMargins,
             "rawTariffLimits": rawTariffLimits,
             "stat": {
+                "overview": overview,
                 "userInfo": userInfo,
                 "accounts": accounts,
                 "margins": margins,
@@ -4650,8 +4658,9 @@ class TinkoffBrokerServer:
                         "| - Liquid portfolio:  | {:<60} |\n".format("{} {}".format(margins[account]["liquid"], margins[account]["currency"])),
                         "| - Margin starting:   | {:<60} |\n".format("{} {}".format(margins[account]["start"], margins[account]["currency"])),
                         "| - Margin minimum:    | {:<60} |\n".format("{} {}".format(margins[account]["min"], margins[account]["currency"])),
+                        "| - Margin difference: | {:<60} |\n".format("{} {}".format(margins[account]["diff"], margins[account]["currency"])),
                         "| - Sufficiency level: | {:<60} |\n".format("{:.2f} ({:.2f}%)".format(margins[account]["level"], margins[account]["level"] * 100)),
-                        "| - Missing funds:     | {:<60} |\n\n".format("{} {}".format(margins[account]["missing"], margins[account]["currency"])),
+                        "| - Not covered funds: | {:<60} |\n\n".format("{:.2f} {}".format(margins[account]["missing"], margins[account]["currency"])),
                     ])
 
                 else:
