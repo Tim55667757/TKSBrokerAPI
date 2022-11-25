@@ -2141,7 +2141,7 @@ class TinkoffBrokerServer:
                             data["volume"],
                             data["blocked"],
                         ),
-                        "{:.4f}".format(data["lots"]) if showCurrencyName else "{:.0f}".format(data["lots"]),
+                        "{:.4f}".format(data["lots"]).rstrip("0").rstrip(".") if showCurrencyName else "{:.0f}".format(data["lots"]),
                         "{:.2f} {}".format(data["currentPrice"], data["baseCurrencyName"]) if data["currentPrice"] > 0 else "n/a",
                         "{:.2f} {}".format(data["average"], data["baseCurrencyName"]) if data["average"] > 0 else "n/a",
                         "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
