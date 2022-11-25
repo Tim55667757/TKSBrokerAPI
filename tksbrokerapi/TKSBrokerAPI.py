@@ -1791,7 +1791,7 @@ class TinkoffBrokerServer:
                 average = NanoToFloat(item["averagePositionPriceFifo"]["units"], item["averagePositionPriceFifo"]["nano"])  # current average position price
                 profit = NanoToFloat(item["expectedYield"]["units"], item["expectedYield"]["nano"])  # expected profit at current moment
                 currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "future") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
-                cost = (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
+                cost = curPrice if "currentNkd" not in item.keys() else (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
                 countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
                 costRUB = cost if item["instrumentType"] == "currency" else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
