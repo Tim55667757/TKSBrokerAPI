@@ -39,6 +39,9 @@
             <li>
                     <a class="function" href="#FloatToNano">FloatToNano</a>
             </li>
+            <li>
+                    <a class="function" href="#UpdateClassFields">UpdateClassFields</a>
+            </li>
     </ul>
 
 
@@ -222,6 +225,19 @@
 </span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="n">frac</span> <span class="o">=</span> <span class="o">-</span><span class="n">frac</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)),</span> <span class="s2">&quot;nano&quot;</span><span class="p">:</span> <span class="n">frac</span><span class="p">}</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="k">def</span> <span class="nf">UpdateClassFields</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    This method read config file in YAML format as dictionary and apply `key: value` as names of class fields and</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    values of class field. Example for class `TradeScenario`:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    `config[&quot;tickers&quot;] = [&quot;TICKER1&quot;, &quot;TICKER2&quot;] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = [&quot;TICKER1&quot;, &quot;TICKER2&quot;]`.</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    :param instance: instance of class to parametrize.</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">    :param params: dict with all parameters in `key: value` format.</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="n">instance</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -466,6 +482,45 @@ An error exception will occur if input date has incorrect format.</p>
 <blockquote>
   <p>nano-type view of number: <code>{"units": "string", "nano": integer}</code></p>
 </blockquote>
+</div>
+
+
+                </section>
+                <section id="UpdateClassFields">
+                            <input id="UpdateClassFields-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">UpdateClassFields</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span>, </span><span class="param"><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="UpdateClassFields-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#UpdateClassFields"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UpdateClassFields-156"><a href="#UpdateClassFields-156"><span class="linenos">156</span></a><span class="k">def</span> <span class="nf">UpdateClassFields</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UpdateClassFields-157"><a href="#UpdateClassFields-157"><span class="linenos">157</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="UpdateClassFields-158"><a href="#UpdateClassFields-158"><span class="linenos">158</span></a><span class="sd">    This method read config file in YAML format as dictionary and apply `key: value` as names of class fields and</span>
+</span><span id="UpdateClassFields-159"><a href="#UpdateClassFields-159"><span class="linenos">159</span></a><span class="sd">    values of class field. Example for class `TradeScenario`:</span>
+</span><span id="UpdateClassFields-160"><a href="#UpdateClassFields-160"><span class="linenos">160</span></a><span class="sd">    `config[&quot;tickers&quot;] = [&quot;TICKER1&quot;, &quot;TICKER2&quot;] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = [&quot;TICKER1&quot;, &quot;TICKER2&quot;]`.</span>
+</span><span id="UpdateClassFields-161"><a href="#UpdateClassFields-161"><span class="linenos">161</span></a>
+</span><span id="UpdateClassFields-162"><a href="#UpdateClassFields-162"><span class="linenos">162</span></a><span class="sd">    :param instance: instance of class to parametrize.</span>
+</span><span id="UpdateClassFields-163"><a href="#UpdateClassFields-163"><span class="linenos">163</span></a><span class="sd">    :param params: dict with all parameters in `key: value` format.</span>
+</span><span id="UpdateClassFields-164"><a href="#UpdateClassFields-164"><span class="linenos">164</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="UpdateClassFields-165"><a href="#UpdateClassFields-165"><span class="linenos">165</span></a>    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+</span><span id="UpdateClassFields-166"><a href="#UpdateClassFields-166"><span class="linenos">166</span></a>        <span class="n">instance</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>This method read config file in YAML format as dictionary and apply <code>key: value</code> as names of class fields and
+values of class field. Example for class <code>TradeScenario</code>:
+<code>config["tickers"] = ["TICKER1", "TICKER2"] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]</code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>instance</strong>:  instance of class to parametrize.</li>
+<li>**params: dict with all parameters in <code>key**:  value</code> format.</li>
+</ul>
 </div>
 
 
