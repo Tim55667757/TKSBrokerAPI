@@ -155,7 +155,7 @@ def FloatToNano(number: float) -> dict:
 def UpdateClassFields(instance: object, params: dict) -> None:
     """
     This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and
-    values of class field. Example for class `TradeScenario`:
+    values of class fields. Example for class `TradeScenario`:
     `config["tickers"] = ["TICKER1", "TICKER2"] ==> TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]`.
 
     :param instance: instance of class to parametrize.
