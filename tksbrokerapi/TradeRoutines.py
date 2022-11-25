@@ -150,3 +150,16 @@ def FloatToNano(number: float) -> dict:
         frac = -frac
 
     return {"units": str(int(number)), "nano": frac}
+
+
+def UpdateClassFields(instance: object, params: dict) -> None:
+    """
+    This method read config file in YAML format as dictionary and apply `key: value` as names of class fields and
+    values of class field. Example for class `TradeScenario`:
+    `config["tickers"] = ["TICKER1", "TICKER2"] ==> TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]`.
+
+    :param instance: instance of class to parametrize.
+    :param params: dict with all parameters in `key: value` format.
+    """
+    for name in params:
+        instance.__setattr__(name, params[name])
