@@ -2411,17 +2411,18 @@ TKSBrokerAPI.py     L:3798 INFO    [2022-10-25 01:04:57,536] # Full user informa
 | Parameters           | Values                                                       |
 |----------------------|--------------------------------------------------------------|
 | Account type:        | Tinkoff brokerage account                                    |
-| Account name:        | Testing - **********                                         |
+| Account name:        | Testing                                                      |
 | Account status:      | Opened and active account                                    |
 | Access level:        | Full access                                                  |
 | Date opened:         | 2018-05-23 00:00:00                                          |
 | Date closed:         | —                                                            |
 | Margin status:       | Enabled                                                      |
-| - Liquid portfolio:  | 74950.81 rub                                                 |
-| - Margin starting:   | 72450.45 rub                                                 |
-| - Margin minimum:    | 36220.73 rub                                                 |
-| - Sufficiency level: | 1.07 (107.00%)                                               |
-| - Missing funds:     | -2500.36 rub                                                 |
+| - Liquid portfolio:  | 148420.61 rub                                                |
+| - Margin starting:   | 105900.73 rub                                                |
+| - Margin minimum:    | 52950.37 rub                                                 |
+| - Margin difference: | -42510.88 rub                                                |
+| - Sufficiency level: | 1.81 (181.00%)                                               |
+| - Not covered funds: | -49650.45 rub                                                |
 
 ### ID: [**********]
 
