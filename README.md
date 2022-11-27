@@ -3235,10 +3235,10 @@ class TradeScenario(TinkoffBrokerServer):
         Получаем текущую цену, вычисляем цену потенциального тейк-профита и срок действия для стоп-ордера.
         И затем открываем BUY позицию по рынку и создаём стоп-ордер по желаемой цене тейк-профита.
         """
-        currentPriceToBuy = self._ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
-        target = currentPriceToBuy * (1 + self.tpStopDiff)  # take profit price target
-        targetStop = ceil(target / self._rawIData["step"]) * self._rawIData["step"]  # real target for placing stop-order
-        localAliveTo = (datetime.now() + timedelta(hours=1)).strftime(TKS_PRINT_DATE_TIME_FORMAT)  # current local time + 1 hour
+        currentPriceToBuy = self._ordersBook["buy"][0]["price"]  # Первая цена в списке ордеров продавцов и есть актуальная цена, по которой можно купить инструмент
+        target = currentPriceToBuy * (1 + self.tpStopDiff)  # Целевая цена для тейк-профита
+        targetStop = ceil(target / self._rawIData["step"]) * self._rawIData["step"]  # Целевая цена с учётом допустимого шага для размещения стоп-ордера
+        localAliveTo = (datetime.now() + timedelta(hours=1)).strftime(TKS_PRINT_DATE_TIME_FORMAT)  # Текущее локальное время + 1 час
 
         uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
             self._sumBuyers, 1 + self.volDiff, self._sumSellers, currentPriceToBuy, self._iCurr,
@@ -3285,7 +3285,7 @@ class TradeScenario(TinkoffBrokerServer):
 
         self._lotsToSell = self._iData["volume"] - self._iData["blocked"]  # Не заблокированные лоты текущего инструмента, доступные для торговли
         self._averagePrice = self._iData["average"]  # Средняя цена позиции
-        self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # первая цена в списке ордеров покупателей и есть актуальная цена, по которой можно продать инструмент
+        self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # Первая цена в списке ордеров покупателей и есть актуальная цена, по которой можно продать инструмент
 
         self._curProfit = (self._curPriceToSell - self._averagePrice) / self._averagePrice  # Доля изменения между текущей рыночной ценой и средней позицией по инструменту
         target = self._curPriceToSell * (1 + self.tolerance)  # Достаточная цена для продажи
