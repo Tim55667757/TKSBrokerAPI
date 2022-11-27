@@ -3505,10 +3505,6 @@ class TinkoffBrokerServer:
         self._ticker = instrument  # try to set instrument as ticker
         self._figi = ""
 
-        if self.IsInPortfolio(portfolio=overview):
-            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Wait, please...")
-            self.CloseTrades(instruments=[instrument], portfolio=overview)
-
         limitAll = [item["orderID"] for item in overview["stat"]["orders"]]  # list of all pending limit order IDs
         stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
 
@@ -3519,6 +3515,10 @@ class TinkoffBrokerServer:
         if stopAll and self.IsInStopOrders(portfolio=overview):
             uLogger.debug("Closing all opened stop orders for the instrument with ticker [{}]. Wait, please...")
             self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
+
+        if self.IsInPortfolio(portfolio=overview):
+            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Wait, please...")
+            self.CloseTrades(instruments=[instrument], portfolio=overview)
 
     def CloseAllByFIGI(self, instrument: str) -> None:
         """
@@ -3540,10 +3540,6 @@ class TinkoffBrokerServer:
         self._ticker = ""
         self._figi = instrument  # try to set instrument as FIGI id
 
-        if self.IsInPortfolio(portfolio=overview):
-            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Wait, please...")
-            self.CloseTrades(instruments=[instrument], portfolio=overview)
-
         limitAll = [item["orderID"] for item in overview["stat"]["orders"]]  # list of all pending limit order IDs
         stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
 
@@ -3554,6 +3550,10 @@ class TinkoffBrokerServer:
         if stopAll and self.IsInStopOrders(portfolio=overview):
             uLogger.debug("Closing all opened stop orders for the instrument with FIGI [{}]. Wait, please...")
             self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
+
+        if self.IsInPortfolio(portfolio=overview):
+            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Wait, please...")
+            self.CloseTrades(instruments=[instrument], portfolio=overview)
 
     @staticmethod
     def ParseOrderParameters(operation, **inputParameters):
