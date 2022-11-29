@@ -182,6 +182,7 @@ TKS_OPERATION_STATES = {
     "OPERATION_STATE_UNSPECIFIED": "! Unknown",
     "OPERATION_STATE_EXECUTED": "√ Executed",
     "OPERATION_STATE_CANCELED": "× Canceled",
+    "OPERATION_STATE_PROGRESS": "↻ Progress",
 }
 """Operation state, enums: https://tinkoff.github.io/investAPI/operations/#operationstate"""
 
