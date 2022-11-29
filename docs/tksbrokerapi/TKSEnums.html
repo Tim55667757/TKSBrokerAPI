@@ -314,87 +314,88 @@
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>    <span class="s2">&quot;OPERATION_STATE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;! Unknown&quot;</span><span class="p">,</span>
 </span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>    <span class="s2">&quot;OPERATION_STATE_EXECUTED&quot;</span><span class="p">:</span> <span class="s2">&quot;√ Executed&quot;</span><span class="p">,</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    <span class="s2">&quot;OPERATION_STATE_CANCELED&quot;</span><span class="p">:</span> <span class="s2">&quot;× Canceled&quot;</span><span class="p">,</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="p">}</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">&quot;&quot;&quot;Operation state, enums: https://tinkoff.github.io/investAPI/operations/#operationstate&quot;&quot;&quot;</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="n">TKS_ORDER_DIRECTIONS</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="s2">&quot;ORDER_DIRECTION_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="s2">&quot;ORDER_DIRECTION_BUY&quot;</span><span class="p">:</span> <span class="s2">&quot;↑ Buy&quot;</span><span class="p">,</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="s2">&quot;ORDER_DIRECTION_SELL&quot;</span><span class="p">:</span> <span class="s2">&quot;↓ Sell&quot;</span><span class="p">,</span>
-</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="p">}</span>
-</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">&quot;&quot;&quot;Order direction, enums: https://tinkoff.github.io/investAPI/orders/#orderdirection&quot;&quot;&quot;</span>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>
-</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="n">TKS_STOP_ORDER_DIRECTIONS</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_BUY&quot;</span><span class="p">:</span> <span class="s2">&quot;↑ Buy&quot;</span><span class="p">,</span>
-</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_SELL&quot;</span><span class="p">:</span> <span class="s2">&quot;↓ Sell&quot;</span><span class="p">,</span>
-</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a><span class="p">}</span>
-</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="sd">&quot;&quot;&quot;Stop-order direction, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection&quot;&quot;&quot;</span>
-</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a>
-</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="n">TKS_ORDER_TYPES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a>    <span class="s2">&quot;ORDER_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>    <span class="s2">&quot;ORDER_TYPE_LIMIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Limit&quot;</span><span class="p">,</span>
-</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="s2">&quot;ORDER_TYPE_MARKET&quot;</span><span class="p">:</span> <span class="s2">&quot;Market&quot;</span><span class="p">,</span>
-</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="p">}</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">&quot;&quot;&quot;Order type, enums: https://tinkoff.github.io/investAPI/orders/#ordertype&quot;&quot;&quot;</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="n">TKS_STOP_ORDER_TYPES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_TAKE_PROFIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Take profit&quot;</span><span class="p">,</span>
-</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_STOP_LOSS&quot;</span><span class="p">:</span> <span class="s2">&quot;Stop loss&quot;</span><span class="p">,</span>
-</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_STOP_LIMIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Stop limit&quot;</span><span class="p">,</span>
-</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="p">}</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="sd">&quot;&quot;&quot;Stop-order type, enums: https://tinkoff.github.io/investAPI/stoporders/#stopordertype&quot;&quot;&quot;</span>
-</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>
-</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a><span class="n">TKS_ORDER_STATES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;! Unknown&quot;</span><span class="p">,</span>
-</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_FILL&quot;</span><span class="p">:</span> <span class="s2">&quot;Performed&quot;</span><span class="p">,</span>
-</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_REJECTED&quot;</span><span class="p">:</span> <span class="s2">&quot;Rejected&quot;</span><span class="p">,</span>
-</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_CANCELLED&quot;</span><span class="p">:</span> <span class="s2">&quot;Cancelled&quot;</span><span class="p">,</span>
-</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_NEW&quot;</span><span class="p">:</span> <span class="s2">&quot;New order&quot;</span><span class="p">,</span>
-</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_PARTIALLYFILL&quot;</span><span class="p">:</span> <span class="s2">&quot;Partially filled&quot;</span><span class="p">,</span>
-</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a><span class="p">}</span>
-</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="sd">&quot;&quot;&quot;Order status, enums: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus&quot;&quot;&quot;</span>
-</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a>
-</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a><span class="n">TKS_STOP_ORDER_EXPIRATION_TYPES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_CANCEL&quot;</span><span class="p">:</span> <span class="s2">&quot;Until cancel&quot;</span><span class="p">,</span>
-</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_DATE&quot;</span><span class="p">:</span> <span class="s2">&quot;Until date&quot;</span><span class="p">,</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a><span class="p">}</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="sd">&quot;&quot;&quot;Expiration type of stop-orders, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype&quot;&quot;&quot;</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a><span class="n">TKS_COUPON_TYPES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>    <span class="s2">&quot;COUPON_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>    <span class="s2">&quot;COUPON_TYPE_CONSTANT&quot;</span><span class="p">:</span> <span class="s2">&quot;Constant&quot;</span><span class="p">,</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>    <span class="s2">&quot;COUPON_TYPE_FLOATING&quot;</span><span class="p">:</span> <span class="s2">&quot;Floating&quot;</span><span class="p">,</span>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>    <span class="s2">&quot;COUPON_TYPE_DISCOUNT&quot;</span><span class="p">:</span> <span class="s2">&quot;Discount&quot;</span><span class="p">,</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>    <span class="s2">&quot;COUPON_TYPE_MORTGAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Mortgage&quot;</span><span class="p">,</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>    <span class="s2">&quot;COUPON_TYPE_FIX&quot;</span><span class="p">:</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="s2">&quot;COUPON_TYPE_VARIABLE&quot;</span><span class="p">:</span> <span class="s2">&quot;Variable&quot;</span><span class="p">,</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>    <span class="s2">&quot;COUPON_TYPE_OTHER&quot;</span><span class="p">:</span> <span class="s2">&quot;Other&quot;</span><span class="p">,</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="p">}</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="sd">&quot;&quot;&quot;Coupon type of bonds, enums: https://tinkoff.github.io/investAPI/instruments/#coupontype&quot;&quot;&quot;</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="n">TKS_REAL_EXCHANGES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>    <span class="s2">&quot;REAL_EXCHANGE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>    <span class="s2">&quot;REAL_EXCHANGE_MOEX&quot;</span><span class="p">:</span> <span class="s2">&quot;MOEX&quot;</span><span class="p">,</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>    <span class="s2">&quot;REAL_EXCHANGE_RTS&quot;</span><span class="p">:</span> <span class="s2">&quot;SPBEX&quot;</span><span class="p">,</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="s2">&quot;REAL_EXCHANGE_OTC&quot;</span><span class="p">:</span> <span class="s2">&quot;OTC&quot;</span><span class="p">,</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a><span class="p">}</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">&quot;&quot;&quot;The real exchange for the execution of trades, enums: https://tinkoff.github.io/investAPI/instruments/#realexchange&quot;&quot;&quot;</span>
-</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="n">TKS_SHARE_TYPES</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>    <span class="s2">&quot;SHARE_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="s2">&quot;SHARE_TYPE_COMMON&quot;</span><span class="p">:</span> <span class="s2">&quot;Ordinary&quot;</span><span class="p">,</span>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>    <span class="s2">&quot;SHARE_TYPE_PREFERRED&quot;</span><span class="p">:</span> <span class="s2">&quot;Privileged&quot;</span><span class="p">,</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>    <span class="s2">&quot;SHARE_TYPE_ADR&quot;</span><span class="p">:</span> <span class="s2">&quot;American Depositary Receipts (ADR)&quot;</span><span class="p">,</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    <span class="s2">&quot;SHARE_TYPE_GDR&quot;</span><span class="p">:</span> <span class="s2">&quot;Global Depositary Receipts (GDR)&quot;</span><span class="p">,</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>    <span class="s2">&quot;SHARE_TYPE_MLP&quot;</span><span class="p">:</span> <span class="s2">&quot;Master Limited Partnership (MLP)&quot;</span><span class="p">,</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="s2">&quot;SHARE_TYPE_NY_REG_SHRS&quot;</span><span class="p">:</span> <span class="s2">&quot;New York registered shares&quot;</span><span class="p">,</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="s2">&quot;SHARE_TYPE_CLOSED_END_FUND&quot;</span><span class="p">:</span> <span class="s2">&quot;Closed investment fund&quot;</span><span class="p">,</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>    <span class="s2">&quot;SHARE_TYPE_REIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Real estate trust&quot;</span><span class="p">,</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a><span class="p">}</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="sd">&quot;&quot;&quot;Share type, enums: https://tinkoff.github.io/investAPI/instruments/#sharetype&quot;&quot;&quot;</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>    <span class="s2">&quot;OPERATION_STATE_PROGRESS&quot;</span><span class="p">:</span> <span class="s2">&quot;↻ Progress&quot;</span><span class="p">,</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="p">}</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">&quot;&quot;&quot;Operation state, enums: https://tinkoff.github.io/investAPI/operations/#operationstate&quot;&quot;&quot;</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="n">TKS_ORDER_DIRECTIONS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="s2">&quot;ORDER_DIRECTION_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="s2">&quot;ORDER_DIRECTION_BUY&quot;</span><span class="p">:</span> <span class="s2">&quot;↑ Buy&quot;</span><span class="p">,</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>    <span class="s2">&quot;ORDER_DIRECTION_SELL&quot;</span><span class="p">:</span> <span class="s2">&quot;↓ Sell&quot;</span><span class="p">,</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="p">}</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">&quot;&quot;&quot;Order direction, enums: https://tinkoff.github.io/investAPI/orders/#orderdirection&quot;&quot;&quot;</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="n">TKS_STOP_ORDER_DIRECTIONS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_BUY&quot;</span><span class="p">:</span> <span class="s2">&quot;↑ Buy&quot;</span><span class="p">,</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="s2">&quot;STOP_ORDER_DIRECTION_SELL&quot;</span><span class="p">:</span> <span class="s2">&quot;↓ Sell&quot;</span><span class="p">,</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a><span class="p">}</span>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">&quot;&quot;&quot;Stop-order direction, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderdirection&quot;&quot;&quot;</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="n">TKS_ORDER_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>    <span class="s2">&quot;ORDER_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>    <span class="s2">&quot;ORDER_TYPE_LIMIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Limit&quot;</span><span class="p">,</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>    <span class="s2">&quot;ORDER_TYPE_MARKET&quot;</span><span class="p">:</span> <span class="s2">&quot;Market&quot;</span><span class="p">,</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="p">}</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">&quot;&quot;&quot;Order type, enums: https://tinkoff.github.io/investAPI/orders/#ordertype&quot;&quot;&quot;</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="n">TKS_STOP_ORDER_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_TAKE_PROFIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Take profit&quot;</span><span class="p">,</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_STOP_LOSS&quot;</span><span class="p">:</span> <span class="s2">&quot;Stop loss&quot;</span><span class="p">,</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>    <span class="s2">&quot;STOP_ORDER_TYPE_STOP_LIMIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Stop limit&quot;</span><span class="p">,</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="p">}</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a><span class="sd">&quot;&quot;&quot;Stop-order type, enums: https://tinkoff.github.io/investAPI/stoporders/#stopordertype&quot;&quot;&quot;</span>
+</span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="n">TKS_ORDER_STATES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;! Unknown&quot;</span><span class="p">,</span>
+</span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_FILL&quot;</span><span class="p">:</span> <span class="s2">&quot;Performed&quot;</span><span class="p">,</span>
+</span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_REJECTED&quot;</span><span class="p">:</span> <span class="s2">&quot;Rejected&quot;</span><span class="p">,</span>
+</span><span id="L-222"><a href="#L-222"><span class="linenos">222</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_CANCELLED&quot;</span><span class="p">:</span> <span class="s2">&quot;Cancelled&quot;</span><span class="p">,</span>
+</span><span id="L-223"><a href="#L-223"><span class="linenos">223</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_NEW&quot;</span><span class="p">:</span> <span class="s2">&quot;New order&quot;</span><span class="p">,</span>
+</span><span id="L-224"><a href="#L-224"><span class="linenos">224</span></a>    <span class="s2">&quot;EXECUTION_REPORT_STATUS_PARTIALLYFILL&quot;</span><span class="p">:</span> <span class="s2">&quot;Partially filled&quot;</span><span class="p">,</span>
+</span><span id="L-225"><a href="#L-225"><span class="linenos">225</span></a><span class="p">}</span>
+</span><span id="L-226"><a href="#L-226"><span class="linenos">226</span></a><span class="sd">&quot;&quot;&quot;Order status, enums: https://tinkoff.github.io/investAPI/orders/#orderexecutionreportstatus&quot;&quot;&quot;</span>
+</span><span id="L-227"><a href="#L-227"><span class="linenos">227</span></a>
+</span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a><span class="n">TKS_STOP_ORDER_EXPIRATION_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_CANCEL&quot;</span><span class="p">:</span> <span class="s2">&quot;Until cancel&quot;</span><span class="p">,</span>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>    <span class="s2">&quot;STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_DATE&quot;</span><span class="p">:</span> <span class="s2">&quot;Until date&quot;</span><span class="p">,</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a><span class="p">}</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a><span class="sd">&quot;&quot;&quot;Expiration type of stop-orders, enums: https://tinkoff.github.io/investAPI/stoporders/#stoporderexpirationtype&quot;&quot;&quot;</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a><span class="n">TKS_COUPON_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>    <span class="s2">&quot;COUPON_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>    <span class="s2">&quot;COUPON_TYPE_CONSTANT&quot;</span><span class="p">:</span> <span class="s2">&quot;Constant&quot;</span><span class="p">,</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>    <span class="s2">&quot;COUPON_TYPE_FLOATING&quot;</span><span class="p">:</span> <span class="s2">&quot;Floating&quot;</span><span class="p">,</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>    <span class="s2">&quot;COUPON_TYPE_DISCOUNT&quot;</span><span class="p">:</span> <span class="s2">&quot;Discount&quot;</span><span class="p">,</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>    <span class="s2">&quot;COUPON_TYPE_MORTGAGE&quot;</span><span class="p">:</span> <span class="s2">&quot;Mortgage&quot;</span><span class="p">,</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>    <span class="s2">&quot;COUPON_TYPE_FIX&quot;</span><span class="p">:</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">,</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>    <span class="s2">&quot;COUPON_TYPE_VARIABLE&quot;</span><span class="p">:</span> <span class="s2">&quot;Variable&quot;</span><span class="p">,</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>    <span class="s2">&quot;COUPON_TYPE_OTHER&quot;</span><span class="p">:</span> <span class="s2">&quot;Other&quot;</span><span class="p">,</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a><span class="p">}</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">&quot;&quot;&quot;Coupon type of bonds, enums: https://tinkoff.github.io/investAPI/instruments/#coupontype&quot;&quot;&quot;</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a><span class="n">TKS_REAL_EXCHANGES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>    <span class="s2">&quot;REAL_EXCHANGE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>    <span class="s2">&quot;REAL_EXCHANGE_MOEX&quot;</span><span class="p">:</span> <span class="s2">&quot;MOEX&quot;</span><span class="p">,</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>    <span class="s2">&quot;REAL_EXCHANGE_RTS&quot;</span><span class="p">:</span> <span class="s2">&quot;SPBEX&quot;</span><span class="p">,</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>    <span class="s2">&quot;REAL_EXCHANGE_OTC&quot;</span><span class="p">:</span> <span class="s2">&quot;OTC&quot;</span><span class="p">,</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="p">}</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">&quot;&quot;&quot;The real exchange for the execution of trades, enums: https://tinkoff.github.io/investAPI/instruments/#realexchange&quot;&quot;&quot;</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="n">TKS_SHARE_TYPES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>    <span class="s2">&quot;SHARE_TYPE_UNSPECIFIED&quot;</span><span class="p">:</span> <span class="s2">&quot;Undefined&quot;</span><span class="p">,</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>    <span class="s2">&quot;SHARE_TYPE_COMMON&quot;</span><span class="p">:</span> <span class="s2">&quot;Ordinary&quot;</span><span class="p">,</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>    <span class="s2">&quot;SHARE_TYPE_PREFERRED&quot;</span><span class="p">:</span> <span class="s2">&quot;Privileged&quot;</span><span class="p">,</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>    <span class="s2">&quot;SHARE_TYPE_ADR&quot;</span><span class="p">:</span> <span class="s2">&quot;American Depositary Receipts (ADR)&quot;</span><span class="p">,</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>    <span class="s2">&quot;SHARE_TYPE_GDR&quot;</span><span class="p">:</span> <span class="s2">&quot;Global Depositary Receipts (GDR)&quot;</span><span class="p">,</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="s2">&quot;SHARE_TYPE_MLP&quot;</span><span class="p">:</span> <span class="s2">&quot;Master Limited Partnership (MLP)&quot;</span><span class="p">,</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>    <span class="s2">&quot;SHARE_TYPE_NY_REG_SHRS&quot;</span><span class="p">:</span> <span class="s2">&quot;New York registered shares&quot;</span><span class="p">,</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>    <span class="s2">&quot;SHARE_TYPE_CLOSED_END_FUND&quot;</span><span class="p">:</span> <span class="s2">&quot;Closed investment fund&quot;</span><span class="p">,</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>    <span class="s2">&quot;SHARE_TYPE_REIT&quot;</span><span class="p">:</span> <span class="s2">&quot;Real estate trust&quot;</span><span class="p">,</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a><span class="p">}</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a><span class="sd">&quot;&quot;&quot;Share type, enums: https://tinkoff.github.io/investAPI/instruments/#sharetype&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -571,7 +572,7 @@ See more: <a href="https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataSe
                 </section>
                 <section id="TKS_OPERATION_STATES">
                     <div class="attr variable">
-            <span class="name">TKS_OPERATION_STATES</span><span class="default_value"> = {&#39;OPERATION_STATE_UNSPECIFIED&#39;: &#39;! Unknown&#39;, &#39;OPERATION_STATE_EXECUTED&#39;: &#39;√ Executed&#39;, &#39;OPERATION_STATE_CANCELED&#39;: &#39;× Canceled&#39;}</span>
+            <span class="name">TKS_OPERATION_STATES</span><span class="default_value"> = {&#39;OPERATION_STATE_UNSPECIFIED&#39;: &#39;! Unknown&#39;, &#39;OPERATION_STATE_EXECUTED&#39;: &#39;√ Executed&#39;, &#39;OPERATION_STATE_CANCELED&#39;: &#39;× Canceled&#39;, &#39;OPERATION_STATE_PROGRESS&#39;: &#39;↻ Progress&#39;}</span>
 
         
     </div>

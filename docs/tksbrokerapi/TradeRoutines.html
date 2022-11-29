@@ -229,8 +229,8 @@
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
 </span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="k">def</span> <span class="nf">UpdateClassFields</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    This method read config file in YAML format as dictionary and apply `key: value` as names of class fields and</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    values of class field. Example for class `TradeScenario`:</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    values of class fields. Example for class `TradeScenario`:</span>
 </span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    `config[&quot;tickers&quot;] = [&quot;TICKER1&quot;, &quot;TICKER2&quot;] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = [&quot;TICKER1&quot;, &quot;TICKER2&quot;]`.</span>
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">    :param instance: instance of class to parametrize.</span>
@@ -499,8 +499,8 @@ An error exception will occur if input date has incorrect format.</p>
     <a class="headerlink" href="#UpdateClassFields"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="UpdateClassFields-156"><a href="#UpdateClassFields-156"><span class="linenos">156</span></a><span class="k">def</span> <span class="nf">UpdateClassFields</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="UpdateClassFields-157"><a href="#UpdateClassFields-157"><span class="linenos">157</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UpdateClassFields-158"><a href="#UpdateClassFields-158"><span class="linenos">158</span></a><span class="sd">    This method read config file in YAML format as dictionary and apply `key: value` as names of class fields and</span>
-</span><span id="UpdateClassFields-159"><a href="#UpdateClassFields-159"><span class="linenos">159</span></a><span class="sd">    values of class field. Example for class `TradeScenario`:</span>
+</span><span id="UpdateClassFields-158"><a href="#UpdateClassFields-158"><span class="linenos">158</span></a><span class="sd">    This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and</span>
+</span><span id="UpdateClassFields-159"><a href="#UpdateClassFields-159"><span class="linenos">159</span></a><span class="sd">    values of class fields. Example for class `TradeScenario`:</span>
 </span><span id="UpdateClassFields-160"><a href="#UpdateClassFields-160"><span class="linenos">160</span></a><span class="sd">    `config[&quot;tickers&quot;] = [&quot;TICKER1&quot;, &quot;TICKER2&quot;] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = [&quot;TICKER1&quot;, &quot;TICKER2&quot;]`.</span>
 </span><span id="UpdateClassFields-161"><a href="#UpdateClassFields-161"><span class="linenos">161</span></a>
 </span><span id="UpdateClassFields-162"><a href="#UpdateClassFields-162"><span class="linenos">162</span></a><span class="sd">    :param instance: instance of class to parametrize.</span>
@@ -511,8 +511,8 @@ An error exception will occur if input date has incorrect format.</p>
 </span></pre></div>
 
 
-            <div class="docstring"><p>This method read config file in YAML format as dictionary and apply <code>key: value</code> as names of class fields and
-values of class field. Example for class <code>TradeScenario</code>:
+            <div class="docstring"><p>This method get config as dictionary (preloaded from YAML file) and apply <code>key: value</code> as names of class fields and
+values of class fields. Example for class <code>TradeScenario</code>:
 <code>config["tickers"] = ["TICKER1", "TICKER2"] ==&gt; TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]</code>.</p>
 
 <h6 id="parameters">Parameters</h6>
