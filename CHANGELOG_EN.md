@@ -25,12 +25,14 @@ Release development in progress...
 * [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) TKSBrokerAPI logo was added to the templates of HTML reports.
 * [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Field with not covered funds were added to margin status report (`--user-info` key).
 * [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
+* [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Now, orders are close before closing positions in `CloseAllByTicker()` and `CloseAllByTicker()` methods. It will minimize blocked lots.
 
 ##### Bug fixes
 
 * [#93](https://github.com/Tim55667757/TKSBrokerAPI/issues/93) Bug fixed: `KeyError: 'stopOrders' and KeyError: 'orders'` in `RequestPendingOrders()` and `RequestStopOrders()` methods.
 * [#94](https://github.com/Tim55667757/TKSBrokerAPI/issues/94) Bug fixed in `Overview()` method: `KeyError: 'currentNkd'` if instrument is not a bond.
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Bug fixed: broken Overview table in `Lots` column.
+* [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Bug fixed in `Deals()` method: `KeyError: 'OPERATION_STATE_PROGRESS'`. New state `OPERATION_STATE_PROGRESS` was added to the `TKS_OPERATION_STATES` constant.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
