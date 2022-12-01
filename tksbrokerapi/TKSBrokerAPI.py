@@ -2394,7 +2394,7 @@ class TinkoffBrokerServer:
                 if self.useHTMLReports:
                     htmlFilePath = filename.replace(".md", ".html") if filename.endswith(".md") else filename + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
-                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="", commonCSS=COMMON_CSS, markdown=infoText))
+                        fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Client's portfolio", commonCSS=COMMON_CSS, markdown=infoText))
 
                     uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
 
