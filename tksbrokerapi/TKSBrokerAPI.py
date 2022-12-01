@@ -1704,6 +1704,10 @@ class TinkoffBrokerServer:
         for item in portfolioResponse["positions"]:
             if item["instrumentType"] == "currency":
                 self._figi = item["figi"]
+                if not self._figi and item["ticker"]:
+                    self._ticker = item["ticker"]
+                    self._figi = self.SearchByTicker()["figi"]  # Get FIGI to avoid warnings
+
                 curr = self.SearchByFIGI(requestPrice=False)
 
                 # current price of currency in RUB:
@@ -1772,6 +1776,10 @@ class TinkoffBrokerServer:
 
         for item in portfolioResponse["positions"]:
             self._figi = item["figi"]
+            if not self._figi and item["ticker"]:
+                self._ticker = item["ticker"]
+                self._figi = self.SearchByTicker()["figi"]  # Get FIGI to avoid warnings
+
             instrument = self.SearchByFIGI(requestPrice=False)  # full raw info about instrument by FIGI
 
             if instrument:
@@ -2617,7 +2625,7 @@ class TinkoffBrokerServer:
                     continue
 
                 else:
-                    self._figi = item["figi"] if item["figi"] else ""
+                    self._figi = item["figi"]
                     payment = NanoToFloat(item["payment"]["units"], item["payment"]["nano"])
                     instrument = self.SearchByFIGI(requestPrice=False) if self._figi else {}
 
