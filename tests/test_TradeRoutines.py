@@ -8,6 +8,14 @@ from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 
 
+class UpdateClassFieldsTestClass:
+
+    def __init__(self):
+        self.a = "123"
+        self.b = 123
+        self.c = False
+
+
 class TestTradeRoutinesMethods:
 
     @pytest.fixture(scope="function", autouse=True)
@@ -142,3 +150,21 @@ class TestTradeRoutinesMethods:
         for test in testData:
             result = TradeRoutines.FloatToNano(number=test[0])
             assert result == test[1], 'Expected `FloatToNano(number="{}") == {}`, but `result == {}`'.format(test[0], test[1], result)
+
+    def test_UpdateClassFieldsCheckType(self):
+        test = UpdateClassFieldsTestClass()
+
+        assert TradeRoutines.UpdateClassFields(instance=test, params={}) is None, "Not None type returned!"
+        assert TradeRoutines.UpdateClassFields(instance=test, params={"a": 1, "d": "1"}) is None, "Not None type returned!"
+
+    def test_UpdateClassFieldsPositive(self):
+        testClass = UpdateClassFieldsTestClass()
+        testData = [
+            {"a": None, "b": None, "c": None}, {"a": -1, "b": "-1", "c": ""}, {"a": 0, "b": "0", "c": False},
+            {"a": [], "b": (), "c": {}}, {"a": [({})], "b": "12345", "c": -12345},
+            {"a": testClass.a, "b": testClass.b, "c": testClass.c},
+        ]
+
+        for test in testData:
+            TradeRoutines.UpdateClassFields(testClass, test)
+            assert testClass.a == test["a"] and testClass.b == test["b"] and testClass.c == test["c"], "Incorrect output!"
