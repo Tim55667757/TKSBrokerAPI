@@ -400,14 +400,19 @@ class TinkoffBrokerServer:
         Parse JSON from response string.
 
         :param rawData: this is a string with JSON-formatted text.
-        :return: JSON (dictionary), parsed from server response string.
+        :return: JSON (dictionary), parsed from server response string. If an error occurred, then returns empty dict `{}`.
         """
-        responseJSON = json.loads(rawData) if rawData else {}
+        try:
+            responseJSON = json.loads(rawData) if rawData else {}
 
-        if self.moreDebug:
-            uLogger.debug("JSON formatted raw body data of response:\n{}".format(json.dumps(responseJSON, indent=4)))
+            if self.moreDebug:
+                uLogger.debug("JSON formatted raw body data of response:\n{}".format(json.dumps(responseJSON, indent=4)))
 
-        return responseJSON
+            return responseJSON
+
+        except Exception as e:
+            uLogger.error("An empty dict will be return, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
+            return {}
 
     def SendAPIRequest(self, url: str, reqType: str = "GET", retry: int = 3, pause: int = 5) -> dict:
         """
