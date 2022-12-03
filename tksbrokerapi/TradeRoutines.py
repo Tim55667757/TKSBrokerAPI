@@ -163,3 +163,58 @@ def UpdateClassFields(instance: object, params: dict) -> None:
     """
     for name in params:
         instance.__setattr__(name, params[name])
+
+
+def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> list:
+    """
+    Gets input list and try to separate it by equal parts of elements.
+
+    Examples:
+    SeparateByEqualParts(elements=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2) -> [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=True) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]
+    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=False) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=True) -> [[1], [2, 3]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=False) -> [[1], [2], [3]]
+
+    If parts > length of elements:
+    SeparateByEqualParts(elements=[1], parts=2, union=True) -> [[1]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=True) -> [[1], [2], [3]]
+    SeparateByEqualParts(elements=[1], parts=2, union=False) -> [[1], []]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=False) -> [[1], [2], [3], []]
+
+    :param elements: list of objects.
+    :param parts: int, numbers of equal parts of objects.
+    :param union: bool, if True and if the remainder of the separating not empty, then remainder part union with the last part.
+    :return: list of lists with equal parts of objects.
+    """
+    try:
+        result = []
+        if elements is not None and isinstance(elements, list) and elements and isinstance(parts, int) and isinstance(union, bool):
+            count = len(elements)
+
+            if parts == 1:
+                result = [elements]
+
+            elif parts > count:
+                result = [[item] for item in elements]
+
+                if not union:
+                    result.extend([[] for _ in range(parts - count)])
+
+            else:
+                partsLen = count // parts
+                for part in range(parts):
+                    result.append(elements[part * partsLen: (part + 1) * partsLen])
+
+                index = parts * partsLen
+                if index < count:
+                    if union:
+                        result[-1].extend(elements[index:])
+
+                    else:
+                        result.append(elements[index:])
+
+        return result
+
+    except Exception:
+        return []
