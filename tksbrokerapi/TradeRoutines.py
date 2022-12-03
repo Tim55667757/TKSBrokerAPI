@@ -68,7 +68,8 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
     :param userFormat: user-friendly date format, e.g. `"%Y-%m-%d"`.
     :param outputFormat: output string date format.
     :return: tuple with 2 strings `("start", "end")`. Example of return is `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`.
-             Second string is the end of the last day. Tuple ("", "") returned if errors occurred.
+             Second string is the end of the last day.
+             Tuple ("", "") returned if errors occurred.
     """
     try:
         s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
@@ -172,7 +173,7 @@ def UpdateClassFields(instance: object, params: dict) -> None:
     `config["tickers"] = ["TICKER1", "TICKER2"] ==> TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]`.
 
     :param instance: instance of class to parametrize.
-    :param params: dict with all parameters in `key: value` format.
+    :param params: dict with all parameters in `key: value` format. It will be nothing with object if an error occurred.
     """
     try:
         for name in params:
@@ -202,7 +203,7 @@ def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> 
     :param elements: list of objects.
     :param parts: int, numbers of equal parts of objects.
     :param union: bool, if True and if the remainder of the separating not empty, then remainder part union with the last part.
-    :return: list of lists with equal parts of objects.
+    :return: list of lists with equal parts of objects. If an error occurred, then returns empty list `[]`.
     """
     try:
         result = []
