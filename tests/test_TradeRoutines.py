@@ -204,6 +204,16 @@ class TestTradeRoutinesMethods:
             TradeRoutines.UpdateClassFields(testClass, test)
             assert testClass.a == test["a"] and testClass.b == test["b"] and testClass.c == test["c"], "Incorrect output!"
 
+    def test_UpdateClassFieldsNegative(self):
+        testClass = UpdateClassFieldsTestClass()
+        testData = [
+            {}, [], None, [1, "2", False], {1: 1}, {"__init__": 0},
+        ]
+
+        for test in testData:
+            TradeRoutines.UpdateClassFields(testClass, test)
+            assert testClass.a == "123" and testClass.b == 123 and testClass.c is False, "Incorrect output!"
+
     def test_SeparateByEqualPartsCheckType(self):
         assert isinstance(TradeRoutines.SeparateByEqualParts(elements=[], parts=2, union=True), list), "Not list type returned!"
 
