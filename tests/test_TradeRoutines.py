@@ -135,6 +135,18 @@ class TestTradeRoutinesMethods:
             result = TradeRoutines.NanoToFloat(units=test[0], nano=test[1])
             assert result == test[2], 'Expected `NanoToFloat(units="{}", nano={}) == {}`, but `result == {}`'.format(test[0], test[1], test[2], result)
 
+    def test_NanoToFloatNegative(self):
+        testData = [
+            (1, 0, 1.0), ("1", "0", 1.0), (0, 1, 0.000000001), ("0", 100000000, 0.1),
+            (None, 0, 0.), (1, None, 0.), (None, None, 0.),
+            ([], {}, 0.), (1.2, 0.1, 1.0), (0.1, 1.2, 0.000000001),
+            ("-1", -100000000, -1.1), ("-1", 100000000, -0.9),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.NanoToFloat(units=test[0], nano=test[1])
+            assert result == test[2], "Unexpected output!"
+
     def test_FloatToNanoCheckType(self):
         assert isinstance(TradeRoutines.FloatToNano(123.456789), dict), "Not dict type returned!"
         assert isinstance(TradeRoutines.FloatToNano(0.000000001), dict), "Not dict type returned!"

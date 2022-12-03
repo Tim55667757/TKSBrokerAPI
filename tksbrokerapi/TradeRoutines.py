@@ -124,9 +124,13 @@ def NanoToFloat(units: str, nano: int) -> float:
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
-    :return: float view of number
+    :return: float view of number. If an error occurred, then returns `0.`
     """
-    return int(units) + int(nano) * NANO
+    try:
+        return int(units) + int(nano) * NANO
+
+    except Exception:
+        return 0.
 
 
 def FloatToNano(number: float) -> dict:
