@@ -30,6 +30,7 @@
 * [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) Реализован метод`SeparateByEqualParts()`. Этот метод получает на вход лист элементов и пытается разделить его на список списков равных по количеству элементов.
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except блок и негативные юнит-тексты были добавлены для метода `GetDatesAsString()`.
 * [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except блок и негативные юнит-тексты были добавлены для метода `NanoToFloat()`.
+* [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except блок и негативные юнит-тексты были добавлены для метода `FloatToNano()`.
 
 ##### Баг-фиксы
 

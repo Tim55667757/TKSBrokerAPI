@@ -30,6 +30,7 @@ Release development in progress...
 * [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) `SeparateByEqualParts()` method was implemented. This method gets input list and try to separate it by equal parts of elements.
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except block and some negative tests were added for `GetDatesAsString()` method.
 * [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except block and some negative tests were `NanoToFloat()` method.
+* [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except block and some negative tests were `FloatToNano()` method.
 
 ##### Bug fixes
 
