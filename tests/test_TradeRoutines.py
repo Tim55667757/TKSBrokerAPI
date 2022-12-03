@@ -101,6 +101,16 @@ class TestTradeRoutinesMethods:
                 test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
             )
 
+    def test_GetDatesAsStringNegative(self):
+        testData = [
+            (1, 2, ("", "")), ("1", "2", ("", "")),
+            ("", "yesterday", ("", "")), ("", None, ("", "")),
+            ("2022-12-03", -1, ("", "")), ("2022-12-02-", "2022-12-03-", ("", "")),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.GetDatesAsString(start=test[0], end=test[1]) == test[2], "Unexpected output!"
+
     def test_NanoToFloatCheckType(self):
         assert isinstance(TradeRoutines.NanoToFloat("123", 456789000), float), "Not float type returned!"
         assert isinstance(TradeRoutines.NanoToFloat("0", 0), float), "Not float type returned!"
