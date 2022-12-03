@@ -29,6 +29,7 @@ Release development in progress...
 * [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Avoid FIGI-warnings in `Overview()` if `self.figi` is empty.
 * [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) `SeparateByEqualParts()` method was implemented. This method gets input list and try to separate it by equal parts of elements.
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except block and some negative tests were added for `GetDatesAsString()` method.
+* [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except block and some negative tests were `NanoToFloat()` method.
 
 ##### Bug fixes
 
