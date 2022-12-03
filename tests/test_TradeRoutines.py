@@ -174,7 +174,8 @@ class TestTradeRoutinesMethods:
 
     def test_SeparateByEqualPartsPositive(self):
         testData = [
-            (None, 0, True, []), (None, 0, False, []), ([], 0, True, []), ([], 0, False, []),
+            (None, 0, True, []), (None, 0, False, []),
+            ([], 0, True, []), ([], 0, False, []),
             ([1], 1, True, [[1]]), ([1], 1, False, [[1]]),
             ([1], 2, True, [[1]]), ([1], 2, False, [[1], []]),
             ([1, 2, 3], 4, True, [[1], [2], [3]]), ([1, 2, 3], 4, False, [[1], [2], [3], []]),
@@ -185,6 +186,27 @@ class TestTradeRoutinesMethods:
             ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, True, [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]),
             ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, True, [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]),
             ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, False, [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.SeparateByEqualParts(elements=test[0], parts=test[1], union=test[2]) == test[3], "Incorrect output!"
+
+    def test_SeparateByEqualPartsNegative(self):
+
+        testData = [
+            (None, -1, True, []), (None, -1, False, []),
+            ([], 1, True, []), ([], 1, False, []),
+            (1, -1, True, []), (1, -1, False, []),
+            (1, 1, True, []), (1, 1, False, []),
+            ("", 1, True, []), ("", 1, False, []),
+            ((), 1, True, []), ((), 1, False, []),
+            ((1,), 1, True, []), ((1,), 1, False, []),
+            ({}, 1, True, []), ({}, 1, False, []),
+            ({"a": 1}, 1, True, []), ({"a": 1}, 1, False, []),
+            (None, None, True, []), (None, None, False, []),
+            (None, None, None, []),
+            ([1], "", True, []), ([1], "", False, []),
+            ([1, 2, 3], "2", True, []), ([1, 2, 3], "2", False, []),
         ]
 
         for test in testData:
