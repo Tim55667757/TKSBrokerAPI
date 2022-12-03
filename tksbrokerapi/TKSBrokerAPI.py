@@ -412,6 +412,7 @@ class TinkoffBrokerServer:
 
         except Exception as e:
             uLogger.error("An empty dict will be return, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
+
             return {}
 
     def SendAPIRequest(self, url: str, reqType: str = "GET", retry: int = 3, pause: int = 5) -> dict:
