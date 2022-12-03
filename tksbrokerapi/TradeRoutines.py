@@ -161,8 +161,12 @@ def UpdateClassFields(instance: object, params: dict) -> None:
     :param instance: instance of class to parametrize.
     :param params: dict with all parameters in `key: value` format.
     """
-    for name in params:
-        instance.__setattr__(name, params[name])
+    try:
+        for name in params:
+            instance.__setattr__(name, params[name])
+
+    except Exception:
+        pass
 
 
 def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> list:
