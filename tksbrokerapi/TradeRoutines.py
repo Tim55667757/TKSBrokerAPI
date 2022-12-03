@@ -124,7 +124,7 @@ def NanoToFloat(units: str, nano: int) -> float:
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
-    :return: float view of number. If an error occurred, then returns `0.`
+    :return: float view of number. If an error occurred, then returns `0.`.
     """
     try:
         return int(units) + int(nano) * NANO
@@ -142,22 +142,27 @@ def FloatToNano(number: float) -> dict:
     `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
     :param number: float number
-    :return: nano-type view of number: `{"units": "string", "nano": integer}`
+    :return: nano-type view of number: `{"units": "string", "nano": integer}`.
+             If an error occurred, then returns `{"units": "0", "nano": 0}`.
     """
-    splitByPoint = str(number).split(".")
-    frac = 0
+    try:
+        splitByPoint = str(number).split(".")
+        frac = 0
 
-    if len(splitByPoint) > 1:
-        if len(splitByPoint[1]) <= 9:
-            frac = int("{}{}".format(
-                int(splitByPoint[1]),
-                "0" * (9 - len(splitByPoint[1])),
-            ))
+        if len(splitByPoint) > 1:
+            if len(splitByPoint[1]) <= 9:
+                frac = int("{}{}".format(
+                    int(splitByPoint[1]),
+                    "0" * (9 - len(splitByPoint[1])),
+                ))
 
-    if (number < 0) and (frac > 0):
-        frac = -frac
+        if (number < 0) and (frac > 0):
+            frac = -frac
 
-    return {"units": str(int(number)), "nano": frac}
+        return {"units": str(int(number)), "nano": frac}
+
+    except Exception:
+        return {"units": "0", "nano": 0}
 
 
 def UpdateClassFields(instance: object, params: dict) -> None:

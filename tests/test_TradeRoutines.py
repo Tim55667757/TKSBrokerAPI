@@ -173,6 +173,19 @@ class TestTradeRoutinesMethods:
             result = TradeRoutines.FloatToNano(number=test[0])
             assert result == test[1], 'Expected `FloatToNano(number="{}") == {}`, but `result == {}`'.format(test[0], test[1], result)
 
+    def test_FloatToNanoNegative(self):
+        testData = [
+            (0, {"units": "0", "nano": 0}), (0.0, {"units": "0", "nano": 0}),
+            ("0", {"units": "0", "nano": 0}), ("0.1", {"units": "0", "nano": 0}),
+            ("-1", {"units": "0", "nano": 0}), ("-0.1", {"units": "0", "nano": 0}),
+            (-1, {"units": "-1", "nano": 0}), (-0.1, {"units": "0", "nano": -100000000}),
+            (None, {"units": "0", "nano": 0}), ([], {"units": "0", "nano": 0}),
+            ({}, {"units": "0", "nano": 0}), ([1], {"units": "0", "nano": 0}),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.FloatToNano(number=test[0]) == test[1], "Unexpected output!"
+
     def test_UpdateClassFieldsCheckType(self):
         test = UpdateClassFieldsTestClass()
 
