@@ -28,6 +28,7 @@
 * [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Теперь в методах `CloseAllByTicker()` и `CloseAllByTicker()` ордеры закрываются до закрытия основной позиции по инструменту, чтобы минимизировать число заблокированных лотов.
 * [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Выполняется попытка определить `self.figi`, чтобы избежать лишних предупреждений в методе `Overview()`, если FIGI пустой.
 * [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) Реализован метод`SeparateByEqualParts()`. Этот метод получает на вход лист элементов и пытается разделить его на список списков равных по количеству элементов.
+* [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except блок и негативные юнит-тексты были добавлены для метода `GetDatesAsString()`.
 
 ##### Баг-фиксы
 
