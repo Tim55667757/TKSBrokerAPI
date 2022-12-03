@@ -68,46 +68,50 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
     :param userFormat: user-friendly date format, e.g. `"%Y-%m-%d"`.
     :param outputFormat: output string date format.
     :return: tuple with 2 strings `("start", "end")`. Example of return is `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`.
-             Second string is the end of the last day.
+             Second string is the end of the last day. Tuple ("", "") returned if errors occurred.
     """
-    s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
-    e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
+    try:
+        s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
+        e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
 
-    # time between start and the end of the current day:
-    if start is None or start.lower() == "today":
-        pass
+        # time between start and the end of the current day:
+        if start is None or start.lower() == "today":
+            pass
 
-    # from start of the last day to the end of the last day:
-    elif start.lower() == "yesterday":
-        s -= timedelta(days=1)
-        e -= timedelta(days=1)
+        # from start of the last day to the end of the last day:
+        elif start.lower() == "yesterday":
+            s -= timedelta(days=1)
+            e -= timedelta(days=1)
 
-    # week (-7 day from 00:00:00 to the end of the current day):
-    elif start.lower() == "week":
-        s -= timedelta(days=6)  # +1 current day already taken into account
+        # week (-7 day from 00:00:00 to the end of the current day):
+        elif start.lower() == "week":
+            s -= timedelta(days=6)  # +1 current day already taken into account
 
-    # month (-30 day from 00:00:00 to the end of current day):
-    elif start.lower() == "month":
-        s -= timedelta(days=29)  # +1 current day already taken into account
+        # month (-30 day from 00:00:00 to the end of current day):
+        elif start.lower() == "month":
+            s -= timedelta(days=29)  # +1 current day already taken into account
 
-    # year (-365 day from 00:00:00 to the end of current day):
-    elif start.lower() == "year":
-        s -= timedelta(days=364)  # +1 current day already taken into account
+        # year (-365 day from 00:00:00 to the end of current day):
+        elif start.lower() == "year":
+            s -= timedelta(days=364)  # +1 current day already taken into account
 
-    # -N days ago to the end of current day:
-    elif start.startswith('-') and start[1:].isdigit():
-        s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
+        # -N days ago to the end of current day:
+        elif start.startswith('-') and start[1:].isdigit():
+            s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
 
-    # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
-    else:
-        s = datetime.strptime(start, userFormat).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
-        e = datetime.strptime(end, userFormat).replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
+        # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
+        else:
+            s = datetime.strptime(start, userFormat).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
+            e = datetime.strptime(end, userFormat).replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
 
-    # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
-    s = s.strftime(outputFormat)
-    e = e.strftime(outputFormat)
+        # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
+        s = s.strftime(outputFormat)
+        e = e.strftime(outputFormat)
 
-    return s, e
+        return s, e
+
+    except Exception:
+        return "", ""
 
 
 def NanoToFloat(units: str, nano: int) -> float:
