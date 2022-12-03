@@ -31,6 +31,7 @@
 * [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except блок и негативные юнит-тексты были добавлены для метода `NanoToFloat()`.
 * [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except блок и негативные юнит-тексты были добавлены для метода `FloatToNano()`.
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except блок и негативные юнит-тексты были добавлены для метода `GetDatesAsString()`.
+* [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except блок и негативные юнит-тексты были добавлены для метода `_ParseJSON()`.
 
 ##### Баг-фиксы
 
