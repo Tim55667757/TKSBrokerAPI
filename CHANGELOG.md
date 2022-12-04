@@ -27,6 +27,7 @@
 * [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) Был реализован метод `UpdateClassFields()`. Он получает настройки как словарь (например, загруженный из YAML файла) и применяет к полям и значениям указанного инстанса некоторого класса пару `key: value`.
 * [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Теперь в методах `CloseAllByTicker()` и `CloseAllByTicker()` ордеры закрываются до закрытия основной позиции по инструменту, чтобы минимизировать число заблокированных лотов.
 * [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Выполняется попытка определить `self.figi`, чтобы избежать лишних предупреждений в методе `Overview()`, если FIGI пустой.
+* [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен ко всем методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
 
 ##### Баг-фиксы
 

@@ -27,6 +27,7 @@ Release development in progress...
 * [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
 * [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Now, orders are close before closing positions in `CloseAllByTicker()` and `CloseAllByTicker()` methods. It will minimize blocked lots.
 * [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Avoid FIGI-warnings in `Overview()` if `self.figi` is empty.
+* [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to all methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
 
 ##### Bug fixes
 
