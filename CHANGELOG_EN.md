@@ -24,9 +24,14 @@ Release development in progress...
 * [#92](https://github.com/Tim55667757/TKSBrokerAPI/issues/92) Mutex lock was implemented for the `SendAPIRequest()` method to avoid multiprocessing issues with unavailable resource.
 * [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) TKSBrokerAPI logo was added to the templates of HTML reports.
 * [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Field with not covered funds were added to margin status report (`--user-info` key).
-* [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
+* [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented and some positive and negative tests were added. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
 * [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Now, orders are close before closing positions in `CloseAllByTicker()` and `CloseAllByTicker()` methods. It will minimize blocked lots.
 * [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Avoid FIGI-warnings in `Overview()` if `self.figi` is empty.
+* [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) `SeparateByEqualParts()` method was implemented. This method gets input list and try to separate it by equal parts of elements.
+* [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except block and some negative tests were added for `NanoToFloat()` method.
+* [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except block and some negative tests were added for `FloatToNano()` method.
+* [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except block and some negative tests were added for `GetDatesAsString()` method.
+* [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except block and some negative tests were added for `_ParseJSON()` method.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to all methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
 
 ##### Bug fixes

@@ -69,45 +69,50 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
     :param outputFormat: output string date format.
     :return: tuple with 2 strings `("start", "end")`. Example of return is `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`.
              Second string is the end of the last day.
+             Tuple ("", "") returned if errors occurred.
     """
-    s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
-    e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
+    try:
+        s = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)  # start of the current day
+        e = s.replace(hour=23, minute=59, second=59, microsecond=0)  # end of the current day
 
-    # time between start and the end of the current day:
-    if start is None or start.lower() == "today":
-        pass
+        # time between start and the end of the current day:
+        if start is None or start.lower() == "today":
+            pass
 
-    # from start of the last day to the end of the last day:
-    elif start.lower() == "yesterday":
-        s -= timedelta(days=1)
-        e -= timedelta(days=1)
+        # from start of the last day to the end of the last day:
+        elif start.lower() == "yesterday":
+            s -= timedelta(days=1)
+            e -= timedelta(days=1)
 
-    # week (-7 day from 00:00:00 to the end of the current day):
-    elif start.lower() == "week":
-        s -= timedelta(days=6)  # +1 current day already taken into account
+        # week (-7 day from 00:00:00 to the end of the current day):
+        elif start.lower() == "week":
+            s -= timedelta(days=6)  # +1 current day already taken into account
 
-    # month (-30 day from 00:00:00 to the end of current day):
-    elif start.lower() == "month":
-        s -= timedelta(days=29)  # +1 current day already taken into account
+        # month (-30 day from 00:00:00 to the end of current day):
+        elif start.lower() == "month":
+            s -= timedelta(days=29)  # +1 current day already taken into account
 
-    # year (-365 day from 00:00:00 to the end of current day):
-    elif start.lower() == "year":
-        s -= timedelta(days=364)  # +1 current day already taken into account
+        # year (-365 day from 00:00:00 to the end of current day):
+        elif start.lower() == "year":
+            s -= timedelta(days=364)  # +1 current day already taken into account
 
-    # -N days ago to the end of current day:
-    elif start.startswith('-') and start[1:].isdigit():
-        s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
+        # -N days ago to the end of current day:
+        elif start.startswith('-') and start[1:].isdigit():
+            s -= timedelta(days=abs(int(start)) - 1)  # +1 current day already taken into account
 
-    # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
-    else:
-        s = datetime.strptime(start, userFormat).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
-        e = datetime.strptime(end, userFormat).replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
+        # dates between start day at 00:00:00 and the end of the last day at 23:59:59:
+        else:
+            s = datetime.strptime(start, userFormat).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tzutc())
+            e = datetime.strptime(end, userFormat).replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=tzutc()) if end is not None else e
 
-    # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
-    s = s.strftime(outputFormat)
-    e = e.strftime(outputFormat)
+        # converting to UTC ISO time formatted with Z suffix for Tinkoff Open API:
+        s = s.strftime(outputFormat)
+        e = e.strftime(outputFormat)
 
-    return s, e
+        return s, e
+
+    except Exception:
+        return "", ""
 
 
 def NanoToFloat(units: str, nano: int) -> float:
@@ -120,9 +125,13 @@ def NanoToFloat(units: str, nano: int) -> float:
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
-    :return: float view of number
+    :return: float view of number. If an error occurred, then returns `0.`.
     """
-    return int(units) + int(nano) * NANO
+    try:
+        return int(units) + int(nano) * NANO
+
+    except Exception:
+        return 0.
 
 
 def FloatToNano(number: float) -> dict:
@@ -134,22 +143,27 @@ def FloatToNano(number: float) -> dict:
     `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
     :param number: float number
-    :return: nano-type view of number: `{"units": "string", "nano": integer}`
+    :return: nano-type view of number: `{"units": "string", "nano": integer}`.
+             If an error occurred, then returns `{"units": "0", "nano": 0}`.
     """
-    splitByPoint = str(number).split(".")
-    frac = 0
+    try:
+        splitByPoint = str(number).split(".")
+        frac = 0
 
-    if len(splitByPoint) > 1:
-        if len(splitByPoint[1]) <= 9:
-            frac = int("{}{}".format(
-                int(splitByPoint[1]),
-                "0" * (9 - len(splitByPoint[1])),
-            ))
+        if len(splitByPoint) > 1:
+            if len(splitByPoint[1]) <= 9:
+                frac = int("{}{}".format(
+                    int(splitByPoint[1]),
+                    "0" * (9 - len(splitByPoint[1])),
+                ))
 
-    if (number < 0) and (frac > 0):
-        frac = -frac
+        if (number < 0) and (frac > 0):
+            frac = -frac
 
-    return {"units": str(int(number)), "nano": frac}
+        return {"units": str(int(number)), "nano": frac}
+
+    except Exception:
+        return {"units": "0", "nano": 0}
 
 
 def UpdateClassFields(instance: object, params: dict) -> None:
@@ -159,7 +173,66 @@ def UpdateClassFields(instance: object, params: dict) -> None:
     `config["tickers"] = ["TICKER1", "TICKER2"] ==> TradeScenario(TinkoffBrokerServer).tickers = ["TICKER1", "TICKER2"]`.
 
     :param instance: instance of class to parametrize.
-    :param params: dict with all parameters in `key: value` format.
+    :param params: dict with all parameters in `key: value` format. It will be nothing with object if an error occurred.
     """
-    for name in params:
-        instance.__setattr__(name, params[name])
+    try:
+        for name in params:
+            instance.__setattr__(name, params[name])
+
+    except Exception:
+        pass
+
+
+def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> list:
+    """
+    Gets input list and try to separate it by equal parts of elements.
+
+    Examples:
+    SeparateByEqualParts(elements=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2) -> [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=True) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]
+    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=False) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=True) -> [[1], [2, 3]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=False) -> [[1], [2], [3]]
+
+    If parts > length of elements:
+    SeparateByEqualParts(elements=[1], parts=2, union=True) -> [[1]]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=True) -> [[1], [2], [3]]
+    SeparateByEqualParts(elements=[1], parts=2, union=False) -> [[1], []]
+    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=False) -> [[1], [2], [3], []]
+
+    :param elements: list of objects.
+    :param parts: int, numbers of equal parts of objects.
+    :param union: bool, if True and if the remainder of the separating not empty, then remainder part union with the last part.
+    :return: list of lists with equal parts of objects. If an error occurred, then returns empty list `[]`.
+    """
+    try:
+        result = []
+        if elements is not None and isinstance(elements, list) and elements and isinstance(parts, int) and isinstance(union, bool):
+            count = len(elements)
+
+            if parts == 1:
+                result = [elements]
+
+            elif parts > count:
+                result = [[item] for item in elements]
+
+                if not union:
+                    result.extend([[] for _ in range(parts - count)])
+
+            else:
+                partsLen = count // parts
+                for part in range(parts):
+                    result.append(elements[part * partsLen: (part + 1) * partsLen])
+
+                index = parts * partsLen
+                if index < count:
+                    if union:
+                        result[-1].extend(elements[index:])
+
+                    else:
+                        result.append(elements[index:])
+
+        return result
+
+    except Exception:
+        return []

@@ -8,6 +8,14 @@ from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 
 
+class UpdateClassFieldsTestClass:
+
+    def __init__(self):
+        self.a = "123"
+        self.b = 123
+        self.c = False
+
+
 class TestTradeRoutinesMethods:
 
     @pytest.fixture(scope="function", autouse=True)
@@ -93,6 +101,16 @@ class TestTradeRoutinesMethods:
                 test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
             )
 
+    def test_GetDatesAsStringNegative(self):
+        testData = [
+            (1, 2, ("", "")), ("1", "2", ("", "")),
+            ("", "yesterday", ("", "")), ("", None, ("", "")),
+            ("2022-12-03", -1, ("", "")), ("2022-12-02-", "2022-12-03-", ("", "")),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.GetDatesAsString(start=test[0], end=test[1]) == test[2], "Unexpected output!"
+
     def test_NanoToFloatCheckType(self):
         assert isinstance(TradeRoutines.NanoToFloat("123", 456789000), float), "Not float type returned!"
         assert isinstance(TradeRoutines.NanoToFloat("0", 0), float), "Not float type returned!"
@@ -116,6 +134,18 @@ class TestTradeRoutinesMethods:
         for test in testData:
             result = TradeRoutines.NanoToFloat(units=test[0], nano=test[1])
             assert result == test[2], 'Expected `NanoToFloat(units="{}", nano={}) == {}`, but `result == {}`'.format(test[0], test[1], test[2], result)
+
+    def test_NanoToFloatNegative(self):
+        testData = [
+            (1, 0, 1.0), ("1", "0", 1.0), (0, 1, 0.000000001), ("0", 100000000, 0.1),
+            (None, 0, 0.), (1, None, 0.), (None, None, 0.),
+            ([], {}, 0.), (1.2, 0.1, 1.0), (0.1, 1.2, 0.000000001),
+            ("-1", -100000000, -1.1), ("-1", 100000000, -0.9),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.NanoToFloat(units=test[0], nano=test[1])
+            assert result == test[2], "Unexpected output!"
 
     def test_FloatToNanoCheckType(self):
         assert isinstance(TradeRoutines.FloatToNano(123.456789), dict), "Not dict type returned!"
@@ -142,3 +172,87 @@ class TestTradeRoutinesMethods:
         for test in testData:
             result = TradeRoutines.FloatToNano(number=test[0])
             assert result == test[1], 'Expected `FloatToNano(number="{}") == {}`, but `result == {}`'.format(test[0], test[1], result)
+
+    def test_FloatToNanoNegative(self):
+        testData = [
+            (0, {"units": "0", "nano": 0}), (0.0, {"units": "0", "nano": 0}),
+            ("0", {"units": "0", "nano": 0}), ("0.1", {"units": "0", "nano": 0}),
+            ("-1", {"units": "0", "nano": 0}), ("-0.1", {"units": "0", "nano": 0}),
+            (-1, {"units": "-1", "nano": 0}), (-0.1, {"units": "0", "nano": -100000000}),
+            (None, {"units": "0", "nano": 0}), ([], {"units": "0", "nano": 0}),
+            ({}, {"units": "0", "nano": 0}), ([1], {"units": "0", "nano": 0}),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.FloatToNano(number=test[0]) == test[1], "Unexpected output!"
+
+    def test_UpdateClassFieldsCheckType(self):
+        test = UpdateClassFieldsTestClass()
+
+        assert TradeRoutines.UpdateClassFields(instance=test, params={}) is None, "Not None type returned!"
+        assert TradeRoutines.UpdateClassFields(instance=test, params={"a": 1, "d": "1"}) is None, "Not None type returned!"
+
+    def test_UpdateClassFieldsPositive(self):
+        testClass = UpdateClassFieldsTestClass()
+        testData = [
+            {"a": None, "b": None, "c": None}, {"a": -1, "b": "-1", "c": ""}, {"a": 0, "b": "0", "c": False},
+            {"a": [], "b": (), "c": {}}, {"a": [({})], "b": "12345", "c": -12345},
+            {"a": testClass.a, "b": testClass.b, "c": testClass.c},
+        ]
+
+        for test in testData:
+            TradeRoutines.UpdateClassFields(testClass, test)
+            assert testClass.a == test["a"] and testClass.b == test["b"] and testClass.c == test["c"], "Incorrect output!"
+
+    def test_UpdateClassFieldsNegative(self):
+        testClass = UpdateClassFieldsTestClass()
+        testData = [
+            {}, [], None, [1, "2", False], {1: 1}, {"__init__": 0},
+        ]
+
+        for test in testData:
+            TradeRoutines.UpdateClassFields(testClass, test)
+            assert testClass.a == "123" and testClass.b == 123 and testClass.c is False, "Incorrect output!"
+
+    def test_SeparateByEqualPartsCheckType(self):
+        assert isinstance(TradeRoutines.SeparateByEqualParts(elements=[], parts=2, union=True), list), "Not list type returned!"
+
+    def test_SeparateByEqualPartsPositive(self):
+        testData = [
+            (None, 0, True, []), (None, 0, False, []),
+            ([], 0, True, []), ([], 0, False, []),
+            ([1], 1, True, [[1]]), ([1], 1, False, [[1]]),
+            ([1], 2, True, [[1]]), ([1], 2, False, [[1], []]),
+            ([1, 2, 3], 4, True, [[1], [2], [3]]), ([1, 2, 3], 4, False, [[1], [2], [3], []]),
+            ([1, 2, 3], 5, True, [[1], [2], [3]]), ([1, 2, 3], 5, False, [[1], [2], [3], [], []]),
+            ([1, 2, 3], 3, True, [[1], [2], [3]]), ([1, 2, 3], 3, False, [[1], [2], [3]]),
+            ([1, 2, 3], 2, True, [[1], [2, 3]]), ([1, 2, 3], 2, False, [[1], [2], [3]]),
+            ([1, 2, 3], 1, True, [[1, 2, 3]]), ([1, 2, 3], 1, False, [[1, 2, 3]]),
+            ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, True, [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]),
+            ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, True, [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]),
+            ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, False, [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.SeparateByEqualParts(elements=test[0], parts=test[1], union=test[2]) == test[3], "Incorrect output!"
+
+    def test_SeparateByEqualPartsNegative(self):
+
+        testData = [
+            (None, -1, True, []), (None, -1, False, []),
+            ([], 1, True, []), ([], 1, False, []),
+            (1, -1, True, []), (1, -1, False, []),
+            (1, 1, True, []), (1, 1, False, []),
+            ("", 1, True, []), ("", 1, False, []),
+            ((), 1, True, []), ((), 1, False, []),
+            ((1,), 1, True, []), ((1,), 1, False, []),
+            ({}, 1, True, []), ({}, 1, False, []),
+            ({"a": 1}, 1, True, []), ({"a": 1}, 1, False, []),
+            (None, None, True, []), (None, None, False, []),
+            (None, None, None, []),
+            ([1], "", True, []), ([1], "", False, []),
+            ([1, 2, 3], "2", True, []), ([1, 2, 3], "2", False, []),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.SeparateByEqualParts(elements=test[0], parts=test[1], union=test[2]) == test[3], "Incorrect output!"

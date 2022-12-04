@@ -54,6 +54,16 @@ class TestTKSBrokerAPIMethods:
 
             assert result == test[1], 'Expected: `_ParseJSON(rawData="{}", debug=False) == {}`, actual: `{}`'.format(test[0], test[1], result)
 
+    def test__ParseJSONNegative(self):
+        testData = [
+            ("[]", []), ("{}", {}), ("{[]}", {}), ([], {}), (123, {}), ("123", 123), (None, {}), ("some string", {}),
+        ]
+
+        for test in testData:
+            result = self.server._ParseJSON(rawData=test[0])
+
+            assert result == test[1], "Unexpected output!"
+
     def test_SendAPIRequestCheckType(self):
         self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
 
