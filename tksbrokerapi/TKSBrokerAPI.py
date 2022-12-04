@@ -643,7 +643,7 @@ class TinkoffBrokerServer:
 
         return jsonDump
 
-    def ShowInstrumentInfo(self, iJSON: dict, show: bool = True) -> str:
+    def ShowInstrumentInfo(self, iJSON: dict, show: bool = True, onlyFiles=False) -> str:
         """
         Show information about one instrument defined by json data and prints it in Markdown format.
 
@@ -651,6 +651,7 @@ class TinkoffBrokerServer:
 
         :param iJSON: json data of instrument, example: `iJSON = self.iList["Shares"][self._ticker]`
         :param show: if `True` then also printing information about instrument and its current price.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: multilines text in Markdown format with information about one instrument.
         """
         splitLine = "|                                                             |                                                        |\n"
@@ -873,13 +874,10 @@ class TinkoffBrokerServer:
 
             infoText += "".join(info)
 
-            if show:
+            if show and not onlyFiles:
                 uLogger.info("{}".format(infoText))
 
-            else:
-                uLogger.debug("{}".format(infoText))
-
-            if self.infoFile is not None:
+            if self.infoFile is not None and (show or onlyFiles):
                 with open(self.infoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -1192,13 +1190,14 @@ class TinkoffBrokerServer:
 
         return prices
 
-    def ShowInstrumentsInfo(self, show: bool = True) -> str:
+    def ShowInstrumentsInfo(self, show: bool = True, onlyFiles=False) -> str:
         """
         This method get and show information about all available broker instruments for current user account.
         If `instrumentsFile` string is not empty then also save information to this file.
 
         :param show: if `True` then print results to console, if `False` — print only to file.
-        :return: multi-lines string with all available broker instruments
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
+        :return: multi-lines string with all available broker instruments.
         """
         if not self.iList:
             self.iList = self.Listing()
@@ -1235,10 +1234,10 @@ class TinkoffBrokerServer:
 
         infoText = "".join(info)
 
-        if show:
+        if show and not onlyFiles:
             uLogger.info(infoText)
 
-        if self.instrumentsFile:
+        if self.instrumentsFile and (show or onlyFiles):
             with open(self.instrumentsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
@@ -1253,13 +1252,14 @@ class TinkoffBrokerServer:
 
         return infoText
 
-    def SearchInstruments(self, pattern: str, show: bool = True) -> dict:
+    def SearchInstruments(self, pattern: str, show: bool = True, onlyFiles=False) -> dict:
         """
         This method search and show information about instruments by part of its ticker, FIGI or name.
         If `searchResultsFile` string is not empty then also save information to this file.
 
         :param pattern: string with part of ticker, FIGI or instrument's name.
         :param show: if `True` then print results to console, if `False` — return list of result only.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: list of dictionaries with all found instruments.
         """
         if not self.iList:
@@ -1321,11 +1321,11 @@ class TinkoffBrokerServer:
         infoText = "".join(info)
         infoTextShort = "".join(infoShort)
 
-        if show:
+        if show and not onlyFiles:
             uLogger.info(infoTextShort)
             uLogger.info("You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
 
-        if self.searchResultsFile:
+        if self.searchResultsFile and (show or onlyFiles):
             with open(self.searchResultsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
@@ -1385,7 +1385,7 @@ class TinkoffBrokerServer:
 
         return onlyUniqueFIGIs
 
-    def GetListOfPrices(self, instruments: list[str], show: bool = False) -> list[dict]:
+    def GetListOfPrices(self, instruments: list[str], show: bool = False, onlyFiles=False) -> list[dict]:
         """
         This method get, maybe show and return prices of list of instruments. WARNING! This is potential long operation!
 
@@ -1395,6 +1395,7 @@ class TinkoffBrokerServer:
 
         :param instruments: list of strings with tickers or FIGIs.
         :param show: if `True` then prints prices to console, if `False` — prints only to file `pricesFile`.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
                  One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
@@ -1408,25 +1409,26 @@ class TinkoffBrokerServer:
 
         iList = []  # trying to get info and current prices about all unique instruments:
         for self._figi in onlyUniqueFIGIs:
-            iData = self.SearchByFIGI(requestPrice=True)
+            iData = self.SearchByFIGI(requestPrice=True, show=False)
             iList.append(iData)
 
-        self.ShowListOfPrices(iList, show)
+        self.ShowListOfPrices(iList, show, onlyFiles)
 
         return iList
 
-    def ShowListOfPrices(self, iList: list, show: bool = True) -> str:
+    def ShowListOfPrices(self, iList: list, show: bool = True, onlyFiles=False) -> str:
         """
         Show table contains current prices of given instruments.
 
         :param iList: list of instruments looks like `[{some ticker info, "currentPrice": {current prices}}, {...}, ...]`.
                       One item is dict returned by `SearchByTicker(requestPrice=True)` or by `SearchByFIGI(requestPrice=True)` methods.
         :param show: if `True` then prints prices to console, if `False` — prints only to file `pricesFile`.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: multilines text in Markdown format as a table contains current prices.
         """
         infoText = ""
 
-        if show or self.pricesFile:
+        if show or self.pricesFile or onlyFiles:
             info = [
                 "# Current prices\n\n* **Actual on date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime("%Y-%m-%d %H:%M")),
                 "| Ticker       | FIGI         | Type       | Prev. close | Last price  | Chg. %   | Day limits min/max  | Actual sell / buy   | Curr. |\n",
@@ -1454,10 +1456,10 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            if show:
+            if show and not onlyFiles:
                 uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
 
-            if self.pricesFile:
+            if self.pricesFile and (show or onlyFiles):
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -1609,7 +1611,7 @@ class TinkoffBrokerServer:
 
         return rawStopOrders
 
-    def Overview(self, show: bool = False, details: str = "full") -> dict:
+    def Overview(self, show: bool = False, details: str = "full", onlyFiles=False) -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
@@ -1626,7 +1628,8 @@ class TinkoffBrokerServer:
         - `orders` — shows only sections of open limits and stop orders.
         - `digest` — show a short digest of the portfolio status,
         - `analytics` — shows only the analytics section and the distribution of the portfolio by various categories,
-        - `calendar` — shows only the bonds calendar section (if these present in portfolio),
+        - `calendar` — shows only the bonds calendar section (if these present in portfolio).
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: dictionary with client's raw portfolio and some statistics.
         """
         if self.accountId is None or not self.accountId:
@@ -2095,7 +2098,7 @@ class TinkoffBrokerServer:
         view["analytics"]["distrByCountries"]["[RU] Российская Федерация"]["percent"] += view["analytics"]["distrByAssets"]["Ruble"]["percent"]
 
         # --- Prepare text statistics overview in human-readable:
-        if show:
+        if show or onlyFiles:
             actualOnDate = datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)
 
             # Whatever the value `details`, header not changes:
@@ -2370,7 +2373,8 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            uLogger.info(infoText)
+            if show and not onlyFiles:
+                uLogger.info(infoText)
 
             if details == "full" and self.overviewFile:
                 filename = self.overviewFile
@@ -2393,7 +2397,7 @@ class TinkoffBrokerServer:
             else:
                 filename = ""
 
-            if filename:
+            if filename and (show or onlyFiles):
                 with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -2408,7 +2412,7 @@ class TinkoffBrokerServer:
 
         return view
 
-    def Deals(self, start: str = None, end: str = None, show: bool = False, showCancelled: bool = True) -> tuple[list[dict], dict]:
+    def Deals(self, start: str = None, end: str = None, show: bool = False, showCancelled: bool = True, onlyFiles=False) -> tuple[list[dict], dict]:
         """
         Returns history operations between two given dates for current `accountId`.
         If `reportFile` string is not empty then also save human-readable report.
@@ -2418,6 +2422,7 @@ class TinkoffBrokerServer:
         :param end: see docstring in `TradeRoutines.GetDatesAsString()` method.
         :param show: if `True` then also prints all records to the console.
         :param showCancelled: if `False` then remove information about cancelled operations from the deals report.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: original list of dictionaries with history of deals records from API ("operations" key):
                  https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
@@ -2437,7 +2442,7 @@ class TinkoffBrokerServer:
         customStat = {}  # custom statistics in additional to responseJSON
 
         # --- output report in human-readable format:
-        if show or self.reportFile:
+        if self.reportFile and (show or onlyFiles):
             splitLine1 = "|                            |                               |                              |                      |                        |\n"  # Summary section
             splitLine2 = "|                     |              |              |            |           |                 |            |                                                                    |\n"  # Operations section
             nextDay = ""
@@ -2650,13 +2655,13 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            if show:
+            if show and not onlyFiles:
                 if self.moreDebug:
                     uLogger.debug("Records about history of a client's operations successfully received")
 
                 uLogger.info(infoText)
 
-            if self.reportFile:
+            if self.reportFile and (show or onlyFiles):
                 with open(self.reportFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -2671,7 +2676,7 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
-    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = False) -> pd.DataFrame:
+    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = False, onlyFiles=False) -> pd.DataFrame:
         """
         This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
 
@@ -2692,6 +2697,7 @@ class TinkoffBrokerServer:
                             with always update last candle!
         :param csvSep: separator if csv-file is used, `,` by default.
         :param show: if `True` then also prints Pandas DataFrame to the console.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: Pandas DataFrame with prices history. Headers of columns are defined by default:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
@@ -2731,18 +2737,20 @@ class TinkoffBrokerServer:
         # calculate data blocks count:
         blocks = 1 if length < TKS_CANDLE_INTERVALS[interval][2] else 1 + length // TKS_CANDLE_INTERVALS[interval][2]
 
-        uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
-        uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
-        uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
-        uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
         uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self._ticker, self._figi))
+        if self.moreDebug:
+            uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
+            uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
+            uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
+            uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
 
         tempOld = None  # pandas object for old history, if --only-missing key present
         lastTime = None  # datetime object of last old candle in file
 
         if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
-            uLogger.debug("--only-missing key present, add only last missing candles...")
-            uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
+            if self.moreDebug:
+                uLogger.debug("--only-missing key present, add only last missing candles...")
+                uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
 
             tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
 
@@ -2832,10 +2840,11 @@ class TinkoffBrokerServer:
             else:
                 history = tempHistory  # if no `--only-missing` key then load full data from server
 
-            uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
+            if self.moreDebug:
+                uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
 
         if history is not None and not history.empty:
-            if show:
+            if show and not onlyFiles:
                 uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
                     strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
                     pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
@@ -2846,14 +2855,15 @@ class TinkoffBrokerServer:
 
         if self.historyFile is not None:
             if history is not None and not history.empty:
-                history.to_csv(self.historyFile, sep=csvSep, index=False, header=None)
+                history.to_csv(self.historyFile, sep=csvSep, index=False, header=False)
                 uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self._ticker, self._figi, interval, os.path.abspath(self.historyFile)))
 
             else:
                 uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
 
         else:
-            uLogger.debug("--output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.")
+            if self.moreDebug:
+                uLogger.debug("--output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.")
 
         return history
 
@@ -3898,13 +3908,14 @@ class TinkoffBrokerServer:
 
         return rawLimits
 
-    def OverviewLimits(self, show: bool = False) -> dict:
+    def OverviewLimits(self, show: bool = False, onlyFiles=False) -> dict:
         """
         Method for parsing and show table with available funds for withdrawal for current `accountId`.
 
         See also: `RequestLimits()`.
 
         :param show: if `False` then only dictionary returns, if `True` then also print withdrawal limits to log.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
         if self.accountId is None or not self.accountId:
@@ -3929,7 +3940,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare text table with limits in human-readable format:
-        if show:
+        if show or onlyFiles:
             info = [
                 "# Withdrawal limits\n\n",
                 "* **Actual on date:** [{} UTC]\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -3966,9 +3977,10 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            uLogger.info(infoText)
+            if show and not onlyFiles:
+                uLogger.info(infoText)
 
-            if self.withdrawalLimitsFile:
+            if self.withdrawalLimitsFile and (show or onlyFiles):
                 with open(self.withdrawalLimitsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -4394,7 +4406,7 @@ class TinkoffBrokerServer:
 
         return calendar
 
-    def ShowBondsCalendar(self, extBonds: pd.DataFrame, show: bool = True) -> str:
+    def ShowBondsCalendar(self, extBonds: pd.DataFrame, show: bool = True, onlyFiles=False) -> str:
         """
         Show bond payments calendar as a table. One row in input `bonds` dataframe contains one bond.
         Also, creates Markdown file with calendar data, `calendar.md` by default.
@@ -4407,14 +4419,15 @@ class TinkoffBrokerServer:
                         If this parameter is `None` then used `figi` or `ticker` as bond name and then calculate `ExtendBondsData()`.
         :param show: if `True` then also printing bonds payment calendar to the console,
                      otherwise save to file `calendarFile` only. `False` by default.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: multilines text in Markdown format with bonds payment calendar as a table.
         """
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
-            extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=False)
+            extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=show or onlyFiles)
 
         infoText = "# Bond payments calendar\n\n"
 
-        calendar = self.CreateBondsCalendar(extBonds, xlsx=True)  # generate Pandas DataFrame with full calendar data
+        calendar = self.CreateBondsCalendar(extBonds, xlsx=show or onlyFiles)  # generate Pandas DataFrame with full calendar data
 
         if not (calendar is None or calendar.empty):
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
@@ -4458,10 +4471,10 @@ class TinkoffBrokerServer:
 
             infoText += "".join(info)
 
-            if show:
+            if show and not onlyFiles:
                 uLogger.info("{}".format(infoText))
 
-            if self.calendarFile is not None:
+            if self.calendarFile is not None and (show or onlyFiles):
                 with open(self.calendarFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -4479,13 +4492,14 @@ class TinkoffBrokerServer:
 
         return infoText
 
-    def OverviewAccounts(self, show: bool = False) -> dict:
+    def OverviewAccounts(self, show: bool = False, onlyFiles=False) -> dict:
         """
         Method for parsing and show simple table with all available user accounts.
 
         See also: `RequestAccounts()` and `OverviewUserInfo()` methods.
 
         :param show: if `False` then only dictionary with accounts data returns, if `True` then also print it to log.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: dict with parsed accounts data received from `RequestAccounts()` method. Example of dict:
                  `view = {"rawAccounts": {rawAccounts from RequestAccounts() method...},
                           "stat": {"accountId string": {"type": "Tinkoff brokerage account", "name": "Test - 1",
@@ -4513,7 +4527,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare simple text table with only accounts data in human-readable format:
-        if show:
+        if show or onlyFiles:
             info = [
                 "# User accounts\n\n",
                 "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -4533,9 +4547,10 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            uLogger.info(infoText)
+            if show and not onlyFiles:
+                uLogger.info(infoText)
 
-            if self.userAccountsFile:
+            if self.userAccountsFile and (show or onlyFiles):
                 with open(self.userAccountsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
@@ -4550,13 +4565,14 @@ class TinkoffBrokerServer:
 
         return view
 
-    def OverviewUserInfo(self, show: bool = False) -> dict:
+    def OverviewUserInfo(self, show: bool = False, onlyFiles=False) -> dict:
         """
         Method for parsing and show all available user's data (`accountId`s, common user information, margin status and tariff connections limit).
 
         See also: `OverviewAccounts()`, `RequestAccounts()`, `RequestUserInfo()`, `RequestMarginStatus()` and `RequestTariffLimits()` methods.
 
         :param show: if `False` then only dictionary returns, if `True` then also print user's data to log.
+        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
         overview = self.Overview(show=False)  # Request current user portfolio for the ability to calculate missing funds
@@ -4635,7 +4651,7 @@ class TinkoffBrokerServer:
         }
 
         # --- Prepare text table with user information in human-readable format:
-        if show:
+        if show or onlyFiles:
             info = [
                 "# Full user information\n\n",
                 "* **Actual date:** [{} UTC]\n\n".format(datetime.now(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT)),
@@ -4708,9 +4724,10 @@ class TinkoffBrokerServer:
 
             infoText = "".join(info)
 
-            uLogger.info(infoText)
+            if show and not onlyFiles:
+                uLogger.info(infoText)
 
-            if self.userInfoFile:
+            if self.userInfoFile and (show or onlyFiles):
                 with open(self.userInfoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
