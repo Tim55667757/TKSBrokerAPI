@@ -252,6 +252,8 @@ class TestTradeRoutinesMethods:
             (None, None, None, []),
             ([1], "", True, []), ([1], "", False, []),
             ([1, 2, 3], "2", True, []), ([1, 2, 3], "2", False, []),
+            ([1, 2, 3], 4, True, [[1], [2], [3]]), ([1, 2, 3], 4, False, [[1], [2], [3], []]),
+            ([1, 2], 4, True, [[1], [2]]), ([1, 2], 4, False, [[1], [2], [], []]),
         ]
 
         for test in testData:
