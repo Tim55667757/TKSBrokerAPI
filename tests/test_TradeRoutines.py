@@ -258,3 +258,30 @@ class TestTradeRoutinesMethods:
 
         for test in testData:
             assert TradeRoutines.SeparateByEqualParts(elements=test[0], parts=test[1], union=test[2]) == test[3], "Incorrect output!"
+
+    def test_CalculateLotsForDealCheckType(self):
+        assert isinstance(TradeRoutines.CalculateLotsForDeal(currentPrice=0, maxCost=0, volumeInLot=0), int), "Not int type returned!"
+
+    def test_CalculateLotsForDealPositive(self):
+        testData = [
+            (1, 1, 1, 1), (2, 1, 1, 1), (2, 1, 2, 1), (1, 2, 1, 2), (3, 2, 1, 1), (3, 2, 3, 1),
+            (1234.56, 2000.01, 1, 1), (1234.56, 2000.01, 2, 1), (1234.56, 2500, 1, 2), (1234.56, 2500, 2, 1),
+            (1234, 2468, 1, 2), (1234, 2468, 2, 1),
+            (-1, 1, 1, 1), (-2, 1, 1, 1), (-2, 1, 2, 1), (-1, 2, 1, 2), (-3, 2, 1, 1), (-3, 2, 3, 1),
+            (-1234.56, 2000.01, 1, 1), (-1234.56, 2000.01, 2, 1), (-1234.56, 2500, 1, 2), (-1234.56, 2500, 2, 1),
+            (-1234, -2468, 1, 2), (-1234, 2468, 2, 1),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.CalculateLotsForDeal(currentPrice=test[0], maxCost=test[1], volumeInLot=test[2]) == test[3], "Incorrect output!"
+
+    def test_CalculateLotsForDealNegative(self):
+
+        testData = [
+            (0, 0, 0, 0), (0, 1, 0, 0), (-2, 0, 1, 1), (1, 0, 1, 1), (-1, -2, -1, 2), (-3, -2, -1, 1), (-3, 2, -3, 1),
+            ("1234.56", 2000.01, 1, 0), (1234.56, "2000.01", 2, 0), (1234.56, 2500, "1", 0),
+            (1234.56, 2500, [], 0), (1234, {}, 1, 0), (None, 2468, 2, 0), (bool, 2468, 2, 0),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.CalculateLotsForDeal(currentPrice=test[0], maxCost=test[1], volumeInLot=test[2]) == test[3], "Incorrect output!"
