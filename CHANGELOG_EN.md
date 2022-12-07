@@ -33,6 +33,7 @@ Release development in progress...
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except block and some negative tests were added for `GetDatesAsString()` method.
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except block and some negative tests were added for `_ParseJSON()` method.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to all methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
+* [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/11) TradeRoutines: `CalculateLotsForDeal()` method was implemented. This method can be used when you need to calculate lots to open position.
 
 ##### Bug fixes
 
