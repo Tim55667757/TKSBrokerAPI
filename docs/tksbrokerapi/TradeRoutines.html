@@ -45,6 +45,9 @@
             <li>
                     <a class="function" href="#SeparateByEqualParts">SeparateByEqualParts</a>
             </li>
+            <li>
+                    <a class="function" href="#CalculateLotsForDeal">CalculateLotsForDeal</a>
+            </li>
     </ul>
 
 
@@ -314,6 +317,32 @@
 </span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>
 </span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
 </span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="k">return</span> <span class="p">[]</span>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a><span class="k">def</span> <span class="nf">CalculateLotsForDeal</span><span class="p">(</span><span class="n">currentPrice</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">maxCost</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">volumeInLot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a><span class="sd">    Calculates maximum lots for deal depends on current price and volume of instrument in one lot.</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a><span class="sd">    Formula: `lots = maxCost // (currentPrice * volumeInLot)`, it means max count of lots, for which will be:</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a><span class="sd">    `cost = lots * currentPrice * volumeInLot &lt;= maxCost`.</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a><span class="sd">    If `costOneLot = currentPrice * volumeInLot &gt; maxCost`, then returned `lots = 1`.</span>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a><span class="sd">    If an error occurred then returned `lots = 0`.</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a><span class="sd">    :param currentPrice: the current price of instrument, &gt;= 0.</span>
+</span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a><span class="sd">    :param maxCost: the maximum cost of all lots of instrument in portfolio, &gt;= 0.</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a><span class="sd">    :param volumeInLot: volumes of instrument in one lot, &gt;= 1.</span>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a><span class="sd">    :return: integer number of lots, &gt;= 0.</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>        <span class="n">costOneLot</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">currentPrice</span> <span class="o">*</span> <span class="n">volumeInLot</span><span class="p">)</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>        <span class="n">lots</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">maxCost</span> <span class="o">//</span> <span class="n">costOneLot</span><span class="p">))</span> <span class="k">if</span> <span class="n">costOneLot</span> <span class="o">&lt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">maxCost</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>        <span class="n">lots</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>    <span class="k">return</span> <span class="n">lots</span>
 </span></pre></div>
 
 
@@ -715,6 +744,70 @@ SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=False) -> [[1], [2], [3]
 
 <blockquote>
   <p>list of lists with equal parts of objects. If an error occurred, then returns empty list <code>[]</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="CalculateLotsForDeal">
+                            <input id="CalculateLotsForDeal-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CalculateLotsForDeal</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">currentPrice</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">maxCost</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">volumeInLot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="CalculateLotsForDeal-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CalculateLotsForDeal"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CalculateLotsForDeal-242"><a href="#CalculateLotsForDeal-242"><span class="linenos">242</span></a><span class="k">def</span> <span class="nf">CalculateLotsForDeal</span><span class="p">(</span><span class="n">currentPrice</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">maxCost</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">volumeInLot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="CalculateLotsForDeal-243"><a href="#CalculateLotsForDeal-243"><span class="linenos">243</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CalculateLotsForDeal-244"><a href="#CalculateLotsForDeal-244"><span class="linenos">244</span></a><span class="sd">    Calculates maximum lots for deal depends on current price and volume of instrument in one lot.</span>
+</span><span id="CalculateLotsForDeal-245"><a href="#CalculateLotsForDeal-245"><span class="linenos">245</span></a>
+</span><span id="CalculateLotsForDeal-246"><a href="#CalculateLotsForDeal-246"><span class="linenos">246</span></a><span class="sd">    Formula: `lots = maxCost // (currentPrice * volumeInLot)`, it means max count of lots, for which will be:</span>
+</span><span id="CalculateLotsForDeal-247"><a href="#CalculateLotsForDeal-247"><span class="linenos">247</span></a><span class="sd">    `cost = lots * currentPrice * volumeInLot &lt;= maxCost`.</span>
+</span><span id="CalculateLotsForDeal-248"><a href="#CalculateLotsForDeal-248"><span class="linenos">248</span></a>
+</span><span id="CalculateLotsForDeal-249"><a href="#CalculateLotsForDeal-249"><span class="linenos">249</span></a><span class="sd">    If `costOneLot = currentPrice * volumeInLot &gt; maxCost`, then returned `lots = 1`.</span>
+</span><span id="CalculateLotsForDeal-250"><a href="#CalculateLotsForDeal-250"><span class="linenos">250</span></a>
+</span><span id="CalculateLotsForDeal-251"><a href="#CalculateLotsForDeal-251"><span class="linenos">251</span></a><span class="sd">    If an error occurred then returned `lots = 0`.</span>
+</span><span id="CalculateLotsForDeal-252"><a href="#CalculateLotsForDeal-252"><span class="linenos">252</span></a>
+</span><span id="CalculateLotsForDeal-253"><a href="#CalculateLotsForDeal-253"><span class="linenos">253</span></a><span class="sd">    :param currentPrice: the current price of instrument, &gt;= 0.</span>
+</span><span id="CalculateLotsForDeal-254"><a href="#CalculateLotsForDeal-254"><span class="linenos">254</span></a><span class="sd">    :param maxCost: the maximum cost of all lots of instrument in portfolio, &gt;= 0.</span>
+</span><span id="CalculateLotsForDeal-255"><a href="#CalculateLotsForDeal-255"><span class="linenos">255</span></a><span class="sd">    :param volumeInLot: volumes of instrument in one lot, &gt;= 1.</span>
+</span><span id="CalculateLotsForDeal-256"><a href="#CalculateLotsForDeal-256"><span class="linenos">256</span></a><span class="sd">    :return: integer number of lots, &gt;= 0.</span>
+</span><span id="CalculateLotsForDeal-257"><a href="#CalculateLotsForDeal-257"><span class="linenos">257</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="CalculateLotsForDeal-258"><a href="#CalculateLotsForDeal-258"><span class="linenos">258</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="CalculateLotsForDeal-259"><a href="#CalculateLotsForDeal-259"><span class="linenos">259</span></a>        <span class="n">costOneLot</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">currentPrice</span> <span class="o">*</span> <span class="n">volumeInLot</span><span class="p">)</span>
+</span><span id="CalculateLotsForDeal-260"><a href="#CalculateLotsForDeal-260"><span class="linenos">260</span></a>        <span class="n">lots</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">maxCost</span> <span class="o">//</span> <span class="n">costOneLot</span><span class="p">))</span> <span class="k">if</span> <span class="n">costOneLot</span> <span class="o">&lt;=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">maxCost</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+</span><span id="CalculateLotsForDeal-261"><a href="#CalculateLotsForDeal-261"><span class="linenos">261</span></a>
+</span><span id="CalculateLotsForDeal-262"><a href="#CalculateLotsForDeal-262"><span class="linenos">262</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="CalculateLotsForDeal-263"><a href="#CalculateLotsForDeal-263"><span class="linenos">263</span></a>        <span class="n">lots</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="CalculateLotsForDeal-264"><a href="#CalculateLotsForDeal-264"><span class="linenos">264</span></a>
+</span><span id="CalculateLotsForDeal-265"><a href="#CalculateLotsForDeal-265"><span class="linenos">265</span></a>    <span class="k">return</span> <span class="n">lots</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Calculates maximum lots for deal depends on current price and volume of instrument in one lot.</p>
+
+<p>Formula: <code>lots = maxCost // (currentPrice * volumeInLot)</code>, it means max count of lots, for which will be:
+<code>cost = lots * currentPrice * volumeInLot &lt;= maxCost</code>.</p>
+
+<p>If <code>costOneLot = currentPrice * volumeInLot &gt; maxCost</code>, then returned <code>lots = 1</code>.</p>
+
+<p>If an error occurred then returned <code>lots = 0</code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>currentPrice</strong>:  the current price of instrument, &gt;= 0.</li>
+<li><strong>maxCost</strong>:  the maximum cost of all lots of instrument in portfolio, &gt;= 0.</li>
+<li><strong>volumeInLot</strong>:  volumes of instrument in one lot, &gt;= 1.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>integer number of lots, &gt;= 0.</p>
 </blockquote>
 </div>
 
