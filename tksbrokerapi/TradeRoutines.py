@@ -236,3 +236,29 @@ def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> 
 
     except Exception:
         return []
+
+
+def CalculateLotsForDeal(currentPrice: float, maxCost: float, volumeInLot: int = 1) -> int:
+    """
+    Calculates maximum lots for deal depends on current price and volume of instrument in one lot.
+
+    Formula: `lots = maxCost // (currentPrice * volumeInLot)`, it means max count of lots, for which will be:
+    `cost = lots * currentPrice * volumeInLot <= maxCost`.
+
+    If `costOneLot = currentPrice * volumeInLot > maxCost`, then returned `lots = 1`.
+
+    If an error occurred then returned `lots = 0`.
+
+    :param currentPrice: the current price of instrument, >= 0.
+    :param maxCost: the maximum cost of all lots of instrument in portfolio, >= 0.
+    :param volumeInLot: volumes of instrument in one lot, >= 1.
+    :return: integer number of lots, >= 0.
+    """
+    try:
+        costOneLot = abs(currentPrice * volumeInLot)
+        lots = abs(int(maxCost // costOneLot)) if costOneLot <= abs(maxCost) else 1
+
+    except Exception:
+        lots = 0
+
+    return lots
