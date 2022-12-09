@@ -322,7 +322,9 @@ Next, consider some scenarios for using the TKSBrokerAPI module: when it is laun
 
 ❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--log-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
 
-Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called). The `--more` (`--more-debug`) key additionally includes debugging information in all methods and displays it in the logs, for example, network requests, responses and their headers.
+Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called). Starting from TKSBrokerAPI v1.5.120 the `--more` (`--more-debug`) key additionally includes debugging information in all methods and displays it in the logs, for example, network requests, responses and their headers.
+
+If you run TKSBrokerAPI platform instances in parallel mode, you can use additional tag in log messages to simplify instance identifying and debugging. It enables with the `--tag` key (since TKSBrokerAPI v1.6.*).
 
 ### Command line
 
@@ -404,6 +406,9 @@ options:
                         verbosity, but in addition `--more` key enable all
                         debug information, such as net request and response
                         headers in all methods.
+  --tag TAG             Option: identification TKSBrokerAPI tag in log
+                        messages to simplify debugging when platform instances
+                        runs in parallel mode. Default: `` (empty string).
   --version, --ver      Action: shows current semantic version, looks like
                         `major.minor.buildnumber`. If TKSBrokerAPI not installed
                         via pip, then used local build number `.dev0`.
