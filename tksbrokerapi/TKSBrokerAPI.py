@@ -125,6 +125,9 @@ class TinkoffBrokerServer:
         Latest version: https://pypi.org/project/tksbrokerapi/
         """
 
+        self._tag = ""
+        """Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
+
         self.__lock = Lock()  # initialize multiprocessing mutex lock
 
         self.aliases = TKS_TICKER_ALIASES
@@ -178,7 +181,9 @@ class TinkoffBrokerServer:
             "Authorization": "Bearer {}".format(self.token),
             "x-app-name": "Tim55667757.TKSBrokerAPI",
         }
-        """Headers which send in every request to broker server. Please, do not change it! Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}"}`.
+        """
+        Headers which send in every request to broker server. Please, do not change it!
+        Default: `{"Content-Type": "application/json", "accept": "application/json", "Authorization": "Bearer {your_token}", "x-app-name": "Tim55667757.TKSBrokerAPI"}`.
 
         See also: `SendAPIRequest()`.
         """
@@ -356,6 +361,28 @@ class TinkoffBrokerServer:
 
         See also: `LoadHistory()`, `ShowHistoryChart()` and the PriceGenerator project: https://github.com/Tim55667757/PriceGenerator
         """
+
+    @property
+    def tag(self) -> str:
+        """Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
+        return self._tag
+
+    @tag.setter
+    def tag(self, value):
+        """Setter for Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
+        self._tag = str(value)
+
+        if self._tag:
+            for handler in uLogger.handlers:
+                handler.setFormatter(uLog.logging.Formatter(uLog.formatStringWithTag.format(tag=self._tag)))
+
+            uLogger.debug("Custom TKSBrokerAPI tag was set: {}".format(self._tag))
+
+        else:
+            for handler in uLogger.handlers:
+                handler.setFormatter(uLog.logging.Formatter(uLog.formatString))
+
+            uLogger.debug("Default logger format is used")
 
     @property
     def ticker(self) -> str:
@@ -4788,6 +4815,7 @@ def ParseArgs():
 
     parser.add_argument("--debug-level", "--log-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
     parser.add_argument("--more", "--more-debug", action="store_true", default=False, help="Option: `--debug-level` key only switch log level verbosity, but in addition `--more` key enable all debug information, such as net request and response headers in all methods.")
+    parser.add_argument("--tag", type=str, default="", help="Option: Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string).")
 
     # --- commands:
 
@@ -4886,6 +4914,9 @@ def Main(**kwargs):
                 accountId=args.account_id,
                 useCache=not args.no_cache,
             )
+
+            if args.tag is not None:
+                trader.tag = args.tag  # Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode
 
             # --- set some options:
 

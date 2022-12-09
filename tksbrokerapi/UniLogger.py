@@ -31,6 +31,7 @@ import logging.handlers
 # initialize Main Parent Logger:
 UniLogger = logging.getLogger("TKSBrokerAPI-UniLogger")
 formatString = "%(filename)-20sL:%(lineno)-5d%(levelname)-8s[%(asctime)s] %(message)s"
+formatStringWithTag = "%(filename)-20sL:%(lineno)-5d%(levelname)-8s[%(asctime)s] {tag} %(message)s"
 formatter = logging.Formatter(formatString)
 sys.stderr = sys.stdout
 
