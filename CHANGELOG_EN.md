@@ -22,6 +22,7 @@ Release development in progress...
 ##### Improvements
 
 * [#92](https://github.com/Tim55667757/TKSBrokerAPI/issues/92) Mutex lock was implemented for the `SendAPIRequest()` method to avoid multiprocessing issues with unavailable resource.
+* [#89](https://github.com/Tim55667757/TKSBrokerAPI/issues/89) If you run TKSBrokerAPI platform instances in parallel mode, you can use additional tag in log messages to simplify instance identifying and debugging. It enables with the `--tag` key.
 * [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) TKSBrokerAPI logo was added to the templates of HTML reports.
 * [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Field with not covered funds were added to margin status report (`--user-info` key).
 * [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented and some positive and negative tests were added. This method get config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
