@@ -22,7 +22,7 @@
 ##### Улучшения
 
 * [#92](https://github.com/Tim55667757/TKSBrokerAPI/issues/92) Блокировка мьютекса была реализована для метода `SendAPIRequest()`, чтобы избежать проблем с недоступным ресурсом при мультипроцессной работе платформы TKSBrokerAPI.
-* [#89](https://github.com/Tim55667757/TKSBrokerAPI/issues/89) If you run TKSBrokerAPI platform instances in parallel mode, you can use additional tag in log messages to simplify instance identifying and debugging. It enables with the `--tag` key.
+* [#89](https://github.com/Tim55667757/TKSBrokerAPI/issues/89) Если вы запускаете несколько экземпляров платформы TKSBrokerAPI в параллельном режиме, можно использовать дополнительный тег для упрощения отладки и идентификации экземпляров в логах. Тег добавляется ключом `--tag`.
 * [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) Нарисован логотип и баннер TKSBrokerAPI и добавлен во все шаблоны HTML-отчётов.
 * [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Новое поле со значением непокрытой позиции было добавлено в раздел отчёта о состоянии маржинальной торговли (ключ `--user-info`).
 * [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) Был реализован метод `UpdateClassFields()` и написаны позитивные и негативные юнит-тесты на него. Он получает настройки как словарь (например, загруженный из YAML файла) и применяет к полям и значениям указанного инстанса некоторого класса пару `key: value`.
