@@ -3336,15 +3336,15 @@ class TinkoffBrokerServer:
 
                 if "lastPrice" in instrument["currentPrice"].keys() and instrument["currentPrice"]["lastPrice"]:
                     if operation == "Buy" and targetPrice < instrument["currentPrice"]["lastPrice"] and stopType != "TP":
-                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target buy price [{:.2f} {}] is lower than the current price [{:.2f} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
-                            targetPrice, instrument["currency"],
-                            instrument["currentPrice"]["lastPrice"], instrument["currency"],
+                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target buy price [{} {}] is lower than the current price [{} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
+                            "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
+                            "{:.4f}".format(instrument["currentPrice"]["lastPrice"]).rstrip("0").rstrip("."), instrument["currency"],
                         ))
 
                     if operation == "Sell" and targetPrice > instrument["currentPrice"]["lastPrice"] and stopType != "TP":
-                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target sell price [{:.2f} {}] is higher than the current price [{:.2f} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
-                            targetPrice, instrument["currency"],
-                            instrument["currentPrice"]["lastPrice"], instrument["currency"],
+                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target sell price [{} {}] is higher than the current price [{} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
+                            "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
+                            "{:.4f}".format(instrument["currentPrice"]["lastPrice"]).rstrip("0").rstrip("."), instrument["currency"],
                         ))
 
             else:
