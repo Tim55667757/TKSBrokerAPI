@@ -519,3 +519,41 @@ class TestTradeRoutinesMethods:
 
         for test in testData:
             assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
+
+    def test_HampelAnomalyDetectionCheckType(self):
+        assert isinstance(TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]), int), "Not int type returned!"
+        assert TradeRoutines.HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) is None, "Not None returned!"
+
+    def test_HampelAnomalyDetectionPositive(self):
+        testData = [
+            ([1, 1, 1, 1, 111, 1], 4),
+            ([1, 1, 10, 1, 1, 1], 2),
+            ([111, 1, 1, 1, 1, 1], 0),
+            ([111, 1, 1, 1, 1, 111], 0),
+            ([1, 11, 1, 111, 1, 1], 1),
+            ([1, 1, 1, 111, 99, 11], 3),
+            ([1, 1, 11, 111, 1, 1, 1, 11111], 2),
+            ([1, 1, 1, 111, 111, 1, 1, 1, 1], 3),
+            ([1, 1, 1, 1, 111, 1, 1, 11111, 5555], 4),
+            ([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1], 1),
+            ([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1], 6),
+            ([-111, 1, 1, 1, 1], 0),
+            ([-111, -1, -1, -1, -1], 0),
+            ([-1, -1, 2, -1, -1], 2),
+        ]
+
+        for test in testData:
+            assert TradeRoutines.HampelAnomalyDetection(test[0]) == test[1], "Incorrect output!"
+
+    def test_HampelAnomalyDetectionNegative(self):
+        testData = [
+            [1],
+            [[1]],
+            [1, 2],
+            None, [], {},
+            [1, 1, 1, 1, 1, 1],
+            [1, "1", 1, 1, 1, 1],
+        ]
+
+        for test in testData:
+            assert TradeRoutines.HampelAnomalyDetection(test) is None, "Incorrect output!"
