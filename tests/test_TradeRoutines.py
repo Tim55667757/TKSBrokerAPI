@@ -431,6 +431,34 @@ class TestTradeRoutinesMethods:
                 },
                 [False],
             ),
+            (
+                {
+                    "pdSeries": pd.Series([1, 11, 1, 111, 1, 1]),
+                    "window": 6, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                [False, True, False, True, False, False],
+            ),
+            (
+                {
+                    "pdSeries": pd.Series([1, 1, 1, 111, 99, 11]),
+                    "window": 6, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                [False, False, False, True, True, False],
+            ),
+            (
+                {
+                    "pdSeries": pd.Series([1, 1, 11, 111, 111, 1, 1, 11]),
+                    "window": 8, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                [False, False, False, True, True, False, False, False],
+            ),
+            (
+                {
+                    "pdSeries": pd.Series([1, 1, 1, 111, 111, 1, 1, 11111, 1]),
+                    "window": 9, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                [False, False, False, True, True, False, False, True, False],
+            ),
         ]
 
         for test in testData:
