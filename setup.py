@@ -85,18 +85,19 @@ setup(
     ],
 
     tests_require=[
-        "pytest >= 7.1.2",
+        "pytest >= 7.1.2",  # MIT License
         "requests >= 2.25.1",  # Apache-2.0 license
-        "pandas >= 1.2.2",
-        "openpyxl >= 3.0.10",
+        "pandas >= 1.2.2",  # MIT License
+        "openpyxl >= 3.0.10",  # MIT License
         "python-dateutil >= 2.8.1",  # Apache-2.0 license
         "PriceGenerator >= 1.2.74",  # Apache-2.0 license
     ],
 
     install_requires=[
         "requests >= 2.25.1",  # Apache-2.0 license
-        "pandas >= 1.2.2",
-        "openpyxl >= 3.0.10",
+        "pandas >= 1.2.2",  # MIT License
+        "openpyxl >= 3.0.10",  # MIT License
+        "Mako >= 1.2.4",  # MIT License
         "python-dateutil >= 2.8.1",  # Apache-2.0 license
         "PriceGenerator >= 1.2.74",  # Apache-2.0 license
     ],
