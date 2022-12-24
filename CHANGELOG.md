@@ -17,7 +17,8 @@
 
 ##### Новая функциональность
 
-* ...
+* [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) В модуль TradeRoutines добавлен метод: `CalculateLotsForDeal()`. Он помогает определить нужное количество лотов инструмента при открытии позиции.
+* [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) В модуль TradeRoutines добавлен метод: `HampelFilter()`. Он позволяет обнаружить аномалию ("выброс", нестандартное значение, отклонение от нормы) среди значений любого числового ряда, используя функцию фильтрации Хэмпела. Фильтр Хэмпела обнаруживает аномалии на основе скользящего окна и подсчёта разницы между медианными значениями и входными значениями числового ряда.
 
 ##### Улучшения
 
@@ -34,7 +35,6 @@
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except блок и негативные юнит-тексты были добавлены для метода `GetDatesAsString()`.
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except блок и негативные юнит-тексты были добавлены для метода `_ParseJSON()`.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен ко всем методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
-* [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) В модуль TradeRoutines добавлен метод: `CalculateLotsForDeal()`. Он помогает определить нужное количество лотов инструмента при открытии позиции.
 
 ##### Баг-фиксы
 
