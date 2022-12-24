@@ -19,6 +19,7 @@ Release development in progress...
 
 * [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) TradeRoutines: `CalculateLotsForDeal()` method was implemented. This method can be used when you need to calculate lots to open position.
 * [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) TradeRoutines: `HampelFilter()` method was implemented. It allows you to detect anomaly (outlier, non-standard value, norm deviation) among the values of any number series using the Hampel filtering function. Hampel Filter detect outliers based on a sliding window and counting difference between median values and input values of series.
+* [#113](https://github.com/Tim55667757/TKSBrokerAPI/issues/113) TradeRoutines: `HampelAnomalyDetection()` method using Hampel Filter was implemented. This function returns the minimum index of elements in anomaly list or index of the first maximum element in input series if this index less than anomaly element index.
 
 ##### Improvements
 
