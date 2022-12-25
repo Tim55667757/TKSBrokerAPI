@@ -451,7 +451,7 @@
 </span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>
 </span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
 </span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">    :return: index of the first element with anomaly in series. If series has no anomalies then None will be return.</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
 </span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -1108,7 +1108,7 @@ Link: <a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf">
 </span><span id="HampelAnomalyDetection-365"><a href="#HampelAnomalyDetection-365"><span class="linenos">365</span></a>
 </span><span id="HampelAnomalyDetection-366"><a href="#HampelAnomalyDetection-366"><span class="linenos">366</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
 </span><span id="HampelAnomalyDetection-367"><a href="#HampelAnomalyDetection-367"><span class="linenos">367</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
-</span><span id="HampelAnomalyDetection-368"><a href="#HampelAnomalyDetection-368"><span class="linenos">368</span></a><span class="sd">    :return: index of the first element with anomaly in series. If series has no anomalies then None will be return.</span>
+</span><span id="HampelAnomalyDetection-368"><a href="#HampelAnomalyDetection-368"><span class="linenos">368</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
 </span><span id="HampelAnomalyDetection-369"><a href="#HampelAnomalyDetection-369"><span class="linenos">369</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="HampelAnomalyDetection-370"><a href="#HampelAnomalyDetection-370"><span class="linenos">370</span></a>    <span class="k">try</span><span class="p">:</span>
 </span><span id="HampelAnomalyDetection-371"><a href="#HampelAnomalyDetection-371"><span class="linenos">371</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -1170,7 +1170,7 @@ no anomalies then None will be return.</p>
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>index of the first element with anomaly in series. If series has no anomalies then None will be return.</p>
+  <p>index of the first element with anomaly in series will be return or <code>None</code> if no anomaly.</p>
 </blockquote>
 </div>
 
