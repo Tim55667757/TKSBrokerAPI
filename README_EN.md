@@ -3423,7 +3423,7 @@ if __name__ == "__main__":
 
 </details>
 
-Вывод скрипта в консоль будет полностью аналогичен, как в первом примере.
+The output of the script to the console will be completely the same as in the first example.
 
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
