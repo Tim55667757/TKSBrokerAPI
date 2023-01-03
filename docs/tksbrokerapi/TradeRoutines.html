@@ -353,124 +353,144 @@
 </span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>    <span class="k">return</span> <span class="n">lots</span>
 </span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>
 </span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="k">def</span> <span class="nf">HampelFilter</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a><span class="k">def</span> <span class="nf">HampelFilter</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 </span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a><span class="sd">    Outlier Detection with Hampel Filter. It can detect outliers based on a sliding window and counting difference</span>
 </span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a><span class="sd">    between median values and input values of series. The Hampel filter is often considered extremely effective in practice.</span>
 </span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">    For each window we calculate the median and the standard deviation expressed as the median absolute deviation (MAD).</span>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="sd">    If the considered observation differs from the window median by more than x standard deviations, we treat it</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">    as an outlier. Also used a constant scale factor which is dependent on the series distribution,</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a><span class="sd">    e.g. for Gaussian distribution it is approximately 1.4826.</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">    References:</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a><span class="sd">    1. Lewinson Eryk, &quot;Outlier Detection with Hampel Filter&quot;, September 26, 2019.</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">       Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</span>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a><span class="sd">    2. Liu, Hancong, Sirish Shah, and Wei Jiang, &quot;On-line outlier detection and data cleaning&quot;. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">       Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a><span class="sd">    3. Hampel F. R., &quot;The influence curve and its role in robust estimation&quot;. Journal of the American Statistical Association, 69, 382–393, 1974.</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="sd">    Examples:</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>
-</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 1, 1, 1]), window=3) -&gt; pd.Series([False, False, False, False, False, False])`</span>
-</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 2, 1, 1]), window=3) -&gt; pd.Series([False, False, False, True, False, False])`</span>
-</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([0, 1, 1, 1, 1, 0]), window=3) -&gt; pd.Series([True, False, False, False, False, True])`</span>
-</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1])) -&gt; pd.Series([False])`</span>
-</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a>
-</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="sd">    :param pdSeries: Pandas Series object with numbers in which we identify outliers.</span>
-</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a><span class="sd">    :param window: length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</span>
-</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a><span class="sd">    :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
-</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a><span class="sd">    :param scaleFactor: constant scale factor (1.4826 by default), &gt; 0.</span>
-</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a><span class="sd">    :return: Pandas Series object with True/False values. `True` mean that an outlier detected in that position of input series.</span>
-</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="sd">             If an error occurred then empty series returned.</span>
-</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a>
-</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">):</span>
-</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">)</span>
-</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a>
-</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a>        <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a>            <span class="n">sigma</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a>
-</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>        <span class="k">if</span> <span class="n">scaleFactor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>            <span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">1.4826</span>
-</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>
-</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>        <span class="c1"># Extend data to avoid undetected anomaly in first and last elements by original algorithm:</span>
-</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>        <span class="n">pdSeries</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pdSeries</span><span class="p">[:</span> <span class="n">window</span><span class="p">],</span> <span class="n">pdSeries</span><span class="p">,</span> <span class="n">pdSeries</span><span class="p">[</span><span class="o">-</span><span class="n">window</span><span class="p">:]])</span>
-</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>
-</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>        <span class="n">rollingMedian</span> <span class="o">=</span> <span class="n">pdSeries</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
-</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>            <span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span>
-</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>            <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
-</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>
-</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>        <span class="n">rollingMAD</span> <span class="o">=</span> <span class="n">scaleFactor</span> <span class="o">*</span> <span class="n">pdSeries</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
-</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>            <span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span>
-</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>            <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a><span class="sd">    For each window we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a><span class="sd">    differs from the window median by more than sigma standard deviations multiple on scaleFactor, then we treat it</span>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a><span class="sd">    as an outlier.</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a><span class="sd">    Let Xi — elements of input series in i-th window,</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a><span class="sd">    s — sigma, the number of standard deviations,</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a><span class="sd">    k — scale factor, depends on distribution (≈1.4826 for normal).</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a><span class="sd">    How to calculate rolling MAD: `MAD(Xi) = Median(|x1 − Median (Xi)|, ..., |xn − Median(Xi)|)`</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a><span class="sd">    What is an anomaly: `A = {a | |a − Median (Xi)| &gt; s ∙ k ∙ MAD(Xi)}`</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a><span class="sd">    References:</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a><span class="sd">    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.</span>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a><span class="sd">       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html</span>
+</span><span id="L-290"><a href="#L-290"><span class="linenos">290</span></a><span class="sd">    2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.</span>
+</span><span id="L-291"><a href="#L-291"><span class="linenos">291</span></a><span class="sd">       Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</span>
+</span><span id="L-292"><a href="#L-292"><span class="linenos">292</span></a><span class="sd">    3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.</span>
+</span><span id="L-293"><a href="#L-293"><span class="linenos">293</span></a><span class="sd">       Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</span>
+</span><span id="L-294"><a href="#L-294"><span class="linenos">294</span></a><span class="sd">    4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.</span>
+</span><span id="L-295"><a href="#L-295"><span class="linenos">295</span></a>
+</span><span id="L-296"><a href="#L-296"><span class="linenos">296</span></a><span class="sd">    Examples:</span>
+</span><span id="L-297"><a href="#L-297"><span class="linenos">297</span></a>
+</span><span id="L-298"><a href="#L-298"><span class="linenos">298</span></a><span class="sd">    - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -&gt; pd.Series([False, False, False, False, False, False])`</span>
+</span><span id="L-299"><a href="#L-299"><span class="linenos">299</span></a><span class="sd">    - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -&gt; pd.Series([False, False, False, True, False, False])`</span>
+</span><span id="L-300"><a href="#L-300"><span class="linenos">300</span></a><span class="sd">    - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -&gt; pd.Series([True, False, False, False, False, True])`</span>
+</span><span id="L-301"><a href="#L-301"><span class="linenos">301</span></a><span class="sd">    - `HampelFilter([1]) -&gt; pd.Series([False])`</span>
+</span><span id="L-302"><a href="#L-302"><span class="linenos">302</span></a>
+</span><span id="L-303"><a href="#L-303"><span class="linenos">303</span></a><span class="sd">    :param series: Pandas Series object with numbers in which we identify outliers.</span>
+</span><span id="L-304"><a href="#L-304"><span class="linenos">304</span></a><span class="sd">    :param window: length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</span>
+</span><span id="L-305"><a href="#L-305"><span class="linenos">305</span></a><span class="sd">    :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
+</span><span id="L-306"><a href="#L-306"><span class="linenos">306</span></a><span class="sd">    :param scaleFactor: constant scale factor (1.4826 by default for Gaussian distribution), &gt; 0.</span>
+</span><span id="L-307"><a href="#L-307"><span class="linenos">307</span></a><span class="sd">    :return: Pandas Series object with True/False values.</span>
+</span><span id="L-308"><a href="#L-308"><span class="linenos">308</span></a><span class="sd">             `True` mean that an outlier detected in that position of input series.</span>
+</span><span id="L-309"><a href="#L-309"><span class="linenos">309</span></a><span class="sd">             If an error occurred then empty series returned.</span>
+</span><span id="L-310"><a href="#L-310"><span class="linenos">310</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-311"><a href="#L-311"><span class="linenos">311</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-312"><a href="#L-312"><span class="linenos">312</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-313"><a href="#L-313"><span class="linenos">313</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="L-314"><a href="#L-314"><span class="linenos">314</span></a>
+</span><span id="L-315"><a href="#L-315"><span class="linenos">315</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="L-316"><a href="#L-316"><span class="linenos">316</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="L-317"><a href="#L-317"><span class="linenos">317</span></a>
+</span><span id="L-318"><a href="#L-318"><span class="linenos">318</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+</span><span id="L-319"><a href="#L-319"><span class="linenos">319</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="L-320"><a href="#L-320"><span class="linenos">320</span></a>
+</span><span id="L-321"><a href="#L-321"><span class="linenos">321</span></a>        <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-322"><a href="#L-322"><span class="linenos">322</span></a>            <span class="n">sigma</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span id="L-323"><a href="#L-323"><span class="linenos">323</span></a>
+</span><span id="L-324"><a href="#L-324"><span class="linenos">324</span></a>        <span class="k">if</span> <span class="n">scaleFactor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-325"><a href="#L-325"><span class="linenos">325</span></a>            <span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">1.4826</span>
 </span><span id="L-326"><a href="#L-326"><span class="linenos">326</span></a>
-</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>        <span class="n">delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pdSeries</span> <span class="o">-</span> <span class="n">rollingMedian</span><span class="p">)</span>
-</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>
-</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">rollingMAD</span>
-</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="n">window</span><span class="p">:</span> <span class="o">-</span><span class="n">window</span><span class="p">]</span>
-</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>
-</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
-</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>
-</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>    <span class="k">return</span> <span class="n">new</span>
-</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>
-</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>
-</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a><span class="k">def</span> <span class="nf">HampelAnomalyDetection</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a><span class="sd">    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list</span>
-</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a><span class="sd">    or index of the first maximum element in input series if this index less than anomaly element index. If series has</span>
-</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a><span class="sd">    no anomalies then None will be return.</span>
+</span><span id="L-327"><a href="#L-327"><span class="linenos">327</span></a>        <span class="c1"># Extending data to avoid undetected anomaly in first and last elements by original algorithm:</span>
+</span><span id="L-328"><a href="#L-328"><span class="linenos">328</span></a>        <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="n">window</span><span class="p">],</span> <span class="n">series</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">window</span><span class="p">:]])</span>
+</span><span id="L-329"><a href="#L-329"><span class="linenos">329</span></a>
+</span><span id="L-330"><a href="#L-330"><span class="linenos">330</span></a>        <span class="c1"># Calculating rolling Median and difference between it and series elements in window:</span>
+</span><span id="L-331"><a href="#L-331"><span class="linenos">331</span></a>        <span class="n">rollingMedian</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+</span><span id="L-332"><a href="#L-332"><span class="linenos">332</span></a>        <span class="n">delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">series</span> <span class="o">-</span> <span class="n">rollingMedian</span><span class="p">)</span>
+</span><span id="L-333"><a href="#L-333"><span class="linenos">333</span></a>
+</span><span id="L-334"><a href="#L-334"><span class="linenos">334</span></a>        <span class="c1"># Calculating rolling MAD: MAD(Xi) = Median(|x1 − Median(Xi)|, ..., |xn − Median(Xi)|)</span>
+</span><span id="L-335"><a href="#L-335"><span class="linenos">335</span></a>        <span class="c1"># where Xi — elements of input series in i-th window</span>
+</span><span id="L-336"><a href="#L-336"><span class="linenos">336</span></a>        <span class="n">rollingMAD</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+</span><span id="L-337"><a href="#L-337"><span class="linenos">337</span></a>            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</span><span id="L-338"><a href="#L-338"><span class="linenos">338</span></a>        <span class="p">)</span>
+</span><span id="L-339"><a href="#L-339"><span class="linenos">339</span></a>
+</span><span id="L-340"><a href="#L-340"><span class="linenos">340</span></a>        <span class="c1"># Checking for anomaly: A = {a | |a − Median(Xi)| &gt; s ∙ k ∙ MAD(Xi)}</span>
+</span><span id="L-341"><a href="#L-341"><span class="linenos">341</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">scaleFactor</span> <span class="o">*</span> <span class="n">rollingMAD</span>
+</span><span id="L-342"><a href="#L-342"><span class="linenos">342</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">window</span><span class="p">:</span> <span class="o">-</span><span class="n">window</span><span class="p">]</span>
 </span><span id="L-343"><a href="#L-343"><span class="linenos">343</span></a>
-</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a><span class="sd">    Examples:</span>
-</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>
-</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) -&gt; None`</span>
-</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1]) -&gt; 4`</span>
-</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 10, 1, 1, 1]) -&gt; 2`</span>
-</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 1]) -&gt; 0`</span>
-</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 111]) -&gt; 0`</span>
-</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a><span class="sd">    - `HampelAnomalyDetection([1, 11, 1, 111, 1, 1]) -&gt; 1`</span>
-</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 99, 11]) -&gt; 3`</span>
-</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 11, 111, 1, 1, 1, 11111]) -&gt; 2`</span>
-</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 111, 1, 1, 1, 1]) -&gt; 3`</span>
-</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1, 1, 11111, 5555]) -&gt; 4`</span>
-</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -&gt; 1`</span>
-</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -&gt; 6`</span>
+</span><span id="L-344"><a href="#L-344"><span class="linenos">344</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="L-345"><a href="#L-345"><span class="linenos">345</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+</span><span id="L-346"><a href="#L-346"><span class="linenos">346</span></a>
+</span><span id="L-347"><a href="#L-347"><span class="linenos">347</span></a>    <span class="k">return</span> <span class="n">new</span>
+</span><span id="L-348"><a href="#L-348"><span class="linenos">348</span></a>
+</span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>
+</span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a><span class="k">def</span> <span class="nf">HampelAnomalyDetection</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a><span class="sd">    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list</span>
+</span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a><span class="sd">    or index of the first maximum element in input series if this index less than anomaly element index. If series has</span>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="sd">    no anomalies then `None` will be return.</span>
+</span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>
+</span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">    Anomaly filter is a function:</span>
+</span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a><span class="sd">    F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.</span>
 </span><span id="L-358"><a href="#L-358"><span class="linenos">358</span></a>
-</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a><span class="sd">    Some **kwargs parameters you can pass to `HampelFilter()`:</span>
+</span><span id="L-359"><a href="#L-359"><span class="linenos">359</span></a><span class="sd">    References:</span>
 </span><span id="L-360"><a href="#L-360"><span class="linenos">360</span></a>
-</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a><span class="sd">    - `window` is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</span>
-</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="sd">    - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
-</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a><span class="sd">    - `scaleFactor` is the constant scale factor (1.4826 by default), &gt; 0.</span>
-</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a>
-</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
-</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
-</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
-</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
-</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>
-</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>        <span class="n">indexFirstMax</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>  <span class="c1"># Index of the first maximum in series</span>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>
-</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>        <span class="n">filtered</span> <span class="o">=</span> <span class="n">HampelFilter</span><span class="p">(</span><span class="n">pdSeries</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># The bool series with filtered data (if True then anomaly present in that place of input series)</span>
-</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>        <span class="n">anomalyIndexes</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="n">filtered</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># Indexes list of all found anomalies (if True)</span>
-</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>
-</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>        <span class="n">indexAnomalyMin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># Index of the first True in filtered series or None</span>
-</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a>
-</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>        <span class="c1"># You need to take the element whose index is less (see examples in docstring):</span>
-</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">indexAnomalyMin</span><span class="p">,</span> <span class="n">indexFirstMax</span><span class="p">)</span> <span class="k">if</span> <span class="n">indexAnomalyMin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a>
-</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a>
-</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-361"><a href="#L-361"><span class="linenos">361</span></a><span class="sd">    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.</span>
+</span><span id="L-362"><a href="#L-362"><span class="linenos">362</span></a><span class="sd">       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html</span>
+</span><span id="L-363"><a href="#L-363"><span class="linenos">363</span></a>
+</span><span id="L-364"><a href="#L-364"><span class="linenos">364</span></a><span class="sd">    Examples:</span>
+</span><span id="L-365"><a href="#L-365"><span class="linenos">365</span></a>
+</span><span id="L-366"><a href="#L-366"><span class="linenos">366</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) -&gt; None`</span>
+</span><span id="L-367"><a href="#L-367"><span class="linenos">367</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1]) -&gt; 4`</span>
+</span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 10, 1, 1, 1]) -&gt; 2`</span>
+</span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 1]) -&gt; 0`</span>
+</span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 111]) -&gt; 0`</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a><span class="sd">    - `HampelAnomalyDetection([1, 11, 1, 111, 1, 1]) -&gt; 1`</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 99, 11]) -&gt; 3`</span>
+</span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 11, 111, 1, 1, 1, 11111]) -&gt; 2`</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 111, 1, 1, 1, 1]) -&gt; 3`</span>
+</span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1, 1, 11111, 5555]) -&gt; 4`</span>
+</span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -&gt; 1`</span>
+</span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -&gt; 6`</span>
+</span><span id="L-378"><a href="#L-378"><span class="linenos">378</span></a>
+</span><span id="L-379"><a href="#L-379"><span class="linenos">379</span></a><span class="sd">    Some **kwargs parameters you can pass to `HampelFilter()`:</span>
+</span><span id="L-380"><a href="#L-380"><span class="linenos">380</span></a>
+</span><span id="L-381"><a href="#L-381"><span class="linenos">381</span></a><span class="sd">    - `window` is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</span>
+</span><span id="L-382"><a href="#L-382"><span class="linenos">382</span></a><span class="sd">    - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
+</span><span id="L-383"><a href="#L-383"><span class="linenos">383</span></a><span class="sd">    - `scaleFactor` is the constant scale factor (1.4826 by default), &gt; 0.</span>
+</span><span id="L-384"><a href="#L-384"><span class="linenos">384</span></a>
+</span><span id="L-385"><a href="#L-385"><span class="linenos">385</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
+</span><span id="L-386"><a href="#L-386"><span class="linenos">386</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
+</span><span id="L-387"><a href="#L-387"><span class="linenos">387</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
+</span><span id="L-388"><a href="#L-388"><span class="linenos">388</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>        <span class="n">indexFirstMax</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>  <span class="c1"># Index of the first maximum in series</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>
+</span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>        <span class="n">filtered</span> <span class="o">=</span> <span class="n">HampelFilter</span><span class="p">(</span><span class="n">series</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># The bool series with filtered data (if True then anomaly present in that place of input series)</span>
+</span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>        <span class="n">anomalyIndexes</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="n">filtered</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># Indexes list of all found anomalies (if True)</span>
+</span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>
+</span><span id="L-398"><a href="#L-398"><span class="linenos">398</span></a>        <span class="n">indexAnomalyMin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># Index of the first True in filtered series or None</span>
+</span><span id="L-399"><a href="#L-399"><span class="linenos">399</span></a>
+</span><span id="L-400"><a href="#L-400"><span class="linenos">400</span></a>        <span class="c1"># We need to take the element whose index is less (see examples in docstring):</span>
+</span><span id="L-401"><a href="#L-401"><span class="linenos">401</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">indexAnomalyMin</span><span class="p">,</span> <span class="n">indexFirstMax</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">indexAnomalyMin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>
+</span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a>
+</span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
@@ -946,122 +966,144 @@ SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=False) -> [[1], [2], [3]
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">HampelFilter</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">pdSeries</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span>,</span><span class="param">	<span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>,</span><span class="param">	<span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>,</span><span class="param">	<span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span>:</span></span>
+        <span class="name">HampelFilter</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>,</span><span class="param">	<span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span>,</span><span class="param">	<span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span>:</span></span>
 
                 <label class="view-source-button" for="HampelFilter-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#HampelFilter"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HampelFilter-270"><a href="#HampelFilter-270"><span class="linenos">270</span></a><span class="k">def</span> <span class="nf">HampelFilter</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HampelFilter-270"><a href="#HampelFilter-270"><span class="linenos">270</span></a><span class="k">def</span> <span class="nf">HampelFilter</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">scaleFactor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4826</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 </span><span id="HampelFilter-271"><a href="#HampelFilter-271"><span class="linenos">271</span></a>    <span class="sd">&quot;&quot;&quot;</span>
 </span><span id="HampelFilter-272"><a href="#HampelFilter-272"><span class="linenos">272</span></a><span class="sd">    Outlier Detection with Hampel Filter. It can detect outliers based on a sliding window and counting difference</span>
 </span><span id="HampelFilter-273"><a href="#HampelFilter-273"><span class="linenos">273</span></a><span class="sd">    between median values and input values of series. The Hampel filter is often considered extremely effective in practice.</span>
 </span><span id="HampelFilter-274"><a href="#HampelFilter-274"><span class="linenos">274</span></a>
-</span><span id="HampelFilter-275"><a href="#HampelFilter-275"><span class="linenos">275</span></a><span class="sd">    For each window we calculate the median and the standard deviation expressed as the median absolute deviation (MAD).</span>
-</span><span id="HampelFilter-276"><a href="#HampelFilter-276"><span class="linenos">276</span></a><span class="sd">    If the considered observation differs from the window median by more than x standard deviations, we treat it</span>
-</span><span id="HampelFilter-277"><a href="#HampelFilter-277"><span class="linenos">277</span></a><span class="sd">    as an outlier. Also used a constant scale factor which is dependent on the series distribution,</span>
-</span><span id="HampelFilter-278"><a href="#HampelFilter-278"><span class="linenos">278</span></a><span class="sd">    e.g. for Gaussian distribution it is approximately 1.4826.</span>
-</span><span id="HampelFilter-279"><a href="#HampelFilter-279"><span class="linenos">279</span></a>
-</span><span id="HampelFilter-280"><a href="#HampelFilter-280"><span class="linenos">280</span></a><span class="sd">    References:</span>
-</span><span id="HampelFilter-281"><a href="#HampelFilter-281"><span class="linenos">281</span></a>
-</span><span id="HampelFilter-282"><a href="#HampelFilter-282"><span class="linenos">282</span></a><span class="sd">    1. Lewinson Eryk, &quot;Outlier Detection with Hampel Filter&quot;, September 26, 2019.</span>
-</span><span id="HampelFilter-283"><a href="#HampelFilter-283"><span class="linenos">283</span></a><span class="sd">       Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</span>
-</span><span id="HampelFilter-284"><a href="#HampelFilter-284"><span class="linenos">284</span></a><span class="sd">    2. Liu, Hancong, Sirish Shah, and Wei Jiang, &quot;On-line outlier detection and data cleaning&quot;. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.</span>
-</span><span id="HampelFilter-285"><a href="#HampelFilter-285"><span class="linenos">285</span></a><span class="sd">       Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</span>
-</span><span id="HampelFilter-286"><a href="#HampelFilter-286"><span class="linenos">286</span></a><span class="sd">    3. Hampel F. R., &quot;The influence curve and its role in robust estimation&quot;. Journal of the American Statistical Association, 69, 382–393, 1974.</span>
-</span><span id="HampelFilter-287"><a href="#HampelFilter-287"><span class="linenos">287</span></a>
-</span><span id="HampelFilter-288"><a href="#HampelFilter-288"><span class="linenos">288</span></a><span class="sd">    Examples:</span>
-</span><span id="HampelFilter-289"><a href="#HampelFilter-289"><span class="linenos">289</span></a>
-</span><span id="HampelFilter-290"><a href="#HampelFilter-290"><span class="linenos">290</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 1, 1, 1]), window=3) -&gt; pd.Series([False, False, False, False, False, False])`</span>
-</span><span id="HampelFilter-291"><a href="#HampelFilter-291"><span class="linenos">291</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 2, 1, 1]), window=3) -&gt; pd.Series([False, False, False, True, False, False])`</span>
-</span><span id="HampelFilter-292"><a href="#HampelFilter-292"><span class="linenos">292</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([0, 1, 1, 1, 1, 0]), window=3) -&gt; pd.Series([True, False, False, False, False, True])`</span>
-</span><span id="HampelFilter-293"><a href="#HampelFilter-293"><span class="linenos">293</span></a><span class="sd">    - `HampelFilter(pdSeries=pd.Series([1])) -&gt; pd.Series([False])`</span>
-</span><span id="HampelFilter-294"><a href="#HampelFilter-294"><span class="linenos">294</span></a>
-</span><span id="HampelFilter-295"><a href="#HampelFilter-295"><span class="linenos">295</span></a><span class="sd">    :param pdSeries: Pandas Series object with numbers in which we identify outliers.</span>
-</span><span id="HampelFilter-296"><a href="#HampelFilter-296"><span class="linenos">296</span></a><span class="sd">    :param window: length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</span>
-</span><span id="HampelFilter-297"><a href="#HampelFilter-297"><span class="linenos">297</span></a><span class="sd">    :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
-</span><span id="HampelFilter-298"><a href="#HampelFilter-298"><span class="linenos">298</span></a><span class="sd">    :param scaleFactor: constant scale factor (1.4826 by default), &gt; 0.</span>
-</span><span id="HampelFilter-299"><a href="#HampelFilter-299"><span class="linenos">299</span></a><span class="sd">    :return: Pandas Series object with True/False values. `True` mean that an outlier detected in that position of input series.</span>
-</span><span id="HampelFilter-300"><a href="#HampelFilter-300"><span class="linenos">300</span></a><span class="sd">             If an error occurred then empty series returned.</span>
-</span><span id="HampelFilter-301"><a href="#HampelFilter-301"><span class="linenos">301</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="HampelFilter-302"><a href="#HampelFilter-302"><span class="linenos">302</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="HampelFilter-303"><a href="#HampelFilter-303"><span class="linenos">303</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="HampelFilter-304"><a href="#HampelFilter-304"><span class="linenos">304</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="mi">1</span>
-</span><span id="HampelFilter-305"><a href="#HampelFilter-305"><span class="linenos">305</span></a>
-</span><span id="HampelFilter-306"><a href="#HampelFilter-306"><span class="linenos">306</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">):</span>
-</span><span id="HampelFilter-307"><a href="#HampelFilter-307"><span class="linenos">307</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdSeries</span><span class="p">)</span>
-</span><span id="HampelFilter-308"><a href="#HampelFilter-308"><span class="linenos">308</span></a>
-</span><span id="HampelFilter-309"><a href="#HampelFilter-309"><span class="linenos">309</span></a>        <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="HampelFilter-310"><a href="#HampelFilter-310"><span class="linenos">310</span></a>            <span class="n">sigma</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span id="HampelFilter-311"><a href="#HampelFilter-311"><span class="linenos">311</span></a>
-</span><span id="HampelFilter-312"><a href="#HampelFilter-312"><span class="linenos">312</span></a>        <span class="k">if</span> <span class="n">scaleFactor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="HampelFilter-313"><a href="#HampelFilter-313"><span class="linenos">313</span></a>            <span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">1.4826</span>
-</span><span id="HampelFilter-314"><a href="#HampelFilter-314"><span class="linenos">314</span></a>
-</span><span id="HampelFilter-315"><a href="#HampelFilter-315"><span class="linenos">315</span></a>        <span class="c1"># Extend data to avoid undetected anomaly in first and last elements by original algorithm:</span>
-</span><span id="HampelFilter-316"><a href="#HampelFilter-316"><span class="linenos">316</span></a>        <span class="n">pdSeries</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pdSeries</span><span class="p">[:</span> <span class="n">window</span><span class="p">],</span> <span class="n">pdSeries</span><span class="p">,</span> <span class="n">pdSeries</span><span class="p">[</span><span class="o">-</span><span class="n">window</span><span class="p">:]])</span>
-</span><span id="HampelFilter-317"><a href="#HampelFilter-317"><span class="linenos">317</span></a>
-</span><span id="HampelFilter-318"><a href="#HampelFilter-318"><span class="linenos">318</span></a>        <span class="n">rollingMedian</span> <span class="o">=</span> <span class="n">pdSeries</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
-</span><span id="HampelFilter-319"><a href="#HampelFilter-319"><span class="linenos">319</span></a>            <span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span>
-</span><span id="HampelFilter-320"><a href="#HampelFilter-320"><span class="linenos">320</span></a>            <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="HampelFilter-321"><a href="#HampelFilter-321"><span class="linenos">321</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
-</span><span id="HampelFilter-322"><a href="#HampelFilter-322"><span class="linenos">322</span></a>
-</span><span id="HampelFilter-323"><a href="#HampelFilter-323"><span class="linenos">323</span></a>        <span class="n">rollingMAD</span> <span class="o">=</span> <span class="n">scaleFactor</span> <span class="o">*</span> <span class="n">pdSeries</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
-</span><span id="HampelFilter-324"><a href="#HampelFilter-324"><span class="linenos">324</span></a>            <span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span>
-</span><span id="HampelFilter-325"><a href="#HampelFilter-325"><span class="linenos">325</span></a>            <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="HampelFilter-326"><a href="#HampelFilter-326"><span class="linenos">326</span></a>        <span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+</span><span id="HampelFilter-275"><a href="#HampelFilter-275"><span class="linenos">275</span></a><span class="sd">    For each window we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation</span>
+</span><span id="HampelFilter-276"><a href="#HampelFilter-276"><span class="linenos">276</span></a><span class="sd">    differs from the window median by more than sigma standard deviations multiple on scaleFactor, then we treat it</span>
+</span><span id="HampelFilter-277"><a href="#HampelFilter-277"><span class="linenos">277</span></a><span class="sd">    as an outlier.</span>
+</span><span id="HampelFilter-278"><a href="#HampelFilter-278"><span class="linenos">278</span></a>
+</span><span id="HampelFilter-279"><a href="#HampelFilter-279"><span class="linenos">279</span></a><span class="sd">    Let Xi — elements of input series in i-th window,</span>
+</span><span id="HampelFilter-280"><a href="#HampelFilter-280"><span class="linenos">280</span></a><span class="sd">    s — sigma, the number of standard deviations,</span>
+</span><span id="HampelFilter-281"><a href="#HampelFilter-281"><span class="linenos">281</span></a><span class="sd">    k — scale factor, depends on distribution (≈1.4826 for normal).</span>
+</span><span id="HampelFilter-282"><a href="#HampelFilter-282"><span class="linenos">282</span></a>
+</span><span id="HampelFilter-283"><a href="#HampelFilter-283"><span class="linenos">283</span></a><span class="sd">    How to calculate rolling MAD: `MAD(Xi) = Median(|x1 − Median (Xi)|, ..., |xn − Median(Xi)|)`</span>
+</span><span id="HampelFilter-284"><a href="#HampelFilter-284"><span class="linenos">284</span></a>
+</span><span id="HampelFilter-285"><a href="#HampelFilter-285"><span class="linenos">285</span></a><span class="sd">    What is an anomaly: `A = {a | |a − Median (Xi)| &gt; s ∙ k ∙ MAD(Xi)}`</span>
+</span><span id="HampelFilter-286"><a href="#HampelFilter-286"><span class="linenos">286</span></a>
+</span><span id="HampelFilter-287"><a href="#HampelFilter-287"><span class="linenos">287</span></a><span class="sd">    References:</span>
+</span><span id="HampelFilter-288"><a href="#HampelFilter-288"><span class="linenos">288</span></a>
+</span><span id="HampelFilter-289"><a href="#HampelFilter-289"><span class="linenos">289</span></a><span class="sd">    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.</span>
+</span><span id="HampelFilter-290"><a href="#HampelFilter-290"><span class="linenos">290</span></a><span class="sd">       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html</span>
+</span><span id="HampelFilter-291"><a href="#HampelFilter-291"><span class="linenos">291</span></a><span class="sd">    2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.</span>
+</span><span id="HampelFilter-292"><a href="#HampelFilter-292"><span class="linenos">292</span></a><span class="sd">       Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</span>
+</span><span id="HampelFilter-293"><a href="#HampelFilter-293"><span class="linenos">293</span></a><span class="sd">    3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.</span>
+</span><span id="HampelFilter-294"><a href="#HampelFilter-294"><span class="linenos">294</span></a><span class="sd">       Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</span>
+</span><span id="HampelFilter-295"><a href="#HampelFilter-295"><span class="linenos">295</span></a><span class="sd">    4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.</span>
+</span><span id="HampelFilter-296"><a href="#HampelFilter-296"><span class="linenos">296</span></a>
+</span><span id="HampelFilter-297"><a href="#HampelFilter-297"><span class="linenos">297</span></a><span class="sd">    Examples:</span>
+</span><span id="HampelFilter-298"><a href="#HampelFilter-298"><span class="linenos">298</span></a>
+</span><span id="HampelFilter-299"><a href="#HampelFilter-299"><span class="linenos">299</span></a><span class="sd">    - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -&gt; pd.Series([False, False, False, False, False, False])`</span>
+</span><span id="HampelFilter-300"><a href="#HampelFilter-300"><span class="linenos">300</span></a><span class="sd">    - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -&gt; pd.Series([False, False, False, True, False, False])`</span>
+</span><span id="HampelFilter-301"><a href="#HampelFilter-301"><span class="linenos">301</span></a><span class="sd">    - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -&gt; pd.Series([True, False, False, False, False, True])`</span>
+</span><span id="HampelFilter-302"><a href="#HampelFilter-302"><span class="linenos">302</span></a><span class="sd">    - `HampelFilter([1]) -&gt; pd.Series([False])`</span>
+</span><span id="HampelFilter-303"><a href="#HampelFilter-303"><span class="linenos">303</span></a>
+</span><span id="HampelFilter-304"><a href="#HampelFilter-304"><span class="linenos">304</span></a><span class="sd">    :param series: Pandas Series object with numbers in which we identify outliers.</span>
+</span><span id="HampelFilter-305"><a href="#HampelFilter-305"><span class="linenos">305</span></a><span class="sd">    :param window: length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</span>
+</span><span id="HampelFilter-306"><a href="#HampelFilter-306"><span class="linenos">306</span></a><span class="sd">    :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
+</span><span id="HampelFilter-307"><a href="#HampelFilter-307"><span class="linenos">307</span></a><span class="sd">    :param scaleFactor: constant scale factor (1.4826 by default for Gaussian distribution), &gt; 0.</span>
+</span><span id="HampelFilter-308"><a href="#HampelFilter-308"><span class="linenos">308</span></a><span class="sd">    :return: Pandas Series object with True/False values.</span>
+</span><span id="HampelFilter-309"><a href="#HampelFilter-309"><span class="linenos">309</span></a><span class="sd">             `True` mean that an outlier detected in that position of input series.</span>
+</span><span id="HampelFilter-310"><a href="#HampelFilter-310"><span class="linenos">310</span></a><span class="sd">             If an error occurred then empty series returned.</span>
+</span><span id="HampelFilter-311"><a href="#HampelFilter-311"><span class="linenos">311</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="HampelFilter-312"><a href="#HampelFilter-312"><span class="linenos">312</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="HampelFilter-313"><a href="#HampelFilter-313"><span class="linenos">313</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="HampelFilter-314"><a href="#HampelFilter-314"><span class="linenos">314</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="HampelFilter-315"><a href="#HampelFilter-315"><span class="linenos">315</span></a>
+</span><span id="HampelFilter-316"><a href="#HampelFilter-316"><span class="linenos">316</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="HampelFilter-317"><a href="#HampelFilter-317"><span class="linenos">317</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span id="HampelFilter-318"><a href="#HampelFilter-318"><span class="linenos">318</span></a>
+</span><span id="HampelFilter-319"><a href="#HampelFilter-319"><span class="linenos">319</span></a>        <span class="k">if</span> <span class="n">window</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+</span><span id="HampelFilter-320"><a href="#HampelFilter-320"><span class="linenos">320</span></a>            <span class="n">window</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="HampelFilter-321"><a href="#HampelFilter-321"><span class="linenos">321</span></a>
+</span><span id="HampelFilter-322"><a href="#HampelFilter-322"><span class="linenos">322</span></a>        <span class="k">if</span> <span class="n">sigma</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="HampelFilter-323"><a href="#HampelFilter-323"><span class="linenos">323</span></a>            <span class="n">sigma</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span id="HampelFilter-324"><a href="#HampelFilter-324"><span class="linenos">324</span></a>
+</span><span id="HampelFilter-325"><a href="#HampelFilter-325"><span class="linenos">325</span></a>        <span class="k">if</span> <span class="n">scaleFactor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="HampelFilter-326"><a href="#HampelFilter-326"><span class="linenos">326</span></a>            <span class="n">scaleFactor</span> <span class="o">=</span> <span class="mf">1.4826</span>
 </span><span id="HampelFilter-327"><a href="#HampelFilter-327"><span class="linenos">327</span></a>
-</span><span id="HampelFilter-328"><a href="#HampelFilter-328"><span class="linenos">328</span></a>        <span class="n">delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pdSeries</span> <span class="o">-</span> <span class="n">rollingMedian</span><span class="p">)</span>
-</span><span id="HampelFilter-329"><a href="#HampelFilter-329"><span class="linenos">329</span></a>
-</span><span id="HampelFilter-330"><a href="#HampelFilter-330"><span class="linenos">330</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">rollingMAD</span>
-</span><span id="HampelFilter-331"><a href="#HampelFilter-331"><span class="linenos">331</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="p">[</span><span class="n">window</span><span class="p">:</span> <span class="o">-</span><span class="n">window</span><span class="p">]</span>
-</span><span id="HampelFilter-332"><a href="#HampelFilter-332"><span class="linenos">332</span></a>
-</span><span id="HampelFilter-333"><a href="#HampelFilter-333"><span class="linenos">333</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="HampelFilter-334"><a href="#HampelFilter-334"><span class="linenos">334</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
-</span><span id="HampelFilter-335"><a href="#HampelFilter-335"><span class="linenos">335</span></a>
-</span><span id="HampelFilter-336"><a href="#HampelFilter-336"><span class="linenos">336</span></a>    <span class="k">return</span> <span class="n">new</span>
+</span><span id="HampelFilter-328"><a href="#HampelFilter-328"><span class="linenos">328</span></a>        <span class="c1"># Extending data to avoid undetected anomaly in first and last elements by original algorithm:</span>
+</span><span id="HampelFilter-329"><a href="#HampelFilter-329"><span class="linenos">329</span></a>        <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span> <span class="n">window</span><span class="p">],</span> <span class="n">series</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="n">window</span><span class="p">:]])</span>
+</span><span id="HampelFilter-330"><a href="#HampelFilter-330"><span class="linenos">330</span></a>
+</span><span id="HampelFilter-331"><a href="#HampelFilter-331"><span class="linenos">331</span></a>        <span class="c1"># Calculating rolling Median and difference between it and series elements in window:</span>
+</span><span id="HampelFilter-332"><a href="#HampelFilter-332"><span class="linenos">332</span></a>        <span class="n">rollingMedian</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+</span><span id="HampelFilter-333"><a href="#HampelFilter-333"><span class="linenos">333</span></a>        <span class="n">delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">series</span> <span class="o">-</span> <span class="n">rollingMedian</span><span class="p">)</span>
+</span><span id="HampelFilter-334"><a href="#HampelFilter-334"><span class="linenos">334</span></a>
+</span><span id="HampelFilter-335"><a href="#HampelFilter-335"><span class="linenos">335</span></a>        <span class="c1"># Calculating rolling MAD: MAD(Xi) = Median(|x1 − Median(Xi)|, ..., |xn − Median(Xi)|)</span>
+</span><span id="HampelFilter-336"><a href="#HampelFilter-336"><span class="linenos">336</span></a>        <span class="c1"># where Xi — elements of input series in i-th window</span>
+</span><span id="HampelFilter-337"><a href="#HampelFilter-337"><span class="linenos">337</span></a>        <span class="n">rollingMAD</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">window</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+</span><span id="HampelFilter-338"><a href="#HampelFilter-338"><span class="linenos">338</span></a>            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</span><span id="HampelFilter-339"><a href="#HampelFilter-339"><span class="linenos">339</span></a>        <span class="p">)</span>
+</span><span id="HampelFilter-340"><a href="#HampelFilter-340"><span class="linenos">340</span></a>
+</span><span id="HampelFilter-341"><a href="#HampelFilter-341"><span class="linenos">341</span></a>        <span class="c1"># Checking for anomaly: A = {a | |a − Median(Xi)| &gt; s ∙ k ∙ MAD(Xi)}</span>
+</span><span id="HampelFilter-342"><a href="#HampelFilter-342"><span class="linenos">342</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">&gt;</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">scaleFactor</span> <span class="o">*</span> <span class="n">rollingMAD</span>
+</span><span id="HampelFilter-343"><a href="#HampelFilter-343"><span class="linenos">343</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">window</span><span class="p">:</span> <span class="o">-</span><span class="n">window</span><span class="p">]</span>
+</span><span id="HampelFilter-344"><a href="#HampelFilter-344"><span class="linenos">344</span></a>
+</span><span id="HampelFilter-345"><a href="#HampelFilter-345"><span class="linenos">345</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="HampelFilter-346"><a href="#HampelFilter-346"><span class="linenos">346</span></a>        <span class="n">new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">()</span>
+</span><span id="HampelFilter-347"><a href="#HampelFilter-347"><span class="linenos">347</span></a>
+</span><span id="HampelFilter-348"><a href="#HampelFilter-348"><span class="linenos">348</span></a>    <span class="k">return</span> <span class="n">new</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Outlier Detection with Hampel Filter. It can detect outliers based on a sliding window and counting difference
 between median values and input values of series. The Hampel filter is often considered extremely effective in practice.</p>
 
-<p>For each window we calculate the median and the standard deviation expressed as the median absolute deviation (MAD).
-If the considered observation differs from the window median by more than x standard deviations, we treat it
-as an outlier. Also used a constant scale factor which is dependent on the series distribution,
-e.g. for Gaussian distribution it is approximately 1.4826.</p>
+<p>For each window we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation
+differs from the window median by more than sigma standard deviations multiple on scaleFactor, then we treat it
+as an outlier.</p>
+
+<p>Let Xi — elements of input series in i-th window,
+s — sigma, the number of standard deviations,
+k — scale factor, depends on distribution (≈1.4826 for normal).</p>
+
+<p>How to calculate rolling MAD: <code>MAD(Xi) = Median(|x1 − Median (Xi)|, ..., |xn − Median(Xi)|)</code></p>
+
+<p>What is an anomaly: <code>A = {a | |a − Median (Xi)| &gt; s ∙ k ∙ MAD(Xi)}</code></p>
 
 <p>References:</p>
 
 <ol>
-<li>Lewinson Eryk, "Outlier Detection with Hampel Filter", September 26, 2019.
+<li>Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></li>
+<li>Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
 Link: <a href="https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d">https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</a></li>
-<li>Liu, Hancong, Sirish Shah, and Wei Jiang, "On-line outlier detection and data cleaning". Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
+<li>Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
 Link: <a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf">https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</a></li>
-<li>Hampel F. R., "The influence curve and its role in robust estimation". Journal of the American Statistical Association, 69, 382–393, 1974.</li>
+<li>Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.</li>
 </ol>
 
 <p>Examples:</p>
 
 <ul>
-<li><code>HampelFilter(pdSeries=pd.Series([1, 1, 1, 1, 1, 1]), window=3) -&gt; pd.Series([False, False, False, False, False, False])</code></li>
-<li><code>HampelFilter(pdSeries=pd.Series([1, 1, 1, 2, 1, 1]), window=3) -&gt; pd.Series([False, False, False, True, False, False])</code></li>
-<li><code>HampelFilter(pdSeries=pd.Series([0, 1, 1, 1, 1, 0]), window=3) -&gt; pd.Series([True, False, False, False, False, True])</code></li>
-<li><code>HampelFilter(pdSeries=pd.Series([1])) -&gt; pd.Series([False])</code></li>
+<li><code>HampelFilter([1, 1, 1, 1, 1, 1], window=3) -&gt; pd.Series([False, False, False, False, False, False])</code></li>
+<li><code>HampelFilter([1, 1, 1, 2, 1, 1], window=3) -&gt; pd.Series([False, False, False, True, False, False])</code></li>
+<li><code>HampelFilter([0, 1, 1, 1, 1, 0], window=3) -&gt; pd.Series([True, False, False, False, False, True])</code></li>
+<li><code>HampelFilter([1]) -&gt; pd.Series([False])</code></li>
 </ul>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>pdSeries</strong>:  Pandas Series object with numbers in which we identify outliers.</li>
-<li><strong>window</strong>:  length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</li>
+<li><strong>series</strong>:  Pandas Series object with numbers in which we identify outliers.</li>
+<li><strong>window</strong>:  length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</li>
 <li><strong>sigma</strong>:  sigma is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</li>
-<li><strong>scaleFactor</strong>:  constant scale factor (1.4826 by default), &gt; 0.</li>
+<li><strong>scaleFactor</strong>:  constant scale factor (1.4826 by default for Gaussian distribution), &gt; 0.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>Pandas Series object with True/False values. <code>True</code> mean that an outlier detected in that position of input series.
+  <p>Pandas Series object with True/False values.
+           <code>True</code> mean that an outlier detected in that position of input series.
            If an error occurred then empty series returned.</p>
 </blockquote>
 </div>
@@ -1079,61 +1121,79 @@ Link: <a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf">
 
     </div>
     <a class="headerlink" href="#HampelAnomalyDetection"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HampelAnomalyDetection-339"><a href="#HampelAnomalyDetection-339"><span class="linenos">339</span></a><span class="k">def</span> <span class="nf">HampelAnomalyDetection</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-</span><span id="HampelAnomalyDetection-340"><a href="#HampelAnomalyDetection-340"><span class="linenos">340</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="HampelAnomalyDetection-341"><a href="#HampelAnomalyDetection-341"><span class="linenos">341</span></a><span class="sd">    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list</span>
-</span><span id="HampelAnomalyDetection-342"><a href="#HampelAnomalyDetection-342"><span class="linenos">342</span></a><span class="sd">    or index of the first maximum element in input series if this index less than anomaly element index. If series has</span>
-</span><span id="HampelAnomalyDetection-343"><a href="#HampelAnomalyDetection-343"><span class="linenos">343</span></a><span class="sd">    no anomalies then None will be return.</span>
-</span><span id="HampelAnomalyDetection-344"><a href="#HampelAnomalyDetection-344"><span class="linenos">344</span></a>
-</span><span id="HampelAnomalyDetection-345"><a href="#HampelAnomalyDetection-345"><span class="linenos">345</span></a><span class="sd">    Examples:</span>
-</span><span id="HampelAnomalyDetection-346"><a href="#HampelAnomalyDetection-346"><span class="linenos">346</span></a>
-</span><span id="HampelAnomalyDetection-347"><a href="#HampelAnomalyDetection-347"><span class="linenos">347</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) -&gt; None`</span>
-</span><span id="HampelAnomalyDetection-348"><a href="#HampelAnomalyDetection-348"><span class="linenos">348</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1]) -&gt; 4`</span>
-</span><span id="HampelAnomalyDetection-349"><a href="#HampelAnomalyDetection-349"><span class="linenos">349</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 10, 1, 1, 1]) -&gt; 2`</span>
-</span><span id="HampelAnomalyDetection-350"><a href="#HampelAnomalyDetection-350"><span class="linenos">350</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 1]) -&gt; 0`</span>
-</span><span id="HampelAnomalyDetection-351"><a href="#HampelAnomalyDetection-351"><span class="linenos">351</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 111]) -&gt; 0`</span>
-</span><span id="HampelAnomalyDetection-352"><a href="#HampelAnomalyDetection-352"><span class="linenos">352</span></a><span class="sd">    - `HampelAnomalyDetection([1, 11, 1, 111, 1, 1]) -&gt; 1`</span>
-</span><span id="HampelAnomalyDetection-353"><a href="#HampelAnomalyDetection-353"><span class="linenos">353</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 99, 11]) -&gt; 3`</span>
-</span><span id="HampelAnomalyDetection-354"><a href="#HampelAnomalyDetection-354"><span class="linenos">354</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 11, 111, 1, 1, 1, 11111]) -&gt; 2`</span>
-</span><span id="HampelAnomalyDetection-355"><a href="#HampelAnomalyDetection-355"><span class="linenos">355</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 111, 1, 1, 1, 1]) -&gt; 3`</span>
-</span><span id="HampelAnomalyDetection-356"><a href="#HampelAnomalyDetection-356"><span class="linenos">356</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1, 1, 11111, 5555]) -&gt; 4`</span>
-</span><span id="HampelAnomalyDetection-357"><a href="#HampelAnomalyDetection-357"><span class="linenos">357</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -&gt; 1`</span>
-</span><span id="HampelAnomalyDetection-358"><a href="#HampelAnomalyDetection-358"><span class="linenos">358</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -&gt; 6`</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HampelAnomalyDetection-351"><a href="#HampelAnomalyDetection-351"><span class="linenos">351</span></a><span class="k">def</span> <span class="nf">HampelAnomalyDetection</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="HampelAnomalyDetection-352"><a href="#HampelAnomalyDetection-352"><span class="linenos">352</span></a>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span id="HampelAnomalyDetection-353"><a href="#HampelAnomalyDetection-353"><span class="linenos">353</span></a><span class="sd">    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list</span>
+</span><span id="HampelAnomalyDetection-354"><a href="#HampelAnomalyDetection-354"><span class="linenos">354</span></a><span class="sd">    or index of the first maximum element in input series if this index less than anomaly element index. If series has</span>
+</span><span id="HampelAnomalyDetection-355"><a href="#HampelAnomalyDetection-355"><span class="linenos">355</span></a><span class="sd">    no anomalies then `None` will be return.</span>
+</span><span id="HampelAnomalyDetection-356"><a href="#HampelAnomalyDetection-356"><span class="linenos">356</span></a>
+</span><span id="HampelAnomalyDetection-357"><a href="#HampelAnomalyDetection-357"><span class="linenos">357</span></a><span class="sd">    Anomaly filter is a function:</span>
+</span><span id="HampelAnomalyDetection-358"><a href="#HampelAnomalyDetection-358"><span class="linenos">358</span></a><span class="sd">    F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.</span>
 </span><span id="HampelAnomalyDetection-359"><a href="#HampelAnomalyDetection-359"><span class="linenos">359</span></a>
-</span><span id="HampelAnomalyDetection-360"><a href="#HampelAnomalyDetection-360"><span class="linenos">360</span></a><span class="sd">    Some **kwargs parameters you can pass to `HampelFilter()`:</span>
+</span><span id="HampelAnomalyDetection-360"><a href="#HampelAnomalyDetection-360"><span class="linenos">360</span></a><span class="sd">    References:</span>
 </span><span id="HampelAnomalyDetection-361"><a href="#HampelAnomalyDetection-361"><span class="linenos">361</span></a>
-</span><span id="HampelAnomalyDetection-362"><a href="#HampelAnomalyDetection-362"><span class="linenos">362</span></a><span class="sd">    - `window` is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</span>
-</span><span id="HampelAnomalyDetection-363"><a href="#HampelAnomalyDetection-363"><span class="linenos">363</span></a><span class="sd">    - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
-</span><span id="HampelAnomalyDetection-364"><a href="#HampelAnomalyDetection-364"><span class="linenos">364</span></a><span class="sd">    - `scaleFactor` is the constant scale factor (1.4826 by default), &gt; 0.</span>
-</span><span id="HampelAnomalyDetection-365"><a href="#HampelAnomalyDetection-365"><span class="linenos">365</span></a>
-</span><span id="HampelAnomalyDetection-366"><a href="#HampelAnomalyDetection-366"><span class="linenos">366</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
-</span><span id="HampelAnomalyDetection-367"><a href="#HampelAnomalyDetection-367"><span class="linenos">367</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
-</span><span id="HampelAnomalyDetection-368"><a href="#HampelAnomalyDetection-368"><span class="linenos">368</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
-</span><span id="HampelAnomalyDetection-369"><a href="#HampelAnomalyDetection-369"><span class="linenos">369</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="HampelAnomalyDetection-370"><a href="#HampelAnomalyDetection-370"><span class="linenos">370</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="HampelAnomalyDetection-371"><a href="#HampelAnomalyDetection-371"><span class="linenos">371</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="HampelAnomalyDetection-372"><a href="#HampelAnomalyDetection-372"><span class="linenos">372</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
-</span><span id="HampelAnomalyDetection-373"><a href="#HampelAnomalyDetection-373"><span class="linenos">373</span></a>
-</span><span id="HampelAnomalyDetection-374"><a href="#HampelAnomalyDetection-374"><span class="linenos">374</span></a>        <span class="n">indexFirstMax</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>  <span class="c1"># Index of the first maximum in series</span>
-</span><span id="HampelAnomalyDetection-375"><a href="#HampelAnomalyDetection-375"><span class="linenos">375</span></a>
-</span><span id="HampelAnomalyDetection-376"><a href="#HampelAnomalyDetection-376"><span class="linenos">376</span></a>        <span class="n">filtered</span> <span class="o">=</span> <span class="n">HampelFilter</span><span class="p">(</span><span class="n">pdSeries</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># The bool series with filtered data (if True then anomaly present in that place of input series)</span>
-</span><span id="HampelAnomalyDetection-377"><a href="#HampelAnomalyDetection-377"><span class="linenos">377</span></a>        <span class="n">anomalyIndexes</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="n">filtered</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># Indexes list of all found anomalies (if True)</span>
-</span><span id="HampelAnomalyDetection-378"><a href="#HampelAnomalyDetection-378"><span class="linenos">378</span></a>
-</span><span id="HampelAnomalyDetection-379"><a href="#HampelAnomalyDetection-379"><span class="linenos">379</span></a>        <span class="n">indexAnomalyMin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># Index of the first True in filtered series or None</span>
-</span><span id="HampelAnomalyDetection-380"><a href="#HampelAnomalyDetection-380"><span class="linenos">380</span></a>
-</span><span id="HampelAnomalyDetection-381"><a href="#HampelAnomalyDetection-381"><span class="linenos">381</span></a>        <span class="c1"># You need to take the element whose index is less (see examples in docstring):</span>
-</span><span id="HampelAnomalyDetection-382"><a href="#HampelAnomalyDetection-382"><span class="linenos">382</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">indexAnomalyMin</span><span class="p">,</span> <span class="n">indexFirstMax</span><span class="p">)</span> <span class="k">if</span> <span class="n">indexAnomalyMin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="HampelAnomalyDetection-383"><a href="#HampelAnomalyDetection-383"><span class="linenos">383</span></a>
-</span><span id="HampelAnomalyDetection-384"><a href="#HampelAnomalyDetection-384"><span class="linenos">384</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="HampelAnomalyDetection-385"><a href="#HampelAnomalyDetection-385"><span class="linenos">385</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="HampelAnomalyDetection-386"><a href="#HampelAnomalyDetection-386"><span class="linenos">386</span></a>
-</span><span id="HampelAnomalyDetection-387"><a href="#HampelAnomalyDetection-387"><span class="linenos">387</span></a>    <span class="k">return</span> <span class="n">result</span>
+</span><span id="HampelAnomalyDetection-362"><a href="#HampelAnomalyDetection-362"><span class="linenos">362</span></a><span class="sd">    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.</span>
+</span><span id="HampelAnomalyDetection-363"><a href="#HampelAnomalyDetection-363"><span class="linenos">363</span></a><span class="sd">       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html</span>
+</span><span id="HampelAnomalyDetection-364"><a href="#HampelAnomalyDetection-364"><span class="linenos">364</span></a>
+</span><span id="HampelAnomalyDetection-365"><a href="#HampelAnomalyDetection-365"><span class="linenos">365</span></a><span class="sd">    Examples:</span>
+</span><span id="HampelAnomalyDetection-366"><a href="#HampelAnomalyDetection-366"><span class="linenos">366</span></a>
+</span><span id="HampelAnomalyDetection-367"><a href="#HampelAnomalyDetection-367"><span class="linenos">367</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) -&gt; None`</span>
+</span><span id="HampelAnomalyDetection-368"><a href="#HampelAnomalyDetection-368"><span class="linenos">368</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1]) -&gt; 4`</span>
+</span><span id="HampelAnomalyDetection-369"><a href="#HampelAnomalyDetection-369"><span class="linenos">369</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 10, 1, 1, 1]) -&gt; 2`</span>
+</span><span id="HampelAnomalyDetection-370"><a href="#HampelAnomalyDetection-370"><span class="linenos">370</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 1]) -&gt; 0`</span>
+</span><span id="HampelAnomalyDetection-371"><a href="#HampelAnomalyDetection-371"><span class="linenos">371</span></a><span class="sd">    - `HampelAnomalyDetection([111, 1, 1, 1, 1, 111]) -&gt; 0`</span>
+</span><span id="HampelAnomalyDetection-372"><a href="#HampelAnomalyDetection-372"><span class="linenos">372</span></a><span class="sd">    - `HampelAnomalyDetection([1, 11, 1, 111, 1, 1]) -&gt; 1`</span>
+</span><span id="HampelAnomalyDetection-373"><a href="#HampelAnomalyDetection-373"><span class="linenos">373</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 99, 11]) -&gt; 3`</span>
+</span><span id="HampelAnomalyDetection-374"><a href="#HampelAnomalyDetection-374"><span class="linenos">374</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 11, 111, 1, 1, 1, 11111]) -&gt; 2`</span>
+</span><span id="HampelAnomalyDetection-375"><a href="#HampelAnomalyDetection-375"><span class="linenos">375</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 111, 111, 1, 1, 1, 1]) -&gt; 3`</span>
+</span><span id="HampelAnomalyDetection-376"><a href="#HampelAnomalyDetection-376"><span class="linenos">376</span></a><span class="sd">    - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1, 1, 11111, 5555]) -&gt; 4`</span>
+</span><span id="HampelAnomalyDetection-377"><a href="#HampelAnomalyDetection-377"><span class="linenos">377</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -&gt; 1`</span>
+</span><span id="HampelAnomalyDetection-378"><a href="#HampelAnomalyDetection-378"><span class="linenos">378</span></a><span class="sd">    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -&gt; 6`</span>
+</span><span id="HampelAnomalyDetection-379"><a href="#HampelAnomalyDetection-379"><span class="linenos">379</span></a>
+</span><span id="HampelAnomalyDetection-380"><a href="#HampelAnomalyDetection-380"><span class="linenos">380</span></a><span class="sd">    Some **kwargs parameters you can pass to `HampelFilter()`:</span>
+</span><span id="HampelAnomalyDetection-381"><a href="#HampelAnomalyDetection-381"><span class="linenos">381</span></a>
+</span><span id="HampelAnomalyDetection-382"><a href="#HampelAnomalyDetection-382"><span class="linenos">382</span></a><span class="sd">    - `window` is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</span>
+</span><span id="HampelAnomalyDetection-383"><a href="#HampelAnomalyDetection-383"><span class="linenos">383</span></a><span class="sd">    - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</span>
+</span><span id="HampelAnomalyDetection-384"><a href="#HampelAnomalyDetection-384"><span class="linenos">384</span></a><span class="sd">    - `scaleFactor` is the constant scale factor (1.4826 by default), &gt; 0.</span>
+</span><span id="HampelAnomalyDetection-385"><a href="#HampelAnomalyDetection-385"><span class="linenos">385</span></a>
+</span><span id="HampelAnomalyDetection-386"><a href="#HampelAnomalyDetection-386"><span class="linenos">386</span></a><span class="sd">    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier&#39;s index).</span>
+</span><span id="HampelAnomalyDetection-387"><a href="#HampelAnomalyDetection-387"><span class="linenos">387</span></a><span class="sd">    :param kwargs: See `HampelFilter()` docstring with all possible parameters.</span>
+</span><span id="HampelAnomalyDetection-388"><a href="#HampelAnomalyDetection-388"><span class="linenos">388</span></a><span class="sd">    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.</span>
+</span><span id="HampelAnomalyDetection-389"><a href="#HampelAnomalyDetection-389"><span class="linenos">389</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="HampelAnomalyDetection-390"><a href="#HampelAnomalyDetection-390"><span class="linenos">390</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="HampelAnomalyDetection-391"><a href="#HampelAnomalyDetection-391"><span class="linenos">391</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="HampelAnomalyDetection-392"><a href="#HampelAnomalyDetection-392"><span class="linenos">392</span></a>            <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+</span><span id="HampelAnomalyDetection-393"><a href="#HampelAnomalyDetection-393"><span class="linenos">393</span></a>
+</span><span id="HampelAnomalyDetection-394"><a href="#HampelAnomalyDetection-394"><span class="linenos">394</span></a>        <span class="n">indexFirstMax</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>  <span class="c1"># Index of the first maximum in series</span>
+</span><span id="HampelAnomalyDetection-395"><a href="#HampelAnomalyDetection-395"><span class="linenos">395</span></a>
+</span><span id="HampelAnomalyDetection-396"><a href="#HampelAnomalyDetection-396"><span class="linenos">396</span></a>        <span class="n">filtered</span> <span class="o">=</span> <span class="n">HampelFilter</span><span class="p">(</span><span class="n">series</span><span class="o">=</span><span class="n">series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># The bool series with filtered data (if True then anomaly present in that place of input series)</span>
+</span><span id="HampelAnomalyDetection-397"><a href="#HampelAnomalyDetection-397"><span class="linenos">397</span></a>        <span class="n">anomalyIndexes</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="n">filtered</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># Indexes list of all found anomalies (if True)</span>
+</span><span id="HampelAnomalyDetection-398"><a href="#HampelAnomalyDetection-398"><span class="linenos">398</span></a>
+</span><span id="HampelAnomalyDetection-399"><a href="#HampelAnomalyDetection-399"><span class="linenos">399</span></a>        <span class="n">indexAnomalyMin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">anomalyIndexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># Index of the first True in filtered series or None</span>
+</span><span id="HampelAnomalyDetection-400"><a href="#HampelAnomalyDetection-400"><span class="linenos">400</span></a>
+</span><span id="HampelAnomalyDetection-401"><a href="#HampelAnomalyDetection-401"><span class="linenos">401</span></a>        <span class="c1"># We need to take the element whose index is less (see examples in docstring):</span>
+</span><span id="HampelAnomalyDetection-402"><a href="#HampelAnomalyDetection-402"><span class="linenos">402</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">indexAnomalyMin</span><span class="p">,</span> <span class="n">indexFirstMax</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="n">indexAnomalyMin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="HampelAnomalyDetection-403"><a href="#HampelAnomalyDetection-403"><span class="linenos">403</span></a>
+</span><span id="HampelAnomalyDetection-404"><a href="#HampelAnomalyDetection-404"><span class="linenos">404</span></a>    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="HampelAnomalyDetection-405"><a href="#HampelAnomalyDetection-405"><span class="linenos">405</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="HampelAnomalyDetection-406"><a href="#HampelAnomalyDetection-406"><span class="linenos">406</span></a>
+</span><span id="HampelAnomalyDetection-407"><a href="#HampelAnomalyDetection-407"><span class="linenos">407</span></a>    <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list
 or index of the first maximum element in input series if this index less than anomaly element index. If series has
-no anomalies then None will be return.</p>
+no anomalies then <code>None</code> will be return.</p>
+
+<p>Anomaly filter is a function:
+F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.</p>
+
+<p>References:</p>
+
+<ol>
+<li>Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></li>
+</ol>
 
 <p>Examples:</p>
 
@@ -1155,7 +1215,7 @@ no anomalies then None will be return.</p>
 <p>Some **kwargs parameters you can pass to <code><a href="#HampelFilter">HampelFilter()</a></code>:</p>
 
 <ul>
-<li><code>window</code> is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(pdSeries).</li>
+<li><code>window</code> is the length of the sliding window (5 points by default), 1 &lt;= window &lt;= len(series).</li>
 <li><code>sigma</code> is the number of standard deviations which identify the outlier (3 sigma by default), &gt; 0.</li>
 <li><code>scaleFactor</code> is the constant scale factor (1.4826 by default), &gt; 0.</li>
 </ul>
