@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 import pandas as pd
+import numpy as np
 
 
 class UpdateClassFieldsTestClass:
@@ -286,175 +287,176 @@ class TestTradeRoutinesMethods:
             assert TradeRoutines.CalculateLotsForDeal(currentPrice=test[0], maxCost=test[1], volumeInLot=test[2]) == test[3], "Incorrect output!"
 
     def test_HampelFilterCheckType(self):
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=pd.Series([1, 1, 1, 1, 1, 1]), window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=pd.Series([1]), window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=pd.Series([]), window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=pd.Series([1, "1", True, None]), window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=1, window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries="1", window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=True, window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=[1, "1", True], window=3), pd.Series), "Not Pandas Series type returned!"
-        assert isinstance(TradeRoutines.HampelFilter(pdSeries=None, window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter(pd.Series([1, 1, 1, 1, 1, 1]), window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter([1, 1, 1, 1, 1, 1], window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter(pd.Series([1]), window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter(pd.Series([]), window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter(pd.Series([1, "1", True, None]), window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter([1], window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter(["1"], window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter([True], window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter([1, "1", True], window=3), pd.Series), "Not Pandas Series type returned!"
+        assert isinstance(TradeRoutines.HampelFilter([None], window=3), pd.Series), "Not Pandas Series type returned!"
 
     def test_HampelFilterPositive(self):
         testData = [
             (
                 {
-                    "pdSeries": pd.Series([10, 10, 10, 10, 10]),
+                    "series": pd.Series([10, 10, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 10, 10, 10, 10]),
+                    "series": pd.Series([1, 10, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 5, 10, 10, 10]),
+                    "series": pd.Series([1, 5, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 5, 1, 1, 1]),
+                    "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 5, 1, 1, 1]),
+                    "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 5, 1, 1, 1]),
+                    "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 3, "sigma": 1, "scaleFactor": 1.4826,
                 },
                 [False, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 5, 1, 1, 1]),
+                    "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 5, "sigma": 3, "scaleFactor": 1,
                 },
                 [False, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 10, 10, 1, 10, 1]),
+                    "series": pd.Series([1, 10, 10, 1, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 10, 10, 10, 10, 1]),
+                    "series": pd.Series([1, 10, 10, 10, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, False, False, False, False, True],
             ),
             (
                 {
-                    "pdSeries": pd.Series([10, 1, 1, 1, 1, 10]),
+                    "series": pd.Series([10, 1, 1, 1, 1, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, False, False, False, False, True],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 1, 1, 10, 10, 10]),
+                    "series": pd.Series([1, 1, 1, 10, 10, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 1, 1, 1, 10, 10]),
+                    "series": pd.Series([1, 1, 1, 1, 10, 10]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, True, True],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 10, 1, 10, 1, 10]),
+                    "series": pd.Series([1, 10, 1, 10, 1, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, True, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([10, 1, 10, 1, 10, 1]),
+                    "series": pd.Series([10, 1, 10, 1, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, True, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 10, 1, 10, 1, 10]),
+                    "series": pd.Series([1, 10, 1, 10, 1, 10]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([10, 1, 10, 1, 10, 1]),
+                    "series": pd.Series([10, 1, 10, 1, 10, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([-1, 1, 1, 1, 0, 1]),
+                    "series": pd.Series([-1, 1, 1, 1, 0, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [True, False, False, False, True, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([-1, -1, -1, -1, 0, -1]),
+                    "series": pd.Series([-1, -1, -1, -1, 0, -1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, True, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1]),
+                    "series": pd.Series([1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 11, 1, 111, 1, 1]),
+                    "series": pd.Series([1, 11, 1, 111, 1, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, True, False, True, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 1, 1, 111, 99, 11]),
+                    "series": pd.Series([1, 1, 1, 111, 99, 11]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, True, True, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 1, 11, 111, 111, 1, 1, 11]),
+                    "series": pd.Series([1, 1, 11, 111, 111, 1, 1, 11]),
                     "window": 8, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, True, True, False, False, False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1, 1, 1, 111, 111, 1, 1, 11111, 1]),
+                    "series": pd.Series([1, 1, 1, 111, 111, 1, 1, 11111, 1]),
                     "window": 9, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, True, True, False, False, True, False],
@@ -468,49 +470,49 @@ class TestTradeRoutinesMethods:
         testData = [
             (
                 {
-                    "pdSeries": pd.Series([None, 10, 10, 10, 10]),
+                    "series": pd.Series([None, 10, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False, False, False, False, False],
             ),
             (
                 {
-                    "pdSeries": [None, 10, 10, 10, 10],
+                    "series": (None, 10, 10, 10, 10),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [],
             ),
             (
                 {
-                    "pdSeries": "10",
+                    "series": "10",
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1]),
+                    "series": pd.Series([1]),
                     "window": -1, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1]),
+                    "series": pd.Series([1]),
                     "window": 2, "sigma": 3, "scaleFactor": 1.4826,
                 },
                 [False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1]),
+                    "series": pd.Series([1]),
                     "window": 1, "sigma": -3, "scaleFactor": 1.4826,
                 },
                 [False],
             ),
             (
                 {
-                    "pdSeries": pd.Series([1]),
+                    "series": pd.Series([1]),
                     "window": 1, "sigma": 3, "scaleFactor": -1.4826,
                 },
                 [False],
@@ -521,7 +523,7 @@ class TestTradeRoutinesMethods:
             assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
 
     def test_HampelAnomalyDetectionCheckType(self):
-        assert isinstance(TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]), int), "Not int type returned!"
+        assert isinstance(TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]), np.int64), "Not int64 type returned!"
         assert TradeRoutines.HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) is None, "Not None returned!"
 
     def test_HampelAnomalyDetectionPositive(self):
@@ -544,7 +546,7 @@ class TestTradeRoutinesMethods:
         ]
 
         for test in testData:
-            assert TradeRoutines.HampelAnomalyDetection(test[0]) == test[1], "Incorrect output!"
+            assert TradeRoutines.HampelAnomalyDetection(test[0]) == test[1], "Incorrect output! {} {}".format(test[0], test[1])
 
     def test_HampelAnomalyDetectionNegative(self):
         testData = [
