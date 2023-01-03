@@ -266,44 +266,57 @@ def CalculateLotsForDeal(currentPrice: float, maxCost: float, volumeInLot: int =
     return lots
 
 
-def HampelFilter(pdSeries: pd.Series, window: int = 5, sigma: float = 3, scaleFactor: float = 1.4826) -> pd.Series:
+def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float = 3, scaleFactor: float = 1.4826) -> pd.Series:
     """
     Outlier Detection with Hampel Filter. It can detect outliers based on a sliding window and counting difference
     between median values and input values of series. The Hampel filter is often considered extremely effective in practice.
 
-    For each window we calculate the median and the standard deviation expressed as the median absolute deviation (MAD).
-    If the considered observation differs from the window median by more than x standard deviations, we treat it
-    as an outlier. Also used a constant scale factor which is dependent on the series distribution,
-    e.g. for Gaussian distribution it is approximately 1.4826.
+    For each window we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation
+    differs from the window median by more than sigma standard deviations multiple on scaleFactor, then we treat it
+    as an outlier.
+
+    Let Xi — elements of input series in i-th window,
+    s — sigma, the number of standard deviations,
+    k — scale factor, depends on distribution (≈1.4826 for normal).
+
+    How to calculate rolling MAD: `MAD(Xi) = Median(|x1 − Median (Xi)|, ..., |xn − Median(Xi)|)`
+
+    What is an anomaly: `A = {a | |a − Median (Xi)| > s ∙ k ∙ MAD(Xi)}`
 
     References:
 
-    1. Lewinson Eryk, "Outlier Detection with Hampel Filter", September 26, 2019.
+    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
+    2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
        Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
-    2. Liu, Hancong, Sirish Shah, and Wei Jiang, "On-line outlier detection and data cleaning". Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
+    3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
        Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
-    3. Hampel F. R., "The influence curve and its role in robust estimation". Journal of the American Statistical Association, 69, 382–393, 1974.
+    4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.
 
     Examples:
 
-    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 1, 1, 1]), window=3) -> pd.Series([False, False, False, False, False, False])`
-    - `HampelFilter(pdSeries=pd.Series([1, 1, 1, 2, 1, 1]), window=3) -> pd.Series([False, False, False, True, False, False])`
-    - `HampelFilter(pdSeries=pd.Series([0, 1, 1, 1, 1, 0]), window=3) -> pd.Series([True, False, False, False, False, True])`
-    - `HampelFilter(pdSeries=pd.Series([1])) -> pd.Series([False])`
+    - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -> pd.Series([False, False, False, False, False, False])`
+    - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -> pd.Series([False, False, False, True, False, False])`
+    - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -> pd.Series([True, False, False, False, False, True])`
+    - `HampelFilter([1]) -> pd.Series([False])`
 
-    :param pdSeries: Pandas Series object with numbers in which we identify outliers.
-    :param window: length of the sliding window (5 points by default), 1 <= window <= len(pdSeries).
+    :param series: Pandas Series object with numbers in which we identify outliers.
+    :param window: length of the sliding window (5 points by default), 1 <= window <= len(series).
     :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
-    :param scaleFactor: constant scale factor (1.4826 by default), > 0.
-    :return: Pandas Series object with True/False values. `True` mean that an outlier detected in that position of input series.
+    :param scaleFactor: constant scale factor (1.4826 by default for Gaussian distribution), > 0.
+    :return: Pandas Series object with True/False values.
+             `True` mean that an outlier detected in that position of input series.
              If an error occurred then empty series returned.
     """
     try:
+        if isinstance(series, list):
+            series = pd.Series(series)
+
         if window < 1:
             window = 1
 
-        if window > len(pdSeries):
-            window = len(pdSeries)
+        if window > len(series):
+            window = len(series)
 
         if sigma <= 0:
             sigma = 3
@@ -311,23 +324,22 @@ def HampelFilter(pdSeries: pd.Series, window: int = 5, sigma: float = 3, scaleFa
         if scaleFactor <= 0:
             scaleFactor = 1.4826
 
-        # Extend data to avoid undetected anomaly in first and last elements by original algorithm:
-        pdSeries = pd.concat([pdSeries[: window], pdSeries, pdSeries[-window:]])
+        # Extending data to avoid undetected anomaly in first and last elements by original algorithm:
+        series = pd.concat([series.iloc[: window], series, series.iloc[-window:]])
 
-        rollingMedian = pdSeries.rolling(
-            window=2 * window,
-            center=True,
-        ).median()
+        # Calculating rolling Median and difference between it and series elements in window:
+        rollingMedian = series.rolling(window=2 * window, center=True).median()
+        delta = pd.Series.abs(series - rollingMedian)
 
-        rollingMAD = scaleFactor * pdSeries.rolling(
-            window=2 * window,
-            center=True,
-        ).apply(lambda x: pd.Series.median(pd.Series.abs(x - pd.Series.median(x))))
+        # Calculating rolling MAD: MAD(Xi) = Median(|x1 − Median(Xi)|, ..., |xn − Median(Xi)|)
+        # where Xi — elements of input series in i-th window
+        rollingMAD = series.rolling(window=2 * window, center=True).apply(
+            lambda x: pd.Series.median(pd.Series.abs(x - pd.Series.median(x)))
+        )
 
-        delta = pd.Series.abs(pdSeries - rollingMedian)
-
-        new = delta > sigma * rollingMAD
-        new = new[window: -window]
+        # Checking for anomaly: A = {a | |a − Median(Xi)| > s ∙ k ∙ MAD(Xi)}
+        new = delta > sigma * scaleFactor * rollingMAD
+        new = new.iloc[window: -window]
 
     except Exception:
         new = pd.Series()
@@ -339,7 +351,15 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     """
     Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list
     or index of the first maximum element in input series if this index less than anomaly element index. If series has
-    no anomalies then None will be return.
+    no anomalies then `None` will be return.
+
+    Anomaly filter is a function:
+    F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.
+
+    References:
+
+    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
 
     Examples:
 
@@ -358,7 +378,7 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
 
     Some **kwargs parameters you can pass to `HampelFilter()`:
 
-    - `window` is the length of the sliding window (5 points by default), 1 <= window <= len(pdSeries).
+    - `window` is the length of the sliding window (5 points by default), 1 <= window <= len(series).
     - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
     - `scaleFactor` is the constant scale factor (1.4826 by default), > 0.
 
@@ -372,13 +392,13 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
 
         indexFirstMax = series.idxmax()  # Index of the first maximum in series
 
-        filtered = HampelFilter(pdSeries=series, **kwargs)  # The bool series with filtered data (if True then anomaly present in that place of input series)
-        anomalyIndexes = filtered[filtered == True].index  # Indexes list of all found anomalies (if True)
+        filtered = HampelFilter(series=series, **kwargs)  # The bool series with filtered data (if True then anomaly present in that place of input series)
+        anomalyIndexes = filtered[filtered].index  # Indexes list of all found anomalies (if True)
 
         indexAnomalyMin = min(anomalyIndexes) if len(anomalyIndexes) > 0 else None  # Index of the first True in filtered series or None
 
-        # You need to take the element whose index is less (see examples in docstring):
-        result = min(indexAnomalyMin, indexFirstMax) if indexAnomalyMin is not None else None
+        # We need to take the element whose index is less (see examples in docstring):
+        result = pd.Series([indexAnomalyMin, indexFirstMax]).min() if indexAnomalyMin is not None else None
 
     except Exception:
         result = None
