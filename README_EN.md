@@ -3435,6 +3435,7 @@ How to use them in Jupyter Notebook, on the example of the problem of filtering 
 See also:
 - (RU) [How to quickly find anomalies in number series using the Hampel method](https://forworktests.blogspot.com/2022/12/blog-post.html).
 - (RU) [How to receive and expand stock data using TKSBrokerAPI — the platform for automation of trading scenarios](https://forworktests.blogspot.com/2022/11/tksbrokerapi.html)
+- (EN) [Python script example: how to use Hampel Filter to determine anomalies in time series](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/TestAnomalyFilter.py)
 
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
