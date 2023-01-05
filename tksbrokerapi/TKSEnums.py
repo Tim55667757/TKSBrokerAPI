@@ -2,7 +2,9 @@
 # Author: Timur Gilmullin
 
 """
-Module contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
+
+Module **TKSEnums** contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
