@@ -522,7 +522,7 @@ class TestTradeRoutinesMethods:
             assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
 
     def test_HampelAnomalyDetectionCheckType(self):
-        assert isinstance(TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]), int), "Not integer type returned!"
+        assert TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]) == 1, "Not integer type returned!"
         assert TradeRoutines.HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) is None, "Not None returned!"
 
     def test_HampelAnomalyDetectionPositive(self):
