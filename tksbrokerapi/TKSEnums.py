@@ -10,7 +10,7 @@ Module **TKSEnums** contains a lot of constants from enums sections of Tinkoff O
 - **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
-- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
+- **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
