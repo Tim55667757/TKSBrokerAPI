@@ -2,7 +2,9 @@
 # Author: Timur Gilmullin
 
 """
-This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module.
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
+
+The **TradeRoutines** library contains some methods used by trade scenarios implemented with TKSBrokerAPI module.
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
@@ -29,6 +31,7 @@ This library contains some methods used by trade scenarios implemented with TKSB
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import pandas as pd
+import numpy as np
 from typing import Union, Optional
 
 
