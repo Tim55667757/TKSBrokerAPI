@@ -31,7 +31,6 @@ The **TradeRoutines** library contains some methods used by trade scenarios impl
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import pandas as pd
-import numpy as np
 from typing import Union, Optional
 
 
