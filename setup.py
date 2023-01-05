@@ -90,7 +90,7 @@ setup(
         "pandas >= 1.5.2",  # MIT License
         "openpyxl >= 3.0.10",  # MIT License
         "python-dateutil >= 2.8.1",  # Apache-2.0 license
-        "PriceGenerator >= 1.2.74",  # Apache-2.0 license
+        "PriceGenerator >= 1.3.81",  # Apache-2.0 license
     ],
 
     install_requires=[
@@ -100,7 +100,7 @@ setup(
         "openpyxl >= 3.0.10",  # MIT License
         "Mako >= 1.2.4",  # MIT License
         "python-dateutil >= 2.8.1",  # Apache-2.0 license
-        "PriceGenerator >= 1.2.74",  # Apache-2.0 license
+        "PriceGenerator >= 1.3.81",  # Apache-2.0 license
     ],
 
     packages=[
