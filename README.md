@@ -3450,9 +3450,9 @@ if __name__ == "__main__":
 
 #### Использование в Jupyter Notebook
 
-Все методы [TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/tksbrokerapi/TKSBrokerAPI.py) ([документация](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html) на основные функции, в том числе на загрузку данных) и [TradeRoutines](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/tksbrokerapi/TradeRoutines.py) ([документация](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TradeRoutines.html) на вспомогательные функции, в том числе на фильтрацию данных) — доступны для использования в Jupyter Notebook. Совместно с этими методами можно использовать методы из [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) — этот модуль умеет генерировать временные ряды с данными, похожими на случайные биржевые цены с аномалиями, а также строить графики цен.
+Все методы TKSBrokerAPI ([документация](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html) на основные функции, в том числе на загрузку данных) и TradeRoutines ([документация](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TradeRoutines.html) на вспомогательные функции, в том числе на фильтрацию данных) — доступны для использования в Jupyter Notebook. Совместно с этими методами можно использовать методы из [PriceGenerator](https://github.com/Tim55667757/PriceGenerator/blob/master/README_RU.md) — этот модуль умеет генерировать временные ряды с данными, похожими на случайные биржевые цены с аномалиями, а также строить графики цен.
 
-Как использовать их в ноутбуках, на примере задачи фильтрации аномальных выбросов цен, смотрите тут: [HampelFilteringExample.ipynb](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb). 
+Как использовать их в ноутбуках, на примере задачи фильтрации аномальных выбросов цен, смотрите тут: [HampelFilteringExample.ipynb](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb).
 
 Статьи по теме:
 - [Как быстро найти аномалии в числовых рядах с помощью метода Хампеля](https://forworktests.blogspot.com/2022/12/blog-post.html).
