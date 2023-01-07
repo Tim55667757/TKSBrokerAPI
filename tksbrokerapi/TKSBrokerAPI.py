@@ -426,18 +426,6 @@ class TinkoffBrokerServer:
         """
         self._figi = str(value).upper()  # FIGI may be upper case only
 
-    @property
-    def precision(self) -> int:
-        return self._precision
-
-    @precision.setter
-    def precision(self, value):
-        if value >= 0:
-            self._precision = value
-
-        else:
-            self._precision = -1  # auto-detect precision next when data-file load
-
     def _ParseJSON(self, rawData="{}") -> dict:
         """
         Parse JSON from response string.
