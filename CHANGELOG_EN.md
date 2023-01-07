@@ -9,7 +9,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
 
 
-### [1.6.* (2022-12-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
+### [1.6.* (2023-01-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
 
 ##### Digest
 
@@ -20,6 +20,7 @@ Release development in progress...
 * [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) TradeRoutines: `CalculateLotsForDeal()` method was implemented. This method can be used when you need to calculate lots to open position.
 * [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) TradeRoutines: `HampelFilter()` method was implemented. It allows you to detect anomaly (outlier, non-standard value, norm deviation) among the values of any number series using the Hampel filtering function. Hampel Filter detect outliers based on a sliding window and counting difference between median values and input values of series.
 * [#113](https://github.com/Tim55667757/TKSBrokerAPI/issues/113) TradeRoutines: `HampelAnomalyDetection()` method using Hampel Filter was implemented. This function returns the minimum index of elements in anomaly list or index of the first maximum element in input series if this index less than anomaly element index.
+* [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Examples of using Hampel Filtering were implemented: 1) Jupyter Notebook with theory and practice ([english](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) and [russian](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) versions); 2) Python script [example](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py); 3) article: "How to quickly find anomalies in number series using the Hampel method" ([english](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) and [russian](https://forworktests.blogspot.com/2022/12/blog-post.html) versions).
 
 ##### Improvements
 
