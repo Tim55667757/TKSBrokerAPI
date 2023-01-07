@@ -2,6 +2,8 @@
 # Author: Timur Gilmullin
 
 """
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
+
 **TKSBrokerAPI** is the trading platform for automation and simplifying the implementation of trading scenarios,
 as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways:
 from the console, it has a rich keys and commands, or you can use it as Python module with `python import`.
@@ -9,7 +11,7 @@ from the console, it has a rich keys and commands, or you can use it as Python m
 TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive
 the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
-- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
+- **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **See CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 - **Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
@@ -129,6 +131,8 @@ class TinkoffBrokerServer:
         """Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
 
         self.__lock = Lock()  # initialize multiprocessing mutex lock
+
+        self._precision = 4  # precision, signs after comma, e.g. 2 for instruments like PLZL, 4 for instruments like USDRUB, if -1 then auto detect it when load data-file
 
         self.aliases = TKS_TICKER_ALIASES
         """Some aliases instead official tickers.
