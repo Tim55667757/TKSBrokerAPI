@@ -3430,12 +3430,12 @@ The output of the script to the console will be completely the same as in the fi
 
 All methods in TKSBrokerAPI ([api-doc](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html) on main functions, e.g., data loading) and in TradeRoutines ([api-doc](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TradeRoutines.html) on support functions, e.g., data filtering) — available for using in Jupyter Notebook. Together with these methods, you can use methods from [PriceGenerator](https://github.com/Tim55667757/PriceGenerator/blob/master/README.md) — this module can generate time series with data similar to random stock prices with anomalies, as well as build price charts.
 
-How to use them in Jupyter Notebook, on the example of the problem of filtering abnormal price outliers, see here: [HampelFilteringExample.ipynb](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb).
+How to use them in Jupyter Notebook, on the example of the problem of filtering abnormal price outliers, see here: [HampelFilteringExample_EN.ipynb](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb).
 
 See also:
-- (RU) [How to quickly find anomalies in number series using the Hampel method](https://forworktests.blogspot.com/2022/12/blog-post.html).
+- [How to quickly find anomalies in number series using the Hampel method](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html).
 - (RU) [How to receive and expand stock data using TKSBrokerAPI — the platform for automation of trading scenarios](https://forworktests.blogspot.com/2022/11/tksbrokerapi.html)
-- (EN) [Python script example: how to use Hampel Filter to determine anomalies in time series](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/TestAnomalyFilter.py)
+- [Python script example: how to use Hampel Filter to determine anomalies in time series](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/TestAnomalyFilter.py)
 
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
