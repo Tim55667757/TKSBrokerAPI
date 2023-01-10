@@ -46,11 +46,9 @@ import re
 import json
 import requests
 import traceback as tb
-from typing import Union
 
 from multiprocessing import cpu_count, Lock
 from multiprocessing.pool import ThreadPool
-import pandas as pd
 
 from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
 from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
@@ -2869,7 +2867,7 @@ class TinkoffBrokerServer:
                     if curTime == lastTime:
                         uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
                         index = i
-                        printCount = index + 1
+                        printCount = i + 1
                         break
 
                 history = pd.concat([tempOld, tempHistory[index:]], ignore_index=True)
