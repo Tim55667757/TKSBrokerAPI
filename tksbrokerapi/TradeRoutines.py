@@ -288,6 +288,7 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     References:
 
     1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+       Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
        Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
     2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
        Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
@@ -361,7 +362,15 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     References:
 
     1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+       Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
        Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
+
+    2. Jupyter Notebook with examples:
+       Link (EN): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb
+       Link (RU): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb
+
+    3. Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
+       Link: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py
 
     Examples:
 
