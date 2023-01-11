@@ -24,6 +24,14 @@ sys.path.extend([
     os.path.abspath(os.path.join(curdir, "tksbrokerapi")),
 ])
 
+pdoc.render.configure(
+    docformat="restructuredtext",
+    favicon="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/favicon-128x128.png?raw=true",
+    footer_text="⚙ Good luck for you in trade automation! And profit!",
+    logo="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo-text-only.png?raw=true",
+    show_source=False,
+    template_directory=Path("docs", "templates").resolve(),
+)
 pdoc.pdoc(
     Path("tksbrokerapi").resolve(),
     output_directory=Path("docs").resolve(),
