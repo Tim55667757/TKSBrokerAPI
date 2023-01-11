@@ -4,6 +4,8 @@
 """
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
 
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+
 **TKSBrokerAPI** is the trading platform for automation and simplifying the implementation of trading scenarios,
 as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways:
 from the console, it has a rich keys and commands, or you can use it as Python module with `python import`.
@@ -4877,6 +4879,8 @@ def Main(**kwargs):
     See examples:
     - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
     - in russian: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
+
+    [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
     """
     args = Args(**kwargs) if kwargs else ParseArgs()  # get and parse command-line parameters or use **kwarg parameters
 
