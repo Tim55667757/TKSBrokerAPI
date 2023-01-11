@@ -36,6 +36,12 @@
                     <a class="variable" href="#NANO">NANO</a>
             </li>
             <li>
+                    <a class="variable" href="#FUZZY_SCALE">FUZZY_SCALE</a>
+            </li>
+            <li>
+                    <a class="variable" href="#FUZZY_LEVELS">FUZZY_LEVELS</a>
+            </li>
+            <li>
                     <a class="variable" href="#OPENING_RULES">OPENING_RULES</a>
             </li>
             <li>
@@ -110,6 +116,32 @@
     <a class="headerlink" href="#NANO"></a>
     
             <div class="docstring"><p>SI-constant: <code>NANO = 10^-9</code></p>
+</div>
+
+
+                </section>
+                <section id="FUZZY_SCALE">
+                    <div class="attr variable">
+            <span class="name">FUZZY_SCALE</span><span class="default_value"> = &lt;fuzzyroutines.FuzzyRoutines.UniversalFuzzyScale object&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FUZZY_SCALE"></a>
+    
+            <div class="docstring"><p>Universal Fuzzy Scale is a set of fuzzy levels: <code>{Min, Low, Med, High, Max}</code>.</p>
+</div>
+
+
+                </section>
+                <section id="FUZZY_LEVELS">
+                    <div class="attr variable">
+            <span class="name">FUZZY_LEVELS</span><span class="default_value"> = [&#39;Min&#39;, &#39;Low&#39;, &#39;Med&#39;, &#39;High&#39;, &#39;Max&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#FUZZY_LEVELS"></a>
+    
+            <div class="docstring"><p>Level names on Universal Fuzzy Scale <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>. Default: <code>["Min", "Low", "Med", "High", "Max"]</code>.</p>
 </div>
 
 
@@ -206,17 +238,17 @@ These rules are defined as transposed matrix constants <code><a href="#OPENING_R
                 <section id="CLOSING_RULES">
                     <div class="attr variable">
             <span class="name">CLOSING_RULES</span><span class="default_value"> =         Min    Low    Med   High    Max
-Min   False  False   True   True   True
-Low   False  False   True   True   True
-Med   False  False  False   True   True
-High  False  False  False  False  False
-Max   False  False  False  False  False</span>
+Min   False  False  False  False  False
+Low   False  False  False  False  False
+Med    True   True  False  False  False
+High   True   True   True  False  False
+Max    True   True   True  False  False</span>
 
         
     </div>
     <a class="headerlink" href="#CLOSING_RULES"></a>
     
-            <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. See explain in docstring for <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant.</p>
+            <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for <code><a href="#OPENING_RULES">OPENING_RULES</a></code>.</p>
 
 <p>Default for closing positions:</p>
 
@@ -236,39 +268,39 @@ Max   False  False  False  False  False</span>
   <td>Min</td>
   <td>False</td>
   <td>False</td>
-  <td>True</td>
-  <td>True</td>
-  <td>True</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
 </tr>
 <tr>
   <td>Low</td>
   <td>False</td>
   <td>False</td>
-  <td>True</td>
-  <td>True</td>
-  <td>True</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
 </tr>
 <tr>
   <td>Med</td>
-  <td>False</td>
-  <td>False</td>
-  <td>False</td>
   <td>True</td>
   <td>True</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
 </tr>
 <tr>
   <td>High</td>
-  <td>False</td>
-  <td>False</td>
-  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
   <td>False</td>
   <td>False</td>
 </tr>
 <tr>
   <td>Max</td>
-  <td>False</td>
-  <td>False</td>
-  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
   <td>False</td>
   <td>False</td>
 </tr>
