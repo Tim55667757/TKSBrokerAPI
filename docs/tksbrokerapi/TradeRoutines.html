@@ -36,6 +36,12 @@
                     <a class="variable" href="#NANO">NANO</a>
             </li>
             <li>
+                    <a class="variable" href="#OPENING_RULES">OPENING_RULES</a>
+            </li>
+            <li>
+                    <a class="variable" href="#CLOSING_RULES">CLOSING_RULES</a>
+            </li>
+            <li>
                     <a class="function" href="#GetDatesAsString">GetDatesAsString</a>
             </li>
             <li>
@@ -76,7 +82,7 @@
                     <h1 class="modulename">
 <a href="./../tksbrokerapi.html">tksbrokerapi</a><wbr>.TradeRoutines    </h1>
 
-                        <div class="docstring"><p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a></p>
+                        <div class="docstring"><p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a></p>
 
 <p><a href="https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111"><img src="https://badgen.net/badge/gift/donate/green" alt="gift" /></a></p>
 
@@ -104,6 +110,170 @@
     <a class="headerlink" href="#NANO"></a>
     
             <div class="docstring"><p>SI-constant: <code>NANO = 10^-9</code></p>
+</div>
+
+
+                </section>
+                <section id="OPENING_RULES">
+                    <div class="attr variable">
+            <span class="name">OPENING_RULES</span><span class="default_value"> =         Min    Low    Med   High    Max
+Min   False  False   True   True   True
+Low   False  False   True   True   True
+Med   False  False   True   True   True
+High  False  False  False  False  False
+Max   False  False  False  False  False</span>
+
+        
+    </div>
+    <a class="headerlink" href="#OPENING_RULES"></a>
+    
+            <div class="docstring"><p>Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a>,
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following diagram explains it:</p>
+
+<p><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" /></p>
+
+<p>Here in table <code>T</code> mean <code>True</code>, <code>F</code> mean <code>False</code>. 1st position is for Opening rules, 2nd position is for Closing rules.
+These rules are defined as transposed matrix constants <code><a href="#OPENING_RULES">OPENING_RULES</a></code> and <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code>.</p>
+
+<p>See also:</p>
+
+<ul>
+<li><a href="https://github.com/devopshq/FuzzyRoutines">FuzzyRoutines</a> library.</li>
+<li>About Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
+<li><code><a href="#CLOSING_RULES">CLOSING_RULES</a></code>.</li>
+</ul>
+
+<p>Default for opening positions:</p>
+
+<table>
+<thead>
+<tr>
+  <th>Risk \ Reach</th>
+  <th>Min</th>
+  <th>Low</th>
+  <th>Med</th>
+  <th>High</th>
+  <th>Max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Min</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>Low</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>Med</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>High</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+</tr>
+<tr>
+  <td>Max</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+                </section>
+                <section id="CLOSING_RULES">
+                    <div class="attr variable">
+            <span class="name">CLOSING_RULES</span><span class="default_value"> =         Min    Low    Med   High    Max
+Min   False  False   True   True   True
+Low   False  False   True   True   True
+Med   False  False  False   True   True
+High  False  False  False  False  False
+Max   False  False  False  False  False</span>
+
+        
+    </div>
+    <a class="headerlink" href="#CLOSING_RULES"></a>
+    
+            <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. See explain in docstring for <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant.</p>
+
+<p>Default for closing positions:</p>
+
+<table>
+<thead>
+<tr>
+  <th>Risk \ Reach</th>
+  <th>Min</th>
+  <th>Low</th>
+  <th>Med</th>
+  <th>High</th>
+  <th>Max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Min</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>Low</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>Med</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>True</td>
+  <td>True</td>
+</tr>
+<tr>
+  <td>High</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+</tr>
+<tr>
+  <td>Max</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+  <td>False</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
