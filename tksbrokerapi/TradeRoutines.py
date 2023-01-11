@@ -35,26 +35,22 @@ from dateutil.tz import tzutc
 import pandas as pd
 from typing import Union, Optional
 
+from fuzzyroutines import FuzzyRoutines as fR  # Some routines to simplify working with fuzzy logic operators, fuzzy datasets and fuzzy scales.
+
 
 # --- Main constants:
 
 NANO = 0.000000001
 """SI-constant: `NANO = 10^-9`"""
 
-# :
-# R i s k
-# e        Min  Low  Med  High Max
-# a
-# c   Min  F/F  F/F  F/T  F/T  F/T
-# h
-# a   Low  F/F  F/F  F/T  F/T  F/T
-# b
-# i   Med  T/F  T/F  T/F  F/T  F/T
-# l
-# i   High T/F  T/F  T/F  F/F  F/F
-# t
-# y   Max  T/F  T/F  T/F  F/F  F/F
-# Opening and Closing rules are defined below as transposed matrix constants `OPENING_RULES` and `CLOSING_RULES`.
+FUZZY_SCALE = fR.UniversalFuzzyScale()
+"""Universal Fuzzy Scale is a set of fuzzy levels: `{Min, Low, Med, High, Max}`."""
+
+FUZZY_LEVELS = list(FUZZY_SCALE.levelsNames.keys())
+"""Level names on Universal Fuzzy Scale `FUZZY_SCALE`. Default: `["Min", "Low", "Med", "High", "Max"]`."""
+
+for level in FUZZY_SCALE.levels:
+    level["fSet"].mFunction.accuracy = 100  # Fast hack to increase speed of calculation with reduce accuracy.
 
 OPENING_RULES = pd.DataFrame([
     # Min    Low    Med   High  Max            (Reach →)
@@ -64,8 +60,8 @@ OPENING_RULES = pd.DataFrame([
     [False, False, False, False, False],  # High
     [False, False, False, False, False],  # Max
 ],
-    index=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Risk Levels (table's row index)
-    columns=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Reach Levels (table's column index)
+    index=FUZZY_LEVELS,  # Fuzzy Risk Levels (table's row index): ["Min", "Low", "Med", "High", "Max"]
+    columns=FUZZY_LEVELS,  # Fuzzy Reach Levels (table's column index): ["Min", "Low", "Med", "High", "Max"]
     dtype=bool,
 )
 """
@@ -95,28 +91,28 @@ Default for opening positions:
 
 CLOSING_RULES = pd.DataFrame([
     # Min    Low    Med   High  Max            (Reach →)
-    [False, False, True, True, True],     # Min (Risk ↓)
-    [False, False, True, True, True],     # Low
-    [False, False, False, True, True],    # Med
-    [False, False, False, False, False],  # High
-    [False, False, False, False, False],  # Max
+    [False, False, False, False, False],  # Min (Risk ↓)
+    [False, False, False, False, False],  # Low
+    [True, True, False, False, False],    # Med
+    [True, True, True, False, False],     # High
+    [True, True, True, False, False],     # Max
 ],
-    index=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Risk Levels (table's row index)
-    columns=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Reach Levels (table's column index)
+    index=FUZZY_LEVELS,  # Fuzzy Risk Levels (table's row index): ["Min", "Low", "Med", "High", "Max"]
+    columns=FUZZY_LEVELS,  # Fuzzy Reach Levels (table's column index): ["Min", "Low", "Med", "High", "Max"]
     dtype=bool,
 )
 """
-Closing positions rules depend of fuzzy Risk/Reach levels. See explain in docstring for `OPENING_RULES` constant.
+Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for `OPENING_RULES`.
 
 Default for closing positions:
 
 | Risk \ Reach | Min   | Low   | Med   | High  | Max   |
 |--------------|-------|-------|-------|-------|-------|
-| Min          | False | False | True  | True  | True  |
-| Low          | False | False | True  | True  | True  |
-| Med          | False | False | False | True  | True  |
-| High         | False | False | False | False | False |
-| Max          | False | False | False | False | False |
+| Min          | False | False | False | False | False |
+| Low          | False | False | False | False | False |
+| Med          | True  | True  | False | False | False |
+| High         | True  | True  | True  | False | False |
+| Max          | True  | True  | True  | False | False |
 """
 
 
