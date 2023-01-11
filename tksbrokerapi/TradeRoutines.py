@@ -4,6 +4,8 @@
 """
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
 
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+
 The **TradeRoutines** library contains some methods used by trade scenarios implemented with TKSBrokerAPI module.
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
@@ -36,7 +38,8 @@ from typing import Union, Optional
 
 # --- Main constants:
 
-NANO = 0.000000001  # SI-constant nano = 10^-9
+NANO = 0.000000001
+"""SI-constant: `NANO = 10^-9`"""
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
@@ -65,7 +68,7 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
     - `yesterday` (-1 day from 00:00:00 to 23:59:59),
     - `week` (-7 day from 00:00:00 to the end of current day),
     - `month` (-30 day from 00:00:00 to the end of current day),
-    - `year` (-365 day from 00:00:00 to the end of current day),
+    - `year` (-365 day from 00:00:00 to the end of current day).
 
     :param start: start day in format defined by `userFormat` or keyword.
     :param end: end day in format defined by `userFormat`.
@@ -121,11 +124,11 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
 
 def NanoToFloat(units: str, nano: int) -> float:
     """
-    Convert number in nano-view mode with string parameter `units` and integer parameter `nano` to float view. Examples:
+    Convert number in nano-view mode with string parameter `units` and integer parameter `nano` to float view.
 
-    `NanoToFloat(units="2", nano=500000000) -> 2.5`
-
-    `NanoToFloat(units="0", nano=50000000) -> 0.05`
+    Examples:
+    - `NanoToFloat(units="2", nano=500000000) -> 2.5`
+    - `NanoToFloat(units="0", nano=50000000) -> 0.05`
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
@@ -140,13 +143,13 @@ def NanoToFloat(units: str, nano: int) -> float:
 
 def FloatToNano(number: float) -> dict:
     """
-    Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`. Examples:
+    Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`.
 
-    `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
+    Examples:
+    - `FloatToNano(number=2.5) -> {"units": "2", "nano": 500000000}`
+    - `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
-    `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
-
-    :param number: float number
+    :param number: float number.
     :return: nano-type view of number: `{"units": "string", "nano": integer}`.
              If an error occurred, then returns `{"units": "0", "nano": 0}`.
     """
@@ -192,17 +195,17 @@ def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> 
     Gets input list and try to separate it by equal parts of elements.
 
     Examples:
-    SeparateByEqualParts(elements=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2) -> [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
-    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=True) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]
-    SeparateByEqualParts(elements=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=False) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]]
-    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=True) -> [[1], [2, 3]]
-    SeparateByEqualParts(elements=[1, 2, 3], parts=2, union=False) -> [[1], [2], [3]]
+    - `SeparateByEqualParts([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2) -> [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]`
+    - `SeparateByEqualParts([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=True) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 10]]`
+    - `SeparateByEqualParts([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], parts=2, union=False) -> [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10]]]`
+    - `SeparateByEqualParts([1, 2, 3], parts=2, union=True) -> [[1], [2, 3]]`
+    - `SeparateByEqualParts([1, 2, 3], parts=2, union=False) -> [[1], [2], [3]]`
 
     If parts > length of elements:
-    SeparateByEqualParts(elements=[1], parts=2, union=True) -> [[1]]
-    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=True) -> [[1], [2], [3]]
-    SeparateByEqualParts(elements=[1], parts=2, union=False) -> [[1], []]
-    SeparateByEqualParts(elements=[1, 2, 3], parts=4, union=False) -> [[1], [2], [3], []]
+    - `SeparateByEqualParts([1], parts=2, union=True) -> [[1]]`
+    - `SeparateByEqualParts([1, 2, 3], parts=4, union=True) -> [[1], [2], [3]]`
+    - `SeparateByEqualParts([1], parts=2, union=False) -> [[1], []]`
+    - `SeparateByEqualParts([1, 2, 3], parts=4, union=False) -> [[1], [2], [3], []]`
 
     :param elements: list of objects.
     :param parts: int, numbers of equal parts of objects.
