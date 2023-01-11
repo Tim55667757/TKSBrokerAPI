@@ -2,7 +2,7 @@
 # Author: Timur Gilmullin
 
 """
-<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" target="_blank" /></a>
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
@@ -40,6 +40,84 @@ from typing import Union, Optional
 
 NANO = 0.000000001
 """SI-constant: `NANO = 10^-9`"""
+
+# :
+# R i s k
+# e        Min  Low  Med  High Max
+# a
+# c   Min  F/F  F/F  F/T  F/T  F/T
+# h
+# a   Low  F/F  F/F  F/T  F/T  F/T
+# b
+# i   Med  T/F  T/F  T/F  F/T  F/T
+# l
+# i   High T/F  T/F  T/F  F/F  F/F
+# t
+# y   Max  T/F  T/F  T/F  F/F  F/F
+# Opening and Closing rules are defined below as transposed matrix constants `OPENING_RULES` and `CLOSING_RULES`.
+
+OPENING_RULES = pd.DataFrame([
+    # Min    Low    Med   High  Max            (Reach →)
+    [False, False, True, True, True],     # Min (Risk ↓)
+    [False, False, True, True, True],     # Low
+    [False, False, True, True, True],     # Med
+    [False, False, False, False, False],  # High
+    [False, False, False, False, False],  # Max
+],
+    index=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Risk Levels (table's row index)
+    columns=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Reach Levels (table's column index)
+    dtype=bool,
+)
+"""
+Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin),
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following diagram explains it:
+
+<img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
+
+Here in table `T` mean `True`, `F` mean `False`. 1st position is for Opening rules, 2nd position is for Closing rules.
+These rules are defined as transposed matrix constants `OPENING_RULES` and `CLOSING_RULES`.
+
+See also:
+  - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
+  - About Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
+  - `CLOSING_RULES`.
+
+Default for opening positions:
+
+| Risk \ Reach | Min   | Low   | Med   | High  | Max   |
+|--------------|-------|-------|-------|-------|-------|
+| Min          | False | False | True  | True  | True  |
+| Low          | False | False | True  | True  | True  |
+| Med          | False | False | True  | True  | True  |
+| High         | False | False | False | False | False |
+| Max          | False | False | False | False | False |
+"""
+
+CLOSING_RULES = pd.DataFrame([
+    # Min    Low    Med   High  Max            (Reach →)
+    [False, False, True, True, True],     # Min (Risk ↓)
+    [False, False, True, True, True],     # Low
+    [False, False, False, True, True],    # Med
+    [False, False, False, False, False],  # High
+    [False, False, False, False, False],  # Max
+],
+    index=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Risk Levels (table's row index)
+    columns=["Min", "Low", "Med", "High", "Max"],  # Fuzzy Reach Levels (table's column index)
+    dtype=bool,
+)
+"""
+Closing positions rules depend of fuzzy Risk/Reach levels. See explain in docstring for `OPENING_RULES` constant.
+
+Default for closing positions:
+
+| Risk \ Reach | Min   | Low   | Med   | High  | Max   |
+|--------------|-------|-------|-------|-------|-------|
+| Min          | False | False | True  | True  | True  |
+| Low          | False | False | True  | True  | True  |
+| Med          | False | False | False | True  | True  |
+| High         | False | False | False | False | False |
+| Max          | False | False | False | False | False |
+"""
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
