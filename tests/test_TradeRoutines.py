@@ -559,3 +559,53 @@ class TestTradeRoutinesMethods:
 
         for test in testData:
             assert TradeRoutines.HampelAnomalyDetection(test) is None, "Incorrect output!"
+
+    def test_CanOpenCheckType(self):
+        assert isinstance(TradeRoutines.CanOpen("Min", "Min"), bool), "Not bool type returned!"
+
+    def test_CanOpenPositive(self):
+        testData = [(TradeRoutines.FUZZY_LEVELS[i], TradeRoutines.FUZZY_LEVELS[j]) for i in range(len(TradeRoutines.FUZZY_LEVELS)) for j in range(len(TradeRoutines.FUZZY_LEVELS))]
+
+        for test in testData:
+            assert TradeRoutines.CanOpen(test[0], test[1]) == TradeRoutines.OPENING_RULES.loc[test[0], test[1]], "Incorrect output! {} {}".format(test[0], test[1])
+
+    def test_CanOpenNegative(self):
+        testData = [
+            ("min", "Min"), ("Max", "max"),
+            ("Med1", "Med2"), ("med", "med"),
+            ("low", "Low"), ("Low", "low"),
+            ("high", "Max"), ("Med", "high"),
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.CanOpen(test[0], test[1])
+
+            assert "Invalid fuzzy" in str(info.value)
+            assert "risk level name" in str(info.value) or "reach level name" in str(info.value)
+            assert "Correct levels on Universal Fuzzy Scale" in str(info.value)
+
+    def test_CanCloseCheckType(self):
+        assert isinstance(TradeRoutines.CanClose("Min", "Min"), bool), "Not bool type returned!"
+
+    def test_CanClosePositive(self):
+        testData = [(TradeRoutines.FUZZY_LEVELS[i], TradeRoutines.FUZZY_LEVELS[j]) for i in range(len(TradeRoutines.FUZZY_LEVELS)) for j in range(len(TradeRoutines.FUZZY_LEVELS))]
+
+        for test in testData:
+            assert TradeRoutines.CanClose(test[0], test[1]) == TradeRoutines.CLOSING_RULES.loc[test[0], test[1]], "Incorrect output! {} {}".format(test[0], test[1])
+
+    def test_CanCloseNegative(self):
+        testData = [
+            ("min", "Min"), ("Max", "max"),
+            ("Med1", "Med2"), ("med", "med"),
+            ("low", "Low"), ("Low", "low"),
+            ("high", "Max"), ("Med", "high"),
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.CanClose(test[0], test[1])
+
+            assert "Invalid fuzzy" in str(info.value)
+            assert "risk level name" in str(info.value) or "reach level name" in str(info.value)
+            assert "Correct levels on Universal Fuzzy Scale" in str(info.value)
