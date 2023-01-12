@@ -66,7 +66,7 @@ OPENING_RULES = pd.DataFrame([
 )
 """
 Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin),
-based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following diagram explains it:
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains it:
 
 <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
 
@@ -76,7 +76,7 @@ These rules are defined as transposed matrix constants `OPENING_RULES` and `CLOS
 See also:
   - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
   - About Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
-  - `CLOSING_RULES`.
+  - `CLOSING_RULES` constant, `CanOpen()` and `CanClose()` methods.
 
 Default for opening positions:
 
@@ -103,6 +103,8 @@ CLOSING_RULES = pd.DataFrame([
 )
 """
 Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for `OPENING_RULES`.
+
+See also: `CanClose()` method.
 
 Default for closing positions:
 
@@ -492,3 +494,41 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
         result = None
 
     return result
+
+
+def CanOpen(fuzzyRisk: str, fuzzyReach: str) -> bool:
+    """
+    Checks opening positions rules in `OPENING_RULES` depend on fuzzy Risk/Reach levels.
+
+    See also: `OPENING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+
+    :param fuzzyRisk: fuzzy risk level name.
+    :param fuzzyReach: fuzzy reach level name.
+    :return: bool. If `True`, then possible to open position.
+    """
+    if fuzzyRisk not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
+
+    if fuzzyReach not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
+
+    return bool(OPENING_RULES.loc[fuzzyRisk, fuzzyReach])
+
+
+def CanClose(fuzzyRisk: str, fuzzyReach: str) -> bool:
+    """
+    Checks closing positions rules in `CLOSING_RULES` depend on fuzzy Risk/Reach levels.
+
+    See also: `CLOSING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+
+    :param fuzzyRisk: fuzzy risk level name.
+    :param fuzzyReach: fuzzy reach level name.
+    :return: bool. If `True`, then possible to close position.
+    """
+    if fuzzyRisk not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
+
+    if fuzzyReach not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
+
+    return bool(CLOSING_RULES.loc[fuzzyRisk, fuzzyReach])
