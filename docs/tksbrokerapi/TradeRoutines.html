@@ -71,6 +71,12 @@
             <li>
                     <a class="function" href="#HampelAnomalyDetection">HampelAnomalyDetection</a>
             </li>
+            <li>
+                    <a class="function" href="#CanOpen">CanOpen</a>
+            </li>
+            <li>
+                    <a class="function" href="#CanClose">CanClose</a>
+            </li>
     </ul>
 
 
@@ -160,7 +166,7 @@ Max   False  False  False  False  False</span>
     <a class="headerlink" href="#OPENING_RULES"></a>
     
             <div class="docstring"><p>Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a>,
-based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following diagram explains it:</p>
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains it:</p>
 
 <p><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" /></p>
 
@@ -172,7 +178,7 @@ These rules are defined as transposed matrix constants <code><a href="#OPENING_R
 <ul>
 <li><a href="https://github.com/devopshq/FuzzyRoutines">FuzzyRoutines</a> library.</li>
 <li>About Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
-<li><code><a href="#CLOSING_RULES">CLOSING_RULES</a></code>.</li>
+<li><code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#CanOpen">CanOpen()</a></code> and <code><a href="#CanClose">CanClose()</a></code> methods.</li>
 </ul>
 
 <p>Default for opening positions:</p>
@@ -249,6 +255,8 @@ Max    True   True   True  False  False</span>
     <a class="headerlink" href="#CLOSING_RULES"></a>
     
             <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for <code><a href="#OPENING_RULES">OPENING_RULES</a></code>.</p>
+
+<p>See also: <code><a href="#CanClose">CanClose()</a></code> method.</p>
 
 <p>Default for closing positions:</p>
 
@@ -680,6 +688,66 @@ Link: <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/exa
 
 <blockquote>
   <p>index of the first element with anomaly in series will be return or <code>None</code> if no anomaly.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="CanOpen">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CanOpen</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#CanOpen"></a>
+    
+            <div class="docstring"><p>Checks opening positions rules in <code><a href="#OPENING_RULES">OPENING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
+
+<p>See also: <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
+<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>bool. If <code>True</code>, then possible to open position.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="CanClose">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CanClose</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#CanClose"></a>
+    
+            <div class="docstring"><p>Checks closing positions rules in <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
+
+<p>See also: <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
+<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>bool. If <code>True</code>, then possible to close position.</p>
 </blockquote>
 </div>
 
