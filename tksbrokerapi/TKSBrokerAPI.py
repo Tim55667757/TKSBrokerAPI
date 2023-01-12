@@ -29,7 +29,7 @@ to perform trading operations: place orders, open and close transactions. The `T
 intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker,
 as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
 
-<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-flow.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-flow.png?raw=true" alt="TKSBrokerAPI-flow" width="780" /></a>
 
 The scheme of trade scenario automation with TKSBrokerAPI is very simple:
 1. You come up with a brilliant trading algorithm.
@@ -51,7 +51,7 @@ or you can generate analytics about the status of the user's portfolio and the [
 by types, companies, industries, currencies, and countries. In addition, you can download [historical data](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Download-historical-data-in-OHLCV-candles-format)
 on the prices of any instrument as OHLCV-candlesticks.
 
-<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-extend-data-flow.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-extend-data-flow.png?raw=true" alt="TKSBrokerAPI-extend-data-flow" width="780" /></a>
 
 How data is extended and used in TKSBrokerAPI:
 1. You request the data you need from the Tinkoff Investments broker server using the TKSBrokerAPI module:
