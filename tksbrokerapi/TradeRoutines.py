@@ -33,7 +33,7 @@ The **TradeRoutines** library contains some methods used by trade scenarios impl
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import pandas as pd
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 from fuzzyroutines import FuzzyRoutines as fR  # Some routines to simplify working with fuzzy logic operators, fuzzy datasets and fuzzy scales.
 
@@ -44,7 +44,7 @@ NANO = 0.000000001
 """SI-constant: `NANO = 10^-9`"""
 
 FUZZY_SCALE = fR.UniversalFuzzyScale()
-"""Universal Fuzzy Scale is a set of fuzzy levels: `{Min, Low, Med, High, Max}`."""
+"""Universal Fuzzy Scale is a special set of fuzzy levels: `{Min, Low, Med, High, Max}`."""
 
 FUZZY_LEVELS = list(FUZZY_SCALE.levelsNames.keys())
 """Level names on Universal Fuzzy Scale `FUZZY_SCALE`. Default: `["Min", "Low", "Med", "High", "Max"]`."""
@@ -217,7 +217,7 @@ def NanoToFloat(units: str, nano: int) -> float:
         return 0.
 
 
-def FloatToNano(number: float) -> dict:
+def FloatToNano(number: float) -> dict[str, int]:
     """
     Convert float number to nano-type view: dictionary with string `units` and integer `nano` parameters `{"units": "string", "nano": integer}`.
 
@@ -266,7 +266,7 @@ def UpdateClassFields(instance: object, params: dict) -> None:
         pass
 
 
-def SeparateByEqualParts(elements: list, parts: int = 2, union: bool = True) -> list:
+def SeparateByEqualParts(elements: list[Any], parts: int = 2, union: bool = True) -> list[list[Any]]:
     """
     Gets input list and try to separate it by equal parts of elements.
 
