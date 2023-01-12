@@ -13,12 +13,59 @@ from the console, it has a rich keys and commands, or you can use it as Python m
 TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive
 the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
+See also:
 - **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-- **See CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
+- **CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 - **Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
+- **How to implement trading scenario in Python:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import
+
+[Using the TKSBrokerAPI module](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import),
+you can implement any trading scenario in Python. Many system used for making trading decisions about buying or selling
+(technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need
+to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an
+intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker,
+as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
+
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-flow.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
+The scheme of trade scenario automation with TKSBrokerAPI is very simple:
+1. You come up with a brilliant trading algorithm.
+2. Write it down step by step in the form of some kind of plan or trading scenario.
+3. Automate scenario as a Python script using TKSBrokerAPI.
+4. TKSBrokerAPI takes care of all the work with the Tinkoff Investments broker infrastructure.
+5. Profit!
+
+But where to get this "brilliant trading algorithm"? The TKSBrokerAPI platform will also help you solve the problem
+of obtaining primary, "raw" data on trading instruments (shares, bonds, funds, futures and currencies) from the broker
+server, for their future analysis in any analytical tool convenient for you. To do this, the methods of the TKSBrokerAPI
+module provide the ability to extend and save data in classic formats: XLSX and CSV (for analysis in spreadsheet editors),
+Markdown (for readability), and Pandas DataFrame (for data scientists and stock analysts).
+
+The "raw" data can be anything that [can be obtained](https://tinkoff.github.io/investAPI/swagger-ui/) from the broker's
+server. After extends, this data can be used to build, for example, a [consolidated payment calendar](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Build-a-bond-payment-calendar)
+for bonds and calculate their [coupon and current yields](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Get-extended-bonds-data),
+or you can generate analytics about the status of the user's portfolio and the [distribution of assets](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Get-the-current-portfolio-and-asset-allocation-statistics)
+by types, companies, industries, currencies, and countries. In addition, you can download [historical data](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Download-historical-data-in-OHLCV-candles-format)
+on the prices of any instrument as OHLCV-candlesticks.
+
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-extend-data-flow.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
+How data is extended and used in TKSBrokerAPI:
+1. You request the data you need from the Tinkoff Investments broker server using the TKSBrokerAPI module:
+   - in this module, almost all methods return "raw" data from the server in the form of a Python dictionary.
+2. Then they are processed and extended:
+   - with various statistics, parameters and some analytical reports.
+3. After that, the data is stored in a form suitable for further analysis:
+   - most of the methods return extended data in the form of a Python dictionary or Pandas DataFrame;
+   - if you launched the TKSBrokerAPI platform in the console, then the data will be saved in XLSX, CSV or Markdown formats.
+4. Next, you can load the data into analytical system and use various data analysis methods to find and highlight
+   dependencies, correlations, make predictions and suggest hypothesis.
+5. Further, based on data analysis, you come up with the same "brilliant trading algorithm".
+6. Automate the trading scenario (according to the previous scheme).
+7. Profit!
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich
