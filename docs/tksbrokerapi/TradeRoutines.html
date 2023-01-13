@@ -48,6 +48,18 @@
                     <a class="variable" href="#CLOSING_RULES">CLOSING_RULES</a>
             </li>
             <li>
+                    <a class="function" href="#CanOpen">CanOpen</a>
+            </li>
+            <li>
+                    <a class="function" href="#CanClose">CanClose</a>
+            </li>
+            <li>
+                    <a class="function" href="#RiskLong">RiskLong</a>
+            </li>
+            <li>
+                    <a class="function" href="#RiskShort">RiskShort</a>
+            </li>
+            <li>
                     <a class="function" href="#GetDatesAsString">GetDatesAsString</a>
             </li>
             <li>
@@ -70,12 +82,6 @@
             </li>
             <li>
                     <a class="function" href="#HampelAnomalyDetection">HampelAnomalyDetection</a>
-            </li>
-            <li>
-                    <a class="function" href="#CanOpen">CanOpen</a>
-            </li>
-            <li>
-                    <a class="function" href="#CanClose">CanClose</a>
             </li>
     </ul>
 
@@ -165,8 +171,10 @@ Max   False  False  False  False  False</span>
     </div>
     <a class="headerlink" href="#OPENING_RULES"></a>
     
-            <div class="docstring"><p>Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a>,
-based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains it:</p>
+            <div class="docstring"><p>Opening positions rules depend of fuzzy Risk/Reach levels.</p>
+
+<p>This is the author's technique, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a> and <a href="https://www.linkedin.com/in/mgilmullin">Mansur Gilmullin</a>,
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains what do we mean as Open/Close Fuzzy Rules:</p>
 
 <p><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" /></p>
 
@@ -177,11 +185,11 @@ These rules are defined as transposed matrix constants <code><a href="#OPENING_R
 
 <ul>
 <li><a href="https://github.com/devopshq/FuzzyRoutines">FuzzyRoutines</a> library.</li>
-<li>About Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
+<li>How to work with Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
 <li><code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#CanOpen">CanOpen()</a></code> and <code><a href="#CanClose">CanClose()</a></code> methods.</li>
 </ul>
 
-<p>Default for opening positions:</p>
+<p>Default rules for opening positions:</p>
 
 <table>
 <thead>
@@ -254,11 +262,12 @@ Max    True   True   True  False  False</span>
     </div>
     <a class="headerlink" href="#CLOSING_RULES"></a>
     
-            <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for <code><a href="#OPENING_RULES">OPENING_RULES</a></code>.</p>
+            <div class="docstring"><p>Closing positions rules depend of fuzzy Risk/Reach levels. These rules are opposite for <code><a href="#OPENING_RULES">OPENING_RULES</a></code>
+(see explanation there what do we mean as Open/Close Fuzzy Rules).</p>
 
 <p>See also: <code><a href="#CanClose">CanClose()</a></code> method.</p>
 
-<p>Default for closing positions:</p>
+<p>Default rules for closing positions:</p>
 
 <table>
 <thead>
@@ -314,6 +323,155 @@ Max    True   True   True  False  False</span>
 </tr>
 </tbody>
 </table>
+</div>
+
+
+                </section>
+                <section id="CanOpen">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CanOpen</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#CanOpen"></a>
+    
+            <div class="docstring"><p>Checks opening positions rules in <code><a href="#OPENING_RULES">OPENING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
+
+<p>See also: <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
+<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>bool. If <code>True</code>, then possible to open position.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="CanClose">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CanClose</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#CanClose"></a>
+    
+            <div class="docstring"><p>Checks closing positions rules in <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
+
+<p>See also: <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
+<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>bool. If <code>True</code>, then possible to close position.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="RiskLong">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">RiskLong</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">curPrice</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">pHighest</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">pLowest</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RiskLong"></a>
+    
+            <div class="docstring"><p>Function returns Risk as fuzzy level and percents of Risk in the range [0, 100], if you want buy from current price.</p>
+
+<p>This is the author's method, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a> and <a href="https://www.linkedin.com/in/mgilmullin">Mansur Gilmullin</a>,
+based on fuzzy scales for measuring the levels of Fuzzy Risk. The following simple diagram explains what do we mean as Fuzzy Risk level:</p>
+
+<p><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/003-Risk.png?raw=true" alt="Fuzzy-Risk" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" /></p>
+
+<ul>
+<li>If open long (buy) position from current price: <code>RiskLong = Fuzzy(|P - L| / (H - L))</code>. Here:
+<ul>
+<li><code>P</code> is the current price,</li>
+<li><code>L (H)</code> is the lowest (highest) price in forecasted movements of candles chain or prognoses diapason border of price movement,</li>
+<li><code>Fuzzy()</code> is the fuzzyfication function that convert real values to its fuzzy representation.</li>
+</ul></li>
+</ul>
+
+<p>See also:</p>
+
+<ul>
+<li><a href="https://github.com/devopshq/FuzzyRoutines">FuzzyRoutines</a> library.</li>
+<li>How to work with Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
+</ul>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>curPrice</strong>:  Current actual price.</li>
+<li><strong>pHighest</strong>:  The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.</li>
+<li><strong>pLowest</strong>:  The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Dictionary with Fuzzy Risk level and Risk percents, e.g. <code>{"riskFuzzy": "High", "riskPercent": 66.67}</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="RiskShort">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">RiskShort</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">curPrice</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">pHighest</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">pLowest</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RiskShort"></a>
+    
+            <div class="docstring"><p>Function returns Risk as fuzzy level and percents of Risk in the range [0, 100], if you want sell from current price.
+This method is opposite for <code><a href="#RiskLong">RiskLong()</a></code> (see explanation there what do we mean as Fuzzy Risk).</p>
+
+<ul>
+<li>If open short (sell) position from current price: <code>RiskShort = Fuzzy(|P - H| / (H - L))</code>. Here:
+<ul>
+<li><code>P</code> is the current price,</li>
+<li><code>L (H)</code> is the lowest (highest) price in forecasted movements of candles chain or prognoses diapason border of price movement,</li>
+<li><code>Fuzzy()</code> is the fuzzyfication function that convert real values to its fuzzy representation.</li>
+</ul></li>
+</ul>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>curPrice</strong>:  Current actual price.</li>
+<li><strong>pHighest</strong>:  The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.</li>
+<li><strong>pLowest</strong>:  The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Dictionary with Fuzzy Risk level and Risk percents, e.g. <code>{"riskFuzzy": "Low", "riskPercent": 20.12}</code>.</p>
+</blockquote>
 </div>
 
 
@@ -416,7 +574,7 @@ An error exception will occur if input date has incorrect format.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">FloatToNano</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">number</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+        <span class="name">FloatToNano</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">number</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>:</span></span>
 
         
     </div>
@@ -475,7 +633,7 @@ values of class fields. Example for class <code>TradeScenario</code>:
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">SeparateByEqualParts</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">elements</span><span class="p">:</span> <span class="nb">list</span>, </span><span class="param"><span class="n">parts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>, </span><span class="param"><span class="n">union</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">list</span>:</span></span>
+        <span class="name">SeparateByEqualParts</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">elements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>,</span><span class="param">	<span class="n">parts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>,</span><span class="param">	<span class="n">union</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]</span>:</span></span>
 
         
     </div>
@@ -584,12 +742,18 @@ k — scale factor, depends on distribution (≈1.4826 for normal).</p>
 
 <ol>
 <li>Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
-Link (EN): <a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html">https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html</a>
-Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></li>
+<ul>
+<li>Link (EN): <a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html"><a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html">https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html</a></a></li>
+<li>Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html"><a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></a></li>
+</ul></li>
 <li>Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
-Link: <a href="https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d">https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</a></li>
+<ul>
+<li>Link: <a href="https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d"><a href="https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d">https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d</a></a></li>
+</ul></li>
 <li>Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
-Link: <a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf">https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</a></li>
+<ul>
+<li>Link: <a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf"><a href="https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf">https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf</a></a></li>
+</ul></li>
 <li>Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.</li>
 </ol>
 
@@ -642,14 +806,20 @@ F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X �
 <p>References:</p>
 
 <ol>
-<li><p>Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
-Link (EN): <a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html">https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html</a>
-Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></p></li>
-<li><p>Jupyter Notebook with examples:
-Link (EN): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb</a>
-Link (RU): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb</a></p></li>
-<li><p>Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
-Link: <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py">https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py</a></p></li>
+<li>Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+<ul>
+<li>Link (EN): <a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html"><a href="https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html">https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html</a></a></li>
+<li>Link (RU): <a href="https://forworktests.blogspot.com/2022/12/blog-post.html"><a href="https://forworktests.blogspot.com/2022/12/blog-post.html">https://forworktests.blogspot.com/2022/12/blog-post.html</a></a></li>
+</ul></li>
+<li>Jupyter Notebook with examples:
+<ul>
+<li>Link (EN): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb"><a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb</a></a></li>
+<li>Link (RU): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb"><a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb</a></a></li>
+</ul></li>
+<li>Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
+<ul>
+<li>Link: <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py"><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py">https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py</a></a></li>
+</ul></li>
 </ol>
 
 <p>Examples:</p>
@@ -688,66 +858,6 @@ Link: <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/exa
 
 <blockquote>
   <p>index of the first element with anomaly in series will be return or <code>None</code> if no anomaly.</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="CanOpen">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">CanOpen</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#CanOpen"></a>
-    
-            <div class="docstring"><p>Checks opening positions rules in <code><a href="#OPENING_RULES">OPENING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
-
-<p>See also: <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
-<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>bool. If <code>True</code>, then possible to open position.</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="CanClose">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">CanClose</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">fuzzyRisk</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">fuzzyReach</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#CanClose"></a>
-    
-            <div class="docstring"><p>Checks closing positions rules in <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
-
-<p>See also: <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
-<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
-</ul>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>bool. If <code>True</code>, then possible to close position.</p>
 </blockquote>
 </div>
 
