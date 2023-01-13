@@ -176,6 +176,7 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
     See also:
     - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
     - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
+    - `RiskShort()` method.
 
     :param curPrice: Current actual price.
     :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
