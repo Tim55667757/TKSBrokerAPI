@@ -104,7 +104,8 @@ CLOSING_RULES = pd.DataFrame([
     dtype=bool,
 )
 """
-Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for `OPENING_RULES` (see there explain what do we mean as Open/Close Fuzzy Rules).
+Closing positions rules depend of fuzzy Risk/Reach levels. These rules are opposite for `OPENING_RULES`
+(see explanation there what do we mean as Open/Close Fuzzy Rules).
 
 See also: `CanClose()` method.
 
@@ -163,9 +164,9 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
     Function returns Risk as fuzzy level and percents of Risk in the range [0, 100], if you want buy from current price.
 
     This is the author's method, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin) and [Mansur Gilmullin](https://www.linkedin.com/in/mgilmullin),
-    based on fuzzy scales for measuring the levels of Fuzzy Risk. The following simple diagram explains what do we mean as Fuzzy Risk:
+    based on fuzzy scales for measuring the levels of Fuzzy Risk. The following simple diagram explains what do we mean as Fuzzy Risk level:
 
-    <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/003-Risk.png?raw=true" alt="Risk" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
+    <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/003-Risk.png?raw=true" alt="Fuzzy-Risk" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
 
     - If open long (buy) position from current price: `RiskLong = Fuzzy(|P - L| / (H - L))`. Here:
       - `P` is the current price,
@@ -191,12 +192,45 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
         curPrice = pHighest
 
     diapason = abs(pHighest - pLowest) if pHighest != pLowest else 1  # Prognosis diapason.
-    riskBuy = abs(curPrice - pLowest) / diapason  # Risk if buy from current price, [0, 1].
+    riskBuy = abs(curPrice - pLowest) / diapason  # Risk if buy from current price in the range [0, 1].
 
-    riskPercentBuy = 100 * riskBuy  # Risk percent if buy from current price, [0, 100].
     riskFuzzyBuy = FUZZY_SCALE.Fuzzy(riskBuy)["name"]  # Fuzzy Risk level if buy from current price.
+    riskPercentBuy = 100 * riskBuy  # Risk percent if buy from current price in the range [0, 100].
 
     return {"riskFuzzy": riskFuzzyBuy, "riskPercent": riskPercentBuy}
+
+
+def RiskShort(curPrice: float, pHighest: float, pLowest: float) -> dict[str, float]:
+    """
+    Function returns Risk as fuzzy level and percents of Risk in the range [0, 100], if you want sell from current price.
+    This method is opposite for `RiskLong()` (see explanation there what do we mean as Fuzzy Risk).
+
+    - If open short (sell) position from current price: `RiskShort = Fuzzy(|P - H| / (H - L))`. Here:
+      - `P` is the current price,
+      - `L (H)` is the lowest (highest) price in forecasted movements of candles chain or prognoses diapason border of price movement,
+      - `Fuzzy()` is the fuzzyfication function that convert real values to its fuzzy representation.
+
+    :param curPrice: Current actual price.
+    :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
+    :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
+    :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "Low", "riskPercent": 20.12}`.
+    """
+    if pHighest < pLowest:
+        raise Exception("The highest [{}] close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement must be greater than the lowest [{}] close price!".format(pHighest, pLowest))
+
+    if curPrice < pLowest:
+        curPrice = pLowest
+
+    if curPrice > pHighest:
+        curPrice = pHighest
+
+    diapason = abs(pHighest - pLowest) if pHighest != pLowest else 1  # Prognosis diapason.
+    riskSell = abs(curPrice - pHighest) / diapason  # Risk if sell from current price in the range [0, 1].
+
+    riskFuzzySell = FUZZY_SCALE.Fuzzy(riskSell)["name"]  # Fuzzy Risk level if sell from current price.
+    riskPercentSell = 100 * riskSell  # Risk percent if sell from current price in the range [0, 100].
+
+    return {"riskFuzzy": riskFuzzySell, "riskPercent": riskPercentSell}
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
@@ -448,12 +482,12 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     References:
 
     1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
-       Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
-       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
+       - Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
+       - Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
     2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
-       Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
+       - Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
     3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
-       Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
+       - Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
     4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.
 
     Examples:
@@ -522,15 +556,13 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     References:
 
     1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
-       Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
-       Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
-
+       - Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
+       - Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
     2. Jupyter Notebook with examples:
-       Link (EN): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb
-       Link (RU): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb
-
+       - Link (EN): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb
+       - Link (RU): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb
     3. Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
-       Link: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py
+       - Link: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py
 
     Examples:
 
