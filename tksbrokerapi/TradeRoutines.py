@@ -65,8 +65,10 @@ OPENING_RULES = pd.DataFrame([
     dtype=bool,
 )
 """
-Opening positions rules depend of fuzzy Risk/Reach levels. This is the author's technique, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin),
-based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains it:
+Opening positions rules depend of fuzzy Risk/Reach levels.
+
+This is the author's technique, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin) and [Mansur Gilmullin](https://www.linkedin.com/in/mgilmullin),
+based on fuzzy scales for measuring the levels of fuzzy risk and reachable. The following simple diagram explains what do we mean as Open/Close Fuzzy Rules:
 
 <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/005-Open-Close-Rules-Matrix.png?raw=true" alt="Open-Close-Rules-Matrix" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
 
@@ -75,10 +77,10 @@ These rules are defined as transposed matrix constants `OPENING_RULES` and `CLOS
 
 See also:
   - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
-  - About Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
+  - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
   - `CLOSING_RULES` constant, `CanOpen()` and `CanClose()` methods.
 
-Default for opening positions:
+Default rules for opening positions:
 
 | Risk \ Reach | Min   | Low   | Med   | High  | Max   |
 |--------------|-------|-------|-------|-------|-------|
@@ -102,11 +104,11 @@ CLOSING_RULES = pd.DataFrame([
     dtype=bool,
 )
 """
-Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for `OPENING_RULES`.
+Closing positions rules depend of fuzzy Risk/Reach levels. This rules are opposite for `OPENING_RULES` (see there explain what do we mean as Open/Close Fuzzy Rules).
 
 See also: `CanClose()` method.
 
-Default for closing positions:
+Default rules for closing positions:
 
 | Risk \ Reach | Min   | Low   | Med   | High  | Max   |
 |--------------|-------|-------|-------|-------|-------|
@@ -116,6 +118,85 @@ Default for closing positions:
 | High         | True  | True  | True  | False | False |
 | Max          | True  | True  | True  | False | False |
 """
+
+
+def CanOpen(fuzzyRisk: str, fuzzyReach: str) -> bool:
+    """
+    Checks opening positions rules in `OPENING_RULES` depend on fuzzy Risk/Reach levels.
+
+    See also: `OPENING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+
+    :param fuzzyRisk: fuzzy risk level name.
+    :param fuzzyReach: fuzzy reach level name.
+    :return: bool. If `True`, then possible to open position.
+    """
+    if fuzzyRisk not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
+
+    if fuzzyReach not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
+
+    return bool(OPENING_RULES.loc[fuzzyRisk, fuzzyReach])
+
+
+def CanClose(fuzzyRisk: str, fuzzyReach: str) -> bool:
+    """
+    Checks closing positions rules in `CLOSING_RULES` depend on fuzzy Risk/Reach levels.
+
+    See also: `CLOSING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+
+    :param fuzzyRisk: fuzzy risk level name.
+    :param fuzzyReach: fuzzy reach level name.
+    :return: bool. If `True`, then possible to close position.
+    """
+    if fuzzyRisk not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
+
+    if fuzzyReach not in FUZZY_LEVELS:
+        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
+
+    return bool(CLOSING_RULES.loc[fuzzyRisk, fuzzyReach])
+
+
+def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, float]:
+    """
+    Function returns Risk as fuzzy level and percents of Risk in the range [0, 100], if you want buy from current price.
+
+    This is the author's method, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin) and [Mansur Gilmullin](https://www.linkedin.com/in/mgilmullin),
+    based on fuzzy scales for measuring the levels of Fuzzy Risk. The following simple diagram explains what do we mean as Fuzzy Risk:
+
+    <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/003-Risk.png?raw=true" alt="Risk" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
+
+    - If open long (buy) position from current price: `RiskLong = Fuzzy(|P - L| / (H - L))`. Here:
+      - `P` is the current price,
+      - `L (H)` is the lowest (highest) price in forecasted movements of candles chain or prognoses diapason border of price movement,
+      - `Fuzzy()` is the fuzzyfication function that convert real values to its fuzzy representation.
+
+    See also:
+    - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
+    - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
+
+    :param curPrice: Current actual price.
+    :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
+    :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
+    :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "High", "riskPercent": 66.67}`.
+    """
+    if pHighest < pLowest:
+        raise Exception("The highest [{}] close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement must be greater than the lowest [{}] close price!".format(pHighest, pLowest))
+
+    if curPrice < pLowest:
+        curPrice = pLowest
+
+    if curPrice > pHighest:
+        curPrice = pHighest
+
+    diapason = abs(pHighest - pLowest) if pHighest != pLowest else 1  # Prognosis diapason.
+    riskBuy = abs(curPrice - pLowest) / diapason  # Risk if buy from current price, [0, 1].
+
+    riskPercentBuy = 100 * riskBuy  # Risk percent if buy from current price, [0, 100].
+    riskFuzzyBuy = FUZZY_SCALE.Fuzzy(riskBuy)["name"]  # Fuzzy Risk level if buy from current price.
+
+    return {"riskFuzzy": riskFuzzyBuy, "riskPercent": riskPercentBuy}
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
@@ -494,41 +575,3 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
         result = None
 
     return result
-
-
-def CanOpen(fuzzyRisk: str, fuzzyReach: str) -> bool:
-    """
-    Checks opening positions rules in `OPENING_RULES` depend on fuzzy Risk/Reach levels.
-
-    See also: `OPENING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
-
-    :param fuzzyRisk: fuzzy risk level name.
-    :param fuzzyReach: fuzzy reach level name.
-    :return: bool. If `True`, then possible to open position.
-    """
-    if fuzzyRisk not in FUZZY_LEVELS:
-        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
-
-    if fuzzyReach not in FUZZY_LEVELS:
-        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
-
-    return bool(OPENING_RULES.loc[fuzzyRisk, fuzzyReach])
-
-
-def CanClose(fuzzyRisk: str, fuzzyReach: str) -> bool:
-    """
-    Checks closing positions rules in `CLOSING_RULES` depend on fuzzy Risk/Reach levels.
-
-    See also: `CLOSING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
-
-    :param fuzzyRisk: fuzzy risk level name.
-    :param fuzzyReach: fuzzy reach level name.
-    :return: bool. If `True`, then possible to close position.
-    """
-    if fuzzyRisk not in FUZZY_LEVELS:
-        raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
-
-    if fuzzyReach not in FUZZY_LEVELS:
-        raise Exception("Invalid fuzzy reach level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyReach, FUZZY_LEVELS))
-
-    return bool(CLOSING_RULES.loc[fuzzyRisk, fuzzyReach])
