@@ -610,6 +610,48 @@ class TestTradeRoutinesMethods:
             assert "risk level name" in str(info.value) or "reach level name" in str(info.value)
             assert "Correct levels on Universal Fuzzy Scale" in str(info.value)
 
+    def test_RiskLongCheckType(self):
+        assert isinstance(TradeRoutines.RiskLong(2, 3, 1), dict), "Not dict type returned!"
+
+    def test_RiskLongPositive(self):
+        testData = [
+            (1, 3, 2, {"riskFuzzy": "Min", "riskPercent": 0}),
+            (0, 0, 0, {"riskFuzzy": "Min", "riskPercent": 0}),
+            (1, 15, 0, {"riskFuzzy": "Min", "riskPercent": 6.6667}),
+            (1, 6, 0, {"riskFuzzy": "Min", "riskPercent": 16.6667}),
+            (1, 5, 0, {"riskFuzzy": "Low", "riskPercent": 20}),
+            (2, 6, 0, {"riskFuzzy": "Low", "riskPercent": 33.3333}),
+            (2, 5, 0, {"riskFuzzy": "Med", "riskPercent": 40}),
+            (3, 7, 0, {"riskFuzzy": "Med", "riskPercent": 42.8571}),
+            (3, 6, 0, {"riskFuzzy": "Med", "riskPercent": 50}),
+            (3, 5, 0, {"riskFuzzy": "Med", "riskPercent": 60}),
+            (4, 6, 0, {"riskFuzzy": "High", "riskPercent": 66.6667}),
+            (7.7777, 10, 0, {"riskFuzzy": "High", "riskPercent": 77.777}),
+            (4, 5, 0, {"riskFuzzy": "High", "riskPercent": 80}),
+            (4.0001, 5, 0, {"riskFuzzy": "High", "riskPercent": 80.002}),
+            (51, 55, 0, {"riskFuzzy": "Max", "riskPercent": 92.7273}),
+            (1, 1, 0, {"riskFuzzy": "Max", "riskPercent": 100}),
+            (5, 5, 0, {"riskFuzzy": "Max", "riskPercent": 100}),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.RiskLong(test[0], test[1], test[2])
+            assert result["riskFuzzy"] == test[3]["riskFuzzy"], "Incorrect output! {} {}".format(test[0], test[3]["riskFuzzy"])
+            assert round(result["riskPercent"], 4) == test[3]["riskPercent"], "Incorrect output! {} {}".format(test[0], test[3]["riskFuzzy"])
+
+    def test_RiskLongNegative(self):
+        testData = [
+            [1, 2, 3], [1, -3, -2],
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.RiskLong(test[0], test[1], test[2])
+
+            assert "The highest" in str(info.value)
+            assert "close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement must be greater than the lowest" in str(info.value)
+            assert "close price!" in str(info.value)
+
     def test_ReachLongCheckType(self):
         assert isinstance(TradeRoutines.ReachLong(pd.Series([1, 2, 3])), dict), "Not dict type returned!"
 
