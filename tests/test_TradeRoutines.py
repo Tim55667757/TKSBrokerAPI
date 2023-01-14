@@ -609,3 +609,36 @@ class TestTradeRoutinesMethods:
             assert "Invalid fuzzy" in str(info.value)
             assert "risk level name" in str(info.value) or "reach level name" in str(info.value)
             assert "Correct levels on Universal Fuzzy Scale" in str(info.value)
+
+    def test_ReachLongCheckType(self):
+        assert isinstance(TradeRoutines.ReachLong(pd.Series([1, 2, 3])), dict), "Not dict type returned!"
+
+    def test_ReachLongPositive(self):
+        testData = [
+            ([4, 5, 3, 2, 11], "Min", 0),
+            ([1, 2, 3, 5, 6, 1], "Low", 33.3333),
+            ([1, 2, 3, 5, 4], "Med", 40),
+            ([1, 2, 3, 5, 4, 1], "Med", 50),
+            ([1, 2, 5, 5, 4], "Med", 60),
+            ([4, 5, 3, 2, 1], "High", 80),
+            ([4, 1, 5, 3, 2, 1, 0], "High", 71.4286),
+            ([8, 2, 3, 5, 6, 1], "Max", 100),
+            ([-1, -2, -3, -4, -5], "Max", 100),
+            ([-5, -4, -3, -2, -1], "Min", 0),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.ReachLong(pd.Series(test[0]))
+            assert result["reachFuzzy"] == test[1], "Incorrect output! {} {}".format(test[0], test[1])
+            assert round(result["reachPercent"], 4) == test[2], "Incorrect output! {} {}".format(test[0], test[2])
+
+    def test_ReachLongNegative(self):
+        testData = [
+            [], [None], [None, None], [None, None, None],
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.ReachLong(pd.Series(test))
+
+            assert "Pandas Series can't be empty and must contain 1 or more elements!" in str(info.value)
