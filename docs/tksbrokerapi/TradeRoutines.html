@@ -60,6 +60,12 @@
                     <a class="function" href="#RiskShort">RiskShort</a>
             </li>
             <li>
+                    <a class="function" href="#ReachLong">ReachLong</a>
+            </li>
+            <li>
+                    <a class="function" href="#ReachShort">ReachShort</a>
+            </li>
+            <li>
                     <a class="function" href="#GetDatesAsString">GetDatesAsString</a>
             </li>
             <li>
@@ -339,19 +345,26 @@ Max    True   True   True  False  False</span>
     
             <div class="docstring"><p>Checks opening positions rules in <code><a href="#OPENING_RULES">OPENING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
 
-<p>See also: <code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+<p>See also:</p>
+
+<ul>
+<li><code><a href="#OPENING_RULES">OPENING_RULES</a></code> constant,</li>
+<li><code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code> constants,</li>
+<li><code><a href="#RiskLong">RiskLong()</a></code> and <code><a href="#RiskShort">RiskShort()</a></code> methods,</li>
+<li><code><a href="#ReachLong">ReachLong()</a></code> and <code><a href="#ReachShort">ReachShort()</a></code> methods.</li>
+</ul>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
-<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+<li><strong>fuzzyRisk</strong>:  Fuzzy Risk level name.</li>
+<li><strong>fuzzyReach</strong>:  Fuzzy Reach level name.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>bool. If <code>True</code>, then possible to open position.</p>
+  <p>Bool. If <code>True</code>, then possible to open position.</p>
 </blockquote>
 </div>
 
@@ -369,19 +382,26 @@ Max    True   True   True  False  False</span>
     
             <div class="docstring"><p>Checks closing positions rules in <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> depend on fuzzy Risk/Reach levels.</p>
 
-<p>See also: <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant, <code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code>.</p>
+<p>See also:</p>
+
+<ul>
+<li><code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constant,</li>
+<li><code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code> constants,</li>
+<li><code><a href="#RiskLong">RiskLong()</a></code> and <code><a href="#RiskShort">RiskShort()</a></code> methods,</li>
+<li><code><a href="#ReachLong">ReachLong()</a></code> and <code><a href="#ReachShort">ReachShort()</a></code> methods.</li>
+</ul>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>fuzzyRisk</strong>:  fuzzy risk level name.</li>
-<li><strong>fuzzyReach</strong>:  fuzzy reach level name.</li>
+<li><strong>fuzzyRisk</strong>:  Fuzzy Risk level name.</li>
+<li><strong>fuzzyReach</strong>:  Fuzzy Reach level name.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>bool. If <code>True</code>, then possible to close position.</p>
+  <p>Bool. If <code>True</code>, then possible to close position.</p>
 </blockquote>
 </div>
 
@@ -418,12 +438,15 @@ based on fuzzy scales for measuring the levels of Fuzzy Risk. The following simp
 <ul>
 <li><a href="https://github.com/devopshq/FuzzyRoutines">FuzzyRoutines</a> library.</li>
 <li>How to work with Universal Fuzzy Scales: <a href="https://github.com/devopshq/FuzzyRoutines#Chapter_2_4">EN</a>, <a href="https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3">RU</a>.</li>
+<li><code><a href="#RiskShort">RiskShort()</a></code> method,</li>
+<li><code><a href="#CanOpen">CanOpen()</a></code> and <code><a href="#CanClose">CanClose()</a></code> methods.</li>
+<li><code><a href="#ReachLong">ReachLong()</a></code> and <code><a href="#ReachShort">ReachShort()</a></code> methods.</li>
 </ul>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>curPrice</strong>:  Current actual price.</li>
+<li><strong>curPrice</strong>:  Current actual price (usually the latest close price).</li>
 <li><strong>pHighest</strong>:  The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.</li>
 <li><strong>pLowest</strong>:  The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.</li>
 </ul>
@@ -462,7 +485,7 @@ This method is opposite for <code><a href="#RiskLong">RiskLong()</a></code> (see
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>curPrice</strong>:  Current actual price.</li>
+<li><strong>curPrice</strong>:  Current actual price (usually the latest close price).</li>
 <li><strong>pHighest</strong>:  The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.</li>
 <li><strong>pLowest</strong>:  The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.</li>
 </ul>
@@ -471,6 +494,106 @@ This method is opposite for <code><a href="#RiskLong">RiskLong()</a></code> (see
 
 <blockquote>
   <p>Dictionary with Fuzzy Risk level and Risk percents, e.g. <code>{"riskFuzzy": "Low", "riskPercent": 20.12}</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="ReachLong">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">ReachLong</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">pClosing</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ReachLong"></a>
+    
+            <div class="docstring"><p>The Fuzzy Reach is a value of forecast reachable of price (highest or lowest close). In this function we calculate
+the reachability of the highest close price.</p>
+
+<p>This is the author's method, proposed by <a href="https://www.linkedin.com/in/tgilmullin">Timur Gilmullin</a> and
+<a href="https://www.linkedin.com/in/mgilmullin">Mansur Gilmullin</a>, based on fuzzy scales for measuring the levels
+of Fuzzy Reach. The following simple diagram explains what is meant by the Fuzzy Reach level:</p>
+
+<p><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/004-Reachability.png?raw=true" alt="Fuzzy-Reach" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" /></p>
+
+<p>There are fuzzy levels and percents in the range [0, 100] for the maximum and minimum forecasted close prices.
+Prognosis horizon is divided by 5 parts of time diapason: I, II, III, IV and V, from the first forecasted candle (or price)
+to the last forecasted candle (or price).</p>
+
+<p>Every part correlate with some fuzzy level, depending on the distance in time from current actual candle (or price):</p>
+
+<ul>
+<li><code>I = Max</code>,</li>
+<li><code>II = High</code>,</li>
+<li><code>III = Med</code>,</li>
+<li><code>IV = Low</code>,</li>
+<li><code>V = Min</code>.</li>
+</ul>
+
+<p>This function search for first fuzzy level appropriate to the part of time diapason, where the close price (highest or lowest)
+located in this diapason. Of course, you can use other price chains (open, high, low) instead of candle close prices,
+but usually this is not recommended.</p>
+
+<p><strong>Recommendation.</strong> If you have no prognosis chain of candles just use <code>"Med"</code> Fuzzy Reach level.</p>
+
+<p>See also:</p>
+
+<ul>
+<li><code><a href="#OPENING_RULES">OPENING_RULES</a></code> and <code><a href="#CLOSING_RULES">CLOSING_RULES</a></code> constants,</li>
+<li><code><a href="#CanOpen">CanOpen()</a></code> and <code><a href="#CanClose">CanClose()</a></code> methods,</li>
+<li><code><a href="#FUZZY_LEVELS">FUZZY_LEVELS</a></code> and <code><a href="#FUZZY_SCALE">FUZZY_SCALE</a></code> constants,</li>
+<li><code><a href="#RiskLong">RiskLong()</a></code> and <code><a href="#RiskShort">RiskShort()</a></code> methods,</li>
+<li><code><a href="#ReachShort">ReachShort()</a></code> method.</li>
+</ul>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>pClosing</strong>:  Pandas Series with prognosis chain of closing prices of candles. This is "close prices"
+in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
+this is the first candle of the forecast. The last price of the forecast is the "farthest"
+relative to the current actual close price.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Dictionary with Fuzzy Reach level and Reach percents for the highest close price, e.g. <code>{"reachFuzzy": "Low", "reachPercent": 20.12}</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="ReachShort">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">ReachShort</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">pClosing</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ReachShort"></a>
+    
+            <div class="docstring"><p>The Fuzzy Reach is a value of forecast reachable of price (highest or lowest close). This method is similar like
+<code><a href="#ReachLong">ReachLong()</a></code> (see explanation there what do we mean as Fuzzy Reach), but in this case we calculate the reachability
+of the lowest close price.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>pClosing</strong>:  Pandas Series with prognosis chain of closing prices of candles. This is "close prices"
+in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
+this is the first candle of the forecast. The last price of the forecast is the "farthest"
+relative to the current actual close price. <strong>Recommendation.</strong> If you have no prognosis chain
+of candles just use <code>"Med"</code> Fuzzy Reach level.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Dictionary with Fuzzy Reach level and Reach percents for the lowest close price, e.g. <code>{"reachFuzzy": "High", "reachPercent": 66.67}</code>.</p>
 </blockquote>
 </div>
 
