@@ -652,6 +652,44 @@ class TestTradeRoutinesMethods:
             assert "close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement must be greater than the lowest" in str(info.value)
             assert "close price!" in str(info.value)
 
+    def test_RiskShortCheckType(self):
+        assert isinstance(TradeRoutines.RiskShort(1.5, 3, 1), dict), "Not dict type returned!"
+
+    def test_RiskShortPositive(self):
+        testData = [
+            (1, 3, 2, {"riskFuzzy": "Max", "riskPercent": 100}),
+            (4, 3, 2, {"riskFuzzy": "Min", "riskPercent": 0}),
+            (0, 0, 0, {"riskFuzzy": "Min", "riskPercent": 0}),
+            (1, 1, 0, {"riskFuzzy": "Min", "riskPercent": 0}),
+            (0, 1, 0, {"riskFuzzy": "Max", "riskPercent": 100}),
+            (1, 9, 0, {"riskFuzzy": "Max", "riskPercent": 88.8889}),
+            (2, 9, 0, {"riskFuzzy": "High", "riskPercent": 77.7778}),
+            (3, 9, 0, {"riskFuzzy": "High", "riskPercent": 66.6667}),
+            (4, 9, 0, {"riskFuzzy": "Med", "riskPercent": 55.5556}),
+            (5, 9, 0, {"riskFuzzy": "Med", "riskPercent": 44.4444}),
+            (6, 9, 0, {"riskFuzzy": "Low", "riskPercent": 33.3333}),
+            (7, 9, 0, {"riskFuzzy": "Low", "riskPercent": 22.2222}),
+            (8, 9, 0, {"riskFuzzy": "Min", "riskPercent": 11.1111}),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.RiskShort(test[0], test[1], test[2])
+            assert result["riskFuzzy"] == test[3]["riskFuzzy"], "Incorrect output! {} {}".format(test[0], test[3]["riskFuzzy"])
+            assert round(result["riskPercent"], 4) == test[3]["riskPercent"], "Incorrect output! {} {}".format(test[0], test[3]["riskFuzzy"])
+
+    def test_RiskShortNegative(self):
+        testData = [
+            [1, 2, 3], [1, -3, -2],
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.RiskShort(test[0], test[1], test[2])
+
+            assert "The highest" in str(info.value)
+            assert "close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement must be greater than the lowest" in str(info.value)
+            assert "close price!" in str(info.value)
+
     def test_ReachLongCheckType(self):
         assert isinstance(TradeRoutines.ReachLong(pd.Series([1, 2, 3])), dict), "Not dict type returned!"
 
