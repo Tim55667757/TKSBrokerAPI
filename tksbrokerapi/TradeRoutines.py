@@ -125,11 +125,15 @@ def CanOpen(fuzzyRisk: str, fuzzyReach: str) -> bool:
     """
     Checks opening positions rules in `OPENING_RULES` depend on fuzzy Risk/Reach levels.
 
-    See also: `OPENING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+    See also:
+    - `OPENING_RULES` constant,
+    - `FUZZY_LEVELS` and `FUZZY_SCALE` constants,
+    - `RiskLong()` and `RiskShort()` methods,
+    - `ReachLong()` and `ReachShort()` methods.
 
-    :param fuzzyRisk: fuzzy risk level name.
-    :param fuzzyReach: fuzzy reach level name.
-    :return: bool. If `True`, then possible to open position.
+    :param fuzzyRisk: Fuzzy Risk level name.
+    :param fuzzyReach: Fuzzy Reach level name.
+    :return: Bool. If `True`, then possible to open position.
     """
     if fuzzyRisk not in FUZZY_LEVELS:
         raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
@@ -144,11 +148,15 @@ def CanClose(fuzzyRisk: str, fuzzyReach: str) -> bool:
     """
     Checks closing positions rules in `CLOSING_RULES` depend on fuzzy Risk/Reach levels.
 
-    See also: `CLOSING_RULES` constant, `FUZZY_LEVELS` and `FUZZY_SCALE`.
+    See also:
+    - `CLOSING_RULES` constant,
+    - `FUZZY_LEVELS` and `FUZZY_SCALE` constants,
+    - `RiskLong()` and `RiskShort()` methods,
+    - `ReachLong()` and `ReachShort()` methods.
 
-    :param fuzzyRisk: fuzzy risk level name.
-    :param fuzzyReach: fuzzy reach level name.
-    :return: bool. If `True`, then possible to close position.
+    :param fuzzyRisk: Fuzzy Risk level name.
+    :param fuzzyReach: Fuzzy Reach level name.
+    :return: Bool. If `True`, then possible to close position.
     """
     if fuzzyRisk not in FUZZY_LEVELS:
         raise Exception("Invalid fuzzy risk level name [{}]! Correct levels on Universal Fuzzy Scale: {}".format(fuzzyRisk, FUZZY_LEVELS))
@@ -176,9 +184,11 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
     See also:
     - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
     - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
-    - `RiskShort()` method.
+    - `RiskShort()` method,
+    - `CanOpen()` and `CanClose()` methods.
+    - `ReachLong()` and `ReachShort()` methods.
 
-    :param curPrice: Current actual price.
+    :param curPrice: Current actual price (usually the latest close price).
     :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
     :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
     :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "High", "riskPercent": 66.67}`.
@@ -211,7 +221,7 @@ def RiskShort(curPrice: float, pHighest: float, pLowest: float) -> dict[str, flo
       - `L (H)` is the lowest (highest) price in forecasted movements of candles chain or prognoses diapason border of price movement,
       - `Fuzzy()` is the fuzzyfication function that convert real values to its fuzzy representation.
 
-    :param curPrice: Current actual price.
+    :param curPrice: Current actual price (usually the latest close price).
     :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
     :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
     :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "Low", "riskPercent": 20.12}`.
@@ -232,6 +242,75 @@ def RiskShort(curPrice: float, pHighest: float, pLowest: float) -> dict[str, flo
     riskPercentSell = 100 * riskSell  # Risk percent if sell from current price in the range [0, 100].
 
     return {"riskFuzzy": riskFuzzySell, "riskPercent": riskPercentSell}
+
+
+def ReachLong(pClosing: pd.Series) -> dict[str, float]:
+    """
+    The Fuzzy Reach is a value of forecast reachable of price (highest or lowest close). In this function we calculate
+    the reachability of the highest close price.
+
+    This is the author's method, proposed by [Timur Gilmullin](https://www.linkedin.com/in/tgilmullin) and
+    [Mansur Gilmullin](https://www.linkedin.com/in/mgilmullin), based on fuzzy scales for measuring the levels
+    of Fuzzy Reach. The following simple diagram explains what is meant by the Fuzzy Reach level:
+
+    <img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/004-Reachability.png?raw=true" alt="Fuzzy-Reach" style="display: block; margin-left: auto; margin-right: auto; width: 50%;" />
+
+    There are fuzzy levels and percents in the range [0, 100] for the maximum and minimum forecasted close prices.
+    Prognosis horizon is divided by 5 parts of time diapason: I, II, III, IV and V, from the first forecasted candle (or price)
+    to the last forecasted candle (or price).
+
+    Every part correlate with some fuzzy level, depending on the distance in time from current actual candle (or price):
+    - `I = Max`,
+    - `II = High`,
+    - `III = Med`,
+    - `IV = Low`,
+    - `V = Min`.
+
+    This function search for first fuzzy level appropriate to the part of time diapason, where the close price (highest or lowest)
+    located in this diapason. Of course, you can use other price chains (open, high, low) instead of candle close prices,
+    but usually this is not recommended.
+
+    **Recommendation.** If you haven`t prognosis chain of candles just use `"Med"` Fuzzy Reach level.
+
+    See also:
+    - `OPENING_RULES` and `CLOSING_RULES` constants,
+    - `CanOpen()` and `CanClose()` methods,
+    - `FUZZY_LEVELS` and `FUZZY_SCALE` constants,
+    - `RiskLong()` and `RiskShort()` methods,
+    - `ReachShort()` method.
+
+    :param pClosing: Pandas Series with prognosis chain of closing prices of candles. This is "close prices"
+                     in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
+                     this is the first candle of the forecast. The last price of the forecast is the "farthest"
+                     relative to the current actual close price. Pandas DataFrame must contain two Series with headers
+                     `["datetime", "close"]`.
+    :return: Dictionary with Fuzzy Reach level and Reach percents for the highest close price, e.g. `{"reachFuzzy": "Low", "reachPercent": 20.12}`.
+    """
+    count = pClosing.count()  # Length of candles chain
+
+    if count == 0:
+        raise Exception("Pandas Series can't be empty and must contain 1 or more elements!")
+
+    elif count == 1:
+        return {"reachFuzzy": "Max", "reachPercent": 100}
+
+    else:
+        indexHighest = pClosing.argmax()  # First occurrence of the highest close price in candles chain.
+
+        # Reach of the highest prognosis close price if buy from current price in the range [0, 1]:
+        if indexHighest == 0:
+            reachBuy = 1
+
+        elif indexHighest == count - 1:
+            reachBuy = 0
+
+        else:
+            reachBuy = 1 - indexHighest / count
+
+        reachFuzzyBuy = FUZZY_SCALE.Fuzzy(reachBuy)["name"]
+        reachPercentBuy = 100 * reachBuy
+
+        return {"reachFuzzy": reachFuzzyBuy, "reachPercent": reachPercentBuy}
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
