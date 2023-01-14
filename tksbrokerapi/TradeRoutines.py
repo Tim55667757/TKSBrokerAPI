@@ -270,7 +270,7 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
     located in this diapason. Of course, you can use other price chains (open, high, low) instead of candle close prices,
     but usually this is not recommended.
 
-    **Recommendation.** If you haven`t prognosis chain of candles just use `"Med"` Fuzzy Reach level.
+    **Recommendation.** If you have no prognosis chain of candles just use `"Med"` Fuzzy Reach level.
 
     See also:
     - `OPENING_RULES` and `CLOSING_RULES` constants,
@@ -282,8 +282,7 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
     :param pClosing: Pandas Series with prognosis chain of closing prices of candles. This is "close prices"
                      in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
                      this is the first candle of the forecast. The last price of the forecast is the "farthest"
-                     relative to the current actual close price. Pandas DataFrame must contain two Series with headers
-                     `["datetime", "close"]`.
+                     relative to the current actual close price.
     :return: Dictionary with Fuzzy Reach level and Reach percents for the highest close price, e.g. `{"reachFuzzy": "Low", "reachPercent": 20.12}`.
     """
     count = pClosing.count()  # Length of candles chain
@@ -297,7 +296,7 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
     else:
         indexHighest = pClosing.argmax()  # First occurrence of the highest close price in candles chain.
 
-        # Reach of the highest prognosis close price if buy from current price in the range [0, 1]:
+        # Reach of the highest prognosis close price (if buy from current price) in the range [0, 1]:
         if indexHighest == 0:
             reachBuy = 1
 
@@ -311,6 +310,46 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
         reachPercentBuy = 100 * reachBuy
 
         return {"reachFuzzy": reachFuzzyBuy, "reachPercent": reachPercentBuy}
+
+
+def ReachShort(pClosing: pd.Series) -> dict[str, float]:
+    """
+    The Fuzzy Reach is a value of forecast reachable of price (highest or lowest close). This method is similar like
+    `ReachLong()` (see explanation there what do we mean as Fuzzy Reach), but in this case we calculate the reachability
+    of the lowest close price.
+
+    :param pClosing: Pandas Series with prognosis chain of closing prices of candles. This is "close prices"
+                     in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
+                     this is the first candle of the forecast. The last price of the forecast is the "farthest"
+                     relative to the current actual close price. **Recommendation.** If you have no prognosis chain
+                     of candles just use `"Med"` Fuzzy Reach level.
+    :return: Dictionary with Fuzzy Reach level and Reach percents for the lowest close price, e.g. `{"reachFuzzy": "High", "reachPercent": 66.67}`.
+    """
+    count = pClosing.count()  # Length of candles chain
+
+    if count == 0:
+        raise Exception("Pandas Series can't be empty and must contain 1 or more elements!")
+
+    elif count == 1:
+        return {"reachFuzzy": "Max", "reachPercent": 100}
+
+    else:
+        indexLowest = pClosing.argmin()  # First occurrence of the lowest close price in candles chain.
+
+        # Reach of the lowest prognosis close price (if sell from current price) in the range [0, 1]:
+        if indexLowest == 0:
+            reachSell = 1
+
+        elif indexLowest == count - 1:
+            reachSell = 0
+
+        else:
+            reachSell = 1 - indexLowest / count
+
+        reachFuzzySell = FUZZY_SCALE.Fuzzy(reachSell)["name"]
+        reachPercentSell = 100 * reachSell
+
+        return {"reachFuzzy": reachFuzzySell, "reachPercent": reachPercentSell}
 
 
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
