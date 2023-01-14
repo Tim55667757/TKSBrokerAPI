@@ -642,3 +642,38 @@ class TestTradeRoutinesMethods:
                 TradeRoutines.ReachLong(pd.Series(test))
 
             assert "Pandas Series can't be empty and must contain 1 or more elements!" in str(info.value)
+
+    def test_ReachShortCheckType(self):
+        assert isinstance(TradeRoutines.ReachShort(pd.Series([3, 2, 1])), dict), "Not dict type returned!"
+
+    def test_ReachShortPositive(self):
+        testData = [
+            ([1, 2, 3, 4, 5], "Max", 100),
+            ([2, 1, 2, 3, 5], "High", 80.0),
+            ([2, 1, 2, 3], "High", 75.0),
+            ([3, 2, 1, 2, 3], "Med", 60),
+            ([3, 2, 2, 1, 2, 4], "Med", 50),
+            ([5, 4, 3, 2, 1, 2, 1], "Med", 42.8571),
+            ([5, 4, 3, 2, 2, 1, 2, 1], "Med", 37.5),
+            ([5, 4, 3, 2, 1, 2], "Low", 33.3333),
+            ([5, 4, 3, 2, 2, 2, 2, 1, 2], "Low", 22.2222),
+            ([5, 4, 3, 2, 2, 2, 2, 2, 2, 1, 2], "Low", 18.1818),
+            ([5, 4, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2], "Min", 14.2857),
+            ([8, 2, 3, 5, 6, 1], "Min", 0),
+        ]
+
+        for test in testData:
+            result = TradeRoutines.ReachShort(pd.Series(test[0]))
+            assert result["reachFuzzy"] == test[1], "Incorrect output! {} {}".format(test[0], test[1])
+            assert round(result["reachPercent"], 4) == test[2], "Incorrect output! {} {}".format(test[0], test[2])
+
+    def test_ReachShortNegative(self):
+        testData = [
+            [], [None], [None, None], [None, None, None],
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.ReachShort(pd.Series(test))
+
+            assert "Pandas Series can't be empty and must contain 1 or more elements!" in str(info.value)
