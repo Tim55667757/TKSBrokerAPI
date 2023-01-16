@@ -4482,7 +4482,6 @@ class TinkoffBrokerServer:
                         writer,
                         sheet_name="Bond payments calendar",
                         index=False,
-                        encoding="UTF-8",
                         freeze_panes=(1, 2),
                     )  # saving as XLSX-file with freeze first row and column as headers
 
