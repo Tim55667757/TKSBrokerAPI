@@ -1695,6 +1695,7 @@ class TinkoffBrokerServer:
 
         return rawStopOrders
 
+    # noinspection PyTypeChecker
     def Overview(self, show: bool = False, details: str = "full", onlyFiles=False) -> dict:
         """
         Get portfolio: all open positions, orders and some statistics for current `accountId`.
@@ -4248,6 +4249,7 @@ class TinkoffBrokerServer:
 
         return calendar
 
+    # noinspection PyTypeChecker
     def ExtendBondsData(self, instruments: list[str], xlsx: bool = False) -> pd.DataFrame:
         """
         Requests jsons with raw bonds data for every ticker or FIGI in instruments list and transform it to the wider
@@ -4649,6 +4651,7 @@ class TinkoffBrokerServer:
 
         return view
 
+    # noinspection PyTypeChecker
     def OverviewUserInfo(self, show: bool = False, onlyFiles=False) -> dict:
         """
         Method for parsing and show all available user's data (`accountId`s, common user information, margin status and tariff connections limit).
