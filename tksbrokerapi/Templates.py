@@ -10,7 +10,7 @@ Module contains some html-templates used by reporting methods in TKSBrokerAPI mo
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **Mako Templates for Python:** https://www.makotemplates.org/
-- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
+- **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 """
 
 # Copyright (c) 2022 Gilmillin Timur Mansurovich

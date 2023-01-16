@@ -27,7 +27,7 @@ you can implement any trading scenario in Python. Many system used for making tr
 (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need
 to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an
 intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker,
-as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
+as well as perform routine tasks on your behalf in [brokerage account](https://tinkoff.ru/sl/AaX1Et1omnH).
 
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-flow.png?raw=true" alt="TKSBrokerAPI-flow" width="780" /></a>
 
@@ -502,7 +502,7 @@ class TinkoffBrokerServer:
         self.timeout: global request timeout, 15 seconds by default.
         :param url: url with REST request.
         :param reqType: send "GET" or "POST" request. "GET" by default.
-        :param retry: how many times retry after first request if an 5xx server errors occurred.
+        :param retry: how many times retry after first request if a 5xx server errors occurred.
         :param pause: sleep time in seconds between retries.
         :return: response JSON (dictionary) from broker.
         """
@@ -2016,7 +2016,7 @@ class TinkoffBrokerServer:
                 orderState = TKS_ORDER_STATES[item["executionReportStatus"]]
                 orderDate = item["orderDate"].replace("T", " ").replace("Z", "").split(".")[0]  # date in UTC format, e.g. "2022-12-31T23:59:59.123456Z"
 
-                # current instrument's price (last sellers order if buy, and last buyers order if sell):
+                # current instrument's price (last sellers order if you buy, and last buyers order if you sell):
                 if item["direction"] == "ORDER_DIRECTION_BUY":
                     lastPrice = instrument["currentPrice"]["sell"][0]["price"] if instrument["currentPrice"]["sell"] else "N/A"
 
@@ -2043,7 +2043,7 @@ class TinkoffBrokerServer:
                     "action": action,  # sell / buy / Unknown from TKS_ORDER_DIRECTIONS
                     "type": orderType,  # type of order from TKS_ORDER_TYPES
                     "status": orderState,  # order status from TKS_ORDER_STATES
-                    "date": orderDate,  # string with order date and time from UTC format (without nano seconds part)
+                    "date": orderDate,  # string with order date and time from UTC format (without nanoseconds part)
                 })
 
         # --- stop orders sector data:
@@ -2076,7 +2076,7 @@ class TinkoffBrokerServer:
                     expType = TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_GOOD_TILL_CANCEL"]
                     expDate = TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED"]
 
-                # current instrument's price (last sellers order if buy, and last buyers order if sell):
+                # current instrument's price (last sellers order if you buy, and last buyers order if you sell):
                 if item["direction"] == "STOP_ORDER_DIRECTION_BUY":
                     lastPrice = instrument["currentPrice"]["sell"][0]["price"] if instrument["currentPrice"]["sell"] else "N/A"
 
@@ -2106,8 +2106,8 @@ class TinkoffBrokerServer:
                     "action": action,  # sell / buy / Unknown from TKS_STOP_ORDER_DIRECTIONS
                     "type": orderType,  # type of order from TKS_STOP_ORDER_TYPES
                     "expType": expType,  # expiration type of stop-order from TKS_STOP_ORDER_EXPIRATION_TYPES
-                    "createDate": createDate,  # string with created order date and time from UTC format (without nano seconds part)
-                    "expDate": expDate,  # string with expiration order date and time from UTC format (without nano seconds part)
+                    "createDate": createDate,  # string with created order date and time from UTC format (without nanoseconds part)
+                    "expDate": expDate,  # string with expiration order date and time from UTC format (without nanoseconds part)
                 })
 
         # --- calculating data for analytics section:
@@ -3047,7 +3047,7 @@ class TinkoffBrokerServer:
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, target price for stop-order with "TP" type. It used as take profit parameter `targetPrice` in `self.Order()`.
         :param sl: float > 0, target price for stop-order with "SL" type. It used as stop loss parameter `targetPrice` in `self.Order()`.
-        :param expDate: string "Undefined" by default or local date in future,
+        :param expDate: string "Undefined" by default or local date in the future,
                         it is a string with format `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
@@ -3115,14 +3115,14 @@ class TinkoffBrokerServer:
     def Buy(self, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
         More simple method than `Trade()`. Create `Buy` market order and make deal at the current price. Returns JSON data with response.
-        If `tp` or `sl` > 0, then in additional will opens stop-orders with "TP" and "SL" flags for `stopType` parameter.
+        If `tp` or `sl` > 0, then in additional will open stop-orders with "TP" and "SL" flags for `stopType` parameter.
 
         See also: `Order()` and `Trade()` docstrings.
 
         :param lots: volume, integer count of lots >= 1.
         :param tp: float > 0, take profit price of stop-order.
         :param sl: float > 0, stop loss price of stop-order.
-        :param expDate: it's a local date in future.
+        :param expDate: it's a local date in the future.
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
         :return: JSON with response from broker server.
         """
@@ -3256,11 +3256,11 @@ class TinkoffBrokerServer:
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is open trade price for limit order.
         :param limitPrice: limit price >= 0. This parameter only makes sense for stop-order. If limitPrice = 0, then it set as targetPrice.
-                           Broker will creates limit-order with price equal to limitPrice, when current price goes to target price of stop-order.
+                           Broker will create limit-order with price equal to limitPrice, when current price goes to target price of stop-order.
         :param stopType: string "Limit" by default. This parameter only makes sense for stop-order. There are 3 stop-order types
                          "SL", "TP", "Limit" for "Stop loss", "Take profit" and "Stop limit" types accordingly.
                          Stop loss order always executed by market price.
-        :param expDate: string "Undefined" by default or local date in future.
+        :param expDate: string "Undefined" by default or local date in the future.
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server. This parameter only makes sense for stop-order.
                         A limit order has no expiration date, it lasts until the end of the trading day.
@@ -3426,11 +3426,11 @@ class TinkoffBrokerServer:
 
         :param lots: volume, integer count of lots >= 1.
         :param targetPrice: target price > 0. This is trigger price for buy stop-order.
-        :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
+        :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will create limit-order
                            with price equal to limitPrice, when current price goes to target price of buy stop-order.
         :param stopType: string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
                          for "Stop loss", "Take profit" and "Stop limit" types accordingly.
-        :param expDate: string "Undefined" by default or local date in future.
+        :param expDate: string "Undefined" by default or local date in the future.
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
@@ -3453,17 +3453,17 @@ class TinkoffBrokerServer:
     def SellStop(self, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
         Create `Sell` stop-order. You must specify at least 2 parameters: `lots` `target price` to open sell stop-order.
-        In additional you can specify 3 parameters for sell stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
+        In addition, you can specify 3 parameters in sell stop-order: `limit price` >=0, `stop type` = Limit|SL|TP,
         `expiration date` = Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`. When current price will go up or down to
         target price value then broker opens a limit order. See also: `Order()` docstring.
 
         :param lots: volume, integer count of lots >= 1.
-        :param targetPrice: target price > 0. This is trigger price for sell stop-order.
-        :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
+        :param targetPrice: target price > 0. This is trigger price in sell stop-order.
+        :param limitPrice: limit price >= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will create limit-order
                            with price equal to limitPrice, when current price goes to target price of sell stop-order.
         :param stopType: string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
                          for "Stop loss", "Take profit" and "Stop limit" types accordingly.
-        :param expDate: string "Undefined" by default or local date in future.
+        :param expDate: string "Undefined" by default or local date in the future.
                         String has a format like this: `%Y-%m-%d %H:%M:%S`.
                         This date is converting to UTC format for server.
         :return: JSON with response from broker server.
@@ -3686,7 +3686,7 @@ class TinkoffBrokerServer:
         #     inputParameters["prices"] = inputParameters.pop("p")
         #
         # if "lots" not in inputParameters.keys() or "prices" not in inputParameters.keys():
-        #     uLogger.error("Both of 'lots' and 'prices' keys must be define to open grid orders!")
+        #     uLogger.error("Both of 'lots' and 'prices' keys must be defined to open grid orders!")
         #     raise Exception("Incorrect value")
         #
         # lots = [int(item.strip()) for item in inputParameters["lots"].split(",")]

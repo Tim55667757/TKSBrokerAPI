@@ -371,7 +371,7 @@ you can implement any trading scenario in Python. Many system used for making tr
 (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need
 to perform trading operations: place orders, open and close transactions. The <code>TKSBrokerAPI</code> module will act as an
 intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker,
-as well as perform routine tasks on your behalf in <a href="http://tinkoff.ru/sl/AaX1Et1omnH">brokerage account</a>.</p>
+as well as perform routine tasks on your behalf in <a href="https://tinkoff.ru/sl/AaX1Et1omnH">brokerage account</a>.</p>
 
 <p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-flow.png?raw=true" alt="TKSBrokerAPI-flow" width="780" /></a></p>
 
@@ -993,7 +993,7 @@ self.timeout: global request timeout, 15 seconds by default.</p>
 <ul>
 <li><strong>url</strong>:  url with REST request.</li>
 <li><strong>reqType</strong>:  send "GET" or "POST" request. "GET" by default.</li>
-<li><strong>retry</strong>:  how many times retry after first request if an 5xx server errors occurred.</li>
+<li><strong>retry</strong>:  how many times retry after first request if a 5xx server errors occurred.</li>
 <li><strong>pause</strong>:  sleep time in seconds between retries.</li>
 </ul>
 
@@ -1703,7 +1703,7 @@ If <code>tp</code> or <code>sl</code> &gt; 0, then in additional will open stop-
 <li><strong>lots</strong>:  volume, integer count of lots &gt;= 1.</li>
 <li><strong>tp</strong>:  float &gt; 0, target price for stop-order with "TP" type. It used as take profit parameter <code>targetPrice</code> in <code>self.Order()</code>.</li>
 <li><strong>sl</strong>:  float &gt; 0, target price for stop-order with "SL" type. It used as stop loss parameter <code>targetPrice</code> in <code>self.Order()</code>.</li>
-<li><strong>expDate</strong>:  string "Undefined" by default or local date in future,
+<li><strong>expDate</strong>:  string "Undefined" by default or local date in the future,
 it is a string with format <code>%Y-%m-%d %H:%M:%S</code>.</li>
 </ul>
 
@@ -1727,7 +1727,7 @@ it is a string with format <code>%Y-%m-%d %H:%M:%S</code>.</li>
     <a class="headerlink" href="#TinkoffBrokerServer.Buy"></a>
     
             <div class="docstring"><p>More simple method than <code><a href="#TinkoffBrokerServer.Trade">Trade()</a></code>. Create <code><a href="#TinkoffBrokerServer.Buy">Buy</a></code> market order and make deal at the current price. Returns JSON data with response.
-If <code>tp</code> or <code>sl</code> &gt; 0, then in additional will opens stop-orders with "TP" and "SL" flags for <code>stopType</code> parameter.</p>
+If <code>tp</code> or <code>sl</code> &gt; 0, then in additional will open stop-orders with "TP" and "SL" flags for <code>stopType</code> parameter.</p>
 
 <p>See also: <code><a href="#TinkoffBrokerServer.Order">Order()</a></code> and <code><a href="#TinkoffBrokerServer.Trade">Trade()</a></code> docstrings.</p>
 
@@ -1737,7 +1737,7 @@ If <code>tp</code> or <code>sl</code> &gt; 0, then in additional will opens stop
 <li><strong>lots</strong>:  volume, integer count of lots &gt;= 1.</li>
 <li><strong>tp</strong>:  float &gt; 0, take profit price of stop-order.</li>
 <li><strong>sl</strong>:  float &gt; 0, stop loss price of stop-order.</li>
-<li><strong>expDate</strong>:  it's a local date in future.
+<li><strong>expDate</strong>:  it's a local date in the future.
 String has a format like this: <code>%Y-%m-%d %H:%M:%S</code>.</li>
 </ul>
 
@@ -1863,11 +1863,11 @@ Stop-order is opened with unlimited expiration date by default, or you can defin
 <li><strong>lots</strong>:  volume, integer count of lots &gt;= 1.</li>
 <li><strong>targetPrice</strong>:  target price &gt; 0. This is open trade price for limit order.</li>
 <li><strong>limitPrice</strong>:  limit price &gt;= 0. This parameter only makes sense for stop-order. If limitPrice = 0, then it set as targetPrice.
-Broker will creates limit-order with price equal to limitPrice, when current price goes to target price of stop-order.</li>
+Broker will create limit-order with price equal to limitPrice, when current price goes to target price of stop-order.</li>
 <li><strong>stopType</strong>:  string "Limit" by default. This parameter only makes sense for stop-order. There are 3 stop-order types
 "SL", "TP", "Limit" for "Stop loss", "Take profit" and "Stop limit" types accordingly.
 Stop loss order always executed by market price.</li>
-<li><strong>expDate</strong>:  string "Undefined" by default or local date in future.
+<li><strong>expDate</strong>:  string "Undefined" by default or local date in the future.
 String has a format like this: <code>%Y-%m-%d %H:%M:%S</code>.
 This date is converting to UTC format for server. This parameter only makes sense for stop-order.
 A limit order has no expiration date, it lasts until the end of the trading day.</li>
@@ -1933,11 +1933,11 @@ target price value then broker opens a limit order. See also: <code><a href="#Ti
 <ul>
 <li><strong>lots</strong>:  volume, integer count of lots &gt;= 1.</li>
 <li><strong>targetPrice</strong>:  target price &gt; 0. This is trigger price for buy stop-order.</li>
-<li><strong>limitPrice</strong>:  limit price &gt;= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
+<li><strong>limitPrice</strong>:  limit price &gt;= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will create limit-order
 with price equal to limitPrice, when current price goes to target price of buy stop-order.</li>
 <li><strong>stopType</strong>:  string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
 for "Stop loss", "Take profit" and "Stop limit" types accordingly.</li>
-<li><strong>expDate</strong>:  string "Undefined" by default or local date in future.
+<li><strong>expDate</strong>:  string "Undefined" by default or local date in the future.
 String has a format like this: <code>%Y-%m-%d %H:%M:%S</code>.
 This date is converting to UTC format for server.</li>
 </ul>
@@ -1993,7 +1993,7 @@ See also: <code><a href="#TinkoffBrokerServer.Order">Order()</a></code> docstrin
     <a class="headerlink" href="#TinkoffBrokerServer.SellStop"></a>
     
             <div class="docstring"><p>Create <code><a href="#TinkoffBrokerServer.Sell">Sell</a></code> stop-order. You must specify at least 2 parameters: <code>lots</code> <code>target price</code> to open sell stop-order.
-In additional you can specify 3 parameters for sell stop-order: <code>limit price</code> &gt;=0, <code>stop type</code> = Limit|SL|TP,
+In addition, you can specify 3 parameters in sell stop-order: <code>limit price</code> &gt;=0, <code>stop type</code> = Limit|SL|TP,
 <code>expiration date</code> = Undefined|<code>%%Y-%%m-%%d %%H:%%M:%%S</code>. When current price will go up or down to
 target price value then broker opens a limit order. See also: <code><a href="#TinkoffBrokerServer.Order">Order()</a></code> docstring.</p>
 
@@ -2001,12 +2001,12 @@ target price value then broker opens a limit order. See also: <code><a href="#Ti
 
 <ul>
 <li><strong>lots</strong>:  volume, integer count of lots &gt;= 1.</li>
-<li><strong>targetPrice</strong>:  target price &gt; 0. This is trigger price for sell stop-order.</li>
-<li><strong>limitPrice</strong>:  limit price &gt;= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will creates limit-order
+<li><strong>targetPrice</strong>:  target price &gt; 0. This is trigger price in sell stop-order.</li>
+<li><strong>limitPrice</strong>:  limit price &gt;= 0 (limitPrice = targetPrice if limitPrice is 0). Broker will create limit-order
 with price equal to limitPrice, when current price goes to target price of sell stop-order.</li>
 <li><strong>stopType</strong>:  string "Limit" by default. There are 3 stop-order types "SL", "TP", "Limit"
 for "Stop loss", "Take profit" and "Stop limit" types accordingly.</li>
-<li><strong>expDate</strong>:  string "Undefined" by default or local date in future.
+<li><strong>expDate</strong>:  string "Undefined" by default or local date in the future.
 String has a format like this: <code>%Y-%m-%d %H:%M:%S</code>.
 This date is converting to UTC format for server.</li>
 </ul>
