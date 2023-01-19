@@ -2883,10 +2883,11 @@ class TinkoffBrokerServer:
                     uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
 
                 else:
-                    if start is not None and (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
-                        responseJSON["candles"] = responseJSON["candles"][:-1]  # removes last candle for "yesterday" request
+                    if "candles" in responseJSON.keys():
+                        if start is not None and (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
+                            responseJSON["candles"] = responseJSON["candles"][:-1]  # removes last candle for "yesterday" request
 
-                    responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
+                        responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
 
             blockEnd = blockStart
 
