@@ -2889,6 +2889,9 @@ class TinkoffBrokerServer:
 
                         responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
 
+                    else:
+                        uLogger.debug("`candles` key not in responseJSON keys! Block #{}/{} is empty".format(item + 1, blocks))
+
             blockEnd = blockStart
 
         printCount = len(responseJSONs)  # candles to show in console
