@@ -27,7 +27,7 @@ sys.path.extend([
 pdoc.render.configure(
     docformat="restructuredtext",
     favicon="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/favicon-128x128.png?raw=true",
-    footer_text="⚙ Technologies. Knowledge. Science.",
+    footer_text="⚙ Technologies · Knowledge · Science",
     logo="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo-text-only.png?raw=true",
     show_source=False,
     template_directory=Path("docs", "templates").resolve(),
