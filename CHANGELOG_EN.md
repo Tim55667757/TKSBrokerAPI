@@ -47,6 +47,7 @@ Release development in progress...
 * [#94](https://github.com/Tim55667757/TKSBrokerAPI/issues/94) Bug fixed in `Overview()` method: `KeyError: 'currentNkd'` if instrument is not a bond.
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Bug fixed: broken Overview table in `Lots` column.
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Bug fixed in `Deals()` method: `KeyError: 'OPERATION_STATE_PROGRESS'`. New state `OPERATION_STATE_PROGRESS` was added to the `TKS_OPERATION_STATES` constant.
+* [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Bug fixed in `History()` method: `KeyError: 'candles'`. Additional check was added.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released

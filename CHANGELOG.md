@@ -47,6 +47,7 @@
 * [#94](https://github.com/Tim55667757/TKSBrokerAPI/issues/94) Исправлен баг в методе `Overview()`: `KeyError: 'currentNkd'`, если инструмент не является облигацией.
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Исправлен баг со "сломанной" таблицей Overview в колонке `Lots`.
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Исправлен баг в методе `Deals()`: `KeyError: 'OPERATION_STATE_PROGRESS'`. Для этого был добавлен новый статус `OPERATION_STATE_PROGRESS` в константу `TKS_OPERATION_STATES`.
+* [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Исправлен баг в методе `History()`: `KeyError: 'candles'`. Добавлена дополнительная проверка.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — опубликована
