@@ -2,13 +2,27 @@
 # Author: Timur Gilmullin
 
 """
-Anomaly Volumes Detector is a simple TG-bot for detecting anomaly volumes of Buyers and Sellers prices.
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
+**T**echnologies · **K**nowledge · **S**cience
+
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
+
+
+**Anomaly Volumes Detector** is a simple TG-bot for detecting anomaly volumes of Buyers and Sellers prices.
 
 The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series
 of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
+
+Bot doesn't contain the real trade operations.
+
+**Acknowledgements**
+
+* Idea and sponsorship: [Jolids](https://github.com/Jolids)
+* Developer: [Timur Gilmullin](https://github.com/Tim55667757)
 """
 
-# Copyright (c) 2022 Gilmillin Timur Mansurovich
+# Copyright (c) 2023 Gilmillin Timur Mansurovich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,11 +39,18 @@ of volumes and notifies in Telegram. The notification contains: the current pric
 
 # --- Import, constants and variables initialization section -----------------------------------------------------------
 
-from datetime import datetime, timedelta
-from dateutil.tz import tzlocal, tzutc
+import os
+import platform
+import shutil
+import yaml
+from dateutil.tz import tzlocal
+from math import ceil
+from multiprocessing import cpu_count
+from multiprocessing.pool import ThreadPool
 
 from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT
+from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT, TKS_TICKER_ALIASES, TKS_ORDER_DIRECTIONS, TKS_STOP_ORDER_DIRECTIONS
+from tksbrokerapi.TradeRoutines import *
 
 
 def Trade():
