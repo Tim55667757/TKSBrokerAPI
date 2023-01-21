@@ -2894,7 +2894,6 @@ class TinkoffBrokerServer:
 
             blockEnd = blockStart
 
-        printCount = len(responseJSONs)  # candles to show in console
         if responseJSONs:
             tempHistory = pd.DataFrame(
                 data={
@@ -2922,7 +2921,6 @@ class TinkoffBrokerServer:
                     if curTime == lastTime:
                         uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
                         index = i
-                        printCount = i + 1
                         break
 
                 history = pd.concat([tempOld, tempHistory[index:]], ignore_index=True)
@@ -2935,6 +2933,7 @@ class TinkoffBrokerServer:
 
         if history is not None and not history.empty:
             if show and not onlyFiles:
+                printCount = len(responseJSONs)  # candles to show in console
                 uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
                     strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
                     pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
