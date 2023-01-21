@@ -64,8 +64,11 @@ The script works with `python >= 3.9`. Steps to start on a new server:
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
 cd ./TKSBrokerAPI/docs/examples/AnomalyVolumesDetector
 python3 -m pip install -r requirements.txt
-python3 TKSAVDetector.py
+python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
+
+If you're using default names `config.yaml` and `secrets.yaml`, then they can be omitted in `python3 TKSAVDetector.py` command.
+
 
 🚀 Good luck for you in trade automation! And profit!
 
@@ -141,8 +144,11 @@ python3 TKSAVDetector.py
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
 cd ./TKSBrokerAPI/docs/examples/AnomalyVolumesDetector
 python3 -m pip install -r requirements.txt
-python3 TKSAVDetector.py
+python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
+
+Если используются дефолтные файлы конфигурации `config.yaml` и `secrets.yaml`, то в команде `python3 TKSAVDetector.py` их можно не указывать.
+
 
 🚀 Успехов вам в автоматизации биржевой торговли! И профита!
 
