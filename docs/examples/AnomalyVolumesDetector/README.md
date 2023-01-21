@@ -25,7 +25,7 @@ The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), loo
 
 Main steps: 
 
-- The script enters the market on schedule (e.g. crontab format: `timeToWork: "*/2 10-21 * * 1-5"  # At every 2nd minute past every hour from 10 through 21 on every day-of-week from Monday through Friday`, see [other examples](https://crontab.guru/#*/2_10-21_*_*_1-5)).
+- The script enters the market on schedule (e.g. crontab format: `timeToWork: "*/2 10-21 * * 1-5"  # At every 2nd minute past every hour from 10 through 22 (including) on every day-of-week from Monday through Friday`, see [other examples](https://crontab.guru/#*/2_10-21_*_*_1-5)).
 
 - In a parallel (multiprocessing) conveyor mode, it requests data on the state of the order book for the specified instruments and with the specified depth of the order book (`depth <= 50`).
 
