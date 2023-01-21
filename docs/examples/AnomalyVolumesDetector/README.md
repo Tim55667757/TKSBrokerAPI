@@ -40,8 +40,10 @@ Main steps:
     * Date and time: [2023-01-18 15:55:51 UTC]
       
     * Current price / volume / value in the order book:
-      * Buy (1st seller price): 4.212 / 51231 / 220959.303 rub
-      * Sell (1st buyer price): 4.211 / 11416 / 48072.776 rub
+      * Buy (1st seller price):
+        4.212 / 51231 / 220959.303 rub
+      * Sell (1st buyer price):
+        4.211 / 11416 / 48072.776 rub
       
     * Anomalies among sellers' offers, price / volume / value:
       * 4.31 / 1508321 / 6500863.51 rub
@@ -120,8 +122,10 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
     * Дата и время: [2023-01-18 15:55:51 UTC]
     
     * Текущая цена / объём / стоимость в стакане:
-      * На покупку (Buy, 1-я цена продавцов): 4.212 / 51231 / 220959.303 rub
-      * На продажу (Sell, 1-я цена покупателей): 4.211 / 11416 / 48072.776 rub
+      * На покупку (Buy, 1-я цена продавцов):
+        4.212 / 51231 / 220959.303 rub
+      * На продажу (Sell, 1-я цена покупателей):
+        4.211 / 11416 / 48072.776 rub
     
     * Аномалии среди предложений продавцов, цена / объём / стоимость:
       * 4.31 / 1508321 / 6500863.51 rub
