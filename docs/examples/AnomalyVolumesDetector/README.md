@@ -25,7 +25,7 @@ The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), loo
 
 Main steps: 
 
-- The script enters the market on schedule (e.g. crontab format:`timeToWork: "*/2 10-21 * * 1-5"  # At every 2nd minute past every hour from 10 through 21 on every day-of-week from Monday through Friday`, see [other examples](https://crontab.guru/#*/2_10-21_*_*_1-5)).
+- The script enters the market on schedule (e.g. crontab format: `timeToWork: "*/2 10-21 * * 1-5"  # At every 2nd minute past every hour from 10 through 21 on every day-of-week from Monday through Friday`, see [other examples](https://crontab.guru/#*/2_10-21_*_*_1-5)).
 
 - In a parallel (multiprocessing) conveyor mode, it requests data on the state of the order book for the specified instruments and with the specified depth of the order book (`depth <= 50`).
 
@@ -105,7 +105,7 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
 
 Основные шаги: 
 
-- Скрипт выходит на рынок по расписанию (например, в формате crontab:`timeToWork: "*/2 10-21 * * 1-5"  # С 10:00 утра до 22:00 вечера (включительно) в будние дни, каждые 2 минуты`, см. другие [примеры](https://crontab.guru/#*/2_10-21_*_*_1-5)).
+- Скрипт выходит на рынок по расписанию (например, в формате crontab: `timeToWork: "*/2 10-21 * * 1-5"  # С 10:00 утра до 22:00 вечера (включительно) в будние дни, каждые 2 минуты`, см. другие [примеры](https://crontab.guru/#*/2_10-21_*_*_1-5)).
 
 - В параллельном (мультипроцессном) конвейерном режиме запрашивает данные по состоянию биржевого стакана по указанным инструментам и с указанной глубиной стакана (`depth <= 50`).
 
