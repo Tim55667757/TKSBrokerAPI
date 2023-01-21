@@ -1,0 +1,15 @@
+# The order of packages is significant, because pip processes them in the order of appearance.
+# Changing the order has an impact on the overall integration  process, which may cause troubles later.
+
+# Packet TKSBrokerAPI requirements:
+requests >= 2.25.1  # Apache-2.0 license
+pandas >= 1.5.2  # MIT License
+numpy >= 1.23.5  # BSD-3-Clause license
+openpyxl >= 3.0.10  # MIT License
+Mako >= 1.2.4  # MIT License
+python-dateutil >= 2.8.1  # Apache-2.0 license
+PriceGenerator >= 1.3.81  # Apache-2.0 license
+FuzzyRoutines >= 1.0.3  # MIT License
+
+# Actual TKSBrokerAPI:
+TKSBrokerAPI >= 1.6.dev140  # Apache-2.0 license
