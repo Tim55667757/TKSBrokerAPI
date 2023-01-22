@@ -71,6 +71,22 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 
 If you're using default names `config.yaml` and `secrets.yaml`, then they can be omitted in `python3 TKSAVDetector.py` command.
 
+### Methods
+
+* The `ConfigDecorator()` method is a wrapper (decorator) for loading configuration files and secrets, controlling the start time of iterations on a schedule, for a single run or in infinite mode, as well as for parameterizing the Trade Manager.
+     - Decorator `ConfigDecorator()`:
+       - loads settings from configuration files,
+       - checks the number of CPU available for parallelization,
+       - checks if it's working time (according to crontab settings),
+       - launches the Trade Manager once or in infinite mode.
+
+* The `TradeManager()` method is a manager for initializing, launching and managing parallel pipelines, which will analyze the state of the order book for a specific set of tickers.
+     - Manager `TradeManager()`:
+       - initializes the reporter (an instance of the `TinkoffBrokerServer()` class for generating reports),
+       - updates the cache for instruments once and gets the user's portfolio so that they are not updated on each pipeline once again,
+       - starts iteration over all tickers, splits them into sets,
+       - each set sends to its own pipeline for parallelization.
+
 
 🚀 Good luck for you in trade automation! And profit!
 
@@ -152,6 +168,22 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
 
 Если используются дефолтные файлы конфигурации `config.yaml` и `secrets.yaml`, то в команде `python3 TKSAVDetector.py` их можно не указывать.
+
+### Основные методы
+
+* Метод `ConfigDecorator()` — обёртка (декоратор) для загрузки файлов конфигурации и секретов, управления временем запуска итераций по расписанию, для однократного запуска или в бесконечном режиме, а также для параметризации менеджера.
+    - Декоратор `ConfigDecorator()`:
+      - загружает настройки из файлов конфигурации,
+      - проверяет количество доступных для распараллеливания запросов CPU,
+      - проверяет рабочее ли сейчас время (согласно настройкам crontab),
+      - однократно или в бесконечном режиме запускает менеджер.
+
+* Метод `TradeManager()` — менеджер для инициализации, запуска и управления параллельными конвейерами, на которых будет исполняться анализ состояния стакана для конкретного набора тикеров.
+    - Менеджер `TradeManager()`:
+      - инициализирует репортер (экземпляр класса `TinkoffBrokerServer()` для генерации отчётов),
+      - однократно обновляет кеш по инструментам и получает портфель пользователя, чтобы они не обновлялись на каждом конвейере лишний раз,
+      - запускает итерацию по всем тикерам, разбивает их на наборы,
+      - каждый набор отправляет на свой конвейер для параллелизации.
 
 
 🚀 Успехов вам в автоматизации биржевой торговли! И профита!
