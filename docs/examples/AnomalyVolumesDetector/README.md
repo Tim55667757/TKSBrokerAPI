@@ -60,7 +60,7 @@ Main steps:
 
 All parameters are configured in two configuration files: [`config.yaml`](./config.yaml) and [`secrets.yaml`](./secrets.yaml), which must be present next to the script [`TKSAVDetector.py`](./TKSAVDetector.py). 
 
-The script works with `python >= 3.9`. Steps to start on a new server:
+The script works with `python >= 3.9`, and dependencies from [`requirements.txt`](./requirements.txt) must also be installed. Steps to start on a new server:
 
 ```commandline
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
@@ -158,7 +158,7 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
 
 Все параметры настраиваются в двух конфигурационных файлах: [`config.yaml`](./config.yaml) и [`secrets.yaml`](./secrets.yaml), которые должны присутствовать рядом со скриптом [`TKSAVDetector.py`](./TKSAVDetector.py). 
 
-Скрипт работает с `python >= 3.9`. Шаги для запуска на новом сервере:
+Скрипт работает с `python >= 3.9`, а также должны быть установлены зависимости из [`requirements.txt`](./requirements.txt). Шаги для запуска на новом сервере:
 
 ```commandline
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
