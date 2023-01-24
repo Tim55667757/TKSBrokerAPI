@@ -67,6 +67,100 @@ CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # How many CPUs will be used
 SCENARIO_ID = "TKSAVDetector"  # Scenario identifier
 
 
+class TradeScenario(TinkoffBrokerServer):
+    """This class contains methods for implementing the trading scenario logic."""
+
+    def __init__(self, **kwargs) -> None:
+        """
+        Initialization and parameterization of the trading scenario.
+
+        **kwargs** parameters can be:
+        * **userToken:** str, Tinkoff Invest API token. Or just use `TKS_API_TOKEN` environment variable.
+        * **userAccount:** str, user account ID. Or just use `TKS_ACCOUNT_ID` environment variable.
+        * **userName:** str, user name to identify in log.
+        * **comment:** str, some additional comment to identify in log. Can be empty.
+        * **pipelineId:** int, number of pipeline.
+
+        TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
+        """
+        super().__init__(token=kwargs["userToken"], accountId=kwargs["userAccount"])  # Initialize main `__init__()` of `TinkoffBrokerServer()` class.
+        self.userName = kwargs["userName"]  # Additional identifier for user.
+        self.comment = kwargs["comment"]  # Additional comment in log.
+        self.moreDebug = False  # Can be set to `True`, if you want more debug information as network headers, requests and responses.
+
+        # Trade parameters loaded from configuration files and replaced here:
+        self.timeout = 30  # Server operations timeout in seconds.
+        self.depth = 20  # How deep to request the Depth of Market to analyze current trading volumes, `1 <= depth <= 50`.
+        self.msgLanguage = "en"  # Bot messages language: "en" / "ru" supported.
+        self.windowHampel = 0  # Length of the sliding window in Hampel filter (0 mean max wide window is used), `1 <= windowHampel <= len(series)`.
+        self.anomaliesMaxCount = 3  # Maximum anomalies that bot sending in one message.
+
+        # Parameters calculated during the execution of the trading scenario (not for manual setting):
+        self._pipelineId = kwargs["pipelineId"] if "pipelineId" in kwargs.keys() else "*"  # Pipeline ID number.
+        self._curTicker = ""  # In `Run()` method we will save original ticker name, before run scenario steps.
+        self._curFIGI = ""  # In `Run()` method we will get and save original FIGI identifier, before run scenario steps.
+        self._portfolio = {}  # User's portfolio with all instruments is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}`.
+        self._rawIData = None  # Raw data of one instrument from broker cache.
+        self._iData = {}  # Information about instrument if it presents in user portfolio.
+        self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Actual broker prices for current instrument.
+        self._volumesOfSellers = []  # Numerical series with volumes of Sellers in ascending price order.
+        self._volumesOfBuyers = []  # Numerical series with volumes of Buyers in descending price order.
+        self._sumSellers = 0  # The current volumes of Sellers in the DOM (you can buy from Sellers).
+        self._sumBuyers = 0  # The current volumes of Buyers in the DOM (you can sell to Buyers).
+        self._curPriceToSell = 0  # The first price in the orders list of Buyers is the current price at which you can sell the instrument (or put it for a buy).
+        self._curPriceToBuy = 0  # The first price in the orders list of Sellers is the current price at which you can buy the instrument (or put it for a sell).
+
+        uLogger.debug("... pipeline [{}]: init completed".format(self._pipelineId))
+
+    def Run(self, instruments: list, portfolio: dict = None) -> list[dict]:
+        """
+        Runner of trade steps for all given instruments tickers.
+
+        :param instruments: Tickers list for trading.
+        :param portfolio: This is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}`.
+        :return: List of dictionaries with trade results for all instruments.
+        """
+        tag = "{}{}{}{}".format(
+            "[{}] ".format(self.userName) if self.userName else "",
+            "[{}] ".format(self.accountId) if self.accountId else "",
+            "[{}] ".format(self.comment) if self.comment else "",
+            "[{}] ".format(SCENARIO_ID) if SCENARIO_ID else "",
+        )
+
+        uLogger.debug("{}Pipeline [{}], runner processing tickers list: {}".format(tag, self._pipelineId, instruments))
+
+        # --- Preparatory operations, before the main steps of the trade scenario --------------------------------------
+
+        # Gets the user's portfolio once before start iteration by all instruments or using given `portfolio` if it is not empty.
+        # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
+        self._portfolio = portfolio if portfolio is not None and portfolio else self.Overview(show=False)
+
+        # --- Running the main steps of the scenario, in a loop for all given tickers ----------------------------------
+
+        tradeResults = []  # Dictionaries like this: `{"result": "operation's result", "message": "some comments"}`.
+        for ticker in instruments:
+            uLogger.debug("{}Pipeline [{}]: [{}] ticker processing...".format(tag, self._pipelineId, ticker))
+
+            self.ticker = ticker
+            self._curTicker = ticker  # Saving name of actual ticker
+
+            uLogger.debug("{}Pipeline [{}]: [{}] ticker processed".format(tag, self._pipelineId, ticker))
+
+        return tradeResults
+
+
+def IRunner(**kwargs) -> dict:
+    """Runner for one instance of `TradeScenario()` class with all parameters of one instrument."""
+    return kwargs["trader"].Run(instruments=kwargs["tasks"], portfolio=kwargs["portfolio"] if "portfolio" in kwargs.keys() else None)
+
+
+def _IWrapper(kwargs):
+    """
+    Wrapper to parallelize scenario for all instruments on all pipelines.
+    """
+    return IRunner(**kwargs)
+
+
 def ConfigDecorator(func):
     """Some technical operations before scenario runs."""
 
@@ -183,7 +277,7 @@ def TradeManager(**kwargs) -> None:
     reporter = TinkoffBrokerServer(token=kwargs["userToken"], accountId=kwargs["userAccount"])
 
     # Gets the user's portfolio once before start iteration throw all instruments.
-    # This is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}
+    # This is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}`
     # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
     overview = reporter.Overview(show=False)
 
@@ -192,11 +286,37 @@ def TradeManager(**kwargs) -> None:
     # Splitting list of tickers by equal parts. Parts count is equal to the available CPU for usages:
     pieces = SeparateByEqualParts(elements=kwargs["tickers"], parts=CPU_USAGES, union=True)
 
-    uLogger.debug("Split list of tickers: {}".format(pieces))
-
     traders = []  # All pipeline is an instance of `TradeScenario()` class and everyone will have their own set of tickers to work with
 
-    uLogger.debug("... DO SOME TRADE JOBS WITH ALL TICKERS ...")
+    # We create a pool of pipelines, the maximum number of which can be equal to CPU_USAGES (the number of processors, minus one).
+    # Then we pass own list of tasks to each pipeline, contains tickers of instruments that need to be processed.
+    for i, piece in enumerate(pieces):
+        traders.append(
+            {
+                "trader": TradeScenario(
+                    userToken=kwargs["userToken"],
+                    userAccount=kwargs["userAccount"],
+                    userName=kwargs["userName"],
+                    comment=kwargs["comment"],
+                    pipelineId=i + 1,
+                ),
+                "tasks": piece,
+                "portfolio": overview,
+            }
+        )
+
+        # Setting trading parameters from the configuration file for each pipeline:
+        UpdateClassFields(traders[-1]["trader"], kwargs["fields"])
+
+    if traders:  # If the pipelines are initialized and parameterized successes, then we launch trade operations in parallel on all pipelines:
+        uLogger.info("{}All pipelines initialized, count: [{}], tickers for trading:\n{}".format(
+            tag, len(pieces), "\n".join(["[{}]: {}".format(i + 1, pieces[i]) for i, piece in enumerate(pieces)]),
+        ))
+
+        with ThreadPool(processes=CPU_USAGES) as poolSteps:  # Create a pool for multiprocessing pipeline
+            poolSteps.map(_IWrapper, traders)  # We execute the trading script in parallel mode for all instruments
+
+        poolSteps.join()  # We are waiting for the end of the work of all threads in the pool
 
     # --- Section of operations performed after the trading iteration --------------------------------------------------
 
