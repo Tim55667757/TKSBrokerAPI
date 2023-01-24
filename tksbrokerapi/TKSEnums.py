@@ -111,6 +111,11 @@ TKS_QUALIFIED_TYPES = {
     "russian_shares": "Russian shares not included in quotation lists",
     "leverage": "Margin trading, unsecured leveraged trades",
     "repo": "REPO agreements",
+    "convertible_bonds": "Convertible bonds",
+    "foreign_bonds_russian_law": "Foreign bonds by Russian law",
+    "russian_bonds_foreign_law": "Russian bonds by foreign law",
+    "non_quoted_instruments": "Non quoted instruments",
+    "option": "Option",
 }
 """Values of `qualified_for_work_with`, field: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with"""
 
