@@ -51,6 +51,7 @@
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Исправлен баг со "сломанной" таблицей Overview в колонке `Lots`.
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Исправлен баг в методе `Deals()`: `KeyError: 'OPERATION_STATE_PROGRESS'`. Для этого был добавлен новый статус `OPERATION_STATE_PROGRESS` в константу `TKS_OPERATION_STATES`.
 * [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Исправлен баг в методе `History()`: `KeyError: 'candles'`. Добавлена дополнительная проверка.
+* [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Исправлен баг в константе `TKS_QUALIFIED_TYPES`. Некоторые новые значения в поле ответа `qualified_for_work_with` были добавлены в Tinkoff REST API, но не задокументированы: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` и `option`. Эти дополнительные значения были добавлены в текущем баг-фиксе.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — опубликована
