@@ -55,7 +55,8 @@ from datetime import datetime
 from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
 
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+# Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger
 from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT, TKS_TICKER_ALIASES, TKS_ORDER_DIRECTIONS, TKS_STOP_ORDER_DIRECTIONS
 from tksbrokerapi.TradeRoutines import *
 
@@ -79,7 +80,7 @@ class TradeScenario(TinkoffBrokerServer):
         * **userAccount:** str, user account ID. Or just use `TKS_ACCOUNT_ID` environment variable.
         * **userName:** str, user name to identify in log.
         * **comment:** str, some additional comment to identify in log. Can be empty.
-        * **pipelineId:** int, number of pipeline.
+        * **pipelineId:** int, number id of pipeline.
 
         TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
         """
@@ -103,14 +104,68 @@ class TradeScenario(TinkoffBrokerServer):
         self._rawIData = None  # Raw data of one instrument from broker cache.
         self._iData = {}  # Information about instrument if it presents in user portfolio.
         self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Actual broker prices for current instrument.
-        self._volumesOfSellers = []  # Numerical series with volumes of Sellers in ascending price order.
-        self._volumesOfBuyers = []  # Numerical series with volumes of Buyers in descending price order.
-        self._sumSellers = 0  # The current volumes of Sellers in the DOM (you can buy from Sellers).
-        self._sumBuyers = 0  # The current volumes of Buyers in the DOM (you can sell to Buyers).
-        self._curPriceToSell = 0  # The first price in the orders list of Buyers is the current price at which you can sell the instrument (or put it for a buy).
         self._curPriceToBuy = 0  # The first price in the orders list of Sellers is the current price at which you can buy the instrument (or put it for a sell).
+        self._curPriceToSell = 0  # The first price in the orders list of Buyers is the current price at which you can sell the instrument (or put it for a buy).
+        self._curVolumeToBuy = 0  # Volumes for the first price in the orders list of Sellers.
+        self._curVolumeToSell = 0  # Volumes for the first price in the orders list of Buyers.
+        self._curValueToBuy = 0  # Cost of the first Sellers offer.
+        self._curValueToSell = 0  # Cost of the first Buyers offer.
+        self._volumesOfBuyers = []  # Numerical series with volumes of Buyers in descending price order.
+        self._volumesOfSellers = []  # Numerical series with volumes of Sellers in ascending price order.
+        self._sumBuyers = 0  # The current volumes of Buyers in the DOM (you can sell to Buyers).
+        self._sumSellers = 0  # The current volumes of Sellers in the DOM (you can buy from Sellers).
 
-        uLogger.debug("... pipeline [{}]: init completed".format(self._pipelineId))
+        uLogger.debug("Pipeline [{}]: init completed".format(self._pipelineId))
+
+    def _UpdateOrderBook(self) -> bool:
+        """
+        Receiving actual prices for current instrument, saving to the `_ordersBook` variable and re-calculating some volume parameters.
+
+        :return: `True` if the order book has been successfully updated, and it is possible to trade (the order book is not empty).
+        """
+        self.ticker = self._curTicker  # Set current ticker to processing with TKSBrokerAPI.
+        self.figi = self._curFIGI  # Set current FIGI ID to processing with TKSBrokerAPI.
+
+        # Receiving DOM, TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
+        self._ordersBook = self.GetCurrentPrices(show=False)
+
+        if self._ordersBook["buy"] and self._ordersBook["sell"]:
+            self._curPriceToBuy = self._ordersBook["buy"][0]["price"]  # The first price in the orders list of Sellers is the current price at which you can buy the instrument (or put it for a sell).
+            self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # The first price in the orders list of Buyers is the current price at which you can sell the instrument (or put it for a buy).
+            self._curVolumeToBuy = self._ordersBook["buy"][0]["quantity"]  # Volumes for the first price in the orders list of Sellers.
+            self._curVolumeToSell = self._ordersBook["sell"][0]["quantity"]  # Volumes for the first price in the orders list of Buyers.
+            self._curValueToBuy = self._curPriceToBuy * self._curVolumeToBuy  # Cost of the first Sellers offer.
+            self._curValueToSell = self._curPriceToSell * self._curVolumeToSell  # Cost of the first Buyers offer.
+            self._volumesOfBuyers = [v["quantity"] for v in self._ordersBook["sell"]]  # Numerical series with volumes of Buyers in descending price order.
+            self._volumesOfSellers = [v["quantity"] for v in self._ordersBook["buy"]]  # Numerical series with volumes of Sellers in ascending price order.
+            self._sumBuyers = sum(self._volumesOfBuyers)  # The current volumes of Buyers in the DOM (you can sell to Buyers).
+            self._sumSellers = sum(self._volumesOfSellers)  # The current volumes of Sellers in the DOM (you can buy from Sellers).
+
+            uLogger.debug("[{}] Orders book was received success, see `self._ordersBook` variable:".format(self._curTicker))
+            uLogger.debug("  - Current price / volume / value in the order book:")
+            uLogger.debug("    - Buy (1st seller price): {} / {} / {:.2f} {}".format(self._curPriceToBuy, self._curVolumeToBuy, self._curValueToBuy, self._rawIData["currency"]))
+            uLogger.debug("    - Sell (1st buyer price): {} / {} / {:.2f} {}".format(self._curPriceToSell, self._curVolumeToSell, self._curValueToSell, self._rawIData["currency"]))
+            uLogger.debug("  - Sum of all volumes in the order book (depth = {}):".format(self.depth))
+            uLogger.debug("    - Buyers: {}".format(self._sumBuyers))
+            uLogger.debug("    - Sellers: {}".format(self._sumSellers))
+
+            return True
+
+        else:
+            self._curPriceToBuy = 0
+            self._curPriceToSell = 0
+            self._curVolumeToBuy = 0
+            self._curVolumeToSell = 0
+            self._curValueToBuy = 0
+            self._curValueToSell = 0
+            self._volumesOfBuyers = []
+            self._volumesOfSellers = []
+            self._sumBuyers = 0
+            self._sumSellers = 0
+
+            uLogger.debug("An empty orders book was returned or non-trading time")
+
+            return False
 
     def Run(self, instruments: list, portfolio: dict = None) -> list[dict]:
         """
@@ -127,7 +182,7 @@ class TradeScenario(TinkoffBrokerServer):
             "[{}] ".format(SCENARIO_ID) if SCENARIO_ID else "",
         )
 
-        uLogger.debug("{}Pipeline [{}], runner processing tickers list: {}".format(tag, self._pipelineId, instruments))
+        uLogger.debug("{}Pipeline [{}], processing tickers list: {}".format(tag, self._pipelineId, instruments))
 
         # --- Preparatory operations, before the main steps of the trade scenario --------------------------------------
 
@@ -142,7 +197,34 @@ class TradeScenario(TinkoffBrokerServer):
             uLogger.debug("{}Pipeline [{}]: [{}] ticker processing...".format(tag, self._pipelineId, ticker))
 
             self.ticker = ticker
-            self._curTicker = ticker  # Saving name of actual ticker
+            self._curTicker = ticker  # Saving original name of current ticker.
+
+            # Getting raw instrument's data by its ticker from broker cache.
+            # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
+            self._rawIData = self.SearchByTicker(requestPrice=False, show=False)
+
+            self.figi = self._rawIData["figi"]
+            self._curFIGI = self.figi  # Saving original FIGI ID.
+
+            notEmptyBook = self._UpdateOrderBook()  # Receiving actual prices for current instrument and re-calculating some volume parameters.
+
+            # --- Trying to run scenario steps for current ticker ------------------------------------------------------
+
+            try:
+                if notEmptyBook:
+                    tradeResults.append({"result": "success", "message": "All trade steps were finished success"})#TODO:tradeResults.append(self.Steps())
+
+                else:
+                    tradeResults.append({"result": "failure", "message": "Operations are not possible at the moment, try agan later"})
+
+                uLogger.info("{}[{}] [{}] {}".format(tag, self.ticker, tradeResults[-1]["result"], tradeResults[-1]["message"]))
+
+            except Exception as e:
+                uLogger.error("An error occurred in Trader: {}".format(e))
+                tradeResults.append({"result": "error", "message": "An error occurred in Trader"})
+
+            self.ticker = self._curTicker  # Reload current ticker.
+            self.figi = self._curFIGI  # Reload current FIGI ID.
 
             uLogger.debug("{}Pipeline [{}]: [{}] ticker processed".format(tag, self._pipelineId, ticker))
 
