@@ -41,7 +41,7 @@
 * [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except блок и негативные юнит-тексты были добавлены для метода `FloatToNano()`.
 * [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except блок и негативные юнит-тексты были добавлены для метода `GetDatesAsString()`.
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except блок и негативные юнит-тексты были добавлены для метода `_ParseJSON()`.
-* [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен ко всем методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `History()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
+* [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен к некоторым методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-документация на модули `TKSBrokerAPI` теперь с тёмной темой.
 
 ##### Баг-фиксы

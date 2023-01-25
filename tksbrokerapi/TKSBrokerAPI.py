@@ -2763,7 +2763,7 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
-    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = False, onlyFiles=False) -> pd.DataFrame:
+    def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = True) -> pd.DataFrame:
         """
         This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
 
@@ -2784,7 +2784,6 @@ class TinkoffBrokerServer:
                             with always update last candle!
         :param csvSep: separator if csv-file is used, `,` by default.
         :param show: if `True` then also prints Pandas DataFrame to the console.
-        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
         :return: Pandas DataFrame with prices history. Headers of columns are defined by default:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
@@ -2824,18 +2823,19 @@ class TinkoffBrokerServer:
         # calculate data blocks count:
         blocks = 1 if length < TKS_CANDLE_INTERVALS[interval][2] else 1 + length // TKS_CANDLE_INTERVALS[interval][2]
 
-        uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self._ticker, self._figi))
-        if self.moreDebug:
-            uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
-            uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
-            uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
-            uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
+        if show:
+            uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Wait, please...".format(self._ticker, self._figi))
+            if self.moreDebug:
+                uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
+                uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
+                uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
+                uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
 
         tempOld = None  # pandas object for old history, if --only-missing key present
         lastTime = None  # datetime object of last old candle in file
 
         if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
-            if self.moreDebug:
+            if self.moreDebug and show:
                 uLogger.debug("--only-missing key present, add only last missing candles...")
                 uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
 
@@ -2862,12 +2862,14 @@ class TinkoffBrokerServer:
             tail = length % TKS_CANDLE_INTERVALS[interval][2] if item + 1 == blocks else TKS_CANDLE_INTERVALS[interval][2]
             blockStart = blockEnd - timedelta(minutes=TKS_CANDLE_INTERVALS[interval][1] * tail)
 
-            uLogger.debug("[Block #{}/{}] time period: [{}] UTC - [{}] UTC".format(
-                item + 1, blocks, blockStart.strftime(TKS_DATE_TIME_FORMAT), blockEnd.strftime(TKS_DATE_TIME_FORMAT),
-            ))
+            if self.moreDebug and show:
+                uLogger.debug("[Block #{}/{}] time period: [{}] UTC - [{}] UTC".format(
+                    item + 1, blocks, blockStart.strftime(TKS_DATE_TIME_FORMAT), blockEnd.strftime(TKS_DATE_TIME_FORMAT),
+                ))
 
             if blockStart == blockEnd:
-                uLogger.debug("Skipped this zero-length block...")
+                if self.moreDebug and show:
+                    uLogger.debug("Skipped this zero-length block...")
 
             else:
                 # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
@@ -2891,7 +2893,8 @@ class TinkoffBrokerServer:
                         responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
 
                     else:
-                        uLogger.debug("`candles` key not in responseJSON keys! Block #{}/{} is empty".format(item + 1, blocks))
+                        if self.moreDebug and show:
+                            uLogger.debug("`candles` key not in responseJSON keys! Block #{}/{} is empty".format(item + 1, blocks))
 
             blockEnd = blockStart
 
@@ -2920,7 +2923,9 @@ class TinkoffBrokerServer:
                     curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
 
                     if curTime == lastTime:
-                        uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
+                        if show:
+                            uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
+
                         index = i
                         break
 
@@ -2929,45 +2934,52 @@ class TinkoffBrokerServer:
             else:
                 history = tempHistory  # if no `--only-missing` key then load full data from server
 
-            if self.moreDebug:
+            if self.moreDebug and show:
                 uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
 
-        if history is not None and not history.empty:
-            if show and not onlyFiles:
+        if show:
+            if history is not None and not history.empty:
                 printCount = len(responseJSONs)  # candles to show in console
                 uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
                     strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
                     pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
                 ))
 
-        else:
-            uLogger.warning("Received an empty candles history!")
+            else:
+                uLogger.warning("Received an empty candles history!")
 
         if self.historyFile is not None:
             if history is not None and not history.empty:
                 history.to_csv(self.historyFile, sep=csvSep, index=False, header=False)
-                uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self._ticker, self._figi, interval, os.path.abspath(self.historyFile)))
+
+                if show:
+                    uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self._ticker, self._figi, interval, os.path.abspath(self.historyFile)))
 
             else:
-                uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
+                if show:
+                    uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
 
         else:
-            if self.moreDebug:
+            if show:
                 uLogger.debug("--output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.")
 
         return history
 
-    def LoadHistory(self, filePath: str) -> pd.DataFrame:
+    def LoadHistory(self, filePath: str, show: bool = True) -> pd.DataFrame:
         """
         Load candles history from csv-file and return Pandas DataFrame object.
 
         See also: `History()` and `ShowHistoryChart()` methods.
 
         :param filePath: path to csv-file to open.
+        :param show: if `True` then also prints Pandas DataFrame to the console.
+        :return: Pandas DataFrame with prices history. Headers of columns are defined by default:
+                 `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
-        loadedHistory = None  # init candles data object
+        loadedHistory = None  # empty pandas object for history
 
-        uLogger.debug("Loading candles history with PriceGenerator module. Wait, please...")
+        if show:
+            uLogger.debug("Loading candles history with PriceGenerator module. Wait, please...")
 
         if os.path.exists(filePath):
             loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as Pandas DataFrame
@@ -2980,15 +2992,16 @@ class TinkoffBrokerServer:
                 "{hours}h {minutes}m {seconds}s",
             )
 
-            if loadedHistory is not None and not loadedHistory.empty:
-                uLogger.info("Rows count loaded: [{}], detected timeframe of candles: [{}]. Showing some last rows:\n{}".format(
-                    len(loadedHistory),
-                    tfStr,
-                    pd.DataFrame.to_string(loadedHistory[-10:], max_cols=20)),
-                )
+            if show:
+                if loadedHistory is not None and not loadedHistory.empty:
+                    uLogger.info("Rows count loaded: [{}], detected timeframe of candles: [{}]. Showing some last rows:\n{}".format(
+                        len(loadedHistory),
+                        tfStr,
+                        pd.DataFrame.to_string(loadedHistory[-10:], max_cols=20)),
+                    )
 
-            else:
-                uLogger.warning("It was loaded an empty history! Path: [{}]".format(os.path.abspath(filePath)))
+                else:
+                    uLogger.warning("It was loaded an empty history! Path: [{}]".format(os.path.abspath(filePath)))
 
         else:
             uLogger.error("File with candles history does not exist! Check the path: [{}]".format(filePath))
