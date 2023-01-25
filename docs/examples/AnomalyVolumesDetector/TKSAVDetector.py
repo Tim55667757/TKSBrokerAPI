@@ -80,7 +80,7 @@ class TradeScenario(TinkoffBrokerServer):
         * **userAccount:** str, user account ID. Or just use `TKS_ACCOUNT_ID` environment variable.
         * **userName:** str, user name to identify in log.
         * **comment:** str, some additional comment to identify in log. Can be empty.
-        * **pipelineId:** int, number id of pipeline.
+        * **pipelineId:** int, number id of the pipeline.
 
         TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
         """
