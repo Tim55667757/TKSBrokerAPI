@@ -1,7 +1,7 @@
 # This is config file for **Anomaly Volumes Detector** scenario, worked on TKSBrokerAPI platform.
 
-logfileVerbosity: 20  # Log level for TKSBrokerAPI.log, DEBUG (10) recommended by default for script debugging.
-consoleVerbosity: 10  # Log level for the console, INFO (20) recommended by default.
+logfileVerbosity: 10  # Log level for TKSBrokerAPI.log, DEBUG (10) recommended by default for script debugging.
+consoleVerbosity: 20  # Log level for the console, INFO (20) recommended by default.
 
 # Trading periods schedule in crontab format, e.g `timeToWork: "*/2 10-21 * * 1-5"` mean:
 # At every 2nd minute past every hour from 10 through 21 on every day-of-week from Monday through Friday.
