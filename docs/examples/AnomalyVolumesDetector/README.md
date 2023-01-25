@@ -38,6 +38,7 @@ Main steps:
     * Ticker: [TMOS]
     * Instrument: [Shares] [Tinkoff iMOEX]
     * Date and time: [2023-01-18 15:55:51 UTC]
+    * Is in your portfolio: [yes / no]
       
     * Current price / volume / value in the order book:
       * Buy (1st seller price):
@@ -136,6 +137,7 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
     * Тикер: [TMOS]
     * Инструмент: [Shares] [Тинькофф iMOEX]
     * Дата и время: [2023-01-18 15:55:51 UTC]
+    * Есть в вашем портфеле: [да / нет]
     
     * Текущая цена / объём / стоимость в стакане:
       * На покупку (Buy, 1-я цена продавцов):
