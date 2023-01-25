@@ -175,14 +175,15 @@ class TradeScenario(TinkoffBrokerServer):
         :param portfolio: This is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}`.
         :return: List of dictionaries with trade results for all instruments.
         """
-        tag = "{}{}{}{}".format(
+        tag = "{}{}{}{}{}".format(
+            "[{}] ".format(self._pipelineId) if self._pipelineId and self._pipelineId > 0 else "",
             "[{}] ".format(self.userName) if self.userName else "",
             "[{}] ".format(self.accountId) if self.accountId else "",
             "[{}] ".format(self.comment) if self.comment else "",
             "[{}] ".format(SCENARIO_ID) if SCENARIO_ID else "",
         )
 
-        uLogger.debug("{}Pipeline [{}], processing tickers list: {}".format(tag, self._pipelineId, instruments))
+        uLogger.debug("{}Processing tickers list: {}".format(tag, instruments))
 
         # --- Preparatory operations, before the main steps of the trade scenario --------------------------------------
 
@@ -194,7 +195,7 @@ class TradeScenario(TinkoffBrokerServer):
 
         tradeResults = []  # Dictionaries like this: `{"result": "operation's result", "message": "some comments"}`.
         for ticker in instruments:
-            uLogger.debug("{}Pipeline [{}]: [{}] ticker processing...".format(tag, self._pipelineId, ticker))
+            uLogger.debug("{}[{}] ticker processing...".format(tag, ticker))
 
             self.ticker = ticker
             self._curTicker = ticker  # Saving original name of current ticker.
@@ -220,13 +221,13 @@ class TradeScenario(TinkoffBrokerServer):
                 uLogger.info("{}[{}] [{}] {}".format(tag, self.ticker, tradeResults[-1]["result"], tradeResults[-1]["message"]))
 
             except Exception as e:
-                uLogger.error("An error occurred in Trader: {}".format(e))
+                uLogger.error("{}An error occurred in Trader: {}".format(tag, e))
                 tradeResults.append({"result": "error", "message": "An error occurred in Trader"})
 
             self.ticker = self._curTicker  # Reload current ticker.
             self.figi = self._curFIGI  # Reload current FIGI ID.
 
-            uLogger.debug("{}Pipeline [{}]: [{}] ticker processed".format(tag, self._pipelineId, ticker))
+            uLogger.debug("{}[{}] ticker processed".format(tag, ticker))
 
         return tradeResults
 
