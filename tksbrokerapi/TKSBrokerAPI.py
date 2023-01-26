@@ -491,6 +491,7 @@ class TinkoffBrokerServer:
             return responseJSON
 
         except Exception as e:
+            uLogger.debug(tb.format_exc())
             uLogger.error("An empty dict will be return, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
 
             return {}
@@ -2835,25 +2836,30 @@ class TinkoffBrokerServer:
         lastTime = None  # datetime object of last old candle in file
 
         if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
-            if self.moreDebug and show:
-                uLogger.debug("--only-missing key present, add only last missing candles...")
-                uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
+            try:
+                if self.moreDebug and show:
+                    uLogger.debug("--only-missing key present, add only last missing candles...")
+                    uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
 
-            tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
+                tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
 
-            tempOld["date"] = pd.to_datetime(tempOld["date"])  # load date "as is"
-            tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
-            tempOld["time"] = pd.to_datetime(tempOld["time"])  # load time "as is"
-            tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
+                tempOld["date"] = pd.to_datetime(tempOld["date"])  # load date "as is"
+                tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
+                tempOld["time"] = pd.to_datetime(tempOld["time"])  # load time "as is"
+                tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
 
-            # get last datetime object from last string in file or minus 1 delta if file is empty:
-            if len(tempOld) > 0:
-                lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
+                # get last datetime object from last string in file or minus 1 delta if file is empty:
+                if len(tempOld) > 0:
+                    lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
 
-            else:
-                lastTime = dtEnd - timedelta(days=1)  # history file is empty, so last date set at -1 day
+                else:
+                    lastTime = dtEnd - timedelta(days=1)  # history file is empty, so last date set at -1 day
 
-            tempOld = tempOld[:-1]  # always remove last old candle because it may be incompletely at the current time
+                tempOld = tempOld[:-1]  # always remove last old candle because it may be incompletely at the current time
+
+            except Exception as e:
+                uLogger.debug(tb.format_exc())
+                uLogger.warning("An issue occurred when loading from file [{}], maybe incorrect format? File will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
 
         responseJSONs = []  # raw history blocks of data
 
@@ -2982,7 +2988,12 @@ class TinkoffBrokerServer:
             uLogger.debug("Loading candles history with PriceGenerator module. Wait, please...")
 
         if os.path.exists(filePath):
-            loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as Pandas DataFrame
+            try:
+                loadedHistory = self.priceModel.LoadFromFile(filePath)  # load data and get chain of candles as Pandas DataFrame
+
+            except Exception as e:
+                uLogger.debug(tb.format_exc())
+                uLogger.warning("An issue occurred when loading from file [{}]! Maybe incorrect strings format? Check it, please. Message: {}".format(os.path.abspath(filePath), e))
 
             tfStr = self.priceModel.FormattedDelta(
                 self.priceModel.timeframe,
@@ -5333,12 +5344,13 @@ def Main(**kwargs):
 
     except Exception:
         trace = tb.format_exc()
+        uLogger.debug(trace)
+
         for e in ["socket.gaierror", "nodename nor servname provided", "or not known", "NewConnectionError", "[Errno 8]", "Failed to establish a new connection"]:
             if e in trace:
                 uLogger.error("Check your Internet connection! Failed to establish connection to broker server!")
                 break
 
-        uLogger.debug(trace)
         uLogger.debug("Please, check issues or request a new one at https://github.com/Tim55667757/TKSBrokerAPI/issues")
         exitCode = 255  # an error occurred, must be open a ticket for this issue
 
