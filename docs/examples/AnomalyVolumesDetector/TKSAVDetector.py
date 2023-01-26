@@ -43,6 +43,7 @@ import os
 import platform
 import shutil
 import sys
+import traceback as tb
 
 import yaml
 from dateutil.tz import tzlocal
@@ -101,8 +102,8 @@ class TradeScenario(TinkoffBrokerServer):
         self._curTicker = ""  # In `Run()` method we will save original ticker name, before run scenario steps.
         self._curFIGI = ""  # In `Run()` method we will get and save original FIGI identifier, before run scenario steps.
         self._portfolio = {}  # User's portfolio with all instruments is a dictionary with some sections: `{"raw": {...}, "stat": {...}, "analytics": {...}}`.
-        self._rawIData = None  # Raw data of one instrument from broker cache.
-        self._iData = {}  # Information about instrument if it presents in user portfolio.
+        self._rawIData = {}  # Raw data of one instrument from broker cache.
+        self._iData = None  # Information about instrument if it presents in user portfolio.
         self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Actual broker prices for current instrument.
         self._curPriceToBuy = 0  # The first price in the orders list of Sellers is the current price at which you can buy the instrument (or put it for a sell).
         self._curPriceToSell = 0  # The first price in the orders list of Buyers is the current price at which you can sell the instrument (or put it for a buy).
@@ -114,6 +115,7 @@ class TradeScenario(TinkoffBrokerServer):
         self._volumesOfSellers = []  # Numerical series with volumes of Sellers in ascending price order.
         self._sumBuyers = 0  # The current volumes of Buyers in the DOM (you can sell to Buyers).
         self._sumSellers = 0  # The current volumes of Sellers in the DOM (you can buy from Sellers).
+        self._currency = ""  # The current instrument currency.
 
         uLogger.debug("Pipeline [{}]: init completed".format(self._pipelineId))
 
@@ -140,11 +142,16 @@ class TradeScenario(TinkoffBrokerServer):
             self._volumesOfSellers = [v["quantity"] for v in self._ordersBook["buy"]]  # Numerical series with volumes of Sellers in ascending price order.
             self._sumBuyers = sum(self._volumesOfBuyers)  # The current volumes of Buyers in the DOM (you can sell to Buyers).
             self._sumSellers = sum(self._volumesOfSellers)  # The current volumes of Sellers in the DOM (you can buy from Sellers).
+            self._currency = self._rawIData["currency"] if self._rawIData and "currency" in self._rawIData.keys() else ""  # The current instrument currency.
 
             uLogger.debug("[{}] Orders book was received success, see `self._ordersBook` variable:".format(self._curTicker))
             uLogger.debug("  - Current price / volume / value in the order book:")
-            uLogger.debug("    - Buy (1st seller price): {} / {} / {:.2f} {}".format(self._curPriceToBuy, self._curVolumeToBuy, self._curValueToBuy, self._rawIData["currency"]))
-            uLogger.debug("    - Sell (1st buyer price): {} / {} / {:.2f} {}".format(self._curPriceToSell, self._curVolumeToSell, self._curValueToSell, self._rawIData["currency"]))
+            uLogger.debug("    - Buy (1st seller price): {} / {} / {:.2f}{}".format(
+                self._curPriceToBuy, self._curVolumeToBuy, self._curValueToBuy, " {}".format(self._currency) if self._currency else "",
+            ))
+            uLogger.debug("    - Sell (1st buyer price): {} / {} / {:.2f}{}".format(
+                self._curPriceToSell, self._curVolumeToSell, self._curValueToSell, " {}".format(self._currency) if self._currency else "",
+            ))
             uLogger.debug("  - Sum of all volumes in the order book (depth = {}):".format(self.depth))
             uLogger.debug("    - Buyers: {}".format(self._sumBuyers))
             uLogger.debug("    - Sellers: {}".format(self._sumSellers))
@@ -162,10 +169,88 @@ class TradeScenario(TinkoffBrokerServer):
             self._volumesOfSellers = []
             self._sumBuyers = 0
             self._sumSellers = 0
+            self._currency = ""
 
             uLogger.debug("An empty orders book was returned or non-trading time")
 
             return False
+
+    def _CreateMessage(self, aBuyers, aSellers) -> str:
+        """Return info message with found anomalies."""
+        message = ""
+
+        if self._iData is not None and self._iData and "currency" in self._iData.keys():
+            inPortfolio = "Да" if self.msgLanguage == "ru" else "Yes"
+
+        else:
+            inPortfolio = "Нет" if self.msgLanguage == "ru" else "No"
+
+        message = inPortfolio
+
+        return message
+
+    def _TGSender(self, msg: str) -> bool:
+        """
+        Telegram Bot Sender.
+
+        :param msg: str, message to send.
+        :return: bool, `True` if message success sent.
+        """
+        success = True
+
+        return success
+
+    def Steps(self) -> dict:
+        """
+        Section for implementing the steps of the trading scenario for one current instrument.
+
+        :return: Dictionary with trade results, e.g. `{"result": "success", "message": "All trade steps were finished success"}`.
+        """
+        self.ticker = self._curTicker  # Set current ticker to processing with TKSBrokerAPI.
+        self.figi = self._curFIGI  # Set current FIGI ID to processing with TKSBrokerAPI.
+        result = {"result": "cancel", "message": "No one trade operation was executed".format(self._curTicker)}
+
+        try:
+            # --- Checking the common situation on the market or technical signals -------------------------------------
+
+            # Checking the availability of the instrument in the portfolio.
+            # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
+            self._iData = self.GetInstrumentFromPortfolio(self._portfolio)
+
+            aBuy = HampelFilter(self._volumesOfBuyers, window=len(self._volumesOfBuyers))  # Volume anomalies in orders of Buyers.
+            aSell = HampelFilter(self._volumesOfSellers, window=len(self._volumesOfSellers))  # Volume anomalies in orders of Sellers.
+
+            uLogger.debug("Volume anomalies in orders of Buyers:\n{}".format(list(aBuy)))
+            uLogger.debug("Volume anomalies in orders of Sellers:\n{}".format(list(aSell)))
+
+            # --- Checking closing position rules if instrument already yet in portfolio -------------------------------
+
+            pass
+
+            # --- Checking opening position rules for an instrument ----------------------------------------------------
+
+            pass
+
+            # --- Final Steps ------------------------------------------------------------------------------------------
+
+            msg = self._CreateMessage(aBuy, aSell)
+
+            uLogger.debug("Message created:\n{}".format(msg))
+
+            if msg:
+                if self._TGSender(msg):
+                    result = {"result": "success", "message": "Anomalies found in volumes orders, and sent via TG Bot"}
+
+                else:
+                    result = {"result": "warning", "message": "Anomalies found in volumes orders, but can not sent via TG Bot"}
+
+            else:
+                result = {"result": "cancel", "message": "Anomalies not found in volumes orders"}
+
+        except Exception as e:
+            result = {"result": "error", "message": "An error occurred during trade steps execution: [{}]".format(e)}
+
+        return result
 
     def Run(self, instruments: list, portfolio: dict = None) -> list[dict]:
         """
@@ -213,14 +298,15 @@ class TradeScenario(TinkoffBrokerServer):
 
             try:
                 if notEmptyBook:
-                    tradeResults.append({"result": "success", "message": "All trade steps were finished success"})#TODO:tradeResults.append(self.Steps())
+                    tradeResults.append(self.Steps())
 
                 else:
-                    tradeResults.append({"result": "failure", "message": "Operations are not possible at the moment, try agan later"})
+                    tradeResults.append({"result": "failure", "message": "Operations are not possible at the moment, try again later"})
 
                 uLogger.info("{}[{}] [{}] {}".format(tag, self.ticker, tradeResults[-1]["result"], tradeResults[-1]["message"]))
 
             except Exception as e:
+                uLogger.debug(tb.format_exc())
                 uLogger.error("{}An error occurred in Trader: {}".format(tag, e))
                 tradeResults.append({"result": "error", "message": "An error occurred in Trader"})
 
@@ -283,6 +369,7 @@ def ConfigDecorator(func):
                         func(**params)  # Executing trade operations by all instruments at once
 
                     except Exception as e:
+                        uLogger.debug(tb.format_exc())
                         uLogger.error("An error occurred: {}".format(e))
                         uLogger.warning("Technical pause {} seconds after failure...".format(params["waitAfterCrash"]))
 
@@ -314,6 +401,7 @@ def ConfigDecorator(func):
                 func(**params)  # Executing trade operations by all instruments at once only one time
 
             except Exception as e:
+                uLogger.debug(tb.format_exc())
                 uLogger.error("An error occurred: {}".format(e))
 
     return Wrapper
@@ -353,7 +441,7 @@ def TradeManager(**kwargs) -> None:
         "[{}] ".format(SCENARIO_ID) if SCENARIO_ID else "",
     )
 
-    uLogger.debug("--- Scenario runs: {}".format(tag))
+    uLogger.info(">>> Scenario runs: {}".format(tag))
 
     # Trade Reporter initialization. It also updates the instruments cache once.
     # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer
@@ -403,13 +491,21 @@ def TradeManager(**kwargs) -> None:
 
     # --- Section of operations performed after the trading iteration --------------------------------------------------
 
-    uLogger.debug("--- Operations completed for all instruments: {}".format(tag))
+    uLogger.info(">>> Scenario operations completed for all instruments: {}".format(tag))
 
 
 if __name__ == "__main__":
-    # Initialization, parametrization and run trading scenario for each instrument:
-    if len(sys.argv) >= 3:
-        TradeManager(config=sys.argv[1], secrets=sys.argv[2])
+    try:
+        # Initialization, parametrization and run trading scenario for each instrument:
+        if len(sys.argv) >= 3:
+            TradeManager(config=sys.argv[1], secrets=sys.argv[2])
 
-    else:
-        TradeManager(config="config.yaml", secrets="secrets.yaml")
+        else:
+            TradeManager(config="config.yaml", secrets="secrets.yaml")
+
+    except KeyboardInterrupt:
+        uLogger.warning("TradeManager interrupted by user")
+
+    except BaseException as eMsg:
+        uLogger.debug(tb.format_exc())
+        uLogger.error("TradeManager error: {}".format(eMsg))
