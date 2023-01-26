@@ -1587,7 +1587,7 @@ Shows some statistical data of closed positions.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">History</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">interval</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hour&#39;</span>,</span><span class="param">	<span class="n">onlyMissing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">csvSep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>,</span><span class="param">	<span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">onlyFiles</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
+        <span class="name">History</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">interval</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hour&#39;</span>,</span><span class="param">	<span class="n">onlyMissing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">csvSep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>,</span><span class="param">	<span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
         
     </div>
@@ -1615,7 +1615,6 @@ False by default. Warning! History appends only from last candle to current time
 with always update last candle!</li>
 <li><strong>csvSep</strong>:  separator if csv-file is used, <code>,</code> by default.</li>
 <li><strong>show</strong>:  if <code>True</code> then also prints Pandas DataFrame to the console.</li>
-<li><strong>onlyFiles</strong>:  if <code>True</code> then do not show Markdown table in the console, but only generates report files.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1632,7 +1631,7 @@ with always update last candle!</li>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">LoadHistory</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">filePath</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
+        <span class="name">LoadHistory</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">filePath</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
         
     </div>
@@ -1646,7 +1645,15 @@ with always update last candle!</li>
 
 <ul>
 <li><strong>filePath</strong>:  path to csv-file to open.</li>
+<li><strong>show</strong>:  if <code>True</code> then also prints Pandas DataFrame to the console.</li>
 </ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Pandas DataFrame with prices history. Headers of columns are defined by default:
+           <code>["date", "time", "open", "high", "low", "close", "volume"]</code>.</p>
+</blockquote>
 </div>
 
 
