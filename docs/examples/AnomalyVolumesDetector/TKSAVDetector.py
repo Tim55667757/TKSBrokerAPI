@@ -82,6 +82,7 @@ class TradeScenario(TinkoffBrokerServer):
         * **userName:** str, user name to identify in log.
         * **comment:** str, some additional comment to identify in log. Can be empty.
         * **pipelineId:** int, number id of the pipeline.
+        * **botToken:** str, Telegram bot token. Or just use `TKS_BOT_TOKEN` environment variable.
 
         TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
         """
@@ -90,14 +91,16 @@ class TradeScenario(TinkoffBrokerServer):
         self.comment = kwargs["comment"]  # Additional comment in log.
         self.moreDebug = False  # Can be set to `True`, if you want more debug information as network headers, requests and responses.
 
-        # Trade parameters loaded from configuration files and replaced here:
+        self.botToken = kwargs["botToken"]  # Telegram bot token. If empty string, then no messages will be sent.
+
+        # Main trade parameters loaded from configuration files and replaced here:
         self.timeout = 30  # Server operations timeout in seconds.
         self.depth = 20  # How deep to request the Depth of Market to analyze current trading volumes, `1 <= depth <= 50`.
         self.msgLanguage = "en"  # Bot messages language: "en" / "ru" supported.
         self.windowHampel = 0  # Length of the sliding window in Hampel filter (0 mean max wide window is used), `1 <= windowHampel <= len(series)`.
         self.anomaliesMaxCount = 3  # Maximum anomalies that bot sending in one message.
 
-        # Parameters calculated during the execution of the trading scenario (not for manual setting):
+        # Some parameters calculated during the execution of the trading scenario (not for manual setting):
         self._pipelineId = kwargs["pipelineId"] if "pipelineId" in kwargs.keys() else "*"  # Pipeline ID number.
         self._curTicker = ""  # In `Run()` method we will save original ticker name, before run scenario steps.
         self._curFIGI = ""  # In `Run()` method we will get and save original FIGI identifier, before run scenario steps.
@@ -175,17 +178,26 @@ class TradeScenario(TinkoffBrokerServer):
 
             return False
 
-    def _CreateMessage(self, aBuyers, aSellers) -> str:
-        """Return info message with found anomalies."""
+    def _CreateMessage(self, aBuyers: list[dict], aSellers: list[dict]) -> str:
+        """
+        Creates info message with found anomalies. Input lists contains dictionaries with anomalies data, for example:
+        `[{'id': 5, 'price': 4.174, 'volume': 452481, 'value': 1888655.694}, ..., {...}, ...]`.
+
+        :param aBuyers: list of dictionaries with anomalies in Buyers orders.
+        :param aSellers: list of dictionaries with anomalies in Sellers orders.
+        :return: str, Markdown formatted message.
+        """
         message = ""
 
-        if self._iData is not None and self._iData and "currency" in self._iData.keys():
+        if self._iData and "currency" in self._iData.keys():
             inPortfolio = "Да" if self.msgLanguage == "ru" else "Yes"
 
         else:
             inPortfolio = "Нет" if self.msgLanguage == "ru" else "No"
 
         message = inPortfolio
+
+        uLogger.debug("Message created:\n{}".format(message))
 
         return message
 
@@ -194,9 +206,13 @@ class TradeScenario(TinkoffBrokerServer):
         Telegram Bot Sender.
 
         :param msg: str, message to send.
-        :return: bool, `True` if message success sent.
+        :return: bool, `True` if message success sent. If an errors occurred or not set value for `botToken`, then returns `False`.
         """
-        success = True
+        if self.botToken and msg:
+            success = True
+
+        else:
+            success = False
 
         return success
 
@@ -208,7 +224,6 @@ class TradeScenario(TinkoffBrokerServer):
         """
         self.ticker = self._curTicker  # Set current ticker to processing with TKSBrokerAPI.
         self.figi = self._curFIGI  # Set current FIGI ID to processing with TKSBrokerAPI.
-        result = {"result": "cancel", "message": "No one trade operation was executed".format(self._curTicker)}
 
         try:
             # --- Checking the common situation on the market or technical signals -------------------------------------
@@ -217,11 +232,54 @@ class TradeScenario(TinkoffBrokerServer):
             # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
             self._iData = self.GetInstrumentFromPortfolio(self._portfolio)
 
-            aBuy = HampelFilter(self._volumesOfBuyers, window=len(self._volumesOfBuyers))  # Volume anomalies in orders of Buyers.
-            aSell = HampelFilter(self._volumesOfSellers, window=len(self._volumesOfSellers))  # Volume anomalies in orders of Sellers.
+            # --- Filtering anomalies:
+            aFilteredBuy = list(HampelFilter(self._volumesOfBuyers, window=len(self._volumesOfBuyers)))  # Positions of volume anomalies in orders of Buyers.
+            aFilteredSell = list(HampelFilter(self._volumesOfSellers, window=len(self._volumesOfSellers)))  # Positions of volume anomalies in orders of Sellers.
 
-            uLogger.debug("Volume anomalies in orders of Buyers:\n{}".format(list(aBuy)))
-            uLogger.debug("Volume anomalies in orders of Sellers:\n{}".format(list(aSell)))
+            onlyAnomaliesOfBuyers = [{
+                "id": i,
+                "price": item["price"],
+                "volume": item["quantity"],
+                "value": item["price"] * item["quantity"],
+            } for i, item in enumerate(self._ordersBook["sell"]) if aFilteredBuy[i]]
+
+            onlyAnomaliesOfSellers = [{
+                "id": i,
+                "price": item["price"],
+                "volume": item["quantity"],
+                "value": item["price"] * item["quantity"],
+            } for i, item in enumerate(self._ordersBook["buy"]) if aFilteredSell[i]]
+
+            uLogger.debug("[{}] All volume anomalies in orders of Buyers:\n{}".format(self.ticker, onlyAnomaliesOfBuyers))
+            uLogger.debug("[{}] All volume anomalies in orders of Sellers:\n{}".format(self.ticker, onlyAnomaliesOfSellers))
+
+            # Show some anomalies in log:
+            if self.anomaliesMaxCount > 0:
+                if onlyAnomaliesOfBuyers:
+                    logViewBuy = ""
+                    for i in range(min(self.anomaliesMaxCount, len(onlyAnomaliesOfBuyers))):
+                        logViewBuy += "\n    - Position: {:<3} Price: {:<10} Volume: {:<10} Value: {} {}".format(
+                            onlyAnomaliesOfBuyers[i]["id"],
+                            round(onlyAnomaliesOfBuyers[i]["price"], 6),
+                            round(onlyAnomaliesOfBuyers[i]["volume"], 6),
+                            round(onlyAnomaliesOfBuyers[i]["value"], 6),
+                            self._currency,
+                        )
+
+                    uLogger.info("[{}] Some volume anomalies in orders of Buyers:{}".format(self.ticker, logViewBuy))
+
+                if onlyAnomaliesOfSellers:
+                    logViewSell = ""
+                    for i in range(min(self.anomaliesMaxCount, len(onlyAnomaliesOfSellers))):
+                        logViewSell += "\n    - Position: {:<3} Price: {:<10} Volume: {:<10} Value: {} {}".format(
+                            onlyAnomaliesOfSellers[i]["id"],
+                            round(onlyAnomaliesOfSellers[i]["price"], 6),
+                            round(onlyAnomaliesOfSellers[i]["volume"], 6),
+                            round(onlyAnomaliesOfSellers[i]["value"], 6),
+                            self._currency,
+                        )
+
+                    uLogger.info("[{}] Some volume anomalies in orders of Sellers:{}".format(self.ticker, logViewSell))
 
             # --- Checking closing position rules if instrument already yet in portfolio -------------------------------
 
@@ -233,22 +291,20 @@ class TradeScenario(TinkoffBrokerServer):
 
             # --- Final Steps ------------------------------------------------------------------------------------------
 
-            msg = self._CreateMessage(aBuy, aSell)
-
-            uLogger.debug("Message created:\n{}".format(msg))
-
-            if msg:
+            if onlyAnomaliesOfBuyers or onlyAnomaliesOfSellers:
+                msg = self._CreateMessage(onlyAnomaliesOfBuyers, onlyAnomaliesOfSellers)
                 if self._TGSender(msg):
-                    result = {"result": "success", "message": "Anomalies found in volumes orders, and sent via TG Bot"}
+                    result = {"result": "success", "message": "Anomalies found in volumes orders and sent via TG Bot"}
 
                 else:
-                    result = {"result": "warning", "message": "Anomalies found in volumes orders, but can not sent via TG Bot"}
+                    result = {"result": "success", "message": "Anomalies found in volumes orders, but can not sent via TG Bot"}
 
             else:
                 result = {"result": "cancel", "message": "Anomalies not found in volumes orders"}
 
         except Exception as e:
-            result = {"result": "error", "message": "An error occurred during trade steps execution: [{}]".format(e)}
+            uLogger.debug(tb.format_exc())
+            result = {"result": "error", "message": "An error occurred during trade steps execution: {}".format(e)}
 
         return result
 
@@ -274,7 +330,7 @@ class TradeScenario(TinkoffBrokerServer):
 
         # Gets the user's portfolio once before start iteration by all instruments or using given `portfolio` if it is not empty.
         # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
-        self._portfolio = portfolio if portfolio is not None and portfolio else self.Overview(show=False)
+        self._portfolio = portfolio if portfolio else self.Overview(show=False)
 
         # --- Running the main steps of the scenario, in a loop for all given tickers ----------------------------------
 
@@ -345,6 +401,17 @@ def ConfigDecorator(func):
         params = yaml.safe_load(open(kwargs["config"], encoding="UTF-8"))  # Loading main config file
         userData = yaml.safe_load(open(kwargs["secrets"], encoding="UTF-8"))  # Loading config file with user secrets
         params.update(userData)  # Merging main parameters and secrets
+
+        # Detect bot token:
+        params["botToken"] = params["botToken"] if "botToken" in params.keys() and params["botToken"] else ""
+        if not params["botToken"]:
+            try:
+                params["botToken"] = r"{}".format(os.environ["TKS_BOT_TOKEN"])
+                uLogger.debug("Telegram bot token set up from environment variable `TKS_BOT_TOKEN`. See https://core.telegram.org/bots/features#botfather")
+
+            except KeyError:
+                params["botToken"] = ""
+                uLogger.warning("`botToken` key in `secrets.yaml` file or environment variable `TKS_BOT_TOKEN` is required if you want to send messages via bot")
 
         uLogger.level = 10  # Log level for TKSBrokerAPI, DEBUG (10) recommended by default
         uLogger.handlers[0].level = params["consoleVerbosity"]  # Console log level, INFO (20) recommended by default
@@ -470,6 +537,7 @@ def TradeManager(**kwargs) -> None:
                     userName=kwargs["userName"],
                     comment=kwargs["comment"],
                     pipelineId=i + 1,
+                    botToken=kwargs["botToken"],
                 ),
                 "tasks": piece,
                 "portfolio": overview,
