@@ -40,18 +40,11 @@ Bot doesn't contain the real trade operations.
 # --- Import, constants and variables initialization section -----------------------------------------------------------
 
 import os
-import platform
-import shutil
 import sys
 import traceback as tb
-
 import yaml
-from dateutil.tz import tzlocal
-from math import ceil
-
 import pycron
 from time import sleep
-from datetime import datetime
 
 from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
@@ -272,7 +265,7 @@ class TradeScenario(TinkoffBrokerServer):
             ]
             message = RU_TEMPLATE.format(*aData) if self.msgLanguage == "ru" else EN_TEMPLATE.format(*aData)  # Formatting message.
 
-            uLogger.info("[{}] Message created:\n{}".format(self._curTicker, message))
+            uLogger.debug("[{}] Message created:\n{}".format(self._curTicker, message))
 
         else:
             message = ""  # No Buyers nor Sellers anomalies.
