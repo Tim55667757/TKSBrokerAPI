@@ -68,6 +68,40 @@ CPU_COUNT = cpu_count()  # Real available Host CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # How many CPUs will be used for parallel computing
 SCENARIO_ID = "TKSAVDetector"  # Scenario identifier
 
+# --- Templates:
+
+EN_TEMPLATE = """Anomalous volumes detected of {}:
+
+- Instrument: [{}] [{}] [{}]
+    - Date and time of detected: [{} UTC]
+    - Is in your portfolio: {}
+
+- Current price / volume / value in the order book
+    - Buy (1st seller price):
+        [0] {} / {} / {}{}
+    - Sell (1st buyer price):
+        [0] {} / {} / {}{}
+
+- Anomalies, price / volume / value
+    - in sellers offers: {}
+    - in buyers offers: {}"""
+
+RU_TEMPLATE = """Обнаружены аномальные объёмы {}:
+
+- Инструмент: [{}] [{}] [{}]
+    - Время обнаружения: [{} UTC]
+    - Есть в вашем портфеле: {}
+
+- Текущая цена / объём / стоимость в стакане
+    - На покупку (Buy, 1-я цена продавцов):
+        [0] {} / {} / {}{}
+    - На продажу (Sell, 1-я цена покупателей):
+        [0] {} / {} / {}{}
+
+- Аномалии, цена / объём / стоимость
+    - среди предложений продавцов: {}
+    - среди предложений покупателей: {}"""
+
 
 class TradeScenario(TinkoffBrokerServer):
     """This class contains methods for implementing the trading scenario logic."""
@@ -147,17 +181,7 @@ class TradeScenario(TinkoffBrokerServer):
             self._sumSellers = sum(self._volumesOfSellers)  # The current volumes of Sellers in the DOM (you can buy from Sellers).
             self._currency = self._rawIData["currency"] if self._rawIData and "currency" in self._rawIData.keys() else ""  # The current instrument currency.
 
-            uLogger.debug("[{}] Orders book was received success, see `self._ordersBook` variable:".format(self._curTicker))
-            uLogger.debug("  - Current price / volume / value in the order book:")
-            uLogger.debug("    - Buy (1st seller price): {} / {} / {:.2f}{}".format(
-                self._curPriceToBuy, self._curVolumeToBuy, self._curValueToBuy, " {}".format(self._currency) if self._currency else "",
-            ))
-            uLogger.debug("    - Sell (1st buyer price): {} / {} / {:.2f}{}".format(
-                self._curPriceToSell, self._curVolumeToSell, self._curValueToSell, " {}".format(self._currency) if self._currency else "",
-            ))
-            uLogger.debug("  - Sum of all volumes in the order book (depth = {}):".format(self.depth))
-            uLogger.debug("    - Buyers: {}".format(self._sumBuyers))
-            uLogger.debug("    - Sellers: {}".format(self._sumSellers))
+            uLogger.debug("[{}] Orders book was received success".format(self._curTicker))
 
             return True
 
@@ -187,17 +211,71 @@ class TradeScenario(TinkoffBrokerServer):
         :param aSellers: list of dictionaries with anomalies in Sellers orders.
         :return: str, Markdown formatted message.
         """
-        message = ""
+        if aBuyers or aSellers:
+            # Whose anomalous volumes were detected:
+            if aSellers and aBuyers:
+                whom = "продавцов и покупателей" if self.msgLanguage == "ru" else "Sellers and Buyers"
 
-        if self._iData and "currency" in self._iData.keys():
-            inPortfolio = "Да" if self.msgLanguage == "ru" else "Yes"
+            elif aSellers:
+                whom = "продавцов" if self.msgLanguage == "ru" else "Sellers"
+
+            else:
+                whom = "покупателей" if self.msgLanguage == "ru" else "Buyers"
+
+            # Is the instrument present in your portfolio:
+            if self._iData:
+                inPortfolio = "Да" if self.msgLanguage == "ru" else "Yes"
+
+            else:
+                inPortfolio = "Нет" if self.msgLanguage == "ru" else "No"
+
+            # Current currency string for message:
+            if self._currency:
+                curr = " руб" if self.msgLanguage == "ru" and self._currency == "rub" else " {}".format(self._currency)
+
+            else:
+                curr = ""
+
+            # Preparing some data about anomalies in Sellers offers:
+            sellersOffers = ""
+            if self.anomaliesMaxCount > 0 and aSellers:
+                for i in range(min(self.anomaliesMaxCount, len(aSellers))):
+                    sellersOffers += "\n        [{}] {} / {} / {}{}".format(
+                        aSellers[i]["id"],  # Position of anomaly in Sellers orders, started from 0.
+                        round(aSellers[i]["price"], 6), aSellers[i]["volume"], round(aSellers[i]["value"], 2), curr,
+                    )
+
+            else:
+                sellersOffers = "Нет данных" if self.msgLanguage == "ru" else "No data"
+
+            # Preparing some data about anomalies in Buyers offers:
+            buyersOffers = ""
+            if self.anomaliesMaxCount > 0 and aBuyers:
+                for i in range(min(self.anomaliesMaxCount, len(aBuyers))):
+                    buyersOffers += "\n        [{}] {} / {} / {}{}".format(
+                        aBuyers[i]["id"],  # Position of anomaly in Buyers orders, started from 0.
+                        round(aBuyers[i]["price"], 6), aBuyers[i]["volume"], round(aBuyers[i]["value"], 2), curr,
+                    )
+
+            else:
+                buyersOffers = "Нет данных" if self.msgLanguage == "ru" else "No data"
+
+            # Preparing final message. Russian/English templates switch:
+            aData = [
+                whom,  # Whose anomalous volumes were detected.
+                self._curTicker, self._rawIData["type"], self._rawIData["name"],  # Stock ticker, Type of instrument and the company name.
+                datetime.now().strftime(TKS_PRINT_DATE_TIME_FORMAT),  # Date and time of detected.
+                inPortfolio,  # Is the instrument present in your portfolio.
+                round(self._curPriceToBuy, 6), self._curVolumeToBuy, round(self._curValueToBuy, 2), curr,  # Current price / volume / value of Sellers in the order book.
+                round(self._curPriceToSell, 6), self._curVolumeToSell, round(self._curValueToSell, 2), curr,  # Current price / volume / value of Buyers in the order book.
+                sellersOffers, buyersOffers,  # Formatted strings with anomalies of Sellers and Buyers.
+            ]
+            message = RU_TEMPLATE.format(*aData) if self.msgLanguage == "ru" else EN_TEMPLATE.format(*aData)  # Formatting message.
+
+            uLogger.info("[{}] Message created:\n{}".format(self._curTicker, message))
 
         else:
-            inPortfolio = "Нет" if self.msgLanguage == "ru" else "No"
-
-        message = inPortfolio
-
-        uLogger.debug("Message created:\n{}".format(message))
+            message = ""  # No Buyers nor Sellers anomalies.
 
         return message
 
@@ -250,36 +328,8 @@ class TradeScenario(TinkoffBrokerServer):
                 "value": item["price"] * item["quantity"],
             } for i, item in enumerate(self._ordersBook["buy"]) if aFilteredSell[i]]
 
-            uLogger.debug("[{}] All volume anomalies in orders of Buyers:\n{}".format(self.ticker, onlyAnomaliesOfBuyers))
-            uLogger.debug("[{}] All volume anomalies in orders of Sellers:\n{}".format(self.ticker, onlyAnomaliesOfSellers))
-
-            # Show some anomalies in log:
-            if self.anomaliesMaxCount > 0:
-                if onlyAnomaliesOfBuyers:
-                    logViewBuy = ""
-                    for i in range(min(self.anomaliesMaxCount, len(onlyAnomaliesOfBuyers))):
-                        logViewBuy += "\n    - Position: {:<3} Price: {:<10} Volume: {:<10} Value: {} {}".format(
-                            onlyAnomaliesOfBuyers[i]["id"],
-                            round(onlyAnomaliesOfBuyers[i]["price"], 6),
-                            round(onlyAnomaliesOfBuyers[i]["volume"], 6),
-                            round(onlyAnomaliesOfBuyers[i]["value"], 6),
-                            self._currency,
-                        )
-
-                    uLogger.info("[{}] Some volume anomalies in orders of Buyers:{}".format(self.ticker, logViewBuy))
-
-                if onlyAnomaliesOfSellers:
-                    logViewSell = ""
-                    for i in range(min(self.anomaliesMaxCount, len(onlyAnomaliesOfSellers))):
-                        logViewSell += "\n    - Position: {:<3} Price: {:<10} Volume: {:<10} Value: {} {}".format(
-                            onlyAnomaliesOfSellers[i]["id"],
-                            round(onlyAnomaliesOfSellers[i]["price"], 6),
-                            round(onlyAnomaliesOfSellers[i]["volume"], 6),
-                            round(onlyAnomaliesOfSellers[i]["value"], 6),
-                            self._currency,
-                        )
-
-                    uLogger.info("[{}] Some volume anomalies in orders of Sellers:{}".format(self.ticker, logViewSell))
+            uLogger.debug("[{}] All volume anomalies in orders of Buyers: {}".format(self._curTicker, onlyAnomaliesOfBuyers))
+            uLogger.debug("[{}] All volume anomalies in orders of Sellers: {}".format(self._curTicker, onlyAnomaliesOfSellers))
 
             # --- Checking closing position rules if instrument already yet in portfolio -------------------------------
 
@@ -297,7 +347,7 @@ class TradeScenario(TinkoffBrokerServer):
                     result = {"result": "success", "message": "Anomalies found in volumes orders and sent via TG Bot"}
 
                 else:
-                    result = {"result": "success", "message": "Anomalies found in volumes orders, but can not sent via TG Bot"}
+                    result = {"result": "partial", "message": "Anomalies found in volumes orders, but can not sent via TG Bot"}
 
             else:
                 result = {"result": "cancel", "message": "Anomalies not found in volumes orders"}
@@ -359,15 +409,15 @@ class TradeScenario(TinkoffBrokerServer):
                 else:
                     tradeResults.append({"result": "failure", "message": "Operations are not possible at the moment, try again later"})
 
-                uLogger.info("{}[{}] [{}] {}".format(tag, self.ticker, tradeResults[-1]["result"], tradeResults[-1]["message"]))
+                uLogger.info("{}[{}] [{}] {}".format(tag, self._curTicker, tradeResults[-1]["result"], tradeResults[-1]["message"]))
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
                 uLogger.error("{}An error occurred in Trader: {}".format(tag, e))
                 tradeResults.append({"result": "error", "message": "An error occurred in Trader"})
 
-            self.ticker = self._curTicker  # Reload current ticker.
-            self.figi = self._curFIGI  # Reload current FIGI ID.
+            self.ticker = self._curTicker  # Reload current ticker in base class.
+            self.figi = self._curFIGI  # Reload current FIGI ID in base class.
 
             uLogger.debug("{}[{}] ticker processed".format(tag, ticker))
 
