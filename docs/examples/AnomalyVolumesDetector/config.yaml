@@ -26,7 +26,7 @@ fields:
   depth: 20  # How deep to request the Depth of Market to analyze current trading volumes, `1 <= depth <= 50`.
   msgLanguage: "en"  # Bot messages language: "en" / "ru" supported.
   windowHampel: 0  # Length of the sliding window in Hampel filter (0 mean max wide window is used), `1 <= windowHampel <= len(series)`.
-  anomaliesMaxCount: 3  # Maximum anomalies that bot sending in one message.
+  anomaliesMaxCount: 2  # Maximum anomalies that bot sending in one message, recommended: `1 <= anomaliesMaxCount <= 3`.
 
 # List of instrument tickers to analyze and trade:
 tickers:
