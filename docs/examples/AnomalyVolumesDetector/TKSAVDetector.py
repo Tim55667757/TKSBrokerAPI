@@ -311,8 +311,11 @@ class TradeScenario(TinkoffBrokerServer):
             self._iData = self.GetInstrumentFromPortfolio(self._portfolio)
 
             # --- Filtering anomalies:
-            aFilteredBuy = list(HampelFilter(self._volumesOfBuyers, window=len(self._volumesOfBuyers)))  # Positions of volume anomalies in orders of Buyers.
-            aFilteredSell = list(HampelFilter(self._volumesOfSellers, window=len(self._volumesOfSellers)))  # Positions of volume anomalies in orders of Sellers.
+            windowBuy = len(self._volumesOfBuyers) if self.windowHampel <= 0 or self.windowHampel >= len(self._volumesOfBuyers) else self.windowHampel
+            aFilteredBuy = list(HampelFilter(self._volumesOfBuyers, window=windowBuy))  # Positions of volume anomalies in orders of Buyers.
+
+            windowSell = len(self._volumesOfSellers) if self.windowHampel <= 0 or self.windowHampel >= len(self._volumesOfSellers) else self.windowHampel
+            aFilteredSell = list(HampelFilter(self._volumesOfSellers, window=windowSell))  # Positions of volume anomalies in orders of Sellers.
 
             onlyAnomaliesOfBuyers = [{
                 "id": i,
@@ -339,7 +342,7 @@ class TradeScenario(TinkoffBrokerServer):
 
             pass
 
-            # --- Final Steps ------------------------------------------------------------------------------------------
+            # --- Final steps ------------------------------------------------------------------------------------------
 
             if onlyAnomaliesOfBuyers or onlyAnomaliesOfSellers:
                 msg = self._CreateMessage(onlyAnomaliesOfBuyers, onlyAnomaliesOfSellers)
