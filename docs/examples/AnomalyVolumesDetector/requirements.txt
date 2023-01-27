@@ -10,6 +10,7 @@ Mako >= 1.2.4  # MIT License
 python-dateutil >= 2.8.1  # Apache-2.0 license
 PriceGenerator >= 1.3.81  # Apache-2.0 license
 FuzzyRoutines >= 1.0.3  # MIT License
+PyYAML >= 6.0  # MIT License
 pycron >= 3.0.0  # MIT License
 
 # Actual TKSBrokerAPI:
