@@ -33,26 +33,27 @@ Main steps:
 
 - If the list of anomalies is not empty, then script generates a human-readable message, for example:
     ```
-    Anomalous volumes detected!
+    Anomalous volumes detected of Sellers and Buyers:
     
-    * Ticker: [TMOS]
-    * Instrument: [Shares] [Tinkoff iMOEX]
-    * Date and time: [2023-01-18 15:55:51 UTC]
-    * Is in your portfolio: [yes / no]
-      
-    * Current price / volume / value in the order book:
-      * Buy (1st seller price):
-        4.212 / 51231 / 220959.303 rub
-      * Sell (1st buyer price):
-        4.211 / 11416 / 48072.776 rub
-      
-    * Anomalies among sellers' offers, price / volume / value:
-      * 4.31 / 1508321 / 6500863.51 rub
-      * 4.27 / 608178 / 2596920.06 rub
-      * 4.244 / 1173028 / 4978330.832 rub
-      
-    * Anomalies among buyers' offers, price / volume / value:
-      * 4.202 / 1176972 / 4945636.344 rub
+    - Instrument: [TBRU] [Etfs] [Тинькофф Bonds RUB]
+        - Date and time of detected: [2023-01-27 18:35:19 UTC]
+        - Is in your portfolio: No
+    
+    - Current price / volume / value in the order book
+        - Buy (1st seller price):
+            [0] 5.3 / 257347 / 1363939.10 rub
+        - Sell (1st buyer price):
+            [0] 5.299 / 98779 / 523429.92 rub
+    
+    - Anomalies, price / volume / value
+        - in sellers offers:
+            [0] 5.3 / 257347 / 1363939.1 rub
+            [1] 5.301 / 18584 / 98513.78 rub
+            [4] 5.304 / 51024 / 270631.3 rub
+        - in buyers offers:
+            [0] 5.299 / 98779 / 523429.92 rub
+            [4] 5.295 / 46860 / 248123.7 rub
+            [6] 5.293 / 122162 / 646603.47 rub
     ```
 
 - Connect to the specified TG-bot by token and send a notification through it.
@@ -132,26 +133,27 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
 
 - Если список аномалий по инструменту получился не пустой, то сформировать оповещение, например, такого вида:
     ```
-    Обнаружены аномальные объёмы!
+    Обнаружены аномальные объёмы продавцов и покупателей:
     
-    * Тикер: [TMOS]
-    * Инструмент: [Shares] [Тинькофф iMOEX]
-    * Дата и время: [2023-01-18 15:55:51 UTC]
-    * Есть в вашем портфеле: [да / нет]
+    - Инструмент: [TBRU] [Etfs] [Тинькофф Bonds RUB]
+        - Время обнаружения: [2023-01-27 18:35:42 UTC]
+        - Есть в вашем портфеле: Нет
     
-    * Текущая цена / объём / стоимость в стакане:
-      * На покупку (Buy, 1-я цена продавцов):
-        4.212 / 51231 / 220959.303 rub
-      * На продажу (Sell, 1-я цена покупателей):
-        4.211 / 11416 / 48072.776 rub
+    - Текущая цена / объём / стоимость в стакане
+        - На покупку (Buy, 1-я цена продавцов):
+            [0] 5.3 / 261552 / 1386225.60 руб
+        - На продажу (Sell, 1-я цена покупателей):
+            [0] 5.299 / 98772 / 523392.83 руб
     
-    * Аномалии среди предложений продавцов, цена / объём / стоимость:
-      * 4.31 / 1508321 / 6500863.51 rub
-      * 4.27 / 608178 / 2596920.06 rub
-      * 4.244 / 1173028 / 4978330.832 rub
-    
-    * Аномалии среди предложений покупателей, цена / объём / стоимость:
-      * 4.202 / 1176972 / 4945636.344 rub
+    - Аномалии, цена / объём / стоимость
+        - среди предложений продавцов:
+            [0] 5.3 / 261552 / 1386225.6 руб
+            [1] 5.301 / 18584 / 98513.78 руб
+            [4] 5.304 / 51024 / 270631.3 руб
+        - среди предложений покупателей:
+            [0] 5.299 / 98772 / 523392.83 руб
+            [4] 5.295 / 46860 / 248123.7 руб
+            [6] 5.293 / 122162 / 646603.47 руб
     ```
 
 - Подключиться к указанному ТГ-боту по токену и отправить через него оповещение.
