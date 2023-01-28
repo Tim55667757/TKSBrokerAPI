@@ -45,6 +45,8 @@ import traceback as tb
 import yaml
 import pycron
 from time import sleep
+from requests import get
+from json import loads
 
 from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
@@ -64,36 +66,34 @@ SCENARIO_ID = "TKSAVDetector"  # Scenario identifier
 # --- Templates:
 
 EN_TEMPLATE = """Anomalous volumes detected of {}:
+  - Instrument: [{}] [{}] [{}]
+  - Date and time: {} UTC
+  - Is in portfolio: {}
 
-- Instrument: [{}] [{}] [{}]
-    - Date and time of detected: [{} UTC]
-    - Is in your portfolio: {}
+- Current price/volume/value in the DoM
+  - Buy (1st seller price):
+    [0] {}/{}/{}{}
+  - Sell (1st buyer price):
+    [0] {}/{}/{}{}
 
-- Current price / volume / value in the order book
-    - Buy (1st seller price):
-        [0] {} / {} / {}{}
-    - Sell (1st buyer price):
-        [0] {} / {} / {}{}
-
-- Anomalies, price / volume / value
-    - in sellers offers: {}
-    - in buyers offers: {}"""
+- Anomalies, price/volume/value
+  - in sellers volumes: {}
+  - in buyers volumes: {}"""
 
 RU_TEMPLATE = """Обнаружены аномальные объёмы {}:
+  - Инструмент: [{}] [{}] [{}]
+  - Время обнаружения: {} UTC
+  - Есть в портфеле: {}
 
-- Инструмент: [{}] [{}] [{}]
-    - Время обнаружения: [{} UTC]
-    - Есть в вашем портфеле: {}
+- Текущая цена/объём/стоимость
+  - На покупку (Buy, 1-я цена продавцов):
+    [0] {}/{}/{}{}
+  - На продажу (Sell, 1-я цена покупателей):
+    [0] {}/{}/{}{}
 
-- Текущая цена / объём / стоимость в стакане
-    - На покупку (Buy, 1-я цена продавцов):
-        [0] {} / {} / {}{}
-    - На продажу (Sell, 1-я цена покупателей):
-        [0] {} / {} / {}{}
-
-- Аномалии, цена / объём / стоимость
-    - среди предложений продавцов: {}
-    - среди предложений покупателей: {}"""
+- Аномалии, цена/объём/стоимость
+  - в объёмах продавцов: {}
+  - в объёмах покупателей: {}"""
 
 
 class TradeScenario(TinkoffBrokerServer):
@@ -109,7 +109,8 @@ class TradeScenario(TinkoffBrokerServer):
         * **userName:** str, user name to identify in log.
         * **comment:** str, some additional comment to identify in log. Can be empty.
         * **pipelineId:** int, number id of the pipeline.
-        * **botToken:** str, Telegram bot token. Or just use `TKS_BOT_TOKEN` environment variable.
+        * **botToken:** str, telegram bot token. Or just use `TKS_BOT_TOKEN` environment variable.
+        * **chatId:** int, chat ID with authorized user for sending messages. How to find it, see in README.md.
 
         TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
         """
@@ -119,6 +120,7 @@ class TradeScenario(TinkoffBrokerServer):
         self.moreDebug = False  # Can be set to `True`, if you want more debug information as network headers, requests and responses.
 
         self.botToken = kwargs["botToken"]  # Telegram bot token. If empty string, then no messages will be sent.
+        self.chatId = kwargs["chatId"]  # Telegram Chat ID with authorized user for sending messages.
 
         # Main trade parameters loaded from configuration files and replaced here:
         self.timeout = 30  # Server operations timeout in seconds.
@@ -191,7 +193,7 @@ class TradeScenario(TinkoffBrokerServer):
             self._sumSellers = 0
             self._currency = ""
 
-            uLogger.debug("An empty orders book was returned or non-trading time")
+            uLogger.debug("[{}] An empty orders book was returned or non-trading time".format(self._curTicker))
 
             return False
 
@@ -233,7 +235,7 @@ class TradeScenario(TinkoffBrokerServer):
             sellersOffers = ""
             if self.anomaliesMaxCount > 0 and aSellers:
                 for i in range(min(self.anomaliesMaxCount, len(aSellers))):
-                    sellersOffers += "\n        [{}] {} / {} / {}{}".format(
+                    sellersOffers += "\n    [{}] {}/{}/{}{}".format(
                         aSellers[i]["id"],  # Position of anomaly in Sellers orders, started from 0.
                         round(aSellers[i]["price"], 6), aSellers[i]["volume"], round(aSellers[i]["value"], 2), curr,
                     )
@@ -245,7 +247,7 @@ class TradeScenario(TinkoffBrokerServer):
             buyersOffers = ""
             if self.anomaliesMaxCount > 0 and aBuyers:
                 for i in range(min(self.anomaliesMaxCount, len(aBuyers))):
-                    buyersOffers += "\n        [{}] {} / {} / {}{}".format(
+                    buyersOffers += "\n    [{}] {}/{}/{}{}".format(
                         aBuyers[i]["id"],  # Position of anomaly in Buyers orders, started from 0.
                         round(aBuyers[i]["price"], 6), aBuyers[i]["volume"], round(aBuyers[i]["value"], 2), curr,
                     )
@@ -279,11 +281,27 @@ class TradeScenario(TinkoffBrokerServer):
         :param msg: str, message to send.
         :return: bool, `True` if message success sent. If an errors occurred or not set value for `botToken`, then returns `False`.
         """
-        if self.botToken and msg:
-            success = True
+        success = False
 
-        else:
-            success = False
+        if self.botToken and msg:
+            msgText = r"https://api.telegram.org/bot{}/sendMessage?chat_id={}&parse_mode=Markdown&text=`{}`".format(self.botToken, self.chatId, msg)
+
+            try:
+                response = loads(get(msgText, timeout=self.timeout).text)
+
+                uLogger.debug("[{}] Raw response from Telegram API-server:\n{}".format(self._curTicker, response))
+
+            except Exception as e:
+                uLogger.debug(tb.format_exc())
+                uLogger.warning("[{}] An issue occurred when sending via Telegram API-server! See full debug log. Message: {}".format(self._curTicker, e))
+
+                response = {}
+
+            if "ok" in response.keys() and response["ok"]:
+                success = True
+
+            else:
+                uLogger.warning("[{}] Telegram API-server returned an error! Message not sent. See full debug log.".format(self._curTicker))
 
         return success
 
@@ -339,6 +357,7 @@ class TradeScenario(TinkoffBrokerServer):
 
             if onlyAnomaliesOfBuyers or onlyAnomaliesOfSellers:
                 msg = self._CreateMessage(onlyAnomaliesOfBuyers, onlyAnomaliesOfSellers)
+
                 if self._TGSender(msg):
                     result = {"result": "success", "message": "Anomalies found in volumes orders and sent via TG Bot"}
 
@@ -438,30 +457,47 @@ def ConfigDecorator(func):
     def Wrapper(**kwargs):
         if not os.path.exists(kwargs["config"]):
             uLogger.error("Config file not found! Check the path: [{}]".format(os.path.abspath(kwargs["config"])))
+
             raise Exception("Config file not found")
 
         if not os.path.exists(kwargs["secrets"]):
             uLogger.error("User account file not found! Check the path: [{}]".format(os.path.abspath(kwargs["secrets"])))
+
             raise Exception("User account file not found")
 
-        params = yaml.safe_load(open(kwargs["config"], encoding="UTF-8"))  # Loading main config file
-        userData = yaml.safe_load(open(kwargs["secrets"], encoding="UTF-8"))  # Loading config file with user secrets
-        params.update(userData)  # Merging main parameters and secrets
+        params = yaml.safe_load(open(kwargs["config"], encoding="UTF-8"))  # Loading main config file.
+        userData = yaml.safe_load(open(kwargs["secrets"], encoding="UTF-8"))  # Loading config file with user secrets.
+        params.update(userData)  # Merging main parameters and secrets.
+
+        uLogger.level = 10  # Log level for TKSBrokerAPI, DEBUG (10) recommended by default.
+        uLogger.handlers[0].level = params["consoleVerbosity"]  # Console log level, INFO (20) recommended by default.
+        uLogger.handlers[1].level = params["logfileVerbosity"]  # TKSBrokerAPI.log file log level, DEBUG (10) recommended by default.
 
         # Detect bot token:
         params["botToken"] = params["botToken"] if "botToken" in params.keys() and params["botToken"] else ""
         if not params["botToken"]:
             try:
                 params["botToken"] = r"{}".format(os.environ["TKS_BOT_TOKEN"])
-                uLogger.debug("Telegram bot token set up from environment variable `TKS_BOT_TOKEN`. See https://core.telegram.org/bots/features#botfather")
+
+                uLogger.debug("Telegram bot token set up from environment variable `TKS_BOT_TOKEN`. See https://core.telegram.org/bots/api#authorizing-your-bot")
 
             except KeyError:
                 params["botToken"] = ""
-                uLogger.warning("`botToken` key in `secrets.yaml` file or environment variable `TKS_BOT_TOKEN` is required if you want to send messages via bot")
 
-        uLogger.level = 10  # Log level for TKSBrokerAPI, DEBUG (10) recommended by default
-        uLogger.handlers[0].level = params["consoleVerbosity"]  # Console log level, INFO (20) recommended by default
-        uLogger.handlers[1].level = params["logfileVerbosity"]  # TKSBrokerAPI.log file log level, DEBUG (10) recommended by default
+                uLogger.warning("`botToken` key in `secrets.yaml` file or environment variable `TKS_BOT_TOKEN` is required if you want to send messages via Telegram bot")
+
+        else:
+            uLogger.debug("Telegram bot token set up from `botToken` variable")
+
+        # Telegram Chat ID for sending messages:
+        if "chatId" in params.keys() and params["chatId"]:
+            uLogger.debug("Telegram Chat ID for sending messages was set up from `chatId` variable")
+
+        else:
+            params["chatId"] = None
+
+            uLogger.warning("`chatId` variable in `secrets.yaml` file is required if you want to send messages via Telegram bot")
+
         timeToWork = params["timeToWorkWeekdays"]  # Allowed working period in crontab format, e.g. "*/2 10-21 * * 1-5" mean "From 10:00AM to 22:00PM (including) at weekdays, every 2 minutes".
 
         uLogger.debug("Real available Host CPU count: {}".format(CPU_COUNT))
@@ -469,8 +505,8 @@ def ConfigDecorator(func):
         uLogger.info("{} just started. Crontab: [{}]. Waiting for the next working period...".format(SCENARIO_ID, timeToWork))
 
         if params["infiniteWorkMode"]:
-            iteration = 0  # Iteration counter (1 iteration = trade operations by all instruments were finished)
-            executed = False  # At first no finished iteration
+            iteration = 0  # Iteration counter (1 iteration = trade operations by all instruments were finished).
+            executed = False  # At first no finished iteration.
 
             while True:
                 if pycron.is_now(timeToWork):
@@ -479,7 +515,7 @@ def ConfigDecorator(func):
                     uLogger.info("--- Trade iteration: [{}]".format(iteration))
 
                     try:
-                        func(**params)  # Executing trade operations by all instruments at once
+                        func(**params)  # Executing trade operations by all instruments at once.
 
                     except Exception as e:
                         uLogger.debug(tb.format_exc())
@@ -488,7 +524,7 @@ def ConfigDecorator(func):
 
                         sleep(params["waitAfterCrash"])
 
-                    executed = True  # For the current period, one trading iteration has been completed, we need to wait for the next one
+                    executed = True  # For the current period, one trading iteration has been completed, we need to wait for the next one.
 
                     uLogger.info("--- Trade iteration completed: [{}]".format(iteration))
 
@@ -511,7 +547,7 @@ def ConfigDecorator(func):
                 uLogger.warning("{} launches one time during non-working period! Crontab: [{}]".format(SCENARIO_ID, timeToWork))
 
             try:
-                func(**params)  # Executing trade operations by all instruments at once only one time
+                func(**params)  # Executing trade operations by all instruments at once only one time.
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
@@ -584,6 +620,7 @@ def TradeManager(**kwargs) -> None:
                     comment=kwargs["comment"],
                     pipelineId=i + 1,
                     botToken=kwargs["botToken"],
+                    chatId=kwargs["chatId"],
                 ),
                 "tasks": piece,
                 "portfolio": overview,
