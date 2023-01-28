@@ -51,7 +51,7 @@ from multiprocessing.pool import ThreadPool
 
 # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger
-from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT, TKS_TICKER_ALIASES, TKS_ORDER_DIRECTIONS, TKS_STOP_ORDER_DIRECTIONS
+from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT
 from tksbrokerapi.TradeRoutines import *
 
 
@@ -529,7 +529,7 @@ def TradeManager(**kwargs) -> None:
     Release API documentation of TKSBrokerAPI module (release version):
     - en: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 
-    TKSBrokerAPI platform latest documentation:
+    The latest documentation on the TKSBrokerAPI platform:
     - en: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md
     - ru: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md
 
