@@ -1,6 +1,7 @@
 # TKSBrokerAPI — список релизных изменений
 
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
 **T**echnologies · **K**nowledge · **S**cience
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
@@ -12,7 +13,7 @@
 * 🎁 Поддержать проект донатом на ЮМани-кошелёк: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.6.* (2023-01-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
+### [1.6.* (2023-02-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
 
 ##### Дайджест
 
@@ -26,6 +27,7 @@
 * [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Были добавлены примеры фильтрации методом Хампеля: 1) Jupyter Notebook с теорией и практикой ([русская](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) и [английская](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) версии); 2) [пример](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py) скрипта на Python; 3) статья: "Как быстро найти аномалии в числовых рядах с помощью метода Хампеля" ([русская](https://forworktests.blogspot.com/2022/12/blog-post.html) и [английская](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) версии).
 * [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Правила открытия/закрытия позиций в зависимости от нечётких уровней Риска/Достижимости были добавлены в виде матриц `OPENING_RULES` и `CLOSING_RULES` с логическими значениями. Методы `CanOpen()` и `CanClose` являются функциями-фильтрами и могут проверять правила открытия/закрытия позиций, опираясь на эти матрицы и нечёткие значения Риска/Достижимости.
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Добавлены методы для вычисления уровней нечёткого риска и нечёткой достижимости: `RiskLong()`, `RiskShort()`, `ReachLong()` и `ReachShort()`.
+* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) Реализован новый пример использования платформы TKSBrokerAPI: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) — это простой Телеграм бот для поиска и анализа аномалий в объёмах спроса и предложения покупателей и продавцов.
 
 ##### Улучшения
 

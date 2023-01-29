@@ -1,6 +1,7 @@
 # TKSBrokerAPI — Release notes
 
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
 **T**echnologies · **K**nowledge · **S**cience
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
@@ -12,7 +13,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.6.* (2023-01-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
+### [1.6.* (2023-02-20)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
 
 ##### Digest
 
@@ -26,6 +27,7 @@ Release development in progress...
 * [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Examples of using Hampel Filtering were implemented: 1) Jupyter Notebook with theory and practice ([english](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) and [russian](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) versions); 2) Python script [example](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py); 3) article: "How to quickly find anomalies in number series using the Hampel method" ([english](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) and [russian](https://forworktests.blogspot.com/2022/12/blog-post.html) versions).
 * [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Bool filter with Rules for Opening/Closing positions by fuzzy Risk/Reach levels was added as bool matrices `OPENING_RULES` and `CLOSING_RULES`. `CanOpen()` and `CanClose` methods can check opening and closing positions rules in these matrices depend on fuzzy Risk/Reach levels.
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Methods for calculation Fuzzy Risk and Fuzzy Reach levels were implemented: `RiskLong()`, `RiskShort()`, `ReachLong()` and `ReachShort()`.
+* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) The new example was implemented: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) is a simple Telegram bot for detecting anomaly volumes in Buyers and Sellers orders.
 
 ##### Improvements
 
