@@ -17,7 +17,7 @@
 
 ## Description
 
-**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple Telegram bot for detecting anomaly volumes of Buyers and Sellers prices.
+**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple Telegram bot, based on the TKSBrokerAPI platform, for detecting anomaly volumes in Buyers and Sellers orders.
 
 The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
 
