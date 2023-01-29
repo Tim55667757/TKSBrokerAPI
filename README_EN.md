@@ -3447,7 +3447,7 @@ See also:
 
 The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
 
-![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true)
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Module-import" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true" alt="AnomalyVolumesDetector-example" width="307" /></a>
 
 More details about the bot and instructions for launching you can be finding here: [./docs/examples/AnomalyVolumesDetector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector#Anomaly-Volumes-Detector).
 

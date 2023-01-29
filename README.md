@@ -3469,7 +3469,7 @@ if __name__ == "__main__":
 
 Бот следит за объёмами покупателей и продавцов в биржевом стакане, ищет аномалии в числовом ряду объёмов и оповещает о них в Телеграм. Оповещение содержит: текущую цену инструмента и цены с аномальными объёмами.
 
-![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-RU.jpg?raw=true)
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Как-Python-API-через-импорт-модуля-TKSBrokerAPI" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumesDetector-TG-example-RU.jpg?raw=true" alt="AnomalyVolumesDetector-example" width="307" /></a>
 
 Подробности о боте и инструкцию по его запуску можно найти в каталоге: [./docs/examples/AnomalyVolumesDetector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector#Детектор-аномальных-объёмов).
 

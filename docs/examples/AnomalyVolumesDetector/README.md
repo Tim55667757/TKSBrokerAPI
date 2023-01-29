@@ -58,7 +58,8 @@ Main steps:
     ```
 
 - Connect to the specified TG-bot by token and send a notification through it.
-  ![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true)
+
+  <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Module-import" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true" alt="AnomalyVolumesDetector-example" width="307" /></a>
 
 ### Bot launch
 
@@ -186,7 +187,8 @@ How you can find Chat ID for `chatId` variable:
     ```
 
 - Подключиться к указанному ТГ-боту по токену и отправить через него оповещение.
-  ![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-RU.jpg?raw=true)
+
+  <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Как-Python-API-через-импорт-модуля-TKSBrokerAPI" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumesDetector-TG-example-RU.jpg?raw=true" alt="AnomalyVolumesDetector-example" width="307" /></a>
 
 ### Запуск бота
 
