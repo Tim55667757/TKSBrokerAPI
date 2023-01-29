@@ -58,6 +58,7 @@ Main steps:
     ```
 
 - Connect to the specified TG-bot by token and send a notification through it.
+  ![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true)
 
 ### Bot launch
 
@@ -73,6 +74,28 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
 
 If you're using default names `config.yaml` and `secrets.yaml`, then they can be omitted in `python3 TKSAVDetector.py` command.
+
+### Auth
+
+All critical secrets must store locally in [`secrets.yaml`](./secrets.yaml) file. You can define there some parameters:
+
+* `userToken` — place here the Tinkoff Investment API token (`t.*****`) or stay it empty and use `TKS_API_TOKEN` environment variable;
+* `userAccount` — place here the `accountId` of Tinkoff Investment broker account or stay it empty and use `TKS_ACCOUNT_ID` environment variable;
+* `botToken` — place here TG bot token (`******:***`) or stay it empty and use `TKS_BOT_TOKEN` environment variable;
+* `chatId` — Telegram Chat ID with authorized user for sending messages.
+
+How to create the Tinkoff Investment API token [see here](https://tinkoff.github.io/investAPI/token/). After creating token, store it to `userToken` variable in `secrets.yaml` or in `TKS_API_TOKEN` environment variable.
+
+You can find `accountId` number using the TKSBrokerAPI platform with command: `tksbrokerapi --accounts` and then store it to `userAccount` variable in `secrets.yaml` or in `TKS_ACCOUNT_ID` environment variable.
+
+How to create new Telegram bot and receive token [see here](https://core.telegram.org/bots/features#botfather). After creating bot, store its token to `botToken` variable in `secrets.yaml` or in `TKS_BOT_TOKEN` environment variable. See also, Telegram [auth and some examples](https://core.telegram.org/bots/api#authorizing-your-bot).
+
+How you can find Chat ID for `chatId` variable:
+  - when the bot will be created, you store its token;
+  - join and authorize bot in Telegram (`/start` command);
+  - send any message to bot;
+  - go to url: https://api.telegram.org/bot<place_your_token_here>/getUpdates
+  - find your message in response text and take `id` as `chatId` variable your need.
 
 ### Methods
 
@@ -93,6 +116,7 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
 * The `TradeScenario()` class contains methods for implementing the trading scenario logic. It has two important methods: `Run()` and `Steps()`.
     - `Run()` is a runner of trade steps for all given instruments tickers.
     - `Steps()` is a section for implementing the steps of the trading scenario for one current instrument.
+
 
 🚀 Good luck for you in trade automation! And profit!
 
@@ -162,6 +186,7 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
     ```
 
 - Подключиться к указанному ТГ-боту по токену и отправить через него оповещение.
+  ![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-RU.jpg?raw=true)
 
 ### Запуск бота
 
@@ -177,6 +202,28 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
 
 Если используются дефолтные файлы конфигурации `config.yaml` и `secrets.yaml`, то в команде `python3 TKSAVDetector.py` их можно не указывать.
+
+### Авторизация
+
+Все критичные секреты должны храниться локально в файле [`secrets.yaml`](./secrets.yaml). Вы можете определить там некоторые параметры:
+
+* `userToken` — укажите здесь свой API-токен от Тинькофф Инвестиции (`t.*****`) или оставьте пустую строку и используйте переменную окружения `TKS_API_TOKEN`;
+* `userAccount` — укажите здесь свой `accountId`, это счёт пользователя в Тинькофф Инвестиции, или оставьте пустую строку и используйте переменную окружения `TKS_ACCOUNT_ID`;
+* `botToken` — укажите здесь токен от вашего Телеграм-бота (`******:***`) или оставьте пустую строку и используйте переменную окружения `TKS_BOT_TOKEN`;
+* `chatId` — укажите здесь ID номер Телеграм-чата, где вы авторизовали бота для отправки сообщений.
+
+Как создать API-токен в Тинькофф Инвестиции, смотрите [по ссылке](https://tinkoff.github.io/investAPI/token/). После создания токена, сохраните его в переменной `userToken` (в `secrets.yaml`) или в переменной окружения `TKS_API_TOKEN`.
+
+Вы можете найти номер своего аккаунта `accountId` используя команду платформы TKSBrokerAPI: `tksbrokerapi --accounts`. После этого сохраните его в переменной `userAccount` (в `secrets.yaml`) или в переменной окружения `TKS_ACCOUNT_ID`.
+
+Как создать нового Телеграм-бота и получить токен для него, смотрите [по ссылке](https://core.telegram.org/bots/features#botfather). После создания бота сохраните его токен в переменной `botToken` (в `secrets.yaml`) или в переменной окружения `TKS_BOT_TOKEN`. Смотрите также [примеры](https://core.telegram.org/bots/api#authorizing-your-bot), как авторизоваться в Телеграм для отправки сообщений.
+
+Как вы можете найти ID чата с ботом для переменной `chatId`:
+  - когда бот будет создан, вы узнаете и сохраните его токен;
+  - подключитесь к боту и авторизуйте его в Telegram командой `/start`, чтобы он мог отправлять вам сообщения;
+  - отправьте любое сообщение боту;
+  - подставьте свой токен и перейдите в браузере по ссылке вида: https://api.telegram.org/bot<положите_сюда_свой_токен>/getUpdates
+  - в тексте ответа от сервера Телеграм найдите ваше сообщение и рядом с ним будет параметр `id`, который является искомым значением для переменной `chatId`.
 
 ### Основные методы
 
