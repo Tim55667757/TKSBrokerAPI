@@ -59,6 +59,7 @@
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
      - [Using in Jupyter Notebook](#Using-in-Jupyter-Notebook)
+     - [Anomaly Volumes Detector](#Anomaly-Volumes-Detector)
 
 
 ## Introduction
@@ -3438,6 +3439,17 @@ See also:
 - [How to quickly find anomalies in number series using the Hampel method](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html).
 - (RU) [How to receive and expand stock data using TKSBrokerAPI — the platform for automation of trading scenarios](https://forworktests.blogspot.com/2022/11/tksbrokerapi.html)
 - [Python script example: how to use Hampel Filter to determine anomalies in time series](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/TestAnomalyFilter.py)
+
+
+#### Anomaly Volumes Detector
+
+**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple Telegram bot, based on the TKSBrokerAPI platform, for detecting anomaly volumes in Buyers and Sellers orders.
+
+The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
+
+![](https://github.com/Tim55667757/PriceGenerator/blob/develop/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true)
+
+More details about the bot and instructions for launching you can be finding here: [./docs/examples/AnomalyVolumesDetector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector#Anomaly-Volumes-Detector).
 
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
