@@ -17,7 +17,7 @@
 
 ## Description
 
-**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple TG-bot for detecting anomaly volumes of Buyers and Sellers prices.
+**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple Telegram bot for detecting anomaly volumes of Buyers and Sellers prices.
 
 The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
 
@@ -145,7 +145,7 @@ How you can find Chat ID for `chatId` variable:
 
 ## Описание
 
-**[Детектор аномальных объёмов](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** — это простой ТГ-бот для анализа объёмов спроса и предложения покупателей и продавцов.
+**[Детектор аномальных объёмов](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** — это простой Телеграм бот для анализа объёмов спроса и предложения покупателей и продавцов.
 
 Бот следит за объёмами покупателей и продавцов в биржевом стакане, ищет аномалии в числовом ряду объёмов и оповещает о них в Телеграм. Оповещение содержит: текущую цену инструмента и цены с аномальными объёмами.
 
