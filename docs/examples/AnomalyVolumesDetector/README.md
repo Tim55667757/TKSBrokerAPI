@@ -77,19 +77,22 @@ If you're using default names `config.yaml` and `secrets.yaml`, then they can be
 ### Methods
 
 * The `ConfigDecorator()` method is a wrapper (decorator) for loading configuration files and secrets, controlling the start time of iterations on a schedule, for a single run or in infinite mode, as well as for parameterizing the Trade Manager.
-     - Decorator `ConfigDecorator()`:
-       - loads settings from configuration files,
-       - checks the number of CPU available for parallelization,
-       - checks if it's working time (according to crontab settings),
-       - launches the Trade Manager once or in infinite mode.
+    - Decorator `ConfigDecorator()`:
+      - loads settings from configuration files,
+      - checks the number of CPU available for parallelization,
+      - checks if it's working time (according to crontab settings),
+      - launches the Trade Manager once or in infinite mode.
 
 * The `TradeManager()` method is a manager for initializing, launching and managing parallel pipelines, which will analyze the state of the order book for a specific set of tickers.
-     - Manager `TradeManager()`:
-       - initializes the reporter (an instance of the `TinkoffBrokerServer()` class for generating reports),
-       - updates the cache for instruments once and gets the user's portfolio so that they are not updated on each pipeline once again,
-       - starts iteration over all tickers, splits them into sets,
-       - each set sends to its own pipeline for parallelization.
+    - Manager `TradeManager()`:
+      - initializes the reporter (an instance of the `TinkoffBrokerServer()` class for generating reports),
+      - updates the cache for instruments once and gets the user's portfolio so that they are not updated on each pipeline once again,
+      - starts iteration over all tickers, splits them into sets,
+      - each set sends to its own pipeline for parallelization.
 
+* The `TradeScenario()` class contains methods for implementing the trading scenario logic. It has two important methods: `Run()` and `Steps()`.
+    - `Run()` is a runner of trade steps for all given instruments tickers.
+    - `Steps()` is a section for implementing the steps of the trading scenario for one current instrument.
 
 🚀 Good luck for you in trade automation! And profit!
 
@@ -177,19 +180,23 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 
 ### Основные методы
 
-* Метод `ConfigDecorator()` — обёртка (декоратор) для загрузки файлов конфигурации и секретов, управления временем запуска итераций по расписанию, для однократного запуска или в бесконечном режиме, а также для параметризации менеджера.
+* Метод `ConfigDecorator()` — это обёртка (декоратор) для загрузки файлов конфигурации и секретов, управления временем запуска итераций по расписанию, для однократного запуска или в бесконечном режиме, а также для параметризации менеджера.
     - Декоратор `ConfigDecorator()`:
       - загружает настройки из файлов конфигурации,
       - проверяет количество доступных для распараллеливания запросов CPU,
       - проверяет рабочее ли сейчас время (согласно настройкам crontab),
       - однократно или в бесконечном режиме запускает менеджер.
 
-* Метод `TradeManager()` — менеджер для инициализации, запуска и управления параллельными конвейерами, на которых будет исполняться анализ состояния стакана для конкретного набора тикеров.
+* Метод `TradeManager()` — это менеджер для инициализации, запуска и управления параллельными конвейерами, на которых будет исполняться анализ состояния стакана для конкретного набора тикеров.
     - Менеджер `TradeManager()`:
       - инициализирует репортер (экземпляр класса `TinkoffBrokerServer()` для генерации отчётов),
       - однократно обновляет кеш по инструментам и получает портфель пользователя, чтобы они не обновлялись на каждом конвейере лишний раз,
       - запускает итерацию по всем тикерам, разбивает их на наборы,
       - каждый набор отправляет на свой конвейер для параллелизации.
+
+* Класс `TradeScenario()` содержит методы для реализации логики торгового сценария. Он содержит два основных метода: `Run()` и `Steps()`.
+    - `Run()` — это метод для запуска сценария итеративно по всем указанным тикерам инструментов.
+    - `Steps()` — это раздел с описанием, реализацией и запуском отдельных шагов торгового сценария для одного указанного инструмента.
 
 
 🚀 Успехов вам в автоматизации биржевой торговли! И профита!
