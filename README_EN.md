@@ -34,6 +34,7 @@
 1. [Introduction](#Introduction)
    - [Key features](#Key-features)
 2. [Setup](#Setup)
+   - [Import errors](#Import-errors)
 3. [Auth](#Auth)
    - [Token](#Token)
    - [User account ID](#User-account-ID)
