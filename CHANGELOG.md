@@ -21,13 +21,13 @@
 
 ##### Новая функциональность
 
+* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) Реализован новый пример использования платформы TKSBrokerAPI: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) — это простой Телеграм бот для поиска и анализа аномалий в объёмах спроса и предложения покупателей и продавцов.
 * [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) В модуль TradeRoutines добавлен метод `CalculateLotsForDeal()`. Он помогает определить нужное количество лотов инструмента при открытии позиции.
 * [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) В модуль TradeRoutines добавлен метод `HampelFilter()`. Он позволяет обнаружить аномалию ("выброс", нестандартное значение, отклонение от нормы) среди значений любого числового ряда, используя функцию фильтрации Хампеля. Фильтр Хампеля обнаруживает аномалии на основе скользящего окна и подсчёта разницы между медианными значениями и входными значениями числового ряда.
 * [#113](https://github.com/Tim55667757/TKSBrokerAPI/issues/113) В модуль TradeRoutines добавлен метод `HampelAnomalyDetection()`, который использует фильтр Хампеля. Эта функция возвращает минимальный индекс элемента в списке найденных аномалий или индекс первого максимального элемента во входном ряду, если этот индекс меньше индекса аномального элемента.
 * [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Были добавлены примеры фильтрации методом Хампеля: 1) Jupyter Notebook с теорией и практикой ([русская](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) и [английская](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) версии); 2) [пример](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py) скрипта на Python; 3) статья: "Как быстро найти аномалии в числовых рядах с помощью метода Хампеля" ([русская](https://forworktests.blogspot.com/2022/12/blog-post.html) и [английская](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) версии).
 * [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Правила открытия/закрытия позиций в зависимости от нечётких уровней Риска/Достижимости были добавлены в виде матриц `OPENING_RULES` и `CLOSING_RULES` с логическими значениями. Методы `CanOpen()` и `CanClose` являются функциями-фильтрами и могут проверять правила открытия/закрытия позиций, опираясь на эти матрицы и нечёткие значения Риска/Достижимости.
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Добавлены методы для вычисления уровней нечёткого риска и нечёткой достижимости: `RiskLong()`, `RiskShort()`, `ReachLong()` и `ReachShort()`.
-* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) Реализован новый пример использования платформы TKSBrokerAPI: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) — это простой Телеграм бот для поиска и анализа аномалий в объёмах спроса и предложения покупателей и продавцов.
 
 ##### Улучшения
 
@@ -54,6 +54,7 @@
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Исправлен баг в методе `Deals()`: `KeyError: 'OPERATION_STATE_PROGRESS'`. Для этого был добавлен новый статус `OPERATION_STATE_PROGRESS` в константу `TKS_OPERATION_STATES`.
 * [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Исправлен баг в методе `History()`: `KeyError: 'candles'`. Добавлена дополнительная проверка.
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Исправлен баг в константе `TKS_QUALIFIED_TYPES`. Некоторые новые значения в поле ответа `qualified_for_work_with` были добавлены в Tinkoff REST API, но не задокументированы: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` и `option`. Эти дополнительные значения были добавлены в текущем баг-фиксе.
+* [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) Для ошибки импорта вида `No module named 'Templates'` в README.md [добавлена инструкция](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Ошибки-импорта) по её исправлению.
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Баг `ValueError` был исправлен для методов `History()` and `LoadHistory()`. Добавлены дополнительные проверки.
 
 

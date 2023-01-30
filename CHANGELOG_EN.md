@@ -21,13 +21,13 @@ Release development in progress...
 
 ##### New features
 
+* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) The new example was implemented: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) is a simple Telegram bot for detecting anomaly volumes in Buyers and Sellers orders.
 * [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) TradeRoutines: `CalculateLotsForDeal()` method was implemented. This method can be used when you need to calculate lots to open position.
 * [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) TradeRoutines: `HampelFilter()` method was implemented. It allows you to detect anomaly (outlier, non-standard value, norm deviation) among the values of any number series using the Hampel filtering function. Hampel Filter detect outliers based on a sliding window and counting difference between median values and input values of series.
 * [#113](https://github.com/Tim55667757/TKSBrokerAPI/issues/113) TradeRoutines: `HampelAnomalyDetection()` method using Hampel Filter was implemented. This function returns the minimum index of elements in anomaly list or index of the first maximum element in input series if this index less than anomaly element index.
 * [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Examples of using Hampel Filtering were implemented: 1) Jupyter Notebook with theory and practice ([english](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) and [russian](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) versions); 2) Python script [example](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py); 3) article: "How to quickly find anomalies in number series using the Hampel method" ([english](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) and [russian](https://forworktests.blogspot.com/2022/12/blog-post.html) versions).
 * [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Bool filter with Rules for Opening/Closing positions by fuzzy Risk/Reach levels was added as bool matrices `OPENING_RULES` and `CLOSING_RULES`. `CanOpen()` and `CanClose` methods can check opening and closing positions rules in these matrices depend on fuzzy Risk/Reach levels.
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Methods for calculation Fuzzy Risk and Fuzzy Reach levels were implemented: `RiskLong()`, `RiskShort()`, `ReachLong()` and `ReachShort()`.
-* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) The new example was implemented: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) is a simple Telegram bot for detecting anomaly volumes in Buyers and Sellers orders.
 
 ##### Improvements
 
@@ -54,6 +54,7 @@ Release development in progress...
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Bug fixed in `Deals()` method: `KeyError: 'OPERATION_STATE_PROGRESS'`. New state `OPERATION_STATE_PROGRESS` was added to the `TKS_OPERATION_STATES` constant.
 * [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Bug fixed in `History()` method: `KeyError: 'candles'`. Additional check was added.
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Bug fixed in `TKS_QUALIFIED_TYPES` constant. Some values of `qualified_for_work_with` field was added in REST API, but not documented: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` and `option`. Additional values was added to constant in this bug fix.
+* [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) For the import error like `No module named 'Templates'` into README_EN.md [was added the instruction](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Import-errors) how to fix it.
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Bug `ValueError` was fixed in `History()` and `LoadHistory()` methods. Additional checks were added.
 
 
