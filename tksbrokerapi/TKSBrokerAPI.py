@@ -102,9 +102,9 @@ from multiprocessing import cpu_count, Lock
 from multiprocessing.pool import ThreadPool
 
 from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
-from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
-from TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
-from TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
+from tksbrokerapi.Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
+from tksbrokerapi.TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
+from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
