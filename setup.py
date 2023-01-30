@@ -110,6 +110,10 @@ setup(
         "tksbrokerapi",
     ],
 
+    package_dir={
+        "tksbrokerapi": "tksbrokerapi",
+    },
+
     package_data={
         "tksbrokerapi": [
         ],
