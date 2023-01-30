@@ -280,6 +280,7 @@ After that, you can check the installation with the command:
 
 ```commandline
 pip show tksbrokerapi
+tksbrokerapi --version
 ```
 
 You can also use the TKSBrokerAPI module by downloading it directly from [repository](https://github.com/Tim55667757/TKSBrokerAPI/) via `git clone` and taking the codebase of any tested [release](https://github.com/Tim55667757/TKSBrokerAPI/releases).
@@ -288,6 +289,23 @@ In the first case, the tool will be available in the console through the `tksbro
 
 ❗ **Important note:** TKSBrokerAPI module was tested for `python >= 3.9`. Earlier versions will have bugs. Further, all examples are written for the case when TKSBrokerAPI is installed via PyPI in `python == 3.9`.
 
+### Import errors
+
+It is possible that after starting the TKSBrokerAPI platform you will see an import error like this:
+
+```
+  File "./tksbrokerapi/TKSBrokerAPI.py", line 105, in <module>
+    from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
+ModuleNotFoundError: No module named 'Templates'
+```
+
+This means that the library directory for the version of Python where the TKSBrokerAPI platform was installed is not visible in the system environment. You need to add it to the `PYTHONPATH` environment variable. See [explanation and examples for different OS](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html). For example, under Linux/MacOS:
+
+```commandline
+export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/tksbrokerapi
+```
+
+If you don't want to set the `PYTHONPATH` variable every time you open a terminal, you can set it to the system environment.
 
 ## Auth
 

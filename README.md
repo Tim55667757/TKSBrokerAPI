@@ -280,6 +280,7 @@ pip install tksbrokerapi
 
 ```commandline
 pip show tksbrokerapi
+tksbrokerapi --version
 ```
 
 Также можно использовать модуль TKSBrokerAPI, скачав его напрямую из [репозитория](https://github.com/Tim55667757/TKSBrokerAPI/) через `git clone` и взяв кодовую базу любого протестированного [релиза](https://github.com/Tim55667757/TKSBrokerAPI/releases).
@@ -288,6 +289,23 @@ pip show tksbrokerapi
 
 ❗ **Важное замечание:** модуль TKSBrokerAPI тестировался для `python >= 3.9`. В более ранних версиях будут возникать ошибки. Далее все примеры написаны для случая, когда TKSBrokerAPI установлен через PyPI и запускается в `python == 3.9`.
 
+### Ошибки импорта
+
+Возможно, что после запуска платформы TKSBrokerAPI вы увидите ошибку импорта такого вида:
+
+```
+  File "./tksbrokerapi/TKSBrokerAPI.py", line 105, in <module>
+    from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
+ModuleNotFoundError: No module named 'Templates'
+```
+
+Это означает, что каталог с библиотеками для той версии Python, куда была установлена платформа, не виден в системном окружении. Нужно добавить его в переменную окружения `PYTHONPATH`. Смотрите объяснение и примеры для разных ОС [по ссылке (en)](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html). Например, под Linux/MacOS:
+
+```commandline
+export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/tksbrokerapi
+```
+
+Чтобы не устанавливать переменную `PYTHONPATH` каждый раз при открытии терминала, можно установить её в системное окружение своей ОС.
 
 ## Аутентификация
 
