@@ -69,7 +69,11 @@ The script works with `python >= 3.9`, and dependencies from [`requirements.txt`
 
 ```commandline
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
-cd ./TKSBrokerAPI/docs/examples/AnomalyVolumesDetector
+cd TKSBrokerAPI
+git branch
+git checkout -f develop
+git pull
+cd ./docs/examples/AnomalyVolumesDetector
 python3 -m pip install -r requirements.txt
 python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
@@ -198,7 +202,11 @@ How you can find Chat ID for `chatId` variable:
 
 ```commandline
 git clone https://github.com/Tim55667757/TKSBrokerAPI.git
-cd ./TKSBrokerAPI/docs/examples/AnomalyVolumesDetector
+cd TKSBrokerAPI
+git branch
+git checkout -f develop
+git pull
+cd ./docs/examples/AnomalyVolumesDetector
 python3 -m pip install -r requirements.txt
 python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
