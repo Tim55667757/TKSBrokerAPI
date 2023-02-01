@@ -133,6 +133,7 @@ class TradeScenario(TinkoffBrokerServer):
         self.msgLanguage = "en"  # Bot messages language: "en" / "ru" supported.
         self.windowHampel = 0  # Length of the sliding window in Hampel filter (0 mean max wide window is used), `1 <= windowHampel <= len(series)`.
         self.anomaliesMaxCount = 3  # Maximum anomalies that bot sending in one message.
+        self.volumeIgnored = 0  # Volume less than this number will be ignored (0 mean that all values will use).
 
         # Some parameters calculated during the execution of the trading scenario (not for manual setting):
         self._pipelineId = kwargs["pipelineId"] if "pipelineId" in kwargs.keys() else "*"  # Pipeline ID number.
@@ -349,6 +350,15 @@ class TradeScenario(TinkoffBrokerServer):
 
             uLogger.debug("[{}] All volume anomalies in orders of Buyers: {}".format(self._curTicker, onlyAnomaliesOfBuyers))
             uLogger.debug("[{}] All volume anomalies in orders of Sellers: {}".format(self._curTicker, onlyAnomaliesOfSellers))
+
+            if self.volumeIgnored > 0:
+                uLogger.debug("`volumeIgnored = {}`, volume less than this number will be ignored!".format(self.volumeIgnored))
+
+                onlyAnomaliesOfBuyers = [item for item in onlyAnomaliesOfBuyers if item["volume"] > self.volumeIgnored]
+                onlyAnomaliesOfSellers = [item for item in onlyAnomaliesOfSellers if item["volume"] > self.volumeIgnored]
+
+                uLogger.debug("[{}] Filtered volume anomalies in orders of Buyers: {}".format(self._curTicker, onlyAnomaliesOfBuyers))
+                uLogger.debug("[{}] Filtered volume anomalies in orders of Sellers: {}".format(self._curTicker, onlyAnomaliesOfSellers))
 
             # --- Checking closing position rules if instrument already yet in portfolio -------------------------------
 
