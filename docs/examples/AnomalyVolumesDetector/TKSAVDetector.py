@@ -123,7 +123,6 @@ class TradeScenario(TinkoffBrokerServer):
         super().__init__(token=kwargs["userToken"], accountId=kwargs["userAccount"])  # Initialize main `__init__()` of `TinkoffBrokerServer()` class.
         self.userName = kwargs["userName"]  # Additional identifier for user.
         self.comment = kwargs["comment"]  # Additional comment in log.
-        self.moreDebug = False  # Can be set to `True`, if you want more debug information as network headers, requests and responses.
 
         self.botToken = kwargs["botToken"]  # Telegram bot token. If empty string, then no messages will be sent.
         self.chatId = kwargs["chatId"]  # Telegram Chat ID with authorized user for sending messages.
