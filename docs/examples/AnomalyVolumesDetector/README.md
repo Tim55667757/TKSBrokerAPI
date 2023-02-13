@@ -21,6 +21,10 @@
 
 The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
 
+The following screenshot illustrates the Depth of Market with the volumes of offers of buyers and sellers, which a trader can visually take as anomalies:
+
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Module-import" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumes-example-EN.png?raw=true" alt="AnomalyVolumes-example" width="700" /></a>
+
 ### Concept
 
 Main steps: 
@@ -170,6 +174,10 @@ How you can find Chat ID for `chatId` variable:
 **[Детектор аномальных объёмов](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** — это простой Телеграм бот для анализа объёмов спроса и предложения покупателей и продавцов.
 
 Бот следит за объёмами покупателей и продавцов в биржевом стакане, ищет аномалии в числовом ряду объёмов и оповещает о них в Телеграм. Оповещение содержит: текущую цену инструмента и цены с аномальными объёмами.
+
+Следующий скриншот иллюстрирует стакан цен с объёмами предложений продавцов и покупателей, которые трейдер визуально может принять за аномалии:
+
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Как-Python-API-через-импорт-модуля-TKSBrokerAPI" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumes-example-RU.png?raw=true" alt="AnomalyVolumes-example" width="700" /></a>
 
 ### Концепция
 
