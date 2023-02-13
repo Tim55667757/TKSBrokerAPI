@@ -70,8 +70,6 @@ class TestTKSBrokerAPIMethods:
         result = self.server.SendAPIRequest(
             url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
             reqType="POST",
-            retry=0,
-            pause=0,
         )
 
         assert isinstance(result, dict), "Not dict type returned!"
@@ -88,8 +86,6 @@ class TestTKSBrokerAPIMethods:
             result = self.server.SendAPIRequest(
                 url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
                 reqType="POST",
-                retry=0,
-                pause=0,
             )
 
             assert result == test[1], 'Expected: `{}`, actual: `{}`'.format(test[1], result)

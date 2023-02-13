@@ -228,6 +228,22 @@ class TinkoffBrokerServer:
         See also: `SendAPIRequest()`.
         """
 
+        self.retry = 3
+        """
+        How many times retry after first request if a 5xx server errors occurred. If set to 0, then only first main
+        request will be sent without retries. This allows you to reduce the number of calls to the server API for all methods.
+
+        3 times of retries by default.
+
+        See also: `SendAPIRequest()`.
+        """
+
+        self.pause = 5
+        """Sleep time in seconds between retries, in all network requests 5 seconds by default.
+
+        See also: `SendAPIRequest()`.
+        """
+
         self.headers = {
             "Content-Type": "application/json",
             "accept": "application/json",
@@ -496,7 +512,7 @@ class TinkoffBrokerServer:
 
             return {}
 
-    def SendAPIRequest(self, url: str, reqType: str = "GET", retry: int = 3, pause: int = 5) -> dict:
+    def SendAPIRequest(self, url: str, reqType: str = "GET") -> dict:
         """
         Send GET or POST request to broker server and receive JSON object.
 
@@ -505,8 +521,6 @@ class TinkoffBrokerServer:
         self.timeout: global request timeout, 15 seconds by default.
         :param url: url with REST request.
         :param reqType: send "GET" or "POST" request. "GET" by default.
-        :param retry: how many times retry after first request if a 5xx server errors occurred.
-        :param pause: sleep time in seconds between retries.
         :return: response JSON (dictionary) from broker.
         """
         if reqType.upper() not in ("GET", "POST"):
@@ -537,7 +551,7 @@ class TinkoffBrokerServer:
                 response = None
                 errMsg = ""
 
-                while not response and counter <= retry:
+                while not response and counter <= self.retry:
                     if reqType == "GET":
                         response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
@@ -570,7 +584,7 @@ class TinkoffBrokerServer:
                             msgDict = self._ParseJSON(rawData=response.text)
                             uLogger.warning("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
 
-                        counter = retry + 1  # do not retry for 4xx errors
+                        counter = self.retry + 1  # do not retry for 4xx errors
 
                     if 500 <= response.status_code < 600:
                         errMsg = "status code: [{}], response body: {}".format(response.status_code, response.text)
@@ -582,9 +596,9 @@ class TinkoffBrokerServer:
 
                         counter += 1
 
-                        if counter <= retry:
-                            uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, pause))
-                            sleep(pause)
+                        if counter <= self.retry:
+                            uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, self.pause))
+                            sleep(self.pause)
 
                 responseJSON = self._ParseJSON(rawData=response.text)
 
@@ -2886,7 +2900,7 @@ class TinkoffBrokerServer:
                     "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
                     "interval": TKS_CANDLE_INTERVALS[interval][0]
                 })
-                responseJSON = self.SendAPIRequest(historyURL, reqType="POST", retry=1, pause=1)
+                responseJSON = self.SendAPIRequest(historyURL, reqType="POST")
 
                 if "code" in responseJSON.keys():
                     uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
@@ -3119,7 +3133,7 @@ class TinkoffBrokerServer:
             "accountId": str(self.accountId),
             "orderType": "ORDER_TYPE_MARKET",  # see: TKS_ORDER_TYPES
         })
-        response = self.SendAPIRequest(openTradeURL, reqType="POST", retry=0)
+        response = self.SendAPIRequest(openTradeURL, reqType="POST")
 
         if "orderId" in response.keys():
             uLogger.info("[{}] market order [{}] was executed: ticker [{}], FIGI [{}], lots [{}]. Total order price: [{:.4f} {}] (with commission: [{:.2f} {}]). Average price of lot: [{:.2f} {}]".format(
@@ -3278,7 +3292,7 @@ class TinkoffBrokerServer:
         When current price will go up or down to target price value then broker opens a limit order.
         Stop-order is opened with unlimited expiration date by default, or you can define expiration date with expDate parameter.
 
-        Only one attempt and no retry for opens order. If network issue occurred you can create new request.
+        Only one attempt without retries recommended for opens order, set `self.retry = 0`. If network issue occurred you can create new request.
 
         :param operation: string "Buy" or "Sell".
         :param orderType: string "Limit" or "Stop".
@@ -3349,7 +3363,7 @@ class TinkoffBrokerServer:
                 "accountId": str(self.accountId),
                 "orderType": "ORDER_TYPE_LIMIT",  # see: TKS_ORDER_TYPES
             })
-            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0)
+            response = self.SendAPIRequest(openOrderURL, reqType="POST")
 
             if "orderId" in response.keys():
                 uLogger.info(
@@ -3403,7 +3417,7 @@ class TinkoffBrokerServer:
                 body["expireDate"] = expDateUTC
 
             self.body = str(body)
-            response = self.SendAPIRequest(openOrderURL, reqType="POST", retry=0)
+            response = self.SendAPIRequest(openOrderURL, reqType="POST")
 
             if "stopOrderId" in response.keys():
                 uLogger.info(

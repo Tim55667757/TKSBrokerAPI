@@ -54,6 +54,12 @@
                                 <a class="variable" href="#TinkoffBrokerServer.timeout">timeout</a>
                         </li>
                         <li>
+                                <a class="variable" href="#TinkoffBrokerServer.retry">retry</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TinkoffBrokerServer.pause">pause</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#TinkoffBrokerServer.headers">headers</a>
                         </li>
                         <li>
@@ -549,6 +555,39 @@ If you don't want to use cache and always updates raw data then set <code>useCac
 
 
                             </div>
+                            <div id="TinkoffBrokerServer.retry" class="classattr">
+                                <div class="attr variable">
+            <span class="name">retry</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TinkoffBrokerServer.retry"></a>
+    
+            <div class="docstring"><p>How many times retry after first request if a 5xx server errors occurred. If set to 0, then only first main
+request will be sent without retries. This allows you to reduce the number of calls to the server API for all methods.</p>
+
+<p>3 times of retries by default.</p>
+
+<p>See also: <code><a href="#TinkoffBrokerServer.SendAPIRequest">SendAPIRequest()</a></code>.</p>
+</div>
+
+
+                            </div>
+                            <div id="TinkoffBrokerServer.pause" class="classattr">
+                                <div class="attr variable">
+            <span class="name">pause</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TinkoffBrokerServer.pause"></a>
+    
+            <div class="docstring"><p>Sleep time in seconds between retries, in all network requests 5 seconds by default.</p>
+
+<p>See also: <code><a href="#TinkoffBrokerServer.SendAPIRequest">SendAPIRequest()</a></code>.</p>
+</div>
+
+
+                            </div>
                             <div id="TinkoffBrokerServer.headers" class="classattr">
                                 <div class="attr variable">
             <span class="name">headers</span>
@@ -978,7 +1017,7 @@ More tickers aliases here: <code>TKSEnums.TKS_TICKER_ALIASES</code>.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">SendAPIRequest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">url</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span>,</span><span class="param">	<span class="n">retry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>,</span><span class="param">	<span class="n">pause</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+        <span class="name">SendAPIRequest</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">url</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
 
         
     </div>
@@ -995,8 +1034,6 @@ self.timeout: global request timeout, 15 seconds by default.</p>
 <ul>
 <li><strong>url</strong>:  url with REST request.</li>
 <li><strong>reqType</strong>:  send "GET" or "POST" request. "GET" by default.</li>
-<li><strong>retry</strong>:  how many times retry after first request if a 5xx server errors occurred.</li>
-<li><strong>pause</strong>:  sleep time in seconds between retries.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -1862,7 +1899,7 @@ then broker immediately open market order as you can do simple --buy or --sell o
 When current price will go up or down to target price value then broker opens a limit order.
 Stop-order is opened with unlimited expiration date by default, or you can define expiration date with expDate parameter.</p>
 
-<p>Only one attempt and no retry for opens order. If network issue occurred you can create new request.</p>
+<p>Only one attempt without retries recommended for opens order, set <code>self.retry = 0</code>. If network issue occurred you can create new request.</p>
 
 <h6 id="parameters">Parameters</h6>
 
