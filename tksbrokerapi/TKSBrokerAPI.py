@@ -2004,12 +2004,6 @@ class TinkoffBrokerServer:
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"].keys() else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
-        view["stat"]["funds"]["rub"] = {
-            "total": view["stat"]["availableRUB"],
-            "totalCostRUB": view["stat"]["availableRUB"],
-            "free": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
-            "freeCostRUB": view["stat"]["availableRUB"] - view["stat"]["blockedRUB"],
-        }
 
         # --- pending limit orders sector data:
         uniquePendingOrdersFIGIs = []  # unique FIGIs of pending limit orders to avoid many times price requests
