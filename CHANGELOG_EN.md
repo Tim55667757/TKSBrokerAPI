@@ -56,6 +56,7 @@ Release development in progress...
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Bug fixed in `TKS_QUALIFIED_TYPES` constant. Some values of `qualified_for_work_with` field was added in REST API, but not documented: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` and `option`. Additional values was added to constant in this bug fix.
 * [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) For the import error like `No module named 'Templates'` into README_EN.md [was added the instruction](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Import-errors) how to fix it.
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Bug `ValueError` was fixed in `History()` and `LoadHistory()` methods. Additional checks were added.
+* [#124](https://github.com/Tim55667757/TKSBrokerAPI/issues/124) Bug fixed: `Incorrect values in view["stat"]["funds"] record`.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released

@@ -1978,10 +1978,10 @@ class TinkoffBrokerServer:
                     # update dict with free funds for trading (total - blocked) by currencies
                     # e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}}
                     view["stat"]["funds"][currency] = {
-                        "total": volume,
-                        "totalCostRUB": costRUB,  # total volume cost in rubles
-                        "free": volume - blocked,
-                        "freeCostRUB": costRUB * ((volume - blocked) / volume) if volume > 0 else 0,  # free volume cost in rubles
+                        "total": round(volume, 6),
+                        "totalCostRUB": round(costRUB * volume, 6),  # total volume cost in rubles
+                        "free": round(volume - blocked, 6),
+                        "freeCostRUB": round(costRUB * (volume - blocked), 6),  # free volume cost in rubles
                     }
 
                 elif item["instrumentType"] == "share":

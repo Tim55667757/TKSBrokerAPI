@@ -56,6 +56,7 @@
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Исправлен баг в константе `TKS_QUALIFIED_TYPES`. Некоторые новые значения в поле ответа `qualified_for_work_with` были добавлены в Tinkoff REST API, но не задокументированы: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` и `option`. Эти дополнительные значения были добавлены в текущем баг-фиксе.
 * [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) Для ошибки импорта вида `No module named 'Templates'` в README.md [добавлена инструкция](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Ошибки-импорта) по её исправлению.
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Баг `ValueError` был исправлен для методов `History()` and `LoadHistory()`. Добавлены дополнительные проверки.
+* [#124](https://github.com/Tim55667757/TKSBrokerAPI/issues/124) Ошибочные вычисления исправлены: `Incorrect values in view["stat"]["funds"] record`.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — опубликована
