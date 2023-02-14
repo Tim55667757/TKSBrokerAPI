@@ -57,6 +57,7 @@ Release development in progress...
 * [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) For the import error like `No module named 'Templates'` into README_EN.md [was added the instruction](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Import-errors) how to fix it.
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Bug `ValueError` was fixed in `History()` and `LoadHistory()` methods. Additional checks were added.
 * [#124](https://github.com/Tim55667757/TKSBrokerAPI/issues/124) Bug fixed: `Incorrect values in view["stat"]["funds"] record`.
+* [#125](https://github.com/Tim55667757/TKSBrokerAPI/issues/125) Bug fixed: `KeyError: 'OPERATION_TYPE_OUT_STAMP_DUTY'`, into `TKS_OPERATION_TYPES` were added some new values.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
