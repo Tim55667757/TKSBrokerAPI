@@ -186,6 +186,23 @@ TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_TAX_REPO_REFUND_PROGRESSIVE": "Tax refund on REPO transactions at the rate of 15%",
     "OPERATION_TYPE_DIV_EXT": "Payout dividends to the card",
     "OPERATION_TYPE_TAX_CORRECTION_COUPON": "Coupon tax correction",
+    "OPERATION_TYPE_CASH_FEE": "Currency Balance Fee",
+    "OPERATION_TYPE_OUT_FEE": "Fee for withdrawing currency from a brokerage account",
+    "OPERATION_TYPE_OUT_STAMP_DUTY": "Stamp duty",
+    "OPERATION_TYPE_OUTPUT_SWIFT": "SWIFT output transfer",
+    "OPERATION_TYPE_INPUT_SWIFT": "SWIFT input transfer",
+    "OPERATION_TYPE_OUTPUT_ACQUIRING": "Transfer to card",
+    "OPERATION_TYPE_INPUT_ACQUIRING": "Transfer from card",
+    "OPERATION_TYPE_OUTPUT_PENALTY": "Withdrawal fee",
+    "OPERATION_TYPE_ADVICE_FEE": "Deducting Fee for Advice Service",
+    "OPERATION_TYPE_TRANS_IIS_BS": "Transfer of securities from IIS to brokerage account",
+    "OPERATION_TYPE_TRANS_BS_BS": "Transfer of securities from one brokerage account to another",
+    "OPERATION_TYPE_OUT_MULTI": "Withdrawal of funds from the account",
+    "OPERATION_TYPE_INP_MULTI": "Refill of funds from the user account",
+    "OPERATION_TYPE_OVER_PLACEMENT": "Overnight Exchange Placement",
+    "OPERATION_TYPE_OVER_COM": "Overnight commission",
+    "OPERATION_TYPE_OVER_INCOME": "Overnight income",
+    "OPERATION_TYPE_OPTION_EXPIRATION": "Option expiration",
 }
 """Operation type, enums: https://tinkoff.github.io/investAPI/operations/#operationtype"""
 
