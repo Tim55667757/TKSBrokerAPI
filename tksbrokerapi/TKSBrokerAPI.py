@@ -1904,7 +1904,7 @@ class TinkoffBrokerServer:
                 average = NanoToFloat(item["averagePositionPriceFifo"]["units"], item["averagePositionPriceFifo"]["nano"])  # current average position price
                 profit = NanoToFloat(item["expectedYield"]["units"], item["expectedYield"]["nano"])  # expected profit at current moment
                 currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "future") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
-                cost = curPrice if "currentNkd" not in item.keys() else (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
+                cost = curPrice * volume if "currentNkd" not in item.keys() else (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
                 countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
                 costRUB = cost if item["instrumentType"] == "currency" else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
@@ -2000,7 +2000,7 @@ class TinkoffBrokerServer:
                     continue
 
         # total changes in Russian Ruble:
-        view["stat"]["availableRUB"] = view["stat"]["allCurrenciesCostRUB"] - sum([item["cost"] for item in view["stat"]["Currencies"]])  # available RUB without other currencies
+        view["stat"]["availableRUB"] = view["stat"]["funds"]["rub"]["total"]  # available RUB without other currencies
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"].keys() else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
@@ -2220,12 +2220,6 @@ class TinkoffBrokerServer:
                     "## Open positions\n\n",
                     "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)                   |\n",
                     "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|------------------------------|\n",
-                    "| **Ruble:**                  | {:>31} |          |              |              |                     |                              |\n".format(
-                        "{:.2f} ({:.2f}) rub".format(
-                            view["stat"]["availableRUB"],
-                            view["stat"]["blockedRUB"],
-                        )
-                    )
                 ])
 
                 def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
@@ -2233,7 +2227,7 @@ class TinkoffBrokerServer:
                         "|                             |                                 |          |              |              |                     |                              |\n",
                         "| {:<27} |                                 |          |              |              | {:>19} |                              |\n".format(
                             noTradeStr if noTradeStr else typeStr,
-                            "" if noTradeStr else "{:.2f} RUB".format(CostRUB),
+                            "" if noTradeStr else "**{:.2f} RUB**".format(CostRUB),
                         ),
                     ]
 
@@ -2262,7 +2256,7 @@ class TinkoffBrokerServer:
 
                 # --- Show currencies section:
                 if view["stat"]["Currencies"]:
-                    info.extend(_SplitStr(CostRUB=view["analytics"]["distrByAssets"]["Currencies"]["cost"], typeStr="**Currencies:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["allCurrenciesCostRUB"], typeStr="**Currencies:**"))
                     for item in view["stat"]["Currencies"]:
                         info.append(_InfoStr(item, isCurr=True))
 
