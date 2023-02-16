@@ -2583,7 +2583,7 @@ class TinkoffBrokerServer:
                                 customStat["sellTotal"][item["payment"]["currency"]] = payment
 
                         # count incoming operations:
-                        elif item["operationType"] in ["OPERATION_TYPE_INPUT"]:
+                        elif item["operationType"] in ["OPERATION_TYPE_INPUT", "OPERATION_TYPE_INPUT_SWIFT", "OPERATION_TYPE_INPUT_ACQUIRING", "OPERATION_TYPE_ACCRUING_VARMARGIN", "OPERATION_TYPE_INP_MULTI", "OPERATION_TYPE_OVER_INCOME"]:
                             if item["payment"]["currency"] in customStat["payIn"].keys():
                                 customStat["payIn"][item["payment"]["currency"]] += payment
 
@@ -2591,7 +2591,7 @@ class TinkoffBrokerServer:
                                 customStat["payIn"][item["payment"]["currency"]] = payment
 
                         # count withdrawals operations:
-                        elif item["operationType"] in ["OPERATION_TYPE_OUTPUT"]:
+                        elif item["operationType"] in ["OPERATION_TYPE_OUTPUT", "OPERATION_TYPE_OUTPUT_SWIFT", "OPERATION_TYPE_OUTPUT_ACQUIRING", "OPERATION_TYPE_OUT_MULTI"]:
                             if item["payment"]["currency"] in customStat["payOut"].keys():
                                 customStat["payOut"][item["payment"]["currency"]] += payment
 
@@ -2615,7 +2615,7 @@ class TinkoffBrokerServer:
                                 customStat["coupons"][item["payment"]["currency"]] = payment
 
                         # count broker commissions:
-                        elif item["operationType"] in ["OPERATION_TYPE_BROKER_FEE", "OPERATION_TYPE_SUCCESS_FEE", "OPERATION_TYPE_TRACK_MFEE", "OPERATION_TYPE_TRACK_PFEE"]:
+                        elif item["operationType"] in ["OPERATION_TYPE_BROKER_FEE", "OPERATION_TYPE_SUCCESS_FEE", "OPERATION_TYPE_TRACK_MFEE", "OPERATION_TYPE_TRACK_PFEE", "OPERATION_TYPE_CASH_FEE", "OPERATION_TYPE_OUT_FEE", "OPERATION_TYPE_OUTPUT_PENALTY", "OPERATION_TYPE_ADVICE_FEE", "OPERATION_TYPE_OVER_COM"]:
                             if item["payment"]["currency"] in customStat["brokerCom"].keys():
                                 customStat["brokerCom"][item["payment"]["currency"]] += payment
 
@@ -2623,7 +2623,7 @@ class TinkoffBrokerServer:
                                 customStat["brokerCom"][item["payment"]["currency"]] = payment
 
                         # count service commissions:
-                        elif item["operationType"] in ["OPERATION_TYPE_SERVICE_FEE"]:
+                        elif item["operationType"] in ["OPERATION_TYPE_SERVICE_FEE", "OPERATION_TYPE_ADVICE_FEE"]:
                             if item["payment"]["currency"] in customStat["serviceCom"].keys():
                                 customStat["serviceCom"][item["payment"]["currency"]] += payment
 
@@ -2631,7 +2631,7 @@ class TinkoffBrokerServer:
                                 customStat["serviceCom"][item["payment"]["currency"]] = payment
 
                         # count margin commissions:
-                        elif item["operationType"] in ["OPERATION_TYPE_MARGIN_FEE"]:
+                        elif item["operationType"] in ["OPERATION_TYPE_MARGIN_FEE", "OPERATION_TYPE_WRITING_OFF_VARMARGIN"]:
                             if item["payment"]["currency"] in customStat["marginCom"].keys():
                                 customStat["marginCom"][item["payment"]["currency"]] += payment
 
@@ -2639,7 +2639,7 @@ class TinkoffBrokerServer:
                                 customStat["marginCom"][item["payment"]["currency"]] = payment
 
                         # count withholding taxes:
-                        elif "_TAX" in item["operationType"]:
+                        elif "_TAX" in item["operationType"] or item["operationType"] == "OPERATION_TYPE_OUT_STAMP_DUTY":
                             if item["payment"]["currency"] in customStat["allTaxes"].keys():
                                 customStat["allTaxes"][item["payment"]["currency"]] += payment
 

@@ -45,6 +45,7 @@
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except блок и негативные юнит-тексты были добавлены для метода `_ParseJSON()`.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен к некоторым методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-документация на модули `TKSBrokerAPI` теперь с тёмной темой.
+* [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Счетчик типов операций был обновлён в отчёте по сделкам.
 
 ##### Баг-фиксы
 

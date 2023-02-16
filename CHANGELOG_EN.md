@@ -45,6 +45,7 @@ Release development in progress...
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except block and some negative tests were added for `_ParseJSON()` method.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to some methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-doc with dark theme now.
+* [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Operation type counts was updated in Deals report.
 
 ##### Bug fixes
 
