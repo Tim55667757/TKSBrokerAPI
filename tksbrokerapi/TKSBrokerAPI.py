@@ -2400,11 +2400,12 @@ class TinkoffBrokerServer:
 
                     for company in view["analytics"]["distrByCompanies"].keys():
                         if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
+                            companyName = "{}{}".format(
+                                "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
+                                company,
+                            )
                             info.append("| {:<44} | {:<7} | {:<18} |\n".format(
-                                "{}{}".format(
-                                    "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
-                                    company,
-                                ),
+                                companyName if len(companyName) <= 44 else "{}...".format(companyName[:41]),
                                 "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
                             ))
@@ -2446,7 +2447,7 @@ class TinkoffBrokerServer:
                     for country in view["analytics"]["distrByCountries"].keys():
                         if view["analytics"]["distrByCountries"][country]["cost"] > 0:
                             info.append("| {:<44} | {:<7} | {:<18} |\n".format(
-                                country,
+                                country if len(country) <= 44 else "{}...".format(country[:41]),
                                 "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCountries"][country]["cost"]),
                             ))
