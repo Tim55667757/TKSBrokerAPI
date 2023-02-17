@@ -36,7 +36,6 @@ MAIN_INFO_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="utf-8"/>
     <title>${mainTitle}</title>
-    <link rel="stylesheet" type="text/css" href="X:\work\projects\FuzzyMarketAnalytics\public\style.css">
     <style>${commonCSS}
     </style>
 </head>
