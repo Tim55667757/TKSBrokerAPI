@@ -45,6 +45,7 @@ Release development in progress...
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except block and some negative tests were added for `_ParseJSON()` method.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to some methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-doc with dark theme now.
+* [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Operation type counts was updated in Deals report.
 
 ##### Bug fixes
 
@@ -53,6 +54,7 @@ Release development in progress...
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Bug fixed: broken Overview table in `Lots` column.
 * [#101](https://github.com/Tim55667757/TKSBrokerAPI/issues/101) Bug fixed with incorrect calculation of available currency and analytics in `Overview()` tables.
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Bug fixed in `Deals()` method: `KeyError: 'OPERATION_STATE_PROGRESS'`. New state `OPERATION_STATE_PROGRESS` was added to the `TKS_OPERATION_STATES` constant.
+* [#103](https://github.com/Tim55667757/TKSBrokerAPI/issues/103) Format fixed.
 * [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Bug fixed in `History()` method: `KeyError: 'candles'`. Additional check was added.
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Bug fixed in `TKS_QUALIFIED_TYPES` constant. Some values of `qualified_for_work_with` field was added in REST API, but not documented: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` and `option`. Additional values was added to constant in this bug fix.
 * [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) For the import error like `No module named 'Templates'` into README_EN.md [was added the instruction](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Import-errors) how to fix it.

@@ -45,6 +45,7 @@
 * [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except блок и негативные юнит-тексты были добавлены для метода `_ParseJSON()`.
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` параметр был добавлен к некоторым методам, где был параметр `show`: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` и `ShowInstrumentInfo()`. Он позволяет генерировать только файлы отчётов, без отображения информации в консоли.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-документация на модули `TKSBrokerAPI` теперь с тёмной темой.
+* [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Счетчик типов операций был обновлён в отчёте по сделкам.
 
 ##### Баг-фиксы
 
@@ -53,6 +54,7 @@
 * [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Исправлен баг со "сломанной" таблицей Overview в колонке `Lots`.
 * [#101](https://github.com/Tim55667757/TKSBrokerAPI/issues/101) Исправлен баг с неправильным расчётом доступных валют и аналитики в таблицах `Overview()`.
 * [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Исправлен баг в методе `Deals()`: `KeyError: 'OPERATION_STATE_PROGRESS'`. Для этого был добавлен новый статус `OPERATION_STATE_PROGRESS` в константу `TKS_OPERATION_STATES`.
+* [#103](https://github.com/Tim55667757/TKSBrokerAPI/issues/103) Таблицы отформатированы.
 * [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Исправлен баг в методе `History()`: `KeyError: 'candles'`. Добавлена дополнительная проверка.
 * [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Исправлен баг в константе `TKS_QUALIFIED_TYPES`. Некоторые новые значения в поле ответа `qualified_for_work_with` были добавлены в Tinkoff REST API, но не задокументированы: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` и `option`. Эти дополнительные значения были добавлены в текущем баг-фиксе.
 * [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) Для ошибки импорта вида `No module named 'Templates'` в README.md [добавлена инструкция](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md#Ошибки-импорта) по её исправлению.
