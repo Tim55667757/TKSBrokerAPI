@@ -405,7 +405,7 @@ class TinkoffBrokerServer:
                 curTime = datetime.now(tzutc())
 
                 if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
-                    uLogger.warning("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
+                    uLogger.debug("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
                     self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump file
 
@@ -418,7 +418,7 @@ class TinkoffBrokerServer:
                     ))
 
             else:
-                uLogger.warning("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
+                uLogger.debug("Local cache with raw instruments data not exists! Creating new dump, wait, please...")
                 self.DumpInstruments(forceUpdate=True)  # updating self.iList and creating default dump file
 
         else:
@@ -582,7 +582,7 @@ class TinkoffBrokerServer:
 
                         if "code" in response.text and "message" in response.text:
                             msgDict = self._ParseJSON(rawData=response.text)
-                            uLogger.warning("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
+                            uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
 
                         counter = self.retry + 1  # do not retry for 4xx errors
 
@@ -592,7 +592,7 @@ class TinkoffBrokerServer:
 
                         if "code" in response.text and "message" in response.text:
                             errMsgDict = self._ParseJSON(rawData=response.text)
-                            uLogger.warning("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict["message"]))
+                            uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict["message"]))
 
                         counter += 1
 
@@ -603,7 +603,7 @@ class TinkoffBrokerServer:
                 responseJSON = self._ParseJSON(rawData=response.text)
 
                 if errMsg:
-                    uLogger.error("Server returns not `oK` status! See: https://tinkoff.github.io/investAPI/errors/")
+                    uLogger.error("Server returns not `oK` status! See full debug log. Errors messages: https://tinkoff.github.io/investAPI/errors/")
                     uLogger.error("    - not oK, {}".format(errMsg))
 
         return responseJSON
@@ -716,7 +716,7 @@ class TinkoffBrokerServer:
                     freeze_panes=(1, 1),
                 )  # saving as XLSX-file with freeze first row and column as headers
 
-        uLogger.info("XLSX-file for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxDumpFile)))
+        uLogger.info("XLSX-file with instruments dump for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxDumpFile)))
 
     def DumpInstruments(self, forceUpdate: bool = True) -> str:
         """
@@ -740,7 +740,7 @@ class TinkoffBrokerServer:
         with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
             fH.write(jsonDump)
 
-        uLogger.info("New cache of instruments data was created: [{}]".format(os.path.abspath(self.iListDumpFile)))
+        uLogger.debug("New cache of instruments data was created: [{}]".format(os.path.abspath(self.iListDumpFile)))
 
         return jsonDump
 
@@ -1006,7 +1006,7 @@ class TinkoffBrokerServer:
             uLogger.debug("Searching information about instrument by it's ticker [{}] ...".format(self._ticker))
 
         if not self._ticker:
-            uLogger.warning("self._ticker variable is not be empty!")
+            uLogger.warning("self._ticker variable have not be empty!")
 
         else:
             if self._ticker in TKS_TICKERS_OR_FIGI_EXCLUDED:
@@ -1058,7 +1058,7 @@ class TinkoffBrokerServer:
 
         else:
             if show:
-                uLogger.warning("Ticker [{}] not found in available broker instrument's list!".format(self._ticker))
+                uLogger.debug("Ticker [{}] not found in available broker instrument's list!".format(self._ticker))
 
         return tickerJSON
 
@@ -1075,7 +1075,7 @@ class TinkoffBrokerServer:
             uLogger.debug("Searching information about instrument by it's FIGI [{}] ...".format(self._figi))
 
         if not self._figi:
-            uLogger.warning("self._figi variable is not be empty!")
+            uLogger.warning("self._figi variable have not be empty!")
 
         else:
             if self._figi in TKS_TICKERS_OR_FIGI_EXCLUDED:
@@ -1152,7 +1152,7 @@ class TinkoffBrokerServer:
 
         else:
             if show:
-                uLogger.warning("FIGI [{}] not found in available broker instrument's list!".format(self._figi))
+                uLogger.debug("FIGI [{}] not found in available broker instrument's list!".format(self._figi))
 
         return figiJSON
 
@@ -1238,8 +1238,7 @@ class TinkoffBrokerServer:
                 prices["closePrice"] = round(NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]), 6) if "closePrice" in pricesResponse.keys() else 0
 
             else:
-                uLogger.warning("Server return an empty or error response! See full log. Instrument: ticker [{}], FIGI [{}]".format(self._ticker, self._figi))
-                uLogger.debug("Server response: {}".format(pricesResponse))
+                uLogger.debug("Ticker [{}], FIGI [{}], server return an empty or error response! Response body: {}".format(self._ticker, self._figi, pricesResponse))
 
             if show:
                 if prices["buy"] or prices["sell"]:
@@ -1287,7 +1286,7 @@ class TinkoffBrokerServer:
                     uLogger.info("Current prices in order book:\n\n{}".format(infoText))
 
                 else:
-                    uLogger.warning("Orders book is empty at this time! Instrument: ticker [{}], FIGI [{}]".format(self._ticker, self._figi))
+                    uLogger.info("Instrument: ticker [{}], FIGI [{}]. Orders book is empty at this time!".format(self._ticker, self._figi))
 
         return prices
 
@@ -1395,7 +1394,7 @@ class TinkoffBrokerServer:
         if resultsLen == 0:
             info.append("\nNo results\n")
             infoShort.append("\nNo results\n")
-            uLogger.warning("No results. Try changing your search pattern.")
+            uLogger.info("No results. Try changing your search pattern.")
 
         else:
             for iType in searchResults:
@@ -1477,7 +1476,7 @@ class TinkoffBrokerServer:
 
                 if not iData:
                     self._figi = ""
-                    uLogger.warning("Instrument [{}] not in list of available instruments for current token!".format(iName))
+                    uLogger.debug("Instrument [{}] not in list of available instruments for current token!".format(iName))
 
             if iData and iData["figi"] not in onlyUniqueFIGIs:
                 onlyUniqueFIGIs.append(iData["figi"])
@@ -2862,7 +2861,7 @@ class TinkoffBrokerServer:
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
-                uLogger.warning("An issue occurred when loading from file [{}], maybe incorrect format? File will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
+                uLogger.error("An issue occurred when loading from file [{}], maybe incorrect format? File will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
 
         responseJSONs = []  # raw history blocks of data
 
@@ -2996,7 +2995,7 @@ class TinkoffBrokerServer:
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
-                uLogger.warning("An issue occurred when loading from file [{}]! Maybe incorrect strings format? Check it, please. Message: {}".format(os.path.abspath(filePath), e))
+                uLogger.error("An issue occurred when loading from file [{}]! Maybe incorrect strings format? Check it, please. Message: {}".format(os.path.abspath(filePath), e))
 
             tfStr = self.priceModel.FormattedDelta(
                 self.priceModel.timeframe,
@@ -3246,7 +3245,7 @@ class TinkoffBrokerServer:
         """
         Close all positions of given instruments with defined type.
 
-        :param iType: type of the instruments that be closed, it must be one of supported types in TKS_INSTRUMENTS list.
+        :param iType: type of the instruments that be closed, it must be one of supported types in `TKS_INSTRUMENTS` list.
         :param portfolio: pre-received dictionary with open trades, returned by `Overview()` method.
                          This avoids unnecessary downloading data from the server.
         """
@@ -5009,7 +5008,7 @@ def Main(**kwargs):
 
             if args.more:
                 trader.moreDebug = True
-                uLogger.warning("More debug info mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
+                uLogger.warning("More debug mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
 
             if args.html:
                 trader.useHTMLReports = True
