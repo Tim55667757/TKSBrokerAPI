@@ -48,19 +48,29 @@ TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
 TKS_TICKER_ALIASES = {
-    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
-    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
-    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
-    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
-    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    "RUB": "RUB000UTSTOM",  # FIGI: RUB000UTSTOM - used just for information, instrument is not available to buy or sell throw API
+    # "GLD": "GLDRUB_TOM",  # FIGI: BBG000VJ5YR4 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "SPDR Gold Trust" company ticker. GOLD alias not used because it equal to the "Barrick Gold" company ticker.
+    # "SLV": "SLVRUB_TOM",  # FIGI: BBG000VHQTD1 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "iShares Silver Trust" company ticker.
     "HKD": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
     "TRY": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+    "TJS": "TJSRUB_TOM",  # FIGI: BBG0013J11P1
+    "KGS": "KGSRUB_TOM",  # FIGI: BBG0013J7Y00
+    "UZS": "UZSRUB_TOM",  # FIGI: BBG0013HQ310
+    # "AMD": "AMDRUB_TOM",  # FIGI: BBG0013HQ310 - not used because it equal to AMD company ticker
+    "BYN": "BYNRUB_TOM",  # FIGI: BBG00D87WQY7
+    "KZT": "KZTRUB_TOM",  # FIGI: BBG0013HG026
+    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31 - not available for trading since sanctions
+    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0 - not available for trading since sanctions
+    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4 - not available for trading since sanctions
+    "JPY": "JPYRUB_TOM",  # FIGI: BBG0013HQ524 - not available for trading since sanctions
 }
 """Some aliases instead official tickers for using in CLI. For example, you can use `"USD"` instead of `"USD000UTSTOM"`."""
 
-# some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
+# Some tickers or FIGIs raised exception or not available for trading, that is why we exclude there:
 TKS_TICKERS_OR_FIGI_EXCLUDED = [
-    "ISSUANCEBRUS",
+    "ISSUANCEBRUS", "EUR_RUB__TOM", "GBPRUB_TOM", "CHFRUB_TOM", "JPYRUB_TOM",
 ]
 
 TKS_CANDLE_INTERVALS = {  # List values: 1st - Tinkoff API parameter, 2nd - minutes count, 3rd - max candles in block
