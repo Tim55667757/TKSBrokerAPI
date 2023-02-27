@@ -1814,16 +1814,19 @@ class TinkoffBrokerServer:
 
                 curr = self.SearchByFIGI(requestPrice=False)
 
-                # current price of currency in RUB:
-                view["raw"]["currenciesCurrentPrices"][curr["nominal"]["currency"]] = {
-                    "name": curr["name"],
-                    "currentPrice": NanoToFloat(
-                        item["currentPrice"]["units"],
-                        item["currentPrice"]["nano"]
-                    ),
-                }
+                if curr:
+                    view["raw"]["currenciesCurrentPrices"][curr["nominal"]["currency"]] = {
+                        "name": curr["name"],
+                        "currentPrice": NanoToFloat(
+                            item["currentPrice"]["units"],
+                            item["currentPrice"]["nano"]
+                        ),
+                    }
 
-                view["raw"]["Currencies"].append(item)
+                    view["raw"]["Currencies"].append(item)  # Current price of currency in RUB.
+
+                else:
+                    uLogger.debug("See #127 bug: Since sanctions occurred at 27 Feb, 2003 Tinkoff Broker returns an error with some currencies! Trouble with FIGI: [{}].".format(self._figi))
 
             elif item["instrumentType"] == "share":
                 view["raw"]["Shares"].append(item)

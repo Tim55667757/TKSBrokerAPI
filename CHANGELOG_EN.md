@@ -61,6 +61,7 @@ Release development in progress...
 * [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Bug `ValueError` was fixed in `History()` and `LoadHistory()` methods. Additional checks were added.
 * [#124](https://github.com/Tim55667757/TKSBrokerAPI/issues/124) Bug fixed: `Incorrect values in view["stat"]["funds"] record`.
 * [#125](https://github.com/Tim55667757/TKSBrokerAPI/issues/125) Bug fixed: `KeyError: 'OPERATION_TYPE_OUT_STAMP_DUTY'`, into `TKS_OPERATION_TYPES` were added some new values.
+* [#127](https://github.com/Tim55667757/TKSBrokerAPI/issues/127) Bug fixed: `KeyError: 'name'`, in `Overview()` method.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
