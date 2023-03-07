@@ -48,7 +48,7 @@ TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
 TKS_TICKER_ALIASES = {
-    "RUB": "RUB000UTSTOM",  # FIGI: RUB000UTSTOM - used just for information, instrument is not available to buy or sell throw API
+    # "RUB": "RUB000UTSTOM",  # FIGI: RUB000UTSTOM - used just for information, instrument is not available to buy or sell throw API (not used since 7 March, 2023; see bug: #128)
     # "GLD": "GLDRUB_TOM",  # FIGI: BBG000VJ5YR4 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "SPDR Gold Trust" company ticker. GOLD alias not used because it equal to the "Barrick Gold" company ticker.
     # "SLV": "SLVRUB_TOM",  # FIGI: BBG000VHQTD1 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "iShares Silver Trust" company ticker.
     "HKD": "HKDRUB_TOM",  # FIGI: BBG0013HSW87

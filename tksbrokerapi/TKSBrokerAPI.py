@@ -1887,7 +1887,22 @@ class TinkoffBrokerServer:
                 self._ticker = item["ticker"]
                 self._figi = self.SearchByTicker()["figi"]  # Get FIGI to avoid warnings
 
-            instrument = self.SearchByFIGI(requestPrice=False)  # full raw info about instrument by FIGI
+            if item["figi"] == "RUB000UTSTOM":
+                instrument = item  # fast hack to avoid bug #128 with Russian Rouble not in dump.json
+                instrument["ticker"] = "[RU] Ruble"
+                instrument["instrumentType"] = "currency"
+                instrument["type"] = "Currencies"
+                instrument["isoCurrencyName"] = "rub"
+                instrument["nominal"] = {"currency": "rub", "units": "1", "nano": 0}
+                instrument["step"] = 0.0025
+                instrument["minPriceIncrement"] = {"units": "0", "nano": 2500000}
+                instrument["lot"] = 1
+                instrument["classCode"] = "CETS"
+                instrument["exchange"] = "FX"
+                instrument["isin"] = ""
+
+            else:
+                instrument = self.SearchByFIGI(requestPrice=False)
 
             if instrument:
                 if item["instrumentType"] == "currency" and instrument["nominal"]["currency"] in allBlocked.keys():
@@ -2379,34 +2394,34 @@ class TinkoffBrokerServer:
                             view["stat"]["totalChangesPercentRUB"],
                         ),
                         "\n## Portfolio distribution by assets\n"
-                        "\n| Type                               | Uniques | Percent | Current cost       |\n",
-                        "|------------------------------------|---------|---------|--------------------|\n",
+                        "\n| Type                               | Uniques | Percent  | Current cost       |\n",
+                        "|------------------------------------|---------|----------|--------------------|\n",
                     ])
 
                     for key in view["analytics"]["distrByAssets"].keys():
-                        if view["analytics"]["distrByAssets"][key]["cost"] > 0:
-                            info.append("| {:<34} | {:<7} | {:<7} | {:<18} |\n".format(
+                        if view["analytics"]["distrByAssets"][key]["cost"] != 0:
+                            info.append("| {:<34} | {:<7} | {:<8} | {:<18} |\n".format(
                                 key,
                                 view["analytics"]["distrByAssets"][key]["uniques"],
                                 "{:.2f}%".format(view["analytics"]["distrByAssets"][key]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByAssets"][key]["cost"]),
                             ))
 
-                    aSepLine = "|----------------------------------------------|---------|--------------------|\n"
+                    aSepLine = "|----------------------------------------------|----------|--------------------|\n"
 
                     info.extend([
                         "\n## Portfolio distribution by companies\n"
-                        "\n| Company                                      | Percent | Current cost       |\n",
+                        "\n| Company                                      | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
 
                     for company in view["analytics"]["distrByCompanies"].keys():
-                        if view["analytics"]["distrByCompanies"][company]["cost"] > 0:
+                        if view["analytics"]["distrByCompanies"][company]["cost"] != 0:
                             companyName = "{}{}".format(
                                 "[{}] ".format(view["analytics"]["distrByCompanies"][company]["ticker"]) if view["analytics"]["distrByCompanies"][company]["ticker"] else "",
                                 company,
                             )
-                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                            info.append("| {:<44} | {:<8} | {:<18} |\n".format(
                                 companyName if len(companyName) <= 44 else "{}...".format(companyName[:41]),
                                 "{:.2f}%".format(view["analytics"]["distrByCompanies"][company]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCompanies"][company]["cost"]),
@@ -2414,13 +2429,13 @@ class TinkoffBrokerServer:
 
                     info.extend([
                         "\n## Portfolio distribution by sectors\n"
-                        "\n| Sector                                       | Percent | Current cost       |\n",
+                        "\n| Sector                                       | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
 
                     for sector in view["analytics"]["distrBySectors"].keys():
-                        if view["analytics"]["distrBySectors"][sector]["cost"] > 0:
-                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                        if view["analytics"]["distrBySectors"][sector]["cost"] != 0:
+                            info.append("| {:<44} | {:<8} | {:<18} |\n".format(
                                 sector,
                                 "{:.2f}%".format(view["analytics"]["distrBySectors"][sector]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrBySectors"][sector]["cost"]),
@@ -2428,13 +2443,13 @@ class TinkoffBrokerServer:
 
                     info.extend([
                         "\n## Portfolio distribution by currencies\n"
-                        "\n| Instruments currencies                       | Percent | Current cost       |\n",
+                        "\n| Instruments currencies                       | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
 
                     for curr in view["analytics"]["distrByCurrencies"].keys():
-                        if view["analytics"]["distrByCurrencies"][curr]["cost"] > 0:
-                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                        if view["analytics"]["distrByCurrencies"][curr]["cost"] != 0:
+                            info.append("| {:<44} | {:<8} | {:<18} |\n".format(
                                 "[{}] {}".format(curr, view["analytics"]["distrByCurrencies"][curr]["name"]),
                                 "{:.2f}%".format(view["analytics"]["distrByCurrencies"][curr]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCurrencies"][curr]["cost"]),
@@ -2442,13 +2457,13 @@ class TinkoffBrokerServer:
 
                     info.extend([
                         "\n## Portfolio distribution by countries\n"
-                        "\n| Assets by country                            | Percent | Current cost       |\n",
+                        "\n| Assets by country                            | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
 
                     for country in view["analytics"]["distrByCountries"].keys():
-                        if view["analytics"]["distrByCountries"][country]["cost"] > 0:
-                            info.append("| {:<44} | {:<7} | {:<18} |\n".format(
+                        if view["analytics"]["distrByCountries"][country]["cost"] != 0:
+                            info.append("| {:<44} | {:<8} | {:<18} |\n".format(
                                 country if len(country) <= 44 else "{}...".format(country[:41]),
                                 "{:.2f}%".format(view["analytics"]["distrByCountries"][country]["percent"]),
                                 "{:.2f} rub".format(view["analytics"]["distrByCountries"][country]["cost"]),
