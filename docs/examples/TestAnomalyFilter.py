@@ -6,7 +6,7 @@ This simple script demonstrate how to use Hampel Filter to determine anomalies i
 Just run this script.
 
 See also:
-- Article about Hampel Filter: ???
+- Article about Hampel Filter: https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
 - Jupyter Notebook with another yet examples: https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/HampelFilteringExample_EN.ipynb
 
 ---
