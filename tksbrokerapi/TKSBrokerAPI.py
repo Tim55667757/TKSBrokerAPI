@@ -2353,12 +2353,12 @@ class TinkoffBrokerServer:
                 if view["stat"]["stopOrders"]:
                     info.extend([
                         "\n## Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"])),
-                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price  | Limit price   | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
-                        "|-----------------------------|--------------------------------------|--------|-------------------------|---------------|---------------|-----------|-------------|--------------|---------------------|---------------------|\n",
+                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price    | Limit price     | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
+                        "|-----------------------------|--------------------------------------|--------|-------------------------|-----------------|-----------------|-----------|-------------|--------------|---------------------|---------------------|\n",
                     ])
 
                     for item in view["stat"]["stopOrders"]:
-                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>13} | {:>13} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
+                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>15} | {:>15} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
                             "{} [{}]".format(item["ticker"], item["figi"]),
                             item["orderID"],
                             item["lotsRequested"],
@@ -2368,8 +2368,8 @@ class TinkoffBrokerServer:
                                 "+" if item["percentChanges"] > 0 else "",
                                 float(item["percentChanges"]),
                             ),
-                            "{:.2f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                            "{:.2f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
+                            "{:.4f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                            "{:.4f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
                             item["action"],
                             item["type"],
                             item["expType"],
