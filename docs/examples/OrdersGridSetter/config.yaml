@@ -7,9 +7,9 @@ consoleVerbosity: 20  # Log level for the console, INFO (20) recommended by defa
 # When define trade parameters, it is important to know commissions of the broker's tariffs: https://www.tinkoff.ru/invest/account/tariffs/
 # See also, how to parametrize and open a pending limit or stop order using TKSBrokerAPI platform: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#open-a-pending-limit-or-stop-order
 fields:
-  target: 3.54  # Start price target to open orders from current price in percent. It can be `> 0` (upper from current price), `< 0` (lower from current price) or `= 0` (target is current price).
-  gridStep: 0.02  # Grid step from target price in percent. It can be `> 0` (new orders will be upper from target price), `< 0` (new orders will be lower from target price). Step cannot be equal to 0.
-  count: 10  # Count of orders in grid. It can be `> 0`.
+  target: 1.5  # Start price target to open orders from current price in percent. It can be `> 0` (upper from current price), `< 0` (lower from current price) or `= 0` (target is current price).
+  gridStep: 0.1  # Grid step from target price in percent. It can be `> 0` (new orders will be upper from target price), `< 0` (new orders will be lower from target price). Step cannot be equal to 0.
+  count: 5  # Count of orders in grid. It can be `> 0`.
   direction: "Sell" # Direction of orders: `Buy` or `Sell`.
   type: "Stop"  # Order type: `Limit` (valid until the end of the trading session) or `Stop` (valid until canceled or until the specified date).
   volume: 1  # Volume of instrument in lots, integer `>= 1`.
@@ -30,9 +30,9 @@ tickers:
 #- MTSS  # rub: MTS
 #- PIKK  # rub: PIK
 #- ROSN  # rub: Rosneft
-#- SBER  # rub: Sberbank
+- SBER  # rub: Sberbank
 #- TCSG  # rub: TCS Group (Tinkoff bank)
-- SGZH  # rub: Segezha Group
+#- SGZH  # rub: Segezha Group
 
 # --- Russian Tinkoff ETFs:
 
