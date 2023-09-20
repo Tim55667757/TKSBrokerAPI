@@ -22,6 +22,8 @@
 
 **[Orders Grid Setter](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/OrdersGridSetter)** scenario can be set up a grid of orders (limit or stop, with buy or sell directions) with defined step and lots. It works on TKSBrokerAPI platform in parallel mode conveyor simultaneously for a lot of instruments defined by tickers. This script is convenient to use when you need to place fast many orders (several tens or hundreds) for various instruments, which would be difficult to do manually through the broker's application.
 
+The speed of placing orders is limited by the [broker's limits](https://tinkoff.github.io/investAPI/limits/) for working via the API. In fact, in this scenario it takes ~0.25 ± 0.05 seconds to open one order on average, excluding timeouts for connecting to the broker’s server.
+
 ### Concept
 
 It will be easier to understand how the scenario works in the illustration below.
@@ -165,6 +167,8 @@ If the scenario was useful to you, you can donate authors using the link: https:
 ## Описание
 
 **[Установщик сетки ордеров](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/OrdersGridSetter)** — это сценарий, который позволяет настроить сетку ордеров (лимитных или стоп-ордеров, с указанием направления — покупки или продажи) с определённым шагом и лотностью. Он работает на платформе TKSBrokerAPI и в параллельном режиме конвейера позволяет выставлять ордера одновременно для множества инструментов, заданных своими тикерами. Этот скрипт удобно использовать, когда вам необходимо быстро разместить большое количество ордеров (несколько десятков или сотен) по различным инструментам, что было бы сложно сделать вручную через приложение брокера.
+
+Скорость выставления ордеров ограничена [лимитами брокера](https://tinkoff.github.io/investAPI/limits/) на работу через API. По факту, в данном сценарии в среднем получается ~0.25 ± 0.05 секунды на открытие одного ордера (без учёта таймаутов на подключения к серверу брокера).
 
 ### Концепция
 
