@@ -1685,14 +1685,14 @@ At the beginning, you should specify the `--ticker` or `--figi` key to specify t
   - number of instrument lots, integer >= 1, default 1;
   - take profit level, fractional number >= 0, default 0 (if 0, no take profit order will be placed);
   - stop loss level, fractional number >= 0, default 0 (if 0, stop loss order will not be placed);
-  - expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 You can also use more simple keys to perform buy and sell operations on the market `--buy` or `--sell`, for which you can set up to 4 optional parameters:
 
 - number of instrument lots, integer >= 1, default 1;
 - take profit level, fractional number >= 0, default 0 (if 0, no take profit order will be placed);
 - stop loss level, fractional number >= 0, default 0 (if 0, stop loss order will not be placed);
-- expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+- expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
  
 <details>
   <summary>Command for buying and placing take profit and stop loss orders</summary>
@@ -1746,7 +1746,7 @@ At the beginning, you should specify the `--ticker` or `--figi` key to specify t
   - price of the opened limit order, fractional number >= 0, default 0 (if 0, a market order will be immediately placed instead of a limit order, when the trigger price of the initial stop order is reached);
   - type of order opened upon reaching the trigger price of the initial stop order, by default it is the string `Limit` or you can specify `SL`, `TP` to open a stop loss or take profit order;
     - stop-loss order is always opened at the market price;
-  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 You can use more simple keys to place pending limit orders (valid until the end of the trading session) `--buy-limit` or `--sell-limit`, for which you need to specify only 2 required parameters:
 
@@ -1763,7 +1763,7 @@ You can use more simple keys to place pending stop orders (valid until canceled 
   - price of the opened limit order, fractional number >= 0, default 0 (if 0, a market order will be immediately placed instead of a limit order, when the trigger price of the initial stop order is reached);
   - type of order opened upon reaching the trigger price of the initial stop order, by default it is the string `Limit` or you can specify `SL`, `TP` to open a stop loss or take profit order;
     - stop-loss order is always opened at the market price;
-  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 <details>
   <summary>Command for placing a stop order of the take profit type for sale with the date of cancellation</summary>
