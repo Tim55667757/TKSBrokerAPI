@@ -2,6 +2,8 @@
 
 **[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is the trading platform for automation and simplifying the implementation of trading scenarios, as well as working with [Tinkoff Invest API](http://tinkoff.ru/sl/AaX1Et1omnH) server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
+**WARNING! IMPORTANT! Use version [1.6.dev155](https://pypi.org/project/tksbrokerapi/1.6.dev155/) or latest from develop-branch.** Unfortunatelly, previous release versions are not worked correctly, because REST was changed.
+
 [![Build Status](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI.svg?branch=master)](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI)
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
 [![license](https://img.shields.io/pypi/l/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/LICENSE)
