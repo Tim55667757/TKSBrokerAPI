@@ -581,12 +581,11 @@ class TinkoffBrokerServer:
                         uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
 
                         if "code" in response.text and "message" in response.text:
-                            msgDict = self._ParseJSON(rawData=response.text)
-
                             if "Authentication token is missing or invalid" in response.text:
                                 uLogger.warning("Authentication token is missing or invalid! Generate a new token, please.")
 
                             else:
+                                msgDict = self._ParseJSON(rawData=response.text)
                                 uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
 
                         counter = self.retry + 1  # do not retry for 4xx errors
