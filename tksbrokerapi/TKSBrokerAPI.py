@@ -584,6 +584,9 @@ class TinkoffBrokerServer:
                             if "Authentication token is missing or invalid" in response.text:
                                 uLogger.warning("Authentication token is missing or invalid! Generate a new token, please.")
 
+                            elif "Insufficient privileges" in response.text:
+                                uLogger.warning("Insufficient privileges to perform this operation! Please verify that the token matches the user's account.")
+
                             else:
                                 msgDict = self._ParseJSON(rawData=response.text)
                                 uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
