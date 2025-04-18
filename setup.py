@@ -11,6 +11,8 @@ from tksbrokerapi.TKSBrokerAPI import __version__ as ver
 moduleVer = ver  # The "major.minor" version is derived from TKSBrokerAPI, while the build number is defined by the build server.
 devStatus = "4 - Beta"  # Default development status.
 
+VERSION_OFFSET = 200  # Offset for the build number.
+
 # Determine if the build is running inside a CI environment (GitHub Actions):
 if "GITHUB_RUN_NUMBER" in os.environ and "GITHUB_REF" in os.environ:
     print("This is GitHub Actions build")
@@ -23,7 +25,7 @@ if "GITHUB_RUN_NUMBER" in os.environ and "GITHUB_REF" in os.environ:
     # Generate the version based on the branch name and build number:
     moduleVer += ".{}{}".format(
         "" if "release" in branchName or branchName == "master" else "dev",
-        os.environ["GITHUB_RUN_NUMBER"],
+        int(os.environ["GITHUB_RUN_NUMBER"]) + VERSION_OFFSET,
     )
 
     # Update the development status for release branches:
