@@ -407,10 +407,15 @@ class TinkoffBrokerServer:
                 if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
                     uLogger.debug("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, wait, please...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
-                    self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump file
+                    self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump it
 
                 else:
                     self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
+
+                    if not self.iList or self.iList == {"Currencies": {}, "Shares": {}, "Bonds": {}, "Etfs": {}, "Futures": {}}:
+                        uLogger.debug("Dump file is empty. Trying to request the new instruments list from broker server, wait, please...")
+
+                        self.DumpInstruments(forceUpdate=True)  # force update self.iList and create new dump file
 
                     uLogger.debug("Local cache with raw instruments data is used: [{}]. Last modified: [{}] UTC".format(
                         os.path.abspath(self.iListDumpFile),
@@ -746,6 +751,10 @@ class TinkoffBrokerServer:
         jsonDump = json.dumps(self.iList, indent=4, sort_keys=False)  # create JSON object as string
         with open(self.iListDumpFile, mode="w", encoding="UTF-8") as fH:
             fH.write(jsonDump)
+
+        if not self.iList or self.iList == {"Currencies": {}, "Shares": {}, "Bonds": {}, "Etfs": {}, "Futures": {}}:
+            uLogger.error("Instruments list is empty! Maybe broker server is not available, try later...")
+            raise Exception("Instruments list is empty")
 
         uLogger.debug("New cache of instruments data was created: [{}]".format(os.path.abspath(self.iListDumpFile)))
 
