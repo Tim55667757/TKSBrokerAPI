@@ -5,7 +5,7 @@ on:
     branches:
       - 'release-*'
       - master
-#      - develop
+      - develop
   pull_request:
     branches:
       - 'release-*'
