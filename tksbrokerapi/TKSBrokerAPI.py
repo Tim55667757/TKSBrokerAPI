@@ -112,6 +112,11 @@ from tksbrokerapi.Templates import *  # Some html-templates used by reporting me
 from tksbrokerapi.TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
 from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 
+# Monkey Patch for PriceGenerator's `pandas_ta` module:
+import numpy as np
+if not hasattr(np, "NaN"):
+    np.NaN = np.nan
+
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
 
