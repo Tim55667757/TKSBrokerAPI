@@ -120,7 +120,7 @@ if not hasattr(np, "NaN"):
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
 
-import UniLogger as uLog  # Logger for TKSBrokerAPI
+import tksbrokerapi.UniLogger as uLog  # Logger for TKSBrokerAPI
 
 
 # --- Common technical parameters:
