@@ -36,7 +36,7 @@ jobs:
         run: echo ✅ PRE-BUILDING stage completed successfully!
 
   testing:
-    name: ✅ Running Tests
+    name: 📝 Running Tests
     needs: pre_build
     runs-on: ubuntu-latest
     env:
@@ -57,7 +57,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          echo 🧪 Starting pytest...
+          echo 🔍 Starting pytest...
           pytest tests -v --disable-pytest-warnings
 
       - name: Testing Completed
@@ -88,7 +88,7 @@ jobs:
           python setup.py sdist bdist_wheel
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-package
           path: dist/
@@ -116,7 +116,7 @@ jobs:
           pip install twine
 
       - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: python-package
           path: dist/
