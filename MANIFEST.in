@@ -1,0 +1,6 @@
+include CHANGELOG.md
+include CHANGELOG_EN.md
+include README.md
+include README_EN.md
+include LICENSE
+include requirements.txt
