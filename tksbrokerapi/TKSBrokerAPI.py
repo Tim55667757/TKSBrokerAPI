@@ -635,7 +635,7 @@ class TinkoffBrokerServer:
             # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
             instrumentURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/{}".format(iType)
-            result = self.SendAPIRequest(instrumentURL, reqType="POST")["instruments"]
+            result = self.SendAPIRequest(instrumentURL, reqType="POST").get("instruments", [])
 
         return iType, result
 
