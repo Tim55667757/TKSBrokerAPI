@@ -138,8 +138,10 @@ jobs:
     needs: [pre_build, testing, building, publish]
     steps:
       - name: Notify Success
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
             echo ✅ PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING completed successfully!
           else
             echo ✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)
