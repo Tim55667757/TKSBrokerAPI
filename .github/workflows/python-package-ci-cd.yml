@@ -5,7 +5,7 @@ on:
     branches:
       - 'release-*'
       - master
-      - develop
+#      - develop
   pull_request:
     branches:
       - 'release-*'
@@ -15,7 +15,7 @@ on:
 jobs:
 
   pre_build:
-    name: \"🔧 Pre-Building Environment\"
+    name: 🔧 Pre-Building Environment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -28,16 +28,16 @@ jobs:
 
       - name: Upgrade pip and install dependencies
         run: |
-          echo \"🔄 Upgrading pip and reinstalling packages...\"
+          echo 🔄 Upgrading pip and reinstalling packages...
           python -m pip install --upgrade pip --force-reinstall
           pip install setuptools==59.5.0 urllib3==1.26.6 --force-reinstall
           pip install -r requirements.txt
 
       - name: Pre-Build Completed
-        run: echo \"✅ PRE-BUILDING stage completed successfully!\"
+        run: echo ✅ PRE-BUILDING stage completed successfully!
 
   testing:
-    name: \"✅ Running Tests\"
+    name: ✅ Running Tests
     needs: pre_build
     runs-on: ubuntu-latest
     env:
@@ -59,14 +59,14 @@ jobs:
 
       - name: Run Tests
         run: |
-          echo \"🧪 Starting pytest...\"
+          echo 🧪 Starting pytest...
           pytest tests -v --disable-pytest-warnings
 
       - name: Testing Completed
-        run: echo \"✅ TESTING stage completed successfully!\"
+        run: echo ✅ TESTING stage completed successfully!
 
   building:
-    name: \"📦 Building Package\"
+    name: 📦 Building Package
     needs: testing
     runs-on: ubuntu-latest
     steps:
@@ -86,7 +86,7 @@ jobs:
 
       - name: Build Package
         run: |
-          echo \"📦 Building distribution...\"
+          echo 📦 Building distribution...
           python setup.py sdist bdist_wheel
 
       - name: Upload Build Artifacts
@@ -96,10 +96,10 @@ jobs:
           path: dist/
 
       - name: Building Completed
-        run: echo \"✅ BUILDING stage completed successfully!\"
+        run: echo ✅ BUILDING stage completed successfully!
 
   publish:
-    name: \"🚀 Publishing to PyPI\"
+    name: 🚀 Publishing to PyPI
     needs: building
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
@@ -125,24 +125,24 @@ jobs:
 
       - name: Publish Package to PyPI
         run: |
-          echo \"🚀 Publishing distribution to PyPI...\"
+          echo 🚀 Publishing distribution to PyPI...
           python -m twine upload --verbose dist/* --skip-existing
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Publishing Completed
-        run: echo \"✅ PUBLISHING stage completed successfully!\"
+        run: echo ✅ PUBLISHING stage completed successfully!
 
   final_status:
-    name: \"🎉 Final Status Notification\"
+    name: 🎉 Final Status Notification
     runs-on: ubuntu-latest
     needs: [pre_build, testing, building, publish]
     steps:
       - name: Notify Success
         run: |
-          if [[ \"${{ github.event_name }}\" != \"pull_request\" ]]; then
-            echo \"✅ PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING completed successfully!\"
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            echo ✅ PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING completed successfully!
           else
-            echo \"✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)\"
+            echo ✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)
           fi
