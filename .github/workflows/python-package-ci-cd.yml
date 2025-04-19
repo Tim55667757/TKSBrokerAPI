@@ -244,10 +244,9 @@ jobs:
     name: 🎉 Final Status Notification
     runs-on: ubuntu-latest
     needs: [pre_build, testing, building, publish]
-    if: always()
     steps:
       - name: Notify Success
-        if: success()
+        if: ${{ success() && needs.pre_build.result == 'success' && needs.testing.result == 'success' && needs.building.result == 'success' && (needs.publish.result == 'success' || github.event_name == 'pull_request') }}
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
@@ -257,5 +256,5 @@ jobs:
             echo "✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)"
           fi
       - name: Notify Failure
-        if: failure()
+        if: ${{ failure() || needs.pre_build.result != 'success' || needs.testing.result != 'success' || needs.building.result != 'success' || (needs.publish.result != 'success' && github.event_name != 'pull_request') }}
         run: echo ❌ Workflow failed during ${{ job.status }} stage.
