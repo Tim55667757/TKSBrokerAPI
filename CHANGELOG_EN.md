@@ -48,6 +48,7 @@ Release development in progress...
 * [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to some methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-doc with dark theme now.
 * [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Operation type counts was updated in Deals report.
+* [#138](https://github.com/Tim55667757/TKSBrokerAPI/issues/138) Monkey Patch for TKSBrokerAPI and it's PriceGenerator library.
 
 ##### Bug fixes
 
