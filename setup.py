@@ -57,6 +57,8 @@ setup(
 
     license="Apache-2.0",
 
+    license_files=["LICENSE"],
+
     author="Timur Gilmullin",
 
     author_email="tim55667757@gmail.com",
