@@ -1,12 +1,5 @@
-# The order of packages is significant, because pip processes them in the order of appearance.
-# Changing the order has an impact on the overall integration  process, which may cause troubles later.
-
-# Build requirements:
-twine == 4.0.1  # MIT License
-pytest >= 7.1.2  # MIT License
-
-# Documentation requirements:
-pdoc >= 14.5.1  # MIT License
+# The package order is critical since pip installs them sequentially.
+# Modifying the order may affect the integration process and lead to potential issues.
 
 # Packet TKSBrokerAPI requirements:
 requests >= 2.32.0  # Apache-2.0 license

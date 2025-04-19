@@ -45,6 +45,8 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 
 # Configure setuptools for the TKSBrokerAPI project:
 setup(
+    python_requires=">=3.9",  # Minimum supported Python version.
+
     name="tksbrokerapi",
 
     version=moduleVer,  # Include the dynamically generated version.

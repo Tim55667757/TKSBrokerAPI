@@ -33,15 +33,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Upgrade pip and install dependencies
         run: |
-          echo 🔄 Upgrading pip and reinstalling packages...
+          echo 🔄 Upgrading pip and reinstalling all dependencies...
           python -m pip install --upgrade pip --force-reinstall
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Log Installed Dependencies
+        run: |
+          echo 📄 Installed packages:
+          pip list
 
       - name: Pre-Build Completed
         run: echo ✅ PRE-BUILDING stage completed successfully!
@@ -59,7 +64,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Python 3.9
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -68,14 +73,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install Test Dependencies
         run: |
+          echo 🔄 Installing dev dependencies...
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
 
       - name: Run Tests
         run: |
@@ -86,7 +97,7 @@ jobs:
         run: echo ✅ TESTING stage completed successfully!
 
   building:
-    name: 📦 Building Package
+    name: ⚙️ Building Package
     needs: testing
     runs-on: ubuntu-latest
     strategy:
@@ -105,19 +116,30 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install Build Dependencies
         run: |
+          echo 🔄 Installing dev dependencies...
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
 
       - name: Build Package
         run: |
           echo 📦 Building distribution...
           python setup.py sdist bdist_wheel
+
+      - name: Test Package Installation
+        run: |
+          echo 📦 Testing distribution...
+          pip install ./dist/*.tar.gz
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -149,14 +171,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install Twine
+      - name: Install Publish Dependencies
         run: |
+          echo 🔄 Installing dev dependencies...
           python -m pip install --upgrade pip
-          pip install twine
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
 
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
@@ -189,3 +217,6 @@ jobs:
           else
             echo "✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)"
           fi
+      - name: Notify Failure
+        if: failure()
+        run: echo ❌ Workflow failed during ${{ job.status }} stage.
