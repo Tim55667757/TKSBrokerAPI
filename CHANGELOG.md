@@ -13,7 +13,7 @@
 * 🎁 Поддержать проект донатом на ЮМани-кошелёк: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.6.* (2023-09-25)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
+### [1.6.* (2025-06-01)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
 
 ##### Дайджест
 
@@ -65,6 +65,7 @@
 * [#125](https://github.com/Tim55667757/TKSBrokerAPI/issues/125) Был исправлен баг `KeyError: 'OPERATION_TYPE_OUT_STAMP_DUTY'`, в константе `TKS_OPERATION_TYPES` не хватало значений.
 * [#127](https://github.com/Tim55667757/TKSBrokerAPI/issues/127) Был исправлен баг `KeyError: 'name'` в методе`Overview()`.
 * [#128](https://github.com/Tim55667757/TKSBrokerAPI/issues/128) Был исправлен баг: `RUB000UTSTOM` FIGI отсутствует в `dump.json`. С 7 марта 2023 RUB000UTSTOM FIGI перестал возвращаться брокером в списке валют через API.
+* [#142](https://github.com/Tim55667757/TKSBrokerAPI/issues/142) Был исправлен баг: ImportError после установки и запуска TKSBrokerAPI.
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — опубликована
