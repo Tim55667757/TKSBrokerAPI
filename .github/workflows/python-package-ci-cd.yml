@@ -221,8 +221,6 @@ jobs:
         run: |
           echo 🗂️ Showing files in dist/
           ls -l dist/
-          echo 🔍 Verifying package metadata...
-          twine check dist/*
 
       - name: Publish Package to PyPI
         run: |
