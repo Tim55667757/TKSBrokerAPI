@@ -56,18 +56,16 @@ setup(
 
     description="TKSBrokerAPI is a trading platform designed to automate and simplify trading scenarios. It integrates with the Tinkoff Invest API server using the REST protocol. The platform can be used in two flexible ways: Command-Line Interface (CLI) and Python Library. This feature-rich API is perfect for trading enthusiasts and professional developers creating advanced automation solutions.",
 
-    long_description="""![TKSBrokerAPI Logo](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true)
-
-        - 🇺🇸 📚 **Full documentation in English**  
-          [README_EN.md — develop](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md)
-    
-        - 🇷🇺 📚 **Подробная документация на русском языке**  
-          [README.md — develop](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md)
-    
-        - ⚙ **TKSBrokerAPI**:
-            - [tksbrokerapi/TKSBrokerAPI (EN) — master only](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
-            - [tksbrokerapi/TKSBrokerAPI (RU) — master only](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
-        """,
+    long_description=(
+        "![TKSBrokerAPI Logo]"
+        "(https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true)\n\n"
+        "🇺🇸 📚 **English Documentation:**\n"
+        "• Full README with examples: [README_EN.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md)\n"
+        "• API Reference: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n\n"
+        "🇷🇺 📚 **Документация на русском:**\n"
+        "• Подробное описание и примеры: [README.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md)\n"
+        "• Документация на модуль: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n"
+    ),
 
     long_description_content_type="text/markdown",
 
