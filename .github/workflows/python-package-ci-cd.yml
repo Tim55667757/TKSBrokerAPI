@@ -234,27 +234,3 @@ jobs:
 
       - name: Publishing Completed
         run: echo ✅ PUBLISHING stage completed successfully!
-
-  final_status:
-    name: 🎉 Final Status Notification
-    runs-on: ubuntu-latest
-    needs: [pre_build, testing, building, publish]
-    steps:
-      - name: Notify Success
-        if: ${{ always() && needs.pre_build.result == 'success' && needs.testing.result == 'success' && needs.building.result == 'success' && (needs.publish.result == 'success' || github.event_name == 'pull_request') }}
-        run: |
-          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
-            echo "✅ Workflow completed successfully: PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING"
-          else
-            echo "✅ Workflow completed successfully for PR: PRE-BUILDING -> TESTING -> BUILDING (Publishing skipped)"
-          fi
-
-      - name: Notify Failure
-        if: ${{ failure() || needs.pre_build.result != 'success' || needs.testing.result != 'success' || needs.building.result != 'success' || (needs.publish.result != 'success' && github.event_name != 'pull_request') }}
-        run: |
-          echo "❌ Workflow FAILED during one of the stages."
-          echo "❌ Stage Results:"
-          echo "   - Pre-Building: ${{ needs.pre_build.result }}"
-          echo "   - Testing:      ${{ needs.testing.result }}"
-          echo "   - Building:     ${{ needs.building.result }}"
-          echo "   - Publishing:   ${{ needs.publish.result }}"

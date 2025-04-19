@@ -55,7 +55,7 @@ setup(
 
     long_description="See full documentation with examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md\n\nTKSBrokerAPI module documentation: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html\n\nПодробная документация на русском с примерами: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md\n\nДокументация на модуль TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html",
 
-    license="Apache License 2.0",
+    license="Apache-2.0",
 
     license_files=["LICENSE"],
 
