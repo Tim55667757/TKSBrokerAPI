@@ -34,11 +34,6 @@ jobs:
           echo 🐍 Using Python version:
           python --version
 
-      - name: Clear Pip Cache
-        run: |
-          echo 🗑️ Clearing old pip cache...
-          rm -rf ~/.cache/pip
-
       - name: Cache Python packages
         uses: actions/cache@v3
         with:
@@ -246,15 +241,20 @@ jobs:
     needs: [pre_build, testing, building, publish]
     steps:
       - name: Notify Success
-        if: ${{ success() && needs.pre_build.result == 'success' && needs.testing.result == 'success' && needs.building.result == 'success' && (needs.publish.result == 'success' || github.event_name == 'pull_request') }}
-        env:
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        if: ${{ always() && needs.pre_build.result == 'success' && needs.testing.result == 'success' && needs.building.result == 'success' && (needs.publish.result == 'success' || github.event_name == 'pull_request') }}
         run: |
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
-            echo "✅ PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING completed successfully!"
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            echo "✅ Workflow completed successfully: PRE-BUILDING -> TESTING -> BUILDING -> PUBLISHING"
           else
-            echo "✅ PRE-BUILDING -> TESTING -> BUILDING completed successfully! (Publishing skipped for PR builds)"
+            echo "✅ Workflow completed successfully for PR: PRE-BUILDING -> TESTING -> BUILDING (Publishing skipped)"
           fi
+
       - name: Notify Failure
         if: ${{ failure() || needs.pre_build.result != 'success' || needs.testing.result != 'success' || needs.building.result != 'success' || (needs.publish.result != 'success' && github.event_name != 'pull_request') }}
-        run: echo ❌ Workflow failed during ${{ job.status }} stage.
+        run: |
+          echo "❌ Workflow FAILED during one of the stages."
+          echo "❌ Stage Results:"
+          echo "   - Pre-Building: ${{ needs.pre_build.result }}"
+          echo "   - Testing:      ${{ needs.testing.result }}"
+          echo "   - Building:     ${{ needs.building.result }}"
+          echo "   - Publishing:   ${{ needs.publish.result }}"
