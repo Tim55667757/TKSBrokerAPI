@@ -6,9 +6,12 @@
 
 from setuptools import setup, find_packages
 import os
-from tksbrokerapi.TKSBrokerAPI import __version__ as ver
 
-moduleVer = ver  # The "major.minor" version is derived from TKSBrokerAPI, while the build number is defined by the build server.
+verPath = os.path.join(os.path.dirname(__file__), "tksbrokerapi", "_version.py")
+ver = {}
+exec(open(verPath).read(), ver)
+moduleVer = ver["__version__"]
+
 devStatus = "4 - Beta"  # Default development status.
 
 VERSION_OFFSET = 200  # Offset for the build number.
