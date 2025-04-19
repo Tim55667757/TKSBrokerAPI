@@ -13,7 +13,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.6.* (2023-09-25)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
+### [1.6.* (2025-06-01)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
 
 ##### Digest
 
@@ -29,6 +29,7 @@ Release development in progress...
 * [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Bool filter with Rules for Opening/Closing positions by fuzzy Risk/Reach levels was added as bool matrices `OPENING_RULES` and `CLOSING_RULES`. `CanOpen()` and `CanClose` methods can check opening and closing positions rules in these matrices depend on fuzzy Risk/Reach levels.
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Methods for calculation Fuzzy Risk and Fuzzy Reach levels were implemented: `RiskLong()`, `RiskShort()`, `ReachLong()` and `ReachShort()`.
 * [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) "Orders Grid Setter" was implemented. This script can be set up a grid of orders (limit or stop, buy or sell) with defined steps and lots for a lot of instruments by its tickers in parallel mode conveyor.
+* [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) CI/CD on GitHub Actions is implemented.
 
 ##### Improvements
 
