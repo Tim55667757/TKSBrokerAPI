@@ -54,6 +54,15 @@ FUZZY_LEVELS = list(FUZZY_SCALE.levelsNames.keys())
 for level in FUZZY_SCALE.levels:
     level["fSet"].mFunction.accuracy = 100  # Fast hack to increase speed of calculation with reduce accuracy.
 
+SIGNAL_FILTER = {
+    "Max": {"Max": "Max", "High": "High", "Med": "Med", "Low": "Low", "Min": "Min"},  # If [Max] probability, then stay signal as is.
+    "High": {"Max": "High", "High": "Med", "Med": "Low", "Low": "Min", "Min": "Min"},  # If [High] probability, then reduce signal strength at 1 level.
+    "Med": {"Max": "Med", "High": "Low", "Med": "Min", "Low": "Min", "Min": "Min"},  # If [Med] probability, then reduce signal strength at 2 level.
+    "Low": {"Max": "Low", "High": "Min", "Med": "Min", "Low": "Min", "Min": "Min"},  # If [Low] probability, then reduce signal strength at 3 level.
+    "Min": {"Max": "Min", "High": "Min", "Med": "Min", "Low": "Min", "Min": "Min"},  # If [Min] probability, then reduce signal strength at 4 level.
+}
+"""Signal filter by default is used to reduce signal strength."""
+
 OPENING_RULES = pd.DataFrame([
     # Min    Low    Med   High  Max            (Reach →)
     [False, False, True, True, True],     # Min (Risk ↓)
