@@ -800,7 +800,7 @@ def CalculateAdaptiveCacheReserve(
     if not isinstance(amplificationFactor, (float, int)) or amplificationFactor <= 0:
         raise ValueError("amplificationFactor must be a positive float or int value!")
 
-    # Check the type and validity of amplificationSensitivity"
+    # Check the type and validity of amplificationSensitivity":
     if not isinstance(amplificationSensitivity, (float, int)) or amplificationSensitivity < 0:
         raise ValueError("amplificationSensitivity must be a positive float or int value!")
 
