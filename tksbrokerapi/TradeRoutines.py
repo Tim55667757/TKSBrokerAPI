@@ -737,3 +737,54 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
         result = None
 
     return result
+
+
+def CalculateAdaptiveCacheReserve(
+    drawdowns: list[float],
+    curDrawdown: float,
+    reserve: float,
+    portfolioValue: float,
+    amplificationFactor: float = 1.25,
+    amplificationSensitivity: float = 0.1,
+) -> float:
+    """
+    Calculates the target cash reserve based on the current and recent portfolio drawdowns.
+
+    Increases the reserve for averaging positions if the drawdown has been growing for several consecutive trading iterations.
+    If the drawdown is decreasing or stabilizing — resets the reserve to its base level.
+
+    :param drawdowns: historical portfolio drawdowns (or PnL, as fractions from 0 to 1); drawdowns[0] is the oldest value, and drawdowns[-1] is the most recent one.
+    :param curDrawdown: current portfolio drawdown at the time of calculation.
+    :param reserve: base reserve ratio (e.g., 0.05 means 5% of portfolio value).
+    :param portfolioValue: current total value of the portfolio (in portfolio currency units).
+    :param amplificationFactor: base amplification factor to apply per drawdown increase step (default is 1.25).
+    :param amplificationSensitivity: A scaling factor that determines the sensitivity of the amplification adjustment
+                                     to the length of the growStreak. Higher values result in stronger increases in
+                                     amplification as the growStreak gets longer, while lower values produce a more gradual
+                                     adjustment. For example, a value of 0.1 means that with each additional growStreak
+                                     step, the amplification will increase by 10% of the base amplification factor.
+
+    :return: computed target cash reserve (in portfolio currency units).
+    """
+    if not drawdowns or all(d == 0.0 for d in drawdowns):
+        return portfolioValue * reserve
+
+    if curDrawdown <= drawdowns[-1]:
+        return portfolioValue * reserve
+
+    # Count how many consecutive iterations the drawdown has been increasing (including the current iteration):
+    fullSequence = drawdowns + [curDrawdown]
+    growStreak = 0
+
+    for i in range(len(fullSequence) - 1, 0, -1):
+        if fullSequence[i] > fullSequence[i - 1]:
+            growStreak += 1
+
+        else:
+            break
+
+    amplification = amplificationFactor * (1 + growStreak * amplificationSensitivity)  # Current amplification factor.
+
+    targetReserve = portfolioValue * reserve * amplification  # Count the reserve in portfolio currency units.
+
+    return targetReserve
