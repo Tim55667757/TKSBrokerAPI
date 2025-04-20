@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 import pandas as pd
+import math
 
 
 class UpdateClassFieldsTestClass:
@@ -803,3 +804,63 @@ class TestTradeRoutinesMethods:
                 TradeRoutines.ReachShort(pd.Series(test))
 
             assert "Pandas Series can't be empty and must contain 1 or more elements!" in str(info.value)
+
+    def test_CalculateAdaptiveCacheReserveCheckType(self):
+        result = TradeRoutines.CalculateAdaptiveCacheReserve(
+            drawdowns=[0.01, 0.02, 0.03],
+            curDrawdown=0.04,
+            reserve=0.05,
+            portfolioValue=1000.0,
+            amplificationFactor=1.25,
+            amplificationSensitivity=0.1,
+        )
+        assert isinstance(result, float), "Not float type returned!"
+
+    def test_CalculateAdaptiveCacheReservePositive(self):
+        testData = [
+            # drawdowns, curDrawdown, reserve, portfolioValue, amplificationFactor, amplificationSensitivity, expected:
+            ([0.02, 0.03], 0.03, 0.035, 1000, 1.25, 0.1, 35.0),  # Stable drawdown → no amplification
+            ([0.01, 0.02, 0.03], 0.04, 0.05, 1000, 1.25, 0.1, round(1000 * 0.05 * 1.25 * math.exp(3 * 0.1), 4)),  # GrowStreak=3, ≈ 84.37
+            ([], 0.0, 0.05, 1000, 1.25, 0.1, 50.0),  # Empty history → base reserve
+            ([0], 0.0, 0.07, 1000, 1.25, 0.1, 70.0),  # Single value, no increase → base reserve
+            ([0.01, 0.02, 0.03], 0.031, 0.05, 1000, 1.25, 0.2, round(1000 * 0.05 * 1.25 * math.exp(3 * 0.2), 4)),  # GrowStreak=3, sensitivity=0.2, ≈ 94.69
+        ]
+
+        for test in testData:
+            result = TradeRoutines.CalculateAdaptiveCacheReserve(
+                drawdowns=test[0],
+                curDrawdown=test[1],
+                reserve=test[2],
+                portfolioValue=test[3],
+                amplificationFactor=test[4],
+                amplificationSensitivity=test[5],
+            )
+            assert round(result, 4) == test[6], f"Incorrect output! Input: {test[:6]} Expected: {test[6]} Got: {round(result, 4)}"
+
+    def test_CalculateAdaptiveCacheReserveNegative(self):
+        testData = [
+            (None, 0.02, 0.05, 1000, 1.25, 0.1, "drawdowns must be a list or iterable of floats!"),
+            ([0.01, None], 0.02, 0.05, 1000, 1.25, 0.1, "drawdowns contains invalid data!"),
+            ([0.01, 0.02], None, 0.05, 1000, 1.25, 0.1, "curDrawdown must be a float or int!"),
+            ([0.01, 0.02], 0.02, None, 1000, 1.25, 0.1, "reserve must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, "NotValid", 1.25, 0.1, "portfolioValue must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, 1000, "NotValid", 0.1, "amplificationFactor must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, 1000, 1.25, "NotValid", "amplificationSensitivity must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, -0.05, 1000, 1.25, 0.1, "reserve must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, -1000, 1.25, 0.1, "portfolioValue must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, 1000, -1.25, 0.1, "amplificationFactor must be a positive float or int value!"),
+            ([0.01, 0.02], 0.02, 0.05, 1000, 1.25, -0.1, "amplificationSensitivity must be a positive float or int value!"),
+        ]
+
+        for test in testData:
+            with pytest.raises(BaseException) as info:
+                TradeRoutines.CalculateAdaptiveCacheReserve(
+                    drawdowns=test[0],
+                    curDrawdown=test[1],
+                    reserve=test[2],
+                    portfolioValue=test[3],
+                    amplificationFactor=test[4],
+                    amplificationSensitivity=test[5],
+                )
+
+            assert test[6] in str(info.value), "Incorrect exception raised! Input: {} Expected Error: {}".format(test[:6], test[6])
