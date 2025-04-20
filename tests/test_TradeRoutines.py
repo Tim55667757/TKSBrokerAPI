@@ -30,6 +30,11 @@ class TestTradeRoutinesMethods:
         assert isinstance(result[0], str), "Not str type in first parameter returned!"
         assert isinstance(result[1], str), "Not str type in second parameter returned!"
 
+        result = TradeRoutines.GetDatesAsString()
+
+        assert isinstance(result, tuple), f"Expected tuple, got {type(result)}"
+        assert all(isinstance(i, str) for i in result), f"Expected tuple of strings, got {result}"
+
     def test_GetDatesAsStringPositive(self):
         now = datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0)
         end = now.replace(hour=23, minute=59, second=59, microsecond=0)
@@ -102,11 +107,52 @@ class TestTradeRoutinesMethods:
                 test[2][0].strftime(dateFormat), test[2][1].strftime(dateFormat), test[0], test[1], result[0], result[1],
             )
 
+        test_cases = [
+            ("today", None,
+             datetime.now(tzutc()).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("yesterday", None,
+             (datetime.now(tzutc()) - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             (datetime.now(tzutc()) - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("week", None,
+             (datetime.now(tzutc()) - timedelta(days=6)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("month", None,
+             (datetime.now(tzutc()) - timedelta(days=29)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("year", None,
+             (datetime.now(tzutc()) - timedelta(days=364)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("2023-01-01", "2023-01-10", "2023-01-01T00:00:00Z", "2023-01-10T23:59:59Z"),
+
+            ("2023-01-01", None,
+             "2023-01-01T00:00:00Z",
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")),
+
+            ("-5", None,
+             (datetime.now(tzutc()) - timedelta(days=4)).replace(hour=0, minute=0, second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"),
+             datetime.now(tzutc()).replace(hour=23, minute=59, second=59, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        ]
+
+        for start, end, expected_start, expected_end in test_cases:
+            result_start, result_end = TradeRoutines.GetDatesAsString(start=start, end=end)
+            assert result_start == expected_start, f"For start={start}, end={end}, expected start={expected_start}, got {result_start}"
+            assert result_end == expected_end, f"For start={start}, end={end}, expected end={expected_end}, got {result_end}"
+
     def test_GetDatesAsStringNegative(self):
         testData = [
             (1, 2, ("", "")), ("1", "2", ("", "")),
             ("", "yesterday", ("", "")), ("", None, ("", "")),
             ("2022-12-03", -1, ("", "")), ("2022-12-02-", "2022-12-03-", ("", "")),
+            ("-", False, ("", "")),
+            ("--100", None, ("", "")),
+            ("invalid_date", None, ("", "")),
+            ("-invalid", None, ("", "")),
         ]
 
         for test in testData:
