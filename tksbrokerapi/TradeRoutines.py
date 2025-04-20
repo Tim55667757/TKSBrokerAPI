@@ -36,6 +36,7 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import pandas as pd
 from typing import Union, Optional, Any
+import math
 
 from fuzzyroutines import FuzzyRoutines as fR  # Some routines to simplify working with fuzzy logic operators, fuzzy datasets and fuzzy scales.
 
@@ -748,23 +749,33 @@ def CalculateAdaptiveCacheReserve(
     amplificationSensitivity: float = 0.1,
 ) -> float:
     """
-    Calculates the target cash reserve based on the current and recent portfolio drawdowns.
+    Calculates the adaptive target cash reserve based on current and historical portfolio drawdowns.
 
-    Increases the reserve for averaging positions if the drawdown has been growing for several consecutive trading iterations.
-    If the drawdown is decreasing or stabilizing — resets the reserve to its base level.
+    This function dynamically adjusts the reserve allocated for averaging positions (e.g., during drawdowns).
+    If the drawdown increases for several consecutive iterations, the reserve is amplified exponentially.
+    If the drawdown stabilizes or decreases, the reserve is reset to the base level.
 
-    :param drawdowns: historical portfolio drawdowns (or PnL, as fractions from 0 to 1); drawdowns[0] is the oldest value, and drawdowns[-1] is the most recent one.
+    The amplification is computed as:
+        amplification = amplificationFactor × exp(growStreak × amplificationSensitivity)
+
+    Where:
+    - `growStreak` is the number of consecutive days the drawdown has been increasing, including the current day.
+    - `amplificationFactor` is the base multiplier.
+    - `amplificationSensitivity` controls how aggressively the amplification grows with each additional drawdown increase.
+
+    Example:
+    With amplificationFactor = 1.25 and amplificationSensitivity = 0.1, if the drawdown increases for 3 days:
+        amplification = 1.25 × exp(0.3) ≈ 1.25 × 1.3499 ≈ 1.687
+
+    :param drawdowns: historical portfolio drawdowns (fractions between 0 and 1);
+                      drawdowns[0] is the oldest, drawdowns[-1] is the most recent.
     :param curDrawdown: current portfolio drawdown at the time of calculation.
-    :param reserve: base reserve ratio (e.g., 0.05 means 5% of portfolio value).
-    :param portfolioValue: current total value of the portfolio (in portfolio currency units).
-    :param amplificationFactor: base amplification factor to apply per drawdown increase step (default is 1.25).
-    :param amplificationSensitivity: A scaling factor that determines the sensitivity of the amplification adjustment
-                                     to the length of the growStreak. Higher values result in stronger increases in
-                                     amplification as the growStreak gets longer, while lower values produce a more gradual
-                                     adjustment. For example, a value of 0.1 means that with each additional growStreak
-                                     step, the amplification will increase by 10% of the base amplification factor.
+    :param reserve: base reserve ratio (e.g., 0.05 means 5% of the portfolio value).
+    :param portfolioValue: current portfolio value (in currency units).
+    :param amplificationFactor: base multiplier for reserve amplification (default is 1.25).
+    :param amplificationSensitivity: exponential growth rate of amplification per growStreak step (default is 0.1).
 
-    :return: computed target cash reserve (in portfolio currency units).
+    :return: calculated target cash reserve in portfolio currency units.
     """
     # Check the type and validity of drawdowns:
     if not isinstance(drawdowns, list):
@@ -775,23 +786,23 @@ def CalculateAdaptiveCacheReserve(
 
     # Check the type and validity of curDrawdown:
     if not isinstance(curDrawdown, (float, int)):
-        raise ValueError("curDrawdown must be a float!")
+        raise ValueError("curDrawdown must be a float or int!")
 
     # Check the type and validity of the reserve:
     if not isinstance(reserve, (float, int)) or reserve < 0:
-        raise ValueError("reserve must be a positive float value!")
+        raise ValueError("reserve must be a positive float or int value!")
 
     # Check the type and validity of portfolioValue:
     if not isinstance(portfolioValue, (float, int)) or portfolioValue < 0:
-        raise ValueError("portfolioValue must be a positive float value!")
+        raise ValueError("portfolioValue must be a positive float or int value!")
 
     # Check the type and validity of the amplificationFactor:
-    if not isinstance(amplificationFactor, (float, int)) or amplificationFactor < 0:
-        raise ValueError("amplificationFactor must be a positive float value!")
+    if not isinstance(amplificationFactor, (float, int)) or amplificationFactor <= 0:
+        raise ValueError("amplificationFactor must be a positive float or int value!")
 
     # Check the type and validity of amplificationSensitivity"
     if not isinstance(amplificationSensitivity, (float, int)) or amplificationSensitivity < 0:
-        raise ValueError("amplificationSensitivity must be a positive float value!")
+        raise ValueError("amplificationSensitivity must be a positive float or int value!")
 
     # --- Main function logic:
     if not drawdowns or all(d == 0.0 for d in drawdowns):
@@ -811,7 +822,7 @@ def CalculateAdaptiveCacheReserve(
         else:
             break
 
-    amplification = amplificationFactor * (1 + growStreak * amplificationSensitivity)  # Current amplification factor.
+    amplification = amplificationFactor * math.exp(growStreak * amplificationSensitivity)  # Current amplification factor.
 
     targetReserve = portfolioValue * reserve * amplification  # Count the reserve in portfolio currency units.
 
