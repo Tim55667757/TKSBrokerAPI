@@ -766,6 +766,34 @@ def CalculateAdaptiveCacheReserve(
 
     :return: computed target cash reserve (in portfolio currency units).
     """
+    # Check the type and validity of drawdowns:
+    if not isinstance(drawdowns, list):
+        raise ValueError("drawdowns must be a list or iterable of floats!")
+
+    if any(not isinstance(d, (float, int)) or d is None for d in drawdowns):
+        raise ValueError("drawdowns contains invalid data!")
+
+    # Check the type and validity of curDrawdown:
+    if not isinstance(curDrawdown, (float, int)):
+        raise ValueError("curDrawdown must be a float!")
+
+    # Check the type and validity of the reserve:
+    if not isinstance(reserve, (float, int)) or reserve < 0:
+        raise ValueError("reserve must be a positive float value!")
+
+    # Check the type and validity of portfolioValue:
+    if not isinstance(portfolioValue, (float, int)) or portfolioValue < 0:
+        raise ValueError("portfolioValue must be a positive float value!")
+
+    # Check the type and validity of the amplificationFactor:
+    if not isinstance(amplificationFactor, (float, int)) or amplificationFactor < 0:
+        raise ValueError("amplificationFactor must be a positive float value!")
+
+    # Check the type and validity of amplificationSensitivity"
+    if not isinstance(amplificationSensitivity, (float, int)) or amplificationSensitivity < 0:
+        raise ValueError("amplificationSensitivity must be a positive float value!")
+
+    # --- Main function logic:
     if not drawdowns or all(d == 0.0 for d in drawdowns):
         return portfolioValue * reserve
 
