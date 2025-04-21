@@ -864,3 +864,80 @@ class TestTradeRoutinesMethods:
                 )
 
             assert test[6] in str(info.value), "Incorrect exception raised! Input: {} Expected Error: {}".format(test[:6], test[6])
+
+    def test_HampelCleanerCheckType(self):
+        testSeries = pd.Series([1, 1, 10, 1, 1])
+
+        for strategy in ["neighborAvg", "prev", "const", "medianWindow", "rollingMean"]:
+            cleaned = TradeRoutines.HampelCleaner(
+                series=testSeries,
+                window=3,
+                sigma=3,
+                scaleFactor=1.4826,
+                strategy=strategy,
+                fallbackValue=0.0,
+                medianWindow=2
+            )
+            assert isinstance(cleaned, pd.Series), f"Expected pd.Series, got {type(cleaned)} for strategy={strategy}"
+
+    def test_HampelCleanerPositive(self):
+        testData = [
+            # strategy, input series, expected cleaned result:
+            ("neighborAvg", pd.Series([1, 10, 1, 1, 1]), pd.Series([1, 1, 1, 1, 1])),
+            ("prev", pd.Series([1, 10, 1, 1, 1]), pd.Series([1, 1, 1, 1, 1])),
+            ("const", pd.Series([1, 10, 1, 1, 1]), pd.Series([1, 0.0, 1, 1, 1])),
+            ("medianWindow", pd.Series([1, 10, 1, 1, 1]), pd.Series([1, 1, 1, 1, 1])),
+            ("rollingMean", pd.Series([1, 10, 1, 1, 1]), pd.Series([1, 1.0, 1, 1, 1])),
+
+            # edge cases:
+            ("neighborAvg", pd.Series([100]), pd.Series([100])),  # not replaced, because not detected as an outlier
+            ("prev", pd.Series([1, 100, 1]), pd.Series([1, 1, 1])),  # center
+            ("const", pd.Series([1]), pd.Series([1])),  # single element, const, not replaced, because not detected as an outlier
+            ("medianWindow", pd.Series([1, 100, 1]), pd.Series([1, 1, 1])),
+            ("rollingMean", pd.Series([1, 100, 1]), pd.Series([1, 1.0, 1])),
+
+            ("neighborAvg", pd.Series([100, 1, 1, 1, 1]), pd.Series([1, 1, 1, 1, 1])),  # left edge
+            ("neighborAvg", pd.Series([1, 1, 1, 1, 100]), pd.Series([1, 1, 1, 1, 1])),  # right edge
+            ("prev", pd.Series([100, 1, 1]), pd.Series([0.0, 1, 1])),  # first idx fallback
+        ]
+
+        for strategy, inputSeries, expected in testData:
+            result = TradeRoutines.HampelCleaner(
+                series=inputSeries,
+                window=3,
+                sigma=3,
+                scaleFactor=1.4826,
+                strategy=strategy,
+                fallbackValue=0.0,
+                medianWindow=2
+            )
+
+            assert list(result.round(4)) == list(expected.round(4)), f"Incorrect output for strategy={strategy}"
+
+    def test_HampelCleanerNegative(self):
+        testData = [
+            {
+                "series": pd.Series([1, 2, 3]),
+                "strategy": "invalidStrategy",
+                "expectedMessage": "Unknown strategy"
+            },
+            {
+                "series": "not_a_series",
+                "strategy": "const",
+                "expectedMessage": "has no attribute 'copy'"
+            },
+        ]
+
+        for test in testData:
+            with pytest.raises(Exception) as err:
+                TradeRoutines.HampelCleaner(
+                    series=test["series"],
+                    window=3,
+                    sigma=3,
+                    scaleFactor=1.4826,
+                    strategy=test["strategy"],
+                    fallbackValue=0.0,
+                    medianWindow=2
+                )
+
+            assert test["expectedMessage"] in str(err.value), f"Unexpected exception: {str(err.value)}"
