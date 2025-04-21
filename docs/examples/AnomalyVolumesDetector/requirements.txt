@@ -14,4 +14,4 @@ PyYAML >= 6.0  # MIT License
 pycron >= 3.0.0  # MIT License
 
 # Actual TKSBrokerAPI:
-TKSBrokerAPI >= 1.6.dev155  # Apache-2.0 license
+TKSBrokerAPI >= 1.6.dev220  # Apache-2.0 license

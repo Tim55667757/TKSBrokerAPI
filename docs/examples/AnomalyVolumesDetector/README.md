@@ -84,23 +84,6 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 
 If you're using default names `config.yaml` and `secrets.yaml`, then they can be omitted in `python3 TKSAVDetector.py` command.
 
-It is possible that after starting the bot you will see an import error like this:
-
-```
-  File "./tksbrokerapi/TKSBrokerAPI.py", line 105, in <module>
-    from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
-ModuleNotFoundError: No module named 'Templates'
-```
-
-This means that the library directory for the version of Python where the TKSBrokerAPI platform was installed is not visible in the system environment. You need to add it to the `PYTHONPATH` environment variable (see [explanation and examples for different OS](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html)). For example, under Linux/MacOS:
-
-```commandline
-export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/tksbrokerapi
-echo $PYTHONPATH
-```
-
-If you don't want to set the `PYTHONPATH` variable every time you open a terminal, you can set it to the system environment.
-
 ### Auth
 
 All critical secrets must store locally in [`secrets.yaml`](./secrets.yaml) file. You can define there some parameters:
@@ -237,23 +220,6 @@ python3 TKSAVDetector.py config.yaml secrets.yaml
 ```
 
 Если используются дефолтные файлы конфигурации `config.yaml` и `secrets.yaml`, то в команде `python3 TKSAVDetector.py` их можно не указывать.
-
-Возможно, что после запуска бота вы увидите ошибку импорта такого вида:
-
-```
-  File "./tksbrokerapi/TKSBrokerAPI.py", line 105, in <module>
-    from Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
-ModuleNotFoundError: No module named 'Templates'
-```
-
-Это означает, что каталог с библиотеками для той версии Python, куда была установлена платформа TKSBrokerAPI, не виден в системном окружении. Нужно добавить его в переменную окружения `PYTHONPATH` (смотрите объяснение и примеры для разных ОС [по ссылке](https://bic-berkeley.github.io/psych-214-fall-2016/using_pythonpath.html)). Например, под Linux/MacOS:
-
-```commandline
-export PYTHONPATH=/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/tksbrokerapi
-echo $PYTHONPATH
-```
-
-Чтобы не устанавливать переменную `PYTHONPATH` каждый раз при открытии терминала, можно установить её в системное окружение своей ОС.
 
 ### Авторизация
 
