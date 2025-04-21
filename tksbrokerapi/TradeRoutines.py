@@ -34,9 +34,10 @@ The **TradeRoutines** library contains some methods used by trade scenarios impl
 
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
-import pandas as pd
-from typing import Union, Optional, Any
 import math
+import pandas as pd
+
+from typing import Union, Optional, Any
 
 from fuzzyroutines import FuzzyRoutines as fR  # Some routines to simplify working with fuzzy logic operators, fuzzy datasets and fuzzy scales.
 
@@ -827,3 +828,114 @@ def CalculateAdaptiveCacheReserve(
     targetReserve = portfolioValue * reserve * amplification  # Count the reserve in portfolio currency units.
 
     return targetReserve
+
+
+def HampelCleaner(
+    series: pd.Series,
+    window: int = 5,
+    sigma: float = 3,
+    scaleFactor: float = 1.4826,
+    strategy: str = "neighborAvg",
+    fallbackValue: float = 0.0,
+    medianWindow: int = 3
+) -> pd.Series:
+    """
+    Replaces outliers in a time series using the Hampel filter and a selected replacement strategy.
+
+    This function detects anomalies using the Hampel method and replaces them according to the specified strategy.
+    It is designed for use in financial time series, sensor data, or any numerical sequences requiring robust cleaning
+    before further analysis (e.g., volatility estimation, trend modeling, probability forecasting).
+
+    Available replacement strategies:
+
+    - "neighborAvg": average of adjacent neighbors (default).
+      Best for stable, low-noise time series where local continuity matters.
+
+    - "prev": previous non-outlier value.
+      Suitable for cumulative or trend-sensitive series, avoids abrupt distortions.
+
+    - "const": fixed fallback value.
+      Recommended when anomalies reflect technical failures (e.g., spikes due to API glitches).
+
+    - "medianWindow": local window median (uses medianWindow size).
+      Robust to single-point noise and short bursts of volatility; good for candle data.
+
+    - "rollingMean": centered rolling mean over the window (same as a Hampel window).
+      Applies smooth correction while preserving a general shape; works well for low-volatility assets.
+
+    :param series: input time series as a Pandas Series of floats.
+    :param window: sliding window size used in Hampel filtering (default: 5).
+    :param sigma: threshold multiplier for anomaly detection (default: 3).
+    :param scaleFactor: scaling factor for the MAD (default: 1.4826, optimal for Gaussian data).
+    :param strategy: strategy used to replace detected outliers (see the list above).
+    :param fallbackValue: constantly used as a fallback in "const" strategy or when neighbors are missing.
+    :param medianWindow: window size used for the "medianWindow" strategy.
+
+    :return: cleaned time series as a Pandas Series with outliers replaced.
+    """
+    allowedStrategies = ["neighborAvg", "prev", "const", "medianWindow", "rollingMean"]
+
+    if strategy not in allowedStrategies:
+        raise ValueError(f"Unknown strategy '{strategy}'. Available options: {allowedStrategies}")
+
+    outlierMask = HampelFilter(series, window, sigma, scaleFactor)
+
+    cleaned = series.copy()
+
+    indexToPosition = {idx: pos for pos, idx in enumerate(series.index)}
+
+    for idx, isOutlier in outlierMask.items():
+        if not isOutlier:
+            continue
+
+        position = indexToPosition[idx]
+
+        left = series.iloc[position - 1] if position - 1 >= 0 else None
+        right = series.iloc[position + 1] if position + 1 < len(series) else None
+
+        replacement = fallbackValue
+
+        if strategy == "neighborAvg":
+            if left is not None and right is not None:
+                replacement = (left + right) / 2
+
+            elif left is not None:
+                replacement = left
+
+            elif right is not None:
+                replacement = right
+
+            else:
+                replacement = fallbackValue
+
+        elif strategy == "prev":
+            replacement = fallbackValue
+
+            for j in range(position - 1, -1, -1):
+                candidateIndex = series.index[j]
+
+                if not outlierMask.get(candidateIndex, False):
+                    replacement = series.iloc[j]
+
+                    break
+
+        elif strategy == "const":
+            replacement = fallbackValue
+
+        elif strategy == "medianWindow":
+            start = max(0, position - medianWindow)
+            end = min(len(series), position + medianWindow + 1)
+            windowValues = series.iloc[start:end].drop(series.index[position], errors="ignore")
+
+            replacement = windowValues.median() if not windowValues.empty else fallbackValue
+
+        elif strategy == "rollingMean":
+            start = max(0, position - window)
+            end = min(len(series), position + window + 1)
+            windowValues = series.iloc[start:end].drop(series.index[position], errors="ignore")
+
+            replacement = windowValues.mean() if not windowValues.empty else fallbackValue
+
+        cleaned.at[idx] = replacement
+
+    return cleaned
