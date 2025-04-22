@@ -49,6 +49,7 @@ Release development in progress...
 * [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-doc with dark theme now.
 * [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Operation type counts was updated in Deals report.
 * [#138](https://github.com/Tim55667757/TKSBrokerAPI/issues/138) Monkey Patch for TKSBrokerAPI and it's PriceGenerator library.
+* [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) Improved `HampelFilter()` performance: replaced nested MAD lambda with vectorized median calculation. Now passes 1M-element test in under 1s (was >90s on older version).
 
 ##### Bug fixes
 
