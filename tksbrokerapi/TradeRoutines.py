@@ -615,9 +615,9 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
 
     References:
 
-    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method:
+       - Link (RU): https://teletype.in/@tgilmullin/anomaly
        - Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
-       - Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
     2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
        - Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
     3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
