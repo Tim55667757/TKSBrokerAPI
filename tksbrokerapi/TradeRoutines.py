@@ -36,6 +36,8 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import math
 import pandas as pd
+import numpy as np
+from scipy.stats import norm
 
 from typing import Union, Optional, Any
 
@@ -599,43 +601,26 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     Outlier Detection with Hampel Filter. It can detect outliers based on a sliding window and counting difference
     between median values and input values of series. The Hampel filter is often considered extremely effective in practice.
 
-    For each window we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation
+    For each window, we calculate the Median and the Median Absolute Deviation (MAD). If the considered observation
     differs from the window median by more than sigma standard deviations multiple on scaleFactor, then we treat it
     as an outlier.
 
-    Let Xi — elements of input series in i-th window,
+    Let Xi — elements of input series in the i-th window,
     s — sigma, the number of standard deviations,
-    k — scale factor, depends on distribution (≈1.4826 for normal).
+    k — scale factor, depend on distribution (≈1.4826 for normal).
 
     How to calculate rolling MAD: `MAD(Xi) = Median(|x1 − Median (Xi)|, ..., |xn − Median(Xi)|)`
 
     What is an anomaly: `A = {a | |a − Median (Xi)| > s ∙ k ∙ MAD(Xi)}`
 
-    References:
-
-    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
-       - Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
-       - Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
-    2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
-       - Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
-    3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
-       - Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
-    4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.
-
-    Examples:
-
-    - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -> pd.Series([False, False, False, False, False, False])`
-    - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -> pd.Series([False, False, False, True, False, False])`
-    - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -> pd.Series([True, False, False, False, False, True])`
-    - `HampelFilter([1]) -> pd.Series([False])`
-
     :param series: Pandas Series object with numbers in which we identify outliers.
     :param window: length of the sliding window (5 points by default), 1 <= window <= len(series).
     :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
     :param scaleFactor: constant scale factor (1.4826 by default for Gaussian distribution), > 0.
+
     :return: Pandas Series object with True/False values.
-             `True` mean that an outlier detected in that position of input series.
-             If an error occurred then empty series returned.
+             `True` means that an outlier detected in that position of input series.
+             If an error occurred, then empty series returned.
     """
     try:
         if isinstance(series, list):
@@ -653,22 +638,67 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
         if scaleFactor <= 0:
             scaleFactor = 1.4826
 
-        # Extending data to avoid undetected anomaly in first and last elements by original algorithm:
-        series = pd.concat([series.iloc[: window], series, series.iloc[-window:]])
+        # Minimal non-zero MAD value to allow robust comparison. Slightly above float64 machine epsilon, robust for anomaly detection:
+        epsilon = 1e-15
 
-        # Calculating rolling Median and difference between it and series elements in window:
+        # Special case: if `2 * window` exceeds series length, process all points manually:
+        if 2 * window > len(series):
+            new = pd.Series(False, index=series.index)
+
+            for i in range(len(series)):
+                start = max(0, i - window)
+                end = min(len(series), i + window + 1)
+                local = series.iloc[start:end]
+
+                if len(local) >= 1 and not local.isna().all():
+                    med = np.median(local)
+                    mad = np.median(np.abs(local - med))
+                    diff = abs(series.iloc[i] - med)
+
+                    if not np.isfinite(mad) or mad < epsilon:
+                        if diff > 0:
+                            new.iloc[i] = True
+
+                    else:
+                        limit = sigma * scaleFactor * mad
+
+                        if diff > limit:
+                            new.iloc[i] = True
+
+            return new
+
+        # Step 1: Calculate rolling median and point-wise absolute deviation from it:
         rollingMedian = series.rolling(window=2 * window, center=True).median()
-        delta = pd.Series.abs(series - rollingMedian)
+        delta = (series - rollingMedian).abs()
 
-        # Calculating rolling MAD: MAD(Xi) = Median(|x1 − Median(Xi)|, ..., |xn − Median(Xi)|)
-        # where Xi — elements of input series in i-th window
-        rollingMAD = series.rolling(window=2 * window, center=True).apply(
-            lambda x: pd.Series.median(pd.Series.abs(x - pd.Series.median(x)))
-        )
+        # Step 2: Calculate rolling MAD (reusing delta for efficiency):
+        rollingMAD = delta.rolling(window=2 * window, center=True).median()
 
-        # Checking for anomaly: A = {a | |a − Median(Xi)| > s ∙ k ∙ MAD(Xi)}
-        new = delta > sigma * scaleFactor * rollingMAD
-        new = new.iloc[window: -window]
+        # Step 3: Detect anomalies for valid central values:
+        new = pd.Series(False, index=series.index)
+        threshold = sigma * scaleFactor * rollingMAD
+        new[rollingMAD.notna()] = delta[rollingMAD.notna()] > threshold[rollingMAD.notna()]
+
+        # Step 4: Handle boundary values manually (first and last `window` points):
+        for i in list(range(window)) + list(range(len(series) - window, len(series))):
+            start = max(0, i - window)
+            end = min(len(series), i + window + 1)
+            local = series.iloc[start:end]
+
+            if len(local) >= 1 and not local.isna().all():
+                med = np.median(local)
+                mad = np.median(np.abs(local - med))
+                diff = abs(series.iloc[i] - med)
+
+                if not np.isfinite(mad) or mad < epsilon:
+                    if diff > 0:
+                        new.iloc[i] = True
+
+                else:
+                    limit = sigma * scaleFactor * mad
+
+                    if diff > limit:
+                        new.iloc[i] = True
 
     except Exception:
         new = pd.Series()
@@ -801,7 +831,7 @@ def CalculateAdaptiveCacheReserve(
     if not isinstance(amplificationFactor, (float, int)) or amplificationFactor <= 0:
         raise ValueError("amplificationFactor must be a positive float or int value!")
 
-    # Check the type and validity of amplificationSensitivity":
+    # Check the type and validity of amplificationSensitivity:
     if not isinstance(amplificationSensitivity, (float, int)) or amplificationSensitivity < 0:
         raise ValueError("amplificationSensitivity must be a positive float or int value!")
 
