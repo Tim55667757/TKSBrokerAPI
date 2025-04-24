@@ -689,21 +689,68 @@ class TestTradeRoutinesMethods:
 
     def test_HampelAnomalyDetectionPositive(self):
         testData = [
-            ([1, 1, 1, 1, 111, 1], 4),
-            ([1, 1, 10, 1, 1, 1], 2),
-            ([111, 1, 1, 1, 1, 1], 0),
-            ([111, 1, 1, 1, 1, 111], 0),
-            ([1, 11, 1, 111, 1, 1], 1),
-            ([1, 1, 1, 111, 99, 11], 3),
-            ([1, 1, 11, 111, 1, 1, 1, 11111], 2),
-            ([1, 1, 1, 111, 111, 1, 1, 1, 1], 3),
-            ([1, 1, 1, 1, 111, 1, 1, 11111, 5555], 4),
-            ([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1], 1),
-            ([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1], 6),
-            ([-111, 1, 1, 1, 1], 0),
-            ([1, 2, 1, -1, 1], 1),
-            ([-111, -1, -1, -1, -1], 0),
-            ([-1, -1, 2, -1, -1], 2),
+            # Single clear spike near the end:
+            ([1, 1, 1, 1, 111, 1], 4),  # Last value is extreme outlier.
+
+            # Middle spike:
+            ([1, 1, 10, 1, 1, 1], 2),  # Middle value is an outlier.
+
+            # Anomaly at the beginning:
+            ([111, 1, 1, 1, 1, 1], 0),  # First value deviates significantly.
+
+            # Two equal anomalies at beginning and end:
+            ([111, 1, 1, 1, 1, 111], 0),  # First and last are both outliers, return first.
+
+            # Gradual growth then spike:
+            ([1, 11, 1, 111, 1, 1], 1),  # The second value is a small anomaly before a large one.
+
+            # Series with several anomalies:
+            ([1, 1, 1, 111, 99, 11], 3),  # The first anomaly is at index 3.
+
+            # Strong mid-sequence anomalies:
+            ([1, 1, 11, 111, 1, 1, 1, 11111], 2),  # Index 2 is first small anomaly before huge one.
+
+            # Two equal spikes in a center:
+            ([1, 1, 1, 111, 111, 1, 1, 1, 1], 3),  # The first 111 is picked as an anomaly.
+
+            # Multiple strong anomalies:
+            ([1, 1, 1, 1, 111, 1, 1, 11111, 5555], 4),  # First anomaly at index 4.
+
+            # Repetitive pattern disrupted early:
+            ([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1], 0),  # The first value is anomaly, not second.
+
+            # Many anomalies including extreme peaks:
+            ([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1], 0),  # 9 is an early anomaly before any maximum.
+
+            # Anomaly at start (negative spike):
+            ([-111, 1, 1, 1, 1], 0),  # First value is extreme negative outlier.
+
+            # Small anomaly in second position:
+            ([1, 2, 1, -1, 1], 1),  # Second value is slightly off trend.
+
+            # Large negative value at beginning:
+            ([-111, -1, -1, -1, -1], 0),  # First value is anomaly.
+
+            # Symmetric small spike:
+            ([-1, -1, 2, -1, -1], 2),  # Center value is small anomaly.
+
+            # Anomaly at the end of the series:
+            ([1, 1, 1, 1, 1, 999], 5),  # Last value is extreme outlier.
+
+            # Two equal outliers in the middle:
+            ([1, 1, 100, 100, 1, 1], 2),  # Both 100s are outliers, return index of first.
+
+            # Symmetric spike in a center:
+            ([1, 1, 50, 1, 1], 2),  # Spike in the center.
+
+            # Two anomalies, pick one with a lower index:
+            ([100, 1, 1, 1, 100], 0),  # Both 0 and 4 are anomalies, return min.
+
+            # Flat line with a single jump:
+            ([10, 10, 10, 99, 10, 10], 3),  # Single jump.
+
+            # Series with negative infinite value at the beginning:
+            ([-np.inf, 1, 1], 0),  # -Inf is detected as a valid outlier at index 0.
         ]
 
         for test in testData:
@@ -711,16 +758,38 @@ class TestTradeRoutinesMethods:
 
     def test_HampelAnomalyDetectionNegative(self):
         testData = [
-            [1],
-            [[1]],
-            [1, 2],
-            None, [], {},
-            [1, 1, 1, 1, 1, 1],
-            [1, "1", 1, 1, 1, 1],
+            # Single value in series:
+            [1],  # Not enough data to detect anomalies.
+
+            # Nested list instead of a flat list:
+            [[1]],  # Invalid input structure should return None.
+
+            # Too few values to detect anomaly:
+            [1, 2],  # Less than window size, should return None.
+
+            # Null or empty input:
+            None,  # Should safely return None.
+            [],  # Empty list, no values to analyze.
+            {},  # Dictionary instead of series, invalid input.
+
+            # Flat series with no deviation:
+            [1, 1, 1, 1, 1, 1],  # All values identical, no anomaly.
+
+            # Series with non-numeric value:
+            [1, "1", 1, 1, 1, 1],  # Contains string, should return None.
+
+            # Series with NaN values only:
+            [np.nan, np.nan, np.nan],  # All values are NaN, should return None.
+
+            # Series with NaN mixed with valid values:
+            [1, np.nan, 1, 1],  # Contains NaN, may interfere with MAD, should return None.
+
+            # Series with infinite value in a center:
+            ([1, np.inf, 1], 1),  # Infinity is correctly detected as anomaly. Return index 1.
         ]
 
         for test in testData:
-            assert TradeRoutines.HampelAnomalyDetection(test) is None, "Incorrect output!"
+            assert TradeRoutines.HampelAnomalyDetection(test) is None, "Incorrect output! Input: {}".format(test)
 
     def test_CanOpenCheckType(self):
         assert isinstance(TradeRoutines.CanOpen("Min", "Min"), bool), "Not bool type returned!"

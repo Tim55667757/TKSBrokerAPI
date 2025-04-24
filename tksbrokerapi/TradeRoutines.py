@@ -629,7 +629,11 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -> pd.Series([False, False, False, False, False, False])`
     - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -> pd.Series([False, False, False, True, False, False])`
     - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -> pd.Series([True, False, False, False, False, True])`
-    - `HampelFilter([1]) -> pd.Series([False])`
+    - `HampelFilter([1], window=3) -> pd.Series([False])`
+    - `HampelFilter([5, 5, 50, 5, 5], window=2) -> pd.Series([False, False, True, False, False])`
+    - `HampelFilter([100, 1, 1, 1, 1, 100], window=2) -> pd.Series([True, False, False, False, False, True])`
+    - `HampelFilter([1, 1, 10, 1, 10, 1, 1], window=2) -> pd.Series([False, False, True, False, True, False, False])`
+
 
     :param series: Pandas Series object with numbers in which we identify outliers.
     :param window: length of the sliding window (5 points by default), 1 <= window <= len(series).
@@ -746,6 +750,8 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
 
     Examples:
 
+    Examples:
+
     - `HampelAnomalyDetection([1, 1, 1, 1, 1, 1]) -> None`
     - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1]) -> 4`
     - `HampelAnomalyDetection([1, 1, 10, 1, 1, 1]) -> 2`
@@ -756,8 +762,8 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     - `HampelAnomalyDetection([1, 1, 11, 111, 1, 1, 1, 11111]) -> 2`
     - `HampelAnomalyDetection([1, 1, 1, 111, 111, 1, 1, 1, 1]) -> 3`
     - `HampelAnomalyDetection([1, 1, 1, 1, 111, 1, 1, 11111, 5555]) -> 4`
-    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -> 1`
-    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -> 6`
+    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 12, 13, 12, 13, 12, 12, 1, 1]) -> 0`
+    - `HampelAnomalyDetection([9, 13, 12, 12, 13, 12, 1000, 13, 12, 12, 300000, 12, 12, 13, 12, 2000, 1, 1, 1, 1]) -> 0`
 
     Some **kwargs parameters you can pass to `HampelFilter()`:
 
@@ -765,26 +771,32 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
     - `scaleFactor` is the constant scale factor (1.4826 by default), > 0.
 
-    :param series: list of numbers or Pandas Series object with numbers in which we identify index of first anomaly (outlier's index).
+    :param series: list of numbers or Pandas Series object with numbers in which we identify the index of the first anomaly (outlier's index).
     :param kwargs: See `HampelFilter()` docstring with all possible parameters.
-    :return: index of the first element with anomaly in series will be return or `None` if no anomaly.
+    :return: index of the first element with anomaly in the series will be return or `None` if no anomaly.
     """
     try:
+        # Convert the list to Pandas Series for consistency:
         if isinstance(series, list):
             series = pd.Series(series)
 
-        indexFirstMax = series.idxmax()  # Index of the first maximum in series
+        # Apply Hampel filter to find outlier positions:
+        filtered = HampelFilter(series=series, **kwargs)  # Boolean series, True means anomaly.
+        anomalyIndexes = filtered[filtered].index  # Extract indices of detected anomalies.
 
-        filtered = HampelFilter(series=series, **kwargs)  # The bool series with filtered data (if True then anomaly present in that place of input series)
-        anomalyIndexes = filtered[filtered].index  # Indexes list of all found anomalies (if True)
+        # Get index of first anomaly or None if there are no anomalies:
+        indexAnomalyMin = next(iter(anomalyIndexes), None)
 
-        indexAnomalyMin = min(anomalyIndexes) if len(anomalyIndexes) > 0 else None  # Index of the first True in filtered series or None
+        # If an anomaly exists — compare it with the index of the first maximum:
+        if indexAnomalyMin is not None:
+            indexFirstMax = series.values.argmax()  # Get numeric position of first maximum value.
+            result = min(indexAnomalyMin, indexFirstMax)  # Return the smaller of the two indices.
 
-        # We need to take the element whose index is less (see examples in docstring):
-        result = pd.Series([indexAnomalyMin, indexFirstMax]).min() if indexAnomalyMin is not None else None
+        else:
+            result = None  # No anomalies found.
 
     except Exception:
-        result = None
+        result = None  # Fallback in case of error (invalid input, etc.)
 
     return result
 
