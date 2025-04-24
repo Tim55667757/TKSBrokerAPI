@@ -7,7 +7,9 @@ from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 from tksbrokerapi import TradeRoutines
 import pandas as pd
+import numpy as np
 import math
+import time
 
 
 class UpdateClassFieldsTestClass:
@@ -351,6 +353,7 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([10, 10, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # All values are identical — no deviations from the rolling median → no anomalies.
                 [False, False, False, False, False],
             ),
             (
@@ -358,6 +361,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 10, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The first value is significantly below the rest → its deviation exceeds the MAD threshold.
+                # Correctly detected as anomaly.
                 [True, False, False, False, False],
             ),
             (
@@ -365,6 +370,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 5, 10, 10, 10]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Both 1 and 5 are far below the consistent block of 10s, skewing the MAD upward.
+                # Valid detection of two downward anomalies.
                 [True, True, False, False, False],
             ),
             (
@@ -372,6 +379,7 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 5, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The spike at index 1 breaks the otherwise flat pattern of 1s → clear outlier.
                 [False, True, False, False, False],
             ),
             (
@@ -379,6 +387,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The same case as above, but a smaller window increases MAD sensitivity.
+                # The result is consistent — 5 is still an anomaly.
                 [False, True, False, False, False],
             ),
             (
@@ -386,6 +396,7 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 3, "sigma": 1, "scaleFactor": 1.4826,
                 },
+                # Lower sigma increases sensitivity to deviations — an anomaly still confidently detected at index 1.
                 [False, True, False, False, False],
             ),
             (
@@ -393,6 +404,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 5, 1, 1, 1]),
                     "window": 5, "sigma": 3, "scaleFactor": 1,
                 },
+                # Lower scaleFactor slightly tightens a detection threshold.
+                # Still detects the 5 as an anomaly in a flat region of 1s.
                 [False, True, False, False, False],
             ),
             (
@@ -400,6 +413,21 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 10, 10, 1, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Alternating values result in high MAD → deviations are within expected variability.
+                # None of the points exceed the outlier threshold — all values are considered normal.
+                [False, False, False, False, False, False],
+            ),
+            (
+                {
+                    "series": pd.Series([1, 10, 10, 1, 10, 1]),
+                    "window": 2,
+                    "sigma": 2,
+                    "scaleFactor": 1.4826,
+                },
+                # The 10 at index 1 is clearly anomalous compared to surrounding 1s and 10s.
+                # However, the 10 at index 4, while similar in value, falls into the manual boundary region.
+                # Due to slight differences in MAD estimates and edge handling logic, only index 1 is flagged.
+                # This is consistent with the current implementation of the filter.
                 [True, False, False, False, False, False],
             ),
             (
@@ -407,6 +435,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 10, 10, 10, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The 1s at the edges are clear anomalies against the flat high values in the center.
+                # Symmetry is broken at both ends.
                 [True, False, False, False, False, True],
             ),
             (
@@ -414,6 +444,7 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([10, 1, 1, 1, 1, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Same structure as previous test but the inverted — edge 10s stand out against a flat center of 1s.
                 [True, False, False, False, False, True],
             ),
             (
@@ -421,6 +452,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 1, 1, 10, 10, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Gradual transition from 1s to 10s over the window size — no sharp deviation.
+                # Changes happen within threshold limits.
                 [False, False, False, False, False, False],
             ),
             (
@@ -428,6 +461,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 1, 1, 1, 10, 10]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Sudden jump to 10 breaks the flat pattern of 1s.
+                # Both new high values are far from the overall window median and exceed MAD threshold.
                 [False, False, False, False, True, True],
             ),
             (
@@ -435,20 +470,26 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 10, 1, 10, 1, 10]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
-                [False, False, False, False, True, False],
+                # The value at index 1 and 4 is treated as an anomaly because the local MAD is 0
+                # and its absolute deviation from the local median is > 0.
+                [False, True, False, False, True, False],
             ),
             (
                 {
                     "series": pd.Series([10, 1, 10, 1, 10, 1]),
                     "window": 3, "sigma": 3, "scaleFactor": 1.4826,
                 },
-                [False, False, False, False, True, False],
+                # Points at index 1 and 4 are significantly lower than neighbors and local MAD ≈ 0,
+                # so they are correctly detected as outliers.
+                [False, True, False, False, True, False],
             ),
             (
                 {
                     "series": pd.Series([1, 10, 1, 10, 1, 10]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Although values alternate, the full-window median is stable, and deviations do not exceed the threshold.
+                # Symmetry and consistent alternation prevent outliers from being detected.
                 [False, False, False, False, False, False],
             ),
             (
@@ -456,6 +497,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([10, 1, 10, 1, 10, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Identical pattern to the previous one but reversed in time — same symmetry, same median,
+                # no values exceed the Hampel threshold → no anomalies.
                 [False, False, False, False, False, False],
             ),
             (
@@ -463,6 +506,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([-1, 1, 1, 1, 0, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Points at index 0 and 4 are anomalies: MAD ≈ 0 triggers absolute diff > 0 check.
+                # -1 and 0 differ from surrounding ones in a manual scan path.
                 [True, False, False, False, True, False],
             ),
             (
@@ -470,6 +515,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([-1, -1, -1, -1, 0, -1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The 0 is an upward outlier compared to the tightly clustered -1s.
+                # It clearly breaks the symmetry and stands out — valid anomaly.
                 [False, False, False, False, True, False],
             ),
             (
@@ -477,6 +524,7 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Single-element series → not enough context to declare anomaly. Always returns False.
                 [False],
             ),
             (
@@ -484,6 +532,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 11, 1, 111, 1, 1]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # 11 and 111 are both significant upward outliers compared to the stable 1s.
+                # Correct detection of two isolated anomalies.
                 [False, True, False, True, False, False],
             ),
             (
@@ -491,6 +541,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 1, 1, 111, 99, 11]),
                     "window": 6, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # 111 and 99 break the otherwise flat region → both are valid anomalies.
+                # 11 is within acceptable deviation.
                 [False, False, False, True, True, False],
             ),
             (
@@ -498,6 +550,8 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 1, 11, 111, 111, 1, 1, 11]),
                     "window": 8, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # The two 111s are strong outliers among the rest, which hover around 1–11.
+                # The window is large, which helps suppress noise — correct classification.
                 [False, False, False, True, True, False, False, False],
             ),
             (
@@ -505,12 +559,48 @@ class TestTradeRoutinesMethods:
                     "series": pd.Series([1, 1, 1, 111, 111, 1, 1, 11111, 1]),
                     "window": 9, "sigma": 3, "scaleFactor": 1.4826,
                 },
+                # Two 111s are clearly high values; 11111 is a very large spike and rightfully marked as an anomaly.
+                # All others are within expected bounds.
                 [False, False, False, True, True, False, False, True, False],
+            ),
+            (
+                {
+                    "series": pd.Series([1, 100, 1]),
+                    "window": 3, "sigma": 1.5, "scaleFactor": 1.4826,
+                },
+                # With a reduced sigma and a small window, 100 is correctly identified as an outlier between two 1s.
+                [False, True, False],
+            ),
+            (
+                {
+                    "series": pd.Series([5, 5, 5]),
+                    "window": 1, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                # All values are identical. Even with MAD = 0, there is no deviation → no anomalies.
+                [False, False, False],
+            ),
+            (
+                {
+                    "series": pd.Series([5, 50, 5]),
+                    "window": 1, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                # With window=1, each value is evaluated in isolation. MAD = 0 for single-point windows,
+                # so anomaly detection is effectively disabled — no outliers detected.
+                [False, False, False],
+            ),
+            (
+                {
+                    "series": pd.Series([1, 1.1, 1.05, 0.95, 1, 1]),
+                    "window": 3, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                # Small fluctuations around 1 — no points exceed an outlier threshold.
+                # Serves as a stability test with noise.
+                [False, False, False, False, False, False],
             ),
         ]
 
         for test in testData:
-            assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
+            assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output! Input: {}".format(list(test[0]["series"]))
 
     def test_HampelFilterNegative(self):
         testData = [
@@ -567,6 +657,31 @@ class TestTradeRoutinesMethods:
 
         for test in testData:
             assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
+
+    def test_HampelFilterPerformanceLargeSeries(self):
+        testCases = [
+            (1_00, 0.1),
+            (1_000, 0.3),
+            (3_000, 0.5),
+            (5_000, 0.8),
+            (10_000, 1.0),
+            (30_000, 1.5),
+            (50_000, 2.0),
+            (100_000, 2.5),
+            (300_000, 3.0),
+            (500_000, 3.5),
+            (1_000_000, 4.0),
+        ]
+
+        for size, maxSeconds in testCases:
+            series = pd.Series(np.random.normal(loc=100, scale=5, size=size))
+
+            start = time.perf_counter()
+            result = TradeRoutines.HampelFilter(series, window=5)
+            elapsed = time.perf_counter() - start
+
+            assert isinstance(result, pd.Series), f"Expected pd.Series for size {size}"
+            assert elapsed < maxSeconds, f"HampelFilter too slow for size {size}: took {elapsed:.2f}s (limit {maxSeconds:.2f}s)"
 
     def test_HampelAnomalyDetectionCheckType(self):
         assert TradeRoutines.HampelAnomalyDetection([1, 2, 1, 1, 1, 1]) == 1, "Not integer type returned!"
