@@ -613,6 +613,24 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
 
     What is an anomaly: `A = {a | |a − Median (Xi)| > s ∙ k ∙ MAD(Xi)}`
 
+    References:
+
+    1. Gilmullin T.M., Gilmullin M.F. How to quickly find anomalies in number series using the Hampel method. December 27, 2022.
+       - Link (EN): https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html
+       - Link (RU): https://forworktests.blogspot.com/2022/12/blog-post.html
+    2. Lewinson Eryk. Outlier Detection with Hampel Filter. September 26, 2019.
+       - Link: https://towardsdatascience.com/outlier-detection-with-hampel-filter-85ddf523c73d
+    3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
+       - Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
+    4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.
+
+    Examples:
+
+    - `HampelFilter([1, 1, 1, 1, 1, 1], window=3) -> pd.Series([False, False, False, False, False, False])`
+    - `HampelFilter([1, 1, 1, 2, 1, 1], window=3) -> pd.Series([False, False, False, True, False, False])`
+    - `HampelFilter([0, 1, 1, 1, 1, 0], window=3) -> pd.Series([True, False, False, False, False, True])`
+    - `HampelFilter([1]) -> pd.Series([False])`
+
     :param series: Pandas Series object with numbers in which we identify outliers.
     :param window: length of the sliding window (5 points by default), 1 <= window <= len(series).
     :param sigma: sigma is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
