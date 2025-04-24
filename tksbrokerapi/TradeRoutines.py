@@ -148,6 +148,7 @@ def CanOpen(fuzzyRisk: str, fuzzyReach: str) -> bool:
 
     :param fuzzyRisk: Fuzzy Risk level name.
     :param fuzzyReach: Fuzzy Reach level name.
+
     :return: Bool. If `True`, then possible to open position.
     """
     if fuzzyRisk not in FUZZY_LEVELS:
@@ -171,6 +172,7 @@ def CanClose(fuzzyRisk: str, fuzzyReach: str) -> bool:
 
     :param fuzzyRisk: Fuzzy Risk level name.
     :param fuzzyReach: Fuzzy Reach level name.
+
     :return: Bool. If `True`, then possible to close position.
     """
     if fuzzyRisk not in FUZZY_LEVELS:
@@ -206,6 +208,7 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
     :param curPrice: Current actual price (usually the latest close price).
     :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
     :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
+
     :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "High", "riskPercent": 66.67}`.
     """
     if pHighest < pLowest:
@@ -239,6 +242,7 @@ def RiskShort(curPrice: float, pHighest: float, pLowest: float) -> dict[str, flo
     :param curPrice: Current actual price (usually the latest close price).
     :param pHighest: The highest close price in forecasted movements of candles chain or prognosis of the highest diapason border of price movement.
     :param pLowest: The lowest close price in forecasted movements of candles chain or prognosis of the lowest diapason border of price movement.
+
     :return: Dictionary with Fuzzy Risk level and Risk percents, e.g. `{"riskFuzzy": "Low", "riskPercent": 20.12}`.
     """
     if pHighest < pLowest:
@@ -298,6 +302,7 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
                      in OHLCV-formatted candles chain. The forecasted prices are indexed starting from zero,
                      this is the first candle of the forecast. The last price of the forecast is the "farthest"
                      relative to the current actual close price.
+
     :return: Dictionary with Fuzzy Reach level and Reach percents for the highest close price, e.g. `{"reachFuzzy": "Low", "reachPercent": 20.12}`.
     """
     count = pClosing.count()  # Length of candles chain
@@ -338,6 +343,7 @@ def ReachShort(pClosing: pd.Series) -> dict[str, float]:
                      this is the first candle of the forecast. The last price of the forecast is the "farthest"
                      relative to the current actual close price. **Recommendation.** If you have no prognosis chain
                      of candles just use `"Med"` Fuzzy Reach level.
+
     :return: Dictionary with Fuzzy Reach level and Reach percents for the lowest close price, e.g. `{"reachFuzzy": "High", "reachPercent": 66.67}`.
     """
     count = pClosing.count()  # Length of candles chain
@@ -399,6 +405,7 @@ def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%
     :param end: end day in format defined by `userFormat`.
     :param userFormat: user-friendly date format, e.g. `"%Y-%m-%d"`.
     :param outputFormat: output string date format.
+
     :return: tuple with 2 strings `("start", "end")`. Example of return is `("2022-06-01T00:00:00Z", "2022-06-20T23:59:59Z")`.
              Second string is the end of the last day.
              Tuple ("", "") returned if errors occurred.
@@ -457,6 +464,7 @@ def NanoToFloat(units: str, nano: int) -> float:
 
     :param units: integer string or integer parameter that represents the integer part of number
     :param nano: integer string or integer parameter that represents the fractional part of number
+
     :return: float view of number. If an error occurred, then returns `0.`.
     """
     try:
@@ -475,6 +483,7 @@ def FloatToNano(number: float) -> dict[str, int]:
     - `FloatToNano(number=0.05) -> {"units": "0", "nano": 50000000}`
 
     :param number: float number.
+
     :return: nano-type view of number: `{"units": "string", "nano": integer}`.
              If an error occurred, then returns `{"units": "0", "nano": 0}`.
     """
@@ -535,6 +544,7 @@ def SeparateByEqualParts(elements: list[Any], parts: int = 2, union: bool = True
     :param elements: list of objects.
     :param parts: int, numbers of equal parts of objects.
     :param union: bool, if True and if the remainder of the separating not empty, then remainder part union with the last part.
+
     :return: list of lists with equal parts of objects. If an error occurred, then returns empty list `[]`.
     """
     try:
@@ -584,6 +594,7 @@ def CalculateLotsForDeal(currentPrice: float, maxCost: float, volumeInLot: int =
     :param currentPrice: the current price of instrument, >= 0.
     :param maxCost: the maximum cost of all lots of instrument in portfolio, >= 0.
     :param volumeInLot: volumes of instrument in one lot, >= 1.
+
     :return: integer number of lots, >= 0.
     """
     try:
@@ -773,6 +784,7 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
 
     :param series: list of numbers or Pandas Series object with numbers in which we identify the index of the first anomaly (outlier's index).
     :param kwargs: See `HampelFilter()` docstring with all possible parameters.
+
     :return: index of the first element with anomaly in the series will be return or `None` if no anomaly.
     """
     try:
@@ -825,6 +837,7 @@ def CalculateAdaptiveCacheReserve(
     - `amplificationSensitivity` controls how aggressively the amplification grows with each additional drawdown increase.
 
     Example:
+
     With amplificationFactor = 1.25 and amplificationSensitivity = 0.1, if the drawdown increases for 3 days:
         amplification = 1.25 × exp(0.3) ≈ 1.25 × 1.3499 ≈ 1.687
 
