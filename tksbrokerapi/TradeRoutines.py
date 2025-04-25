@@ -91,6 +91,7 @@ Here in table `T` mean `True`, `F` mean `False`. 1st position is for Opening rul
 These rules are defined as transposed matrix constants `OPENING_RULES` and `CLOSING_RULES`.
 
 See also:
+  - An Engineering View of Trading: How a Trading Robot's Signal Algorithm Works: [RU](https://teletype.in/@tgilmullin/trading-algorithm).
   - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
   - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
   - `CLOSING_RULES` constant, `CanOpen()` and `CanClose()` methods.
@@ -199,6 +200,7 @@ def RiskLong(curPrice: float, pHighest: float, pLowest: float) -> dict[str, floa
       - `Fuzzy()` is the fuzzyfication function that convert real values to its fuzzy representation.
 
     See also:
+    - An Engineering View of Trading: How a Trading Robot's Signal Algorithm Works: [RU](https://teletype.in/@tgilmullin/trading-algorithm).
     - [FuzzyRoutines](https://github.com/devopshq/FuzzyRoutines) library.
     - How to work with Universal Fuzzy Scales: [EN](https://github.com/devopshq/FuzzyRoutines#Chapter_2_4), [RU](https://math-n-algo.blogspot.com/2014/08/FuzzyClassificator.html#chapter_3).
     - `RiskShort()` method,
@@ -292,6 +294,7 @@ def ReachLong(pClosing: pd.Series) -> dict[str, float]:
     **Recommendation.** If you have no prognosis chain of candles just use `"Med"` Fuzzy Reach level.
 
     See also:
+    - An Engineering View of Trading: How a Trading Robot's Signal Algorithm Works: [RU](https://teletype.in/@tgilmullin/trading-algorithm).
     - `OPENING_RULES` and `CLOSING_RULES` constants,
     - `CanOpen()` and `CanClose()` methods,
     - `FUZZY_LEVELS` and `FUZZY_SCALE` constants,
@@ -937,9 +940,9 @@ def HampelCleaner(
       Applies smooth correction while preserving a general shape; works well for low-volatility assets.
 
     :param series: input time series as a Pandas Series of floats.
-    :param window: sliding window size used in Hampel filtering (default: 5).
-    :param sigma: threshold multiplier for anomaly detection (default: 3).
-    :param scaleFactor: scaling factor for the MAD (default: 1.4826, optimal for Gaussian data).
+    :param window: sliding window size used in Hampel filtering (`5` by default).
+    :param sigma: threshold multiplier for anomaly detection (`3` by default).
+    :param scaleFactor: scaling factor for the MAD (`1.4826` by default, optimal for Gaussian data).
     :param strategy: strategy used to replace detected outliers (see the list above).
     :param fallbackValue: constantly used as a fallback in "const" strategy or when neighbors are missing.
     :param medianWindow: window size used for the "medianWindow" strategy.
@@ -1099,6 +1102,8 @@ def EstimateTargetReachability(
     horizonLowTF: int,
     horizonHighTF: int,
     ddof: int = 2,
+    cleanWithHampel: bool = False,
+    **kwargs
 ) -> tuple[float, str]:
     """
     Estimates the probability of reaching a target price using two price series from different timeframes.
@@ -1120,8 +1125,28 @@ def EstimateTargetReachability(
     :param horizonLowTF: The forecast horizon in candles for the lower timeframe.
     :param horizonHighTF: The forecast horizon in candles for the higher timeframe.
     :param ddof: Degrees of freedom for volatility estimation (use 2 as per article).
+    :param cleanWithHampel: If `True`, applies outlier cleaning to both input series before computing log returns
+                            using `HampelCleaner()` (`False` by default). Recommended for real market data where spikes,
+                            anomalies, or gaps may distort volatility and probability estimates.
+    :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
 
-    :return: A tuple (pIntegral [0.0–1.0], fIntegral fuzzy level).
+        Supported options (with default values):
+
+        - `window` (5): Sliding window size for `HampelCleaner()`.
+        - `sigma` (3): Threshold multiplier for anomaly detection.
+        - `scaleFactor` (`1.4826`): Scaling factor for MAD.
+        - `strategy` ("neighborAvg"): Outlier replacement strategy:
+            • `"neighborAvg"` – average of adjacent neighbors. Good for a smooth, low-noise series.
+            • `"prev"` – previous valid value. Preserves a trend direction.
+            • `"const"` – constant fallback. Use for API glitches or corrupted data.
+            • `"medianWindow"` – local median window. **Best default for real-world candles.**
+            • `"rollingMean"` – centered mean smoothing for low-volatility series.
+        - `fallbackValue` (`0.0`): Constant value for use in `"const"` strategy or edge cases.
+        - `medianWindow` (`3`): Window size for `"medianWindow"` strategy.
+
+    :return: A tuple `(pIntegral, fIntegral)`, where:
+        - `pIntegral` is a float in range `[0.0, 1.0]` — estimated probability of reaching the target.
+        - `fIntegral` is a fuzzy label: one of `["Min", "Low", "Med", "High", "Max"]`.
     """
     try:
         # Convert lists to Pandas Series if needed:
@@ -1138,6 +1163,11 @@ def EstimateTargetReachability(
             currentPrice <= 0 or targetPrice <= 0
         ):
             return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
+
+        # Optional Hampel-based outlier cleaning before log-return computation:
+        if cleanWithHampel:
+            seriesLowTF = HampelCleaner(seriesLowTF, **kwargs)
+            seriesHighTF = HampelCleaner(seriesHighTF, **kwargs)
 
         # --- Formulas (2)–(3): Compute log returns and mean returns:
         rLow = LogReturns(seriesLowTF)
