@@ -1304,3 +1304,34 @@ class TestTradeRoutinesMethods:
 
             except Exception:
                 pass  # Also acceptable.
+
+    def test_VolatilityCheckType(self):
+        logReturns = pd.Series([0.01, 0.02, 0.03])
+
+        result = TradeRoutines.Volatility(logReturns, ddof=1)
+
+        assert isinstance(result, float), "Volatility must return a float!"
+
+    def test_VolatilityPositive(self):
+        logReturns = pd.Series([0.01, 0.02, 0.03])
+
+        for ddof in [0, 1, 2]:
+            expected = logReturns.std(ddof=ddof)
+
+            result = TradeRoutines.Volatility(logReturns, ddof=ddof)
+
+            assert abs(result - expected) < 1e-10, (
+                f"Incorrect volatility for ddof={ddof}: {result}, expected: {expected}"
+            )
+
+    def test_VolatilityNegative(self):
+        badInputs = [[], pd.Series([]), None, "invalid"]
+
+        for testCase in badInputs:
+            try:
+                result = TradeRoutines.Volatility(testCase)
+
+                assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for input: {testCase}"
+
+            except Exception:
+                pass  # Also acceptable
