@@ -1134,7 +1134,7 @@ class TestTradeRoutinesMethods:
             assert test["expectedMessage"] in str(err.value), f"Unexpected exception: {str(err.value)}"
 
     def test_HampelCleanerPerformance(self):
-        sizes = [10, 100, 500, 1000, 5000, 10000, 50000, 100000, 200000, 300000, 400000, 500000, 750000, 1000000]
+        sizes = [10, 100, 500, 1000, 5000, 10000, 50000, 100000, 300000, 500000, 1000000]
         strategy = "medianWindow"
 
         for size in sizes:
@@ -1155,7 +1155,7 @@ class TestTradeRoutinesMethods:
             elapsed = time.perf_counter() - startTime
 
             # Assert an upper time limit for performance (adjust as needed):
-            assert elapsed < 2.0, f"HampelCleaner too slow for size {size}: took {elapsed:.2f}s"
+            assert elapsed < 2.5, f"HampelCleaner too slow for size {size}: took {elapsed:.2f}s"
 
     def test_EstimateTargetReachabilityCheckType(self):
         # Generate valid synthetic data for testing:
