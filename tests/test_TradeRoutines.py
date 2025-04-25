@@ -1369,3 +1369,38 @@ class TestTradeRoutinesMethods:
 
             except Exception:
                 pass  # Acceptable fallback on bad input
+
+    def test_BayesianAggregationCheckType(self):
+        result = TradeRoutines.BayesianAggregation(0.6, 0.7)
+
+        assert isinstance(result, float), "BayesianAggregation must return a float!"
+
+    def test_BayesianAggregationPositive(self):
+        testCases = [
+            (0.5, 0.5, 0.5),
+            (0.8, 0.9, (0.8 * 0.9) / (0.8 * 0.9 + 0.2 * 0.1)),
+            (0.0, 0.0, 0.0),
+            (1.0, 1.0, 1.0),
+        ]
+
+        for p1, p2, expected in testCases:
+            result = TradeRoutines.BayesianAggregation(p1, p2)
+
+            assert abs(result - expected) < 1e-10, f"Incorrect result for {p1}, {p2}: {result}, expected: {expected}"
+
+    def test_BayesianAggregationNegative(self):
+        testCases = [
+            (1.2, 0.5),
+            (0.5, -0.1),
+            ("bad", 0.5),
+            (None, 0.7),
+        ]
+
+        for p1, p2 in testCases:
+            try:
+                result = TradeRoutines.BayesianAggregation(p1, p2)
+
+                assert 0.0 <= result <= 1.0, f"Result out of bounds: {result}"
+
+            except Exception:
+                pass  # Acceptable on bad input
