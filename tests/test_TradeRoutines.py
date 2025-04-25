@@ -665,7 +665,7 @@ class TestTradeRoutinesMethods:
         for test in testData:
             assert list(TradeRoutines.HampelFilter(**test[0])) == test[1], "Incorrect output!"
 
-    def test_HampelFilterPerformanceLargeSeries(self):
+    def test_HampelFilterPerformance(self):
         testCases = [
             (1_00, 0.1),
             (1_000, 0.3),
@@ -1133,10 +1133,31 @@ class TestTradeRoutinesMethods:
 
             assert test["expectedMessage"] in str(err.value), f"Unexpected exception: {str(err.value)}"
 
+    def test_HampelCleanerPerformance(self):
+        sizes = [10, 100, 500, 1000, 5000, 10000, 50000, 100000, 200000, 300000, 400000, 500000, 750000, 1000000]
+        strategy = "medianWindow"
+
+        for size in sizes:
+            series = self.GenerateSeries(size)
+
+            startTime = time.perf_counter()
+
+            _ = TradeRoutines.HampelCleaner(
+                series,
+                window=5,
+                sigma=3,
+                scaleFactor=1.4826,
+                strategy=strategy,
+                fallbackValue=0.0,
+                medianWindow=3
+            )
+
+            elapsed = time.perf_counter() - startTime
+
+            # Assert an upper time limit for performance (adjust as needed):
+            assert elapsed < 2.0, f"HampelCleaner too slow for size {size}: took {elapsed:.2f}s"
+
     def test_EstimateTargetReachabilityCheckType(self):
-        """
-        Check that EstimateTargetReachability returns correct types.
-        """
         # Generate valid synthetic data for testing:
         seriesLowTF = self.GenerateSeries(200)
         seriesHighTF = self.GenerateSeries(60)
@@ -1154,10 +1175,6 @@ class TestTradeRoutinesMethods:
         assert fIntegral in TradeRoutines.FUZZY_LEVELS, "Returned fuzzy value is not valid!"
 
     def test_EstimateTargetReachabilityPositive(self):
-        """
-        Positive test-cases for EstimateTargetReachability function.
-        Checks expected behavior with realistic data.
-        """
         testCases = [
             (self.GenerateSeries(150), self.GenerateSeries(40), 12, 3),
             (self.GenerateSeries(300), self.GenerateSeries(60), 20, 5),
@@ -1180,10 +1197,6 @@ class TestTradeRoutinesMethods:
             assert fIntegral in TradeRoutines.FUZZY_LEVELS, f"Invalid fuzzy label: {fIntegral}"
 
     def test_EstimateTargetReachabilityNegative(self):
-        """
-        Negative test-cases for EstimateTargetReachability function.
-        Ensures robust fallback handling of invalid inputs.
-        """
         validSeries = self.GenerateSeries(100)
         emptySeries = pd.Series([], dtype=float)
 
@@ -1209,10 +1222,6 @@ class TestTradeRoutinesMethods:
             )
 
     def test_EstimateTargetReachabilityPerformance(self):
-        """
-        Performance test for EstimateTargetReachability function.
-        Ensures it meets expected execution time limits.
-        """
         sizes = [1000, 5000, 10000, 50000]
 
         for size in sizes:

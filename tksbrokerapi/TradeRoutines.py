@@ -949,31 +949,41 @@ def HampelCleaner(
 
     :return: cleaned time series as a Pandas Series with outliers replaced.
     """
-    allowedStrategies = ["neighborAvg", "prev", "const", "medianWindow", "rollingMean"]
+    allowedStrategies = {"neighborAvg", "prev", "const", "medianWindow", "rollingMean"}
 
     if strategy not in allowedStrategies:
         raise ValueError(f"Unknown strategy '{strategy}'. Available options: {allowedStrategies}")
 
+    # Step 1: Detect outliers using the Hampel filter:
     outlierMask = HampelFilter(series, window, sigma, scaleFactor)
 
-    cleaned = series.copy()
+    if not outlierMask.any():
+        return series.copy()  # No anomalies detected — return untouched copy.
 
-    indexToPosition = {idx: pos for pos, idx in enumerate(series.index)}
+    # Step 2: Convert series and mask to NumPy arrays for faster access:
+    seriesValues = series.to_numpy(copy=True)
+    outlierMaskArray = outlierMask.to_numpy()
+    n = len(seriesValues)
+    result = seriesValues.copy()
 
-    for idx, isOutlier in outlierMask.items():
-        if not isOutlier:
-            continue
+    # Helper to compute window boundaries for rolling strategies:
+    def GetBounds(pos, w):
+        return max(0, pos - w), min(n, pos + w + 1)
 
-        position = indexToPosition[idx]
+    # Step 3: Process each outlier individually:
+    outlierIndices = np.where(outlierMaskArray)[0]
 
-        left = series.iloc[position - 1] if position - 1 >= 0 else None
-        right = series.iloc[position + 1] if position + 1 < len(series) else None
+    for i in outlierIndices:
+        replacement = fallbackValue  # Default fallback.
 
-        replacement = fallbackValue
+        # Local neighbors for use in neighborAvg strategy:
+        left = seriesValues[i - 1] if i - 1 >= 0 else None
+        right = seriesValues[i + 1] if i + 1 < n else None
 
         if strategy == "neighborAvg":
+            # Average of adjacent neighbors (if available):
             if left is not None and right is not None:
-                replacement = (left + right) / 2
+                replacement = (left + right) / 2.0
 
             elif left is not None:
                 replacement = left
@@ -981,40 +991,38 @@ def HampelCleaner(
             elif right is not None:
                 replacement = right
 
-            else:
-                replacement = fallbackValue
-
         elif strategy == "prev":
-            replacement = fallbackValue
-
-            for j in range(position - 1, -1, -1):
-                candidateIndex = series.index[j]
-
-                if not outlierMask.get(candidateIndex, False):
-                    replacement = series.iloc[j]
+            # Walk back until non-outlier found:
+            for j in range(i - 1, -1, -1):
+                if not outlierMaskArray[j]:
+                    replacement = seriesValues[j]
 
                     break
 
         elif strategy == "const":
+            # Constant fallback (already assigned):
             replacement = fallbackValue
 
         elif strategy == "medianWindow":
-            start = max(0, position - medianWindow)
-            end = min(len(series), position + medianWindow + 1)
-            windowValues = series.iloc[start:end].drop(series.index[position], errors="ignore")
+            # Local median in a window (excluding outlier itself):
+            start, end = GetBounds(i, medianWindow)
+            values = np.delete(seriesValues[start:end], np.where(np.arange(start, end) == i))
 
-            replacement = windowValues.median() if not windowValues.empty else fallbackValue
+            if len(values) > 0:
+                replacement = np.median(values)
 
         elif strategy == "rollingMean":
-            start = max(0, position - window)
-            end = min(len(series), position + window + 1)
-            windowValues = series.iloc[start:end].drop(series.index[position], errors="ignore")
+            # Local mean in the rolling window (excluding outlier itself):
+            start, end = GetBounds(i, window)
+            values = np.delete(seriesValues[start:end], np.where(np.arange(start, end) == i))
 
-            replacement = windowValues.mean() if not windowValues.empty else fallbackValue
+            if len(values) > 0:
+                replacement = np.mean(values)
 
-        cleaned.at[idx] = replacement
+        result[i] = replacement  # Replace outlier value.
 
-    return cleaned
+    # Step 4: Return the cleaned Pandas series with the original index:
+    return pd.Series(result, index=series.index)
 
 
 def LogReturns(series: pd.Series) -> pd.Series:
