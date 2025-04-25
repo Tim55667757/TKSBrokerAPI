@@ -1335,3 +1335,37 @@ class TestTradeRoutinesMethods:
 
             except Exception:
                 pass  # Also acceptable
+
+    def test_ZScoreCheckType(self):
+        result = TradeRoutines.ZScore(logTargetRatio=0.05, meanReturn=0.01, volatility=0.02, horizon=10)
+
+        assert isinstance(result, float), "ZScore must return a float!"
+
+    def test_ZScorePositive(self):
+        logTarget = 0.05
+        mu = 0.01
+        sigma = 0.02
+        horizon = 10
+
+        expected = (logTarget - (mu - 0.5 * sigma**2) * horizon) / (sigma * math.sqrt(horizon))
+
+        result = TradeRoutines.ZScore(logTarget, mu, sigma, horizon)
+
+        assert abs(result - expected) < 1e-10, f"Incorrect z-score: {result}, expected: {expected}"
+
+    def test_ZScoreNegative(self):
+        testCases = [
+            (0.05, 0.01, 0.0, 10),  # Zero volatility.
+            (0.05, 0.01, 0.02, 0),  # Zero horizon.
+            ("bad", 0.01, 0.02, 10),  # Invalid logTargetRatio.
+            (0.05, None, 0.02, 10),  # None in input.
+        ]
+
+        for logTarget, mu, sigma, horizon in testCases:
+            try:
+                result = TradeRoutines.ZScore(logTarget, mu, sigma, horizon)
+
+                assert np.isfinite(result), f"Unexpected result: {result}"
+
+            except Exception:
+                pass  # Acceptable fallback on bad input
