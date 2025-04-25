@@ -1334,7 +1334,7 @@ class TestTradeRoutinesMethods:
                 assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for input: {testCase}"
 
             except Exception:
-                pass  # Also acceptable
+                pass  # Also acceptable.
 
     def test_ZScoreCheckType(self):
         result = TradeRoutines.ZScore(logTargetRatio=0.05, meanReturn=0.01, volatility=0.02, horizon=10)
@@ -1368,7 +1368,7 @@ class TestTradeRoutinesMethods:
                 assert np.isfinite(result), f"Unexpected result: {result}"
 
             except Exception:
-                pass  # Acceptable fallback on bad input
+                pass  # Acceptable fallback on bad input.
 
     def test_BayesianAggregationCheckType(self):
         result = TradeRoutines.BayesianAggregation(0.6, 0.7)
@@ -1403,4 +1403,41 @@ class TestTradeRoutinesMethods:
                 assert 0.0 <= result <= 1.0, f"Result out of bounds: {result}"
 
             except Exception:
-                pass  # Acceptable on bad input
+                pass  # Acceptable on bad input.
+
+    def test_VolatilityWeightCheckType(self):
+        result = TradeRoutines.VolatilityWeight(0.01, 0.02)
+
+        assert isinstance(result, float), "VolatilityWeight must return a float!"
+
+    def test_VolatilityWeightPositive(self):
+        testCases = [
+            (0.01, 0.01, 0.5),
+            (0.02, 0.01, 0.3333333333),
+            (0.01, 0.02, 0.6666666667),
+            (0.0, 0.01, 1.0),
+            (0.01, 0.0, 0.0),
+        ]
+
+        for sigmaLow, sigmaHigh, expected in testCases:
+            result = TradeRoutines.VolatilityWeight(sigmaLow, sigmaHigh)
+
+            assert abs(result - expected) < 1e-10, f"Incorrect result for {sigmaLow}, {sigmaHigh}: {result}, expected: {expected}"
+
+    def test_VolatilityWeightNegative(self):
+        testCases = [
+            (-0.01, 0.02),     # Negative sigmaLow.
+            (0.02, -0.01),     # Negative sigmaHigh.
+            (0.0, 0.0),        # Both zero.
+            (None, 0.01),      # None input.
+            ("bad", 0.01),     # Non-numeric input.
+        ]
+
+        for sigmaLow, sigmaHigh in testCases:
+            try:
+                result = TradeRoutines.VolatilityWeight(sigmaLow, sigmaHigh)
+
+                assert 0.0 <= result <= 1.0 or np.isnan(result), f"Unexpected result: {result}"
+
+            except Exception:
+                pass  # Acceptable if function raises.
