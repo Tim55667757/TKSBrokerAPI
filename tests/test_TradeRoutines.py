@@ -26,6 +26,13 @@ class TestTradeRoutinesMethods:
     def init(self):
         pass
 
+    @staticmethod
+    def GenerateSeries(length=100, start=100.0, mu=0.001, sigma=0.01):
+        """Generates synthetic price series based on log returns."""
+        logReturns = np.random.normal(loc=mu, scale=sigma, size=length)
+
+        return pd.Series(start * np.exp(np.cumsum(logReturns)))
+
     def test_GetDatesAsStringCheckType(self):
         result = TradeRoutines.GetDatesAsString(None, None)
 
@@ -1125,3 +1132,110 @@ class TestTradeRoutinesMethods:
                 )
 
             assert test["expectedMessage"] in str(err.value), f"Unexpected exception: {str(err.value)}"
+
+    def test_EstimateTargetReachabilityCheckType(self):
+        """
+        Check that EstimateTargetReachability returns correct types.
+        """
+        # Generate valid synthetic data for testing:
+        seriesLowTF = self.GenerateSeries(200)
+        seriesHighTF = self.GenerateSeries(60)
+        currentPrice = seriesLowTF.iloc[-1]
+        targetPrice = currentPrice * 1.05
+
+        # Test function call:
+        pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
+            seriesLowTF, seriesHighTF, currentPrice, targetPrice, 12, 4, ddof=2
+        )
+
+        # Check return types:
+        assert isinstance(pIntegral, float), "Returned probability (pIntegral) is not float!"
+        assert isinstance(fIntegral, str), "Returned fuzzy value (fIntegral) is not string!"
+        assert fIntegral in TradeRoutines.FUZZY_LEVELS, "Returned fuzzy value is not valid!"
+
+    def test_EstimateTargetReachabilityPositive(self):
+        """
+        Positive test-cases for EstimateTargetReachability function.
+        Checks expected behavior with realistic data.
+        """
+        testCases = [
+            (self.GenerateSeries(150), self.GenerateSeries(40), 12, 3),
+            (self.GenerateSeries(300), self.GenerateSeries(60), 20, 5),
+            (self.GenerateSeries(1000), self.GenerateSeries(100), 15, 4),
+        ]
+
+        for seriesLowTF, seriesHighTF, horizonLowTF, horizonHighTF in testCases:
+            currentPrice = seriesLowTF.iloc[-1]
+            targetPrice = currentPrice * 1.07
+
+            pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
+                seriesLowTF, seriesHighTF, currentPrice, targetPrice,
+                horizonLowTF, horizonHighTF, ddof=2
+            )
+
+            # Probability must be within [0, 1]:
+            assert 0.0 <= pIntegral <= 1.0, f"Probability out of bounds: {pIntegral}"
+
+            # Fuzzy level must be valid:
+            assert fIntegral in TradeRoutines.FUZZY_LEVELS, f"Invalid fuzzy label: {fIntegral}"
+
+    def test_EstimateTargetReachabilityNegative(self):
+        """
+        Negative test-cases for EstimateTargetReachability function.
+        Ensures robust fallback handling of invalid inputs.
+        """
+        validSeries = self.GenerateSeries(100)
+        emptySeries = pd.Series([], dtype=float)
+
+        # Invalid/edge test cases:
+        testCases = [
+            ([], [], 100, 110, 10, 5),  # Empty lists
+            ([100], [100], 100, 110, 10, 5),  # Single-point series
+            (validSeries, validSeries, 0, 110, 10, 5),  # Zero current price
+            (validSeries, validSeries, 100, -110, 10, 5),  # Negative target price
+            (validSeries, validSeries, 100, 110, 0, 5),  # Zero horizon
+            (emptySeries, emptySeries, 100, 110, 10, 5),  # Empty Pandas series
+        ]
+
+        for seriesLowTF, seriesHighTF, currentPrice, targetPrice, horizonLowTF, horizonHighTF in testCases:
+            pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
+                seriesLowTF, seriesHighTF, currentPrice, targetPrice,
+                horizonLowTF, horizonHighTF, ddof=2
+            )
+
+            # Must fallback to zero probability and "Min":
+            assert pIntegral == 0.0 and fIntegral == "Min", (
+                f"Expected fallback (0.0, 'Min'), got: {pIntegral}, {fIntegral}"
+            )
+
+    def test_EstimateTargetReachabilityPerformance(self):
+        """
+        Performance test for EstimateTargetReachability function.
+        Ensures it meets expected execution time limits.
+        """
+        sizes = [1000, 5000, 10000, 50000]
+
+        for size in sizes:
+            seriesLowTF = self.GenerateSeries(size)
+            seriesHighTF = self.GenerateSeries(size // 5)
+            currentPrice = seriesLowTF.iloc[-1]
+            targetPrice = currentPrice * 1.05
+
+            startTime = time.perf_counter()
+
+            pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
+                seriesLowTF, seriesHighTF, currentPrice, targetPrice,
+                horizonLowTF=12, horizonHighTF=4, ddof=2
+            )
+
+            elapsed = time.perf_counter() - startTime
+
+            print(
+                f"Size: {size:>6}, "
+                f"Time: {elapsed:.5f}s, "
+                f"Prob: {pIntegral:.4f}, "
+                f"Fuzzy: {fIntegral}"
+            )
+
+            # Ensuring reasonable performance (adjust 1.0s limit as needed):
+            assert elapsed < 1.0, f"Performance issue for size {size}: took {elapsed:.2f}s"
