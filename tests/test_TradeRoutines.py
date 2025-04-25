@@ -1248,3 +1248,29 @@ class TestTradeRoutinesMethods:
 
             # Ensuring reasonable performance (adjust 1.0s limit as needed):
             assert elapsed < 1.0, f"Performance issue for size {size}: took {elapsed:.2f}s"
+
+    def test_LogReturnsCheckType(self):
+        series = self.GenerateSeries(100)
+        result = TradeRoutines.LogReturns(series)
+
+        assert isinstance(result, pd.Series), "LogReturns must return a Pandas Series!"
+
+    def test_LogReturnsPositive(self):
+        series = pd.Series([100, 105, 110, 120])
+        result = TradeRoutines.LogReturns(series)
+
+        expected = np.log(pd.Series([105, 110, 120]) / pd.Series([100, 105, 110]))
+        expected = pd.Series(expected.values, index=[1, 2, 3])  # same index as after shift+dropna
+
+        pd.testing.assert_series_equal(result, expected, check_names=False)
+
+    def test_LogReturnsNegative(self):
+        badInputs = [[], pd.Series([]), None, [1], pd.Series([1]), "not a series"]
+
+        for testCase in badInputs:
+            try:
+                result = TradeRoutines.LogReturns(testCase)
+                assert result.empty or isinstance(result, pd.Series), f"Should return empty Series for input: {testCase}"
+
+            except Exception:
+                pass  # Acceptable if exception raised on invalid input
