@@ -1260,7 +1260,7 @@ class TestTradeRoutinesMethods:
         result = TradeRoutines.LogReturns(series)
 
         expected = np.log(pd.Series([105, 110, 120]) / pd.Series([100, 105, 110]))
-        expected = pd.Series(expected.values, index=[1, 2, 3])  # same index as after shift+dropna
+        expected = pd.Series(expected.values, index=[1, 2, 3])  # Ыame index as after shift+dropna.
 
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
@@ -1270,7 +1270,33 @@ class TestTradeRoutinesMethods:
         for testCase in badInputs:
             try:
                 result = TradeRoutines.LogReturns(testCase)
+
                 assert result.empty or isinstance(result, pd.Series), f"Should return empty Series for input: {testCase}"
 
             except Exception:
-                pass  # Acceptable if exception raised on invalid input
+                pass  # Acceptable if exception raised on invalid input.
+
+    def test_MeanReturnCheckType(self):
+        logReturns = pd.Series([0.01, 0.02, 0.03])
+        result = TradeRoutines.MeanReturn(logReturns)
+
+        assert isinstance(result, float), "MeanReturn must return a float!"
+
+    def test_MeanReturnPositive(self):
+        logReturns = pd.Series([0.01, 0.02, 0.03])
+        expected = (0.01 + 0.02 + 0.03) / 3
+
+        result = TradeRoutines.MeanReturn(logReturns)
+
+        assert abs(result - expected) < 1e-10, f"Incorrect mean return: {result}, expected: {expected}"
+
+    def test_MeanReturnNegative(self):
+        badInputs = [[], pd.Series([]), None, "not a series"]
+
+        for testCase in badInputs:
+            try:
+                result = TradeRoutines.MeanReturn(testCase)
+                assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for input: {testCase}"
+
+            except Exception:
+                pass  # Also acceptable.
