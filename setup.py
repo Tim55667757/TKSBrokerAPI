@@ -59,6 +59,7 @@ setup(
     long_description=(
         "![TKSBrokerAPI Logo]"
         "(https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true)\n\n"
+        "*By [Fuzzy Technologies](https://fuzzy-technologies.github.io/)*\n\n\n"
         "🇺🇸 📚 **English Documentation:**\n\n"
         "• Full README with examples: [README_EN.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md)\n\n"
         "• API Reference: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n\n\n"
