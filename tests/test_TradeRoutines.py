@@ -1251,16 +1251,18 @@ class TestTradeRoutinesMethods:
 
     def test_LogReturnsCheckType(self):
         series = self.GenerateSeries(100)
+
         result = TradeRoutines.LogReturns(series)
 
         assert isinstance(result, pd.Series), "LogReturns must return a Pandas Series!"
 
     def test_LogReturnsPositive(self):
         series = pd.Series([100, 105, 110, 120])
-        result = TradeRoutines.LogReturns(series)
 
         expected = np.log(pd.Series([105, 110, 120]) / pd.Series([100, 105, 110]))
-        expected = pd.Series(expected.values, index=[1, 2, 3])  # Ыame index as after shift+dropna.
+        expected = pd.Series(expected.values, index=[1, 2, 3])  # Name index as after shift + dropna.
+
+        result = TradeRoutines.LogReturns(series)
 
         pd.testing.assert_series_equal(result, expected, check_names=False)
 
@@ -1278,6 +1280,7 @@ class TestTradeRoutinesMethods:
 
     def test_MeanReturnCheckType(self):
         logReturns = pd.Series([0.01, 0.02, 0.03])
+
         result = TradeRoutines.MeanReturn(logReturns)
 
         assert isinstance(result, float), "MeanReturn must return a float!"
@@ -1296,6 +1299,7 @@ class TestTradeRoutinesMethods:
         for testCase in badInputs:
             try:
                 result = TradeRoutines.MeanReturn(testCase)
+
                 assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for input: {testCase}"
 
             except Exception:
