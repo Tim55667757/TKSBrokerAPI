@@ -1,7 +1,7 @@
 # TKSBrokerAPI — Release notes
 
-<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
-
+*By [Fuzzy Technologies](https://fuzzy-technologies.github.io/)*
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
 **T**echnologies · **K**nowledge · **S**cience
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
@@ -30,6 +30,7 @@ Release development in progress...
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Methods for calculation Fuzzy Risk and Fuzzy Reach levels were implemented: `RiskLong()`, `RiskShort()`, `ReachLong()` and `ReachShort()`.
 * [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) "Orders Grid Setter" was implemented. This script can be set up a grid of orders (limit or stop, buy or sell) with defined steps and lots for a lot of instruments by its tickers in parallel mode conveyor.
 * [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) CI/CD on GitHub Actions is implemented.
+* [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Target Probability Estimation, the Big Core feature is implemented.
 
 ##### Improvements
 

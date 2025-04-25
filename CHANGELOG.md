@@ -1,7 +1,7 @@
 # TKSBrokerAPI — список релизных изменений
 
-<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
-
+*[Нечёткие технологии](https://fuzzy-technologies.github.io/)*
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
 **T**echnologies · **K**nowledge · **S**cience
 
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
@@ -30,6 +30,7 @@
 * [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Добавлены методы для вычисления уровней нечёткого риска и нечёткой достижимости: `RiskLong()`, `RiskShort()`, `ReachLong()` и `ReachShort()`.
 * [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) Реализован "Установщик сетки ордеров". Этот скрипт позволяет настроить сетку ордеров (лимитных или стоп-ордеров, на покупку или на продажу) с заданными шагами и лотностью для множества инструментов по их тикерам в конвейерном параллельном режиме работы.
 * [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) Реализовано CI/CD на GitHub Actions.
+* [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Реализована оценка вероятности достижимости ценой целевых уровней.
 
 ##### Улучшения
 
