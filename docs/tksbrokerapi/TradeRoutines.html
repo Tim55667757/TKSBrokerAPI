@@ -973,15 +973,15 @@ k — scale factor, depend on distribution (≈1.4826 for normal).</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">HampelAnomalyDetection</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>:</span></span>
+        <span class="name">HampelAnomalyDetection</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">compareWithMax</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>:</span></span>
 
         
     </div>
     <a class="headerlink" href="#HampelAnomalyDetection"></a>
     
-            <div class="docstring"><p>Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list
-or index of the first maximum element in input series if this index less than anomaly element index. If series has
-no anomalies then <code>None</code> will be return.</p>
+            <div class="docstring"><p>Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in an anomaly list
+or index of the first maximum element in the input series if this index is less than anomaly element index.
+If the series has no anomalies, then <code>None</code> will be returned.</p>
 
 <p>Anomaly filter is a function:
 F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.</p>
@@ -999,13 +999,11 @@ F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X �
 <li>Link (EN): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb"><a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb</a></a></li>
 <li>Link (RU): <a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb"><a href="https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb">https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb</a></a></li>
 </ul></li>
-<li>Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
+<li>Simple Python script demonstrates how to use Hampel Filter to determine anomalies in time series:
 <ul>
 <li>Link: <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py"><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py">https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py</a></a></li>
 </ul></li>
 </ol>
-
-<p>Examples:</p>
 
 <p>Examples:</p>
 
@@ -1035,14 +1033,16 @@ F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X �
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>series</strong>:  list of numbers or Pandas Series object with numbers in which we identify the index of the first anomaly (outlier's index).</li>
-<li><strong>kwargs</strong>:  See <code><a href="#HampelFilter">HampelFilter()</a></code> docstring with all possible parameters.</li>
+<li><strong>series</strong>:  List or Pandas Series of numeric values to check for anomalies.</li>
+<li><strong>compareWithMax</strong>:  If <code>True</code> (default), returns min(index of anomaly, index of first maximum).
+If <code>False</code>, returns only the first anomaly index detected by <code><a href="#HampelFilter">HampelFilter</a></code>.</li>
+<li><strong>kwargs</strong>:  Additional parameters are forwarded to <code><a href="#HampelFilter">HampelFilter()</a></code>.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>index of the first element with anomaly in the series will be return or <code>None</code> if no anomaly.</p>
+  <p>Index of the first anomaly (or intersection with maximum, if enabled). Returns <code>None</code> if no anomaly is found.</p>
 </blockquote>
 </div>
 
