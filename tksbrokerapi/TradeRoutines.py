@@ -742,11 +742,15 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     return new
 
 
-def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional[int]:
+def HampelAnomalyDetection(
+    series: Union[list, pd.Series],
+    compareWithMax: bool = True,
+    **kwargs
+) -> Optional[int]:
     """
-    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in anomaly list
-    or index of the first maximum element in input series if this index less than anomaly element index. If series has
-    no anomalies then `None` will be return.
+    Anomaly Detection function using Hampel Filter. This function returns the minimum index of elements in an anomaly list
+    or index of the first maximum element in the input series if this index is less than anomaly element index.
+    If the series has no anomalies, then `None` will be returned.
 
     Anomaly filter is a function:
     F: X → {True, False}. F(xi) = True, if xi ∈ A; False, if xi ∉ A, where X — input series with xi elements, A — anomaly set.
@@ -759,10 +763,8 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     2. Jupyter Notebook with examples:
        - Link (EN): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb
        - Link (RU): https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb
-    3. Simple Python script demonstrate how to use Hampel Filter to determine anomalies in time series:
+    3. Simple Python script demonstrates how to use Hampel Filter to determine anomalies in time series:
        - Link: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py
-
-    Examples:
 
     Examples:
 
@@ -785,35 +787,40 @@ def HampelAnomalyDetection(series: Union[list, pd.Series], **kwargs) -> Optional
     - `sigma` is the number of standard deviations which identify the outlier (3 sigma by default), > 0.
     - `scaleFactor` is the constant scale factor (1.4826 by default), > 0.
 
-    :param series: list of numbers or Pandas Series object with numbers in which we identify the index of the first anomaly (outlier's index).
-    :param kwargs: See `HampelFilter()` docstring with all possible parameters.
+    :param series: List or Pandas Series of numeric values to check for anomalies.
+    :param compareWithMax: If `True` (default), returns min(index of anomaly, index of first maximum).
+                           If `False`, returns only the first anomaly index detected by `HampelFilter`.
+    :param kwargs: Additional parameters are forwarded to `HampelFilter()`.
 
-    :return: index of the first element with anomaly in the series will be return or `None` if no anomaly.
+    :return: Index of the first anomaly (or intersection with maximum, if enabled). Returns `None` if no anomaly is found.
     """
     try:
-        # Convert the list to Pandas Series for consistency:
+        # Convert a list to Pandas Series for consistency:
         if isinstance(series, list):
             series = pd.Series(series)
 
-        # Apply Hampel filter to find outlier positions:
-        filtered = HampelFilter(series=series, **kwargs)  # Boolean series, True means anomaly.
-        anomalyIndexes = filtered[filtered].index  # Extract indices of detected anomalies.
+        # Apply Hampel filter to get a mask of anomalies (True means anomaly):
+        filtered = HampelFilter(series=series, **kwargs)
+        anomalyIndexes = filtered[filtered].index  # Get indices where an anomaly is detected.
 
-        # Get index of first anomaly or None if there are no anomalies:
+        # Get an index of the first anomaly, if any:
         indexAnomalyMin = next(iter(anomalyIndexes), None)
 
-        # If an anomaly exists — compare it with the index of the first maximum:
-        if indexAnomalyMin is not None:
-            indexFirstMax = series.values.argmax()  # Get numeric position of first maximum value.
-            result = min(indexAnomalyMin, indexFirstMax)  # Return the smaller of the two indices.
+        # If compareWithMax is True — return the minimum between anomaly index and maximum index:
+        if compareWithMax:
+            if indexAnomalyMin is not None:
+                indexFirstMax = int(series.values.argmax())  # Index of the first maximum value.
+
+                return min(indexAnomalyMin, indexFirstMax)
+
+            else:
+                return None  # No anomaly found.
 
         else:
-            result = None  # No anomalies found.
+            return indexAnomalyMin  # If compareWithMax is False — return only the anomaly index.
 
     except Exception:
-        result = None  # Fallback in case of error (invalid input, etc.)
-
-    return result
+        return None  # Fallback in case of error.
 
 
 def CalculateAdaptiveCacheReserve(

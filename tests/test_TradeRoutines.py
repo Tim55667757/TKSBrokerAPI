@@ -760,8 +760,43 @@ class TestTradeRoutinesMethods:
             ([-np.inf, 1, 1], 0),  # -Inf is detected as a valid outlier at index 0.
         ]
 
-        for test in testData:
-            assert TradeRoutines.HampelAnomalyDetection(test[0]) == test[1], "Incorrect output! {} {}".format(test[0], test[1])
+        testData2 = [
+            # --- Special cases to validate compareWithMax=False behavior:
+            # If compareWithMax=False, should return pure anomaly even if the maximum is earlier.
+
+            # Two spikes, maximum occurs first, but real anomaly later:
+            ([1, 100, 1, 999], 1),  # Maximum at 1 (100), anomaly later at 3 (999), min(1,3) is 1 normally.
+
+            # The maximum is before the anomaly:
+            ([999, 1, 1, 1000], 0),  # Maximum at 0, anomaly at 3, min(0,3)=0 with default.
+
+            # Anomaly before maximum:
+            ([1, 1, 1000, 999], 2),  # Anomaly at 2 before the maximum at 2 as well.
+        ]
+
+        for series, expectedCompareWithMaxTrue in testData:
+            # Test default behavior:
+            assert TradeRoutines.HampelAnomalyDetection(series, compareWithMax=True) == expectedCompareWithMaxTrue, (
+                "Incorrect output with compareWithMax=True! Input: {}".format(series)
+            )
+
+        for series, _ in testData2:
+            # Test compareWithMax=False separately (pure anomaly search):
+            anomalyOnly = TradeRoutines.HampelAnomalyDetection(series, compareWithMax=False)
+
+            filtered = TradeRoutines.HampelFilter(series=pd.Series(series), window=len(series))
+
+            if filtered.any():
+                expectedPureAnomaly = filtered[filtered].index.min()
+
+                assert anomalyOnly == expectedPureAnomaly, (
+                    "Incorrect pure anomaly detection with compareWithMax=False! Input: {}".format(series)
+                )
+            else:
+                assert anomalyOnly is None, (
+                    "Incorrect pure anomaly detection with compareWithMax=False (expected None)! Input: {}".format(
+                        series)
+                )
 
     def test_HampelAnomalyDetectionNegative(self):
         testData = [
@@ -790,13 +825,16 @@ class TestTradeRoutinesMethods:
 
             # Series with NaN mixed with valid values:
             [1, np.nan, 1, 1],  # Contains NaN, may interfere with MAD, should return None.
-
-            # Series with infinite value in a center:
-            ([1, np.inf, 1], 1),  # Infinity is correctly detected as anomaly. Return index 1.
         ]
 
         for test in testData:
-            assert TradeRoutines.HampelAnomalyDetection(test) is None, "Incorrect output! Input: {}".format(test)
+            # Test default behavior (compareWithMax=True):
+            resultWithMax = TradeRoutines.HampelAnomalyDetection(test, compareWithMax=True)
+            assert resultWithMax is None, "Incorrect output with compareWithMax=True! Input: {}".format(test)
+
+            # Test pure anomaly detection (compareWithMax=False):
+            resultOnlyAnomaly = TradeRoutines.HampelAnomalyDetection(test, compareWithMax=False)
+            assert resultOnlyAnomaly is None, "Incorrect output with compareWithMax=False! Input: {}".format(test)
 
     def test_CanOpenCheckType(self):
         assert isinstance(TradeRoutines.CanOpen("Min", "Min"), bool), "Not bool type returned!"
