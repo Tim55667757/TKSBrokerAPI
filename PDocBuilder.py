@@ -5,9 +5,8 @@
 A coroutine that generates the API documentation for the TKSBrokerAPI module using pdoc-engine: https://pdoc.dev/docs/pdoc.html
 
 To build new documentation:
-1. Remove the `./docs` directory from the repository root.
-2. Go to the root of the repository.
-3. Just run: `python PDocBuilder.py`.
+1. Go to the root of the repository.
+2. Just run: `python PDocBuilder.py`.
 """
 
 
@@ -15,10 +14,7 @@ import os
 import sys
 import pdoc
 from pathlib import Path
-from shutil import rmtree
 
-
-rmtree("./docs")
 
 curdir = os.path.curdir
 
