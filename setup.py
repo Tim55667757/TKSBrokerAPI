@@ -62,10 +62,12 @@ setup(
         "*By [Fuzzy Technologies](https://fuzzy-technologies.github.io/)*\n\n\n"
         "🇺🇸 📚 **English Documentation:**\n\n"
         "• Full README with examples: [README_EN.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md)\n\n"
-        "• API Reference: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n\n\n"
+        "• API Reference: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n\n"
+        "• Cumulative Release Notes: [CHANGELOG_EN.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/CHANGELOG_EN.md)\n\n\n"
         "🇷🇺 📚 **Документация на русском:**\n\n"
         "• Подробное описание и примеры: [README.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README.md)\n\n"
-        "• Документация на модуль: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n"
+        "• Документация на модуль: [TKSBrokerAPI module docs](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)\n\n\n"
+        "• Накопительные релиз-ноты: [CHANGELOG.md](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/CHANGELOG.md)\n"
     ),
 
     long_description_content_type="text/markdown",
