@@ -119,6 +119,18 @@
             <li>
                     <a class="function" href="#EstimateTargetReachability">EstimateTargetReachability</a>
             </li>
+            <li>
+                    <a class="function" href="#RollingMean">RollingMean</a>
+            </li>
+            <li>
+                    <a class="function" href="#RollingStd">RollingStd</a>
+            </li>
+            <li>
+                    <a class="function" href="#FastBBands">FastBBands</a>
+            </li>
+            <li>
+                    <a class="function" href="#FastPSAR">FastPSAR</a>
+            </li>
     </ul>
 
 
@@ -1382,6 +1394,155 @@ anomalies, or gaps may distort volatility and probability estimates.</li>
   <p>A tuple <code>(pIntegral, fIntegral)</code>, where:
       - <code>pIntegral</code> is a float in range <code>[0.0, 1.0]</code> — estimated probability of reaching the target.
       - <code>fIntegral</code> is a fuzzy label: one of <code>["Min", "Low", "Med", "High", "Max"]</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="RollingMean">
+                    <div class="attr function">
+                    <div class="decorator">@jit(nopython=True)</div>
+
+        <span class="def">def</span>
+        <span class="name">RollingMean</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">array</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">window</span><span class="p">:</span> <span class="nb">int</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RollingMean"></a>
+    
+            <div class="docstring"><p>Calculates a simple moving average (SMA) using a sliding window over a NumPy array.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>array</strong>:  A NumPy array of input data (e.g., closing prices).</li>
+<li><strong>window</strong>:  The size of the rolling window for calculating the average. Must be a positive integer.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A NumPy array containing the rolling mean values, with NaNs for positions before the first full window.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="RollingStd">
+                    <div class="attr function">
+                    <div class="decorator">@jit(nopython=True)</div>
+
+        <span class="def">def</span>
+        <span class="name">RollingStd</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">array</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">window</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RollingStd"></a>
+    
+            <div class="docstring"><p>Calculates a rolling standard deviation over a NumPy array using a sliding window.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>array</strong>:  A NumPy array of input data (e.g., closing prices).</li>
+<li><strong>window</strong>:  The size of the rolling window for calculating standard deviation.</li>
+<li><strong>ddof</strong>:  Delta degrees of freedom. Default is <code>1</code>.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A NumPy array containing the rolling standard deviation values.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FastBBands">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">FastBBands</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">close</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>,</span><span class="param">	<span class="n">length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>,</span><span class="param">	<span class="n">std</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span>,</span><span class="param">	<span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FastBBands"></a>
+    
+            <div class="docstring"><p>Calculates Bollinger Bands (BBANDS) using a fast NumPy-based implementation.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>close</strong>:  Series or array of closing prices.</li>
+<li><strong>length</strong>:  Rolling window size for the moving average and standard deviation. The default is <code>5</code>.</li>
+<li><strong>std</strong>:  Number of standard deviations to determine the width of the bands. The default is <code>2.0</code>.</li>
+<li><strong>ddof</strong>:  Delta degrees of freedom for standard deviation calculation. Default is <code>0</code>.</li>
+<li><strong>offset</strong>:  How many periods to offset the resulting bands. The default is <code>0</code>.</li>
+<li><p><strong>kwargs</strong>:  Optional keyword arguments are forwarded for filling missing values.</p>
+
+<p>Supported options (with default values):</p>
+
+<ul>
+<li><code>fillna</code> (<code>None</code>): Value to fill missing data points (NaN values).</li>
+<li><code>fill_method</code> (<code>None</code>): Method to fill missing data points (e.g., <code>ffill</code>, <code>bfill</code>).</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A pandas DataFrame containing the following columns:
+      - <code>lower</code>: Lower Bollinger Band.
+      - <code>mid</code>: Middle band (simple moving average).
+      - <code>upper</code>: Upper Bollinger Band.
+      - <code>bandwidth</code>: Percentage bandwidth between upper and lower bands.
+      - <code>percent</code>: Position of the close price within the bands (from <code>0</code> to <code>1</code>).
+      Returns <code>None</code> if the input is invalid.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FastPSAR">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">FastPSAR</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">high</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>,</span><span class="param">	<span class="n">low</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>,</span><span class="param">	<span class="n">af0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span>,</span><span class="param">	<span class="n">af</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">maxAf</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span>,</span><span class="param">	<span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FastPSAR"></a>
+    
+            <div class="docstring"><p>Calculates the Parabolic SAR (PSAR) indicator using a fast NumPy-based implementation.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>high</strong>:  Series or array of high prices.</li>
+<li><strong>low</strong>:  Series or array of low prices.</li>
+<li><strong>af0</strong>:  Initial Acceleration Factor. The default is <code>0.02</code>.</li>
+<li><strong>af</strong>:  Acceleration Factor (not used separately, defaults to <code>af0</code>). Default is <code>None</code>.</li>
+<li><strong>maxAf</strong>:  Maximum Acceleration Factor. The default is <code>0.2</code>.</li>
+<li><strong>offset</strong>:  How many periods to offset the resulting arrays. The default is <code>0</code>.</li>
+<li><p><strong>kwargs</strong>:  Optional keyword arguments are forwarded for filling missing values.</p>
+
+<p>Supported options (with default values):</p>
+
+<ul>
+<li><code>fillna</code> (<code>None</code>): Value to fill missing data points (NaN values).</li>
+<li><code>fill_method</code> (<code>None</code>): Method to fill missing values (e.g., <code>ffill</code>, <code>bfill</code>).</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>A pandas DataFrame containing the following columns:
+      - <code>long</code>: SAR points for long trends (upward movement).
+      - <code>short</code>: SAR points for short trends (downward movement).
+      - <code>af</code>: Acceleration Factor values over time.
+      - <code>reversal</code>: <code>1</code> if reversal detected on this candle, otherwise <code>0</code>.
+      Returns <code>None</code> if input is invalid.</p>
 </blockquote>
 </div>
 
