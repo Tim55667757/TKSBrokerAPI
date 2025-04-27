@@ -15,7 +15,10 @@ import os
 import sys
 import pdoc
 from pathlib import Path
+from shutil import rmtree
 
+
+rmtree("./docs")
 
 curdir = os.path.curdir
 
@@ -32,6 +35,7 @@ pdoc.render.configure(
     show_source=False,
     template_directory=Path("docs", "templates").resolve(),
 )
+
 pdoc.pdoc(
     Path("tksbrokerapi").resolve(),
     output_directory=Path("docs").resolve(),
