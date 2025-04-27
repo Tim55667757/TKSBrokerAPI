@@ -1512,7 +1512,7 @@ class TestTradeRoutinesMethods:
 
         elapsed = time.perf_counter() - start
 
-        assert elapsed < 1.0, f"RollingMean too slow: {elapsed:.2f}s"
+        assert elapsed < 0.5, f"RollingMean too slow: {elapsed:.2f}s"
 
     def test_RollingStdCheckType(self):
         series = self.GenerateSeries(length=100).values

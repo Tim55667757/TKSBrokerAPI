@@ -1235,7 +1235,7 @@ def EstimateTargetReachability(
 @jit(nopython=True)
 def RollingMean(array: np.ndarray, window: int) -> np.ndarray:
     """
-    Calculates a simple moving average (SMA) using a sliding window over a NumPy array.
+    Calculates a simple moving average (SMA) using a sliding window over a NumPy array with running sum optimization.
 
     :param array: A NumPy array of input data (e.g., closing prices).
     :param window: The size of the rolling window for calculating the average. Must be a positive integer.
@@ -1244,8 +1244,15 @@ def RollingMean(array: np.ndarray, window: int) -> np.ndarray:
     """
     result = np.full(array.shape, np.nan)  # Initialize the result array with NaNs.
 
+    if array.size < window:
+        return result  # Not enough data to form the first window.
+
+    runningSum = np.sum(array[:window - 1])  # Calculate an initial sum for the first window (excluding the last element).
+
     for i in range(window - 1, array.size):
-        result[i] = np.mean(array[i - window + 1:i + 1])  # Calculate mean over the sliding window.
+        runningSum += array[i]  # Add the new element entering the window.
+        result[i] = runningSum / window  # Calculate the mean and assign it to the result array.
+        runningSum -= array[i - window + 1]  # Subtract the oldest element exiting the window.
 
     return result
 
