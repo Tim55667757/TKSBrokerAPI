@@ -1257,7 +1257,8 @@ def RollingStd(array: np.ndarray, window: int, ddof: int = 1) -> np.ndarray:
 
     :param array: A NumPy array of input data (e.g., closing prices).
     :param window: The size of the rolling window for calculating standard deviation.
-    :param ddof: Delta degrees of freedom. Default is 1.
+    :param ddof: Delta degrees of freedom. Default is `1`.
+
     :return: A NumPy array containing the rolling standard deviation values.
     """
     result = np.full(array.shape, np.nan)  # Initialize the result array with NaNs.
@@ -1292,24 +1293,24 @@ def FastBBands(
     Calculates Bollinger Bands (BBANDS) using a fast NumPy-based implementation.
 
     :param close: Series or array of closing prices.
-    :param length: Rolling window size for the moving average and standard deviation. Default is 5.
-    :param std: Number of standard deviations to determine the width of the bands. Default is 2.0.
-    :param ddof: Delta degrees of freedom for standard deviation calculation. Default is 0.
-    :param offset: How many periods to offset the resulting bands. Default is 0.
+    :param length: Rolling window size for the moving average and standard deviation. The default is `5`.
+    :param std: Number of standard deviations to determine the width of the bands. The default is `2.0`.
+    :param ddof: Delta degrees of freedom for standard deviation calculation. Default is `0`.
+    :param offset: How many periods to offset the resulting bands. The default is `0`.
     :param kwargs: Optional keyword arguments are forwarded for filling missing values.
 
         Supported options (with default values):
 
-        - `fillna` (None): Value to fill missing data points (NaN values).
-        - `fill_method` (None): Method to fill missing data points (e.g., 'ffill', 'bfill').
+        - `fillna` (`None`): Value to fill missing data points (NaN values).
+        - `fill_method` (`None`): Method to fill missing data points (e.g., `ffill`, `bfill`).
 
     :return: A pandas DataFrame containing the following columns:
         - `lower`: Lower Bollinger Band.
         - `mid`: Middle band (simple moving average).
         - `upper`: Upper Bollinger Band.
         - `bandwidth`: Percentage bandwidth between upper and lower bands.
-        - `percent`: Position of the close price within the bands (from 0 to 1).
-        Returns None if the input is invalid.
+        - `percent`: Position of the close price within the bands (from `0` to `1`).
+        Returns `None` if the input is invalid.
     """
     # Input validation:
     if close is None or not isinstance(close, (pd.Series, np.ndarray)):
@@ -1371,5 +1372,169 @@ def FastBBands(
 
     dataFrame.name = f"BBANDS_{lengthParam}_{stdParam}"
     dataFrame.category = "volatility"
+
+    return dataFrame
+
+
+@jit(nopython=True)
+def _FastPSARCore(highArray: np.ndarray, lowArray: np.ndarray, af0: float, maxAf: float) -> tuple:
+    """
+    Core calculation of Parabolic SAR (PSAR) using NumPy arrays.
+
+    :param highArray: Numpy array of `high` prices.
+    :param lowArray: Numpy array of `low` prices.
+    :param af0: Initial Acceleration Factor.
+    :param maxAf: Maximum Acceleration Factor.
+
+    :return: Tuple of arrays `(long, short, af, reversal)`.
+    """
+    size = highArray.shape[0]
+
+    longSar = np.full(size, np.nan)
+    shortSar = np.full(size, np.nan)
+    afArray = np.full(size, np.nan)
+    reversalArray = np.zeros(size, dtype=np.int32)
+
+    # Initialize the trend direction based on the first two candles:
+    upMove = highArray[1] - highArray[0]
+    downMove = lowArray[0] - lowArray[1]
+    falling = downMove > upMove  # True if the initial trend is falling.
+
+    # Initialize SAR and EP:
+    if falling:
+        sar = highArray[0]
+        ep = lowArray[0]
+
+    else:
+        sar = lowArray[0]
+        ep = highArray[0]
+
+    af = af0
+    afArray[0] = af0
+
+    for i in range(1, size):
+        high = highArray[i]
+        low = lowArray[i]
+
+        newSar = sar + af * (ep - sar)  # Calculate the new SAR.
+
+        if falling:
+            reverse = high > newSar
+
+            if low < ep:
+                ep = low
+                af = min(af + af0, maxAf)
+
+            newSar = max(max(float(highArray[i - 1]), float(highArray[i - 2])), newSar)
+
+        else:
+            reverse = low < newSar
+
+            if high > ep:
+                ep = high
+                af = min(af + af0, maxAf)
+
+            newSar = min(min(float(lowArray[i - 1]), float(lowArray[i - 2])), newSar)
+
+        if reverse:
+            newSar = ep
+            af = af0
+            falling = not falling
+            ep = low if falling else high
+
+        sar = newSar
+
+        # Assign SAR value to long or short arrays:
+        if falling:
+            shortSar[i] = sar
+
+        else:
+            longSar[i] = sar
+
+        afArray[i] = af
+        reversalArray[i] = int(reverse)
+
+    return longSar, shortSar, afArray, reversalArray
+
+
+def FastPSAR(
+    high: Union[pd.Series, np.ndarray],
+    low: Union[pd.Series, np.ndarray],
+    af0: float = 0.02,
+    af: Optional[float] = None,
+    maxAf: float = 0.2,
+    offset: int = 0,
+    **kwargs
+) -> Optional[pd.DataFrame]:
+    """
+    Calculates the Parabolic SAR (PSAR) indicator using a fast NumPy-based implementation.
+
+    :param high: Series or array of high prices.
+    :param low: Series or array of low prices.
+    :param af0: Initial Acceleration Factor. The default is `0.02`.
+    :param af: Acceleration Factor (not used separately, defaults to `af0`). Default is `None`.
+    :param maxAf: Maximum Acceleration Factor. The default is `0.2`.
+    :param offset: How many periods to offset the resulting arrays. The default is `0`.
+    :param kwargs: Optional keyword arguments are forwarded for filling missing values.
+
+        Supported options (with default values):
+
+        - `fillna` (`None`): Value to fill missing data points (NaN values).
+        - `fill_method` (`None`): Method to fill missing values (e.g., `ffill`, `bfill`).
+
+    :return: A pandas DataFrame containing the following columns:
+        - `long`: SAR points for long trends (upward movement).
+        - `short`: SAR points for short trends (downward movement).
+        - `af`: Acceleration Factor values over time.
+        - `reversal`: `1` if reversal detected on this candle, otherwise `0`.
+        Returns `None` if input is invalid.
+    """
+    # Input validation:
+    if high is None or low is None or not isinstance(high, (pd.Series, np.ndarray)) or not isinstance(low, (pd.Series, np.ndarray)):
+        return None
+
+    highArray = high.values if isinstance(high, pd.Series) else high
+    lowArray = low.values if isinstance(low, pd.Series) else low
+
+    if highArray.size != lowArray.size:
+        return None
+
+    afStart = af0 if af is None else af
+
+    # Core calculation:
+    longSar, shortSar, afArray, reversalArray = _FastPSARCore(highArray, lowArray, afStart, maxAf)
+
+    # Offset results if needed:
+    if offset != 0:
+        longSar = np.roll(longSar, offset)
+        shortSar = np.roll(shortSar, offset)
+        afArray = np.roll(afArray, offset)
+        reversalArray = np.roll(reversalArray, offset)
+
+    # Convert to Pandas Series:
+    longSeries = pd.Series(longSar, name="long")
+    shortSeries = pd.Series(shortSar, name="short")
+    afSeries = pd.Series(afArray, name="af")
+    reversalSeries = pd.Series(reversalArray, name="reversal")
+
+    # Handle fills:
+    if "fillna" in kwargs:
+        for series in [longSeries, shortSeries, afSeries, reversalSeries]:
+            series.fillna(kwargs["fillna"], inplace=True)
+
+    if "fill_method" in kwargs:
+        for series in [longSeries, shortSeries, afSeries, reversalSeries]:
+            series.fillna(method=kwargs["fill_method"], inplace=True)
+
+    # Create the final DataFrame
+    dataFrame = pd.DataFrame({
+        "long": longSeries,
+        "short": shortSeries,
+        "af": afSeries,
+        "reversal": reversalSeries,
+    })
+
+    dataFrame.name = "PSAR"
+    dataFrame.category = "trend"
 
     return dataFrame
