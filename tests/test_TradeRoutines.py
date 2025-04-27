@@ -1479,3 +1479,98 @@ class TestTradeRoutinesMethods:
 
             except Exception:
                 pass  # Acceptable if function raises.
+
+    def test_RollingMeanCheckType(self):
+        series = self.GenerateSeries(length=100).values
+
+        result = TradeRoutines.RollingMean(series, window=5)
+
+        assert isinstance(result, np.ndarray), "RollingMean must return a NumPy array!"
+
+    def test_RollingMeanPositive(self):
+        series = np.array([1, 2, 3, 4, 5])
+        expected = np.array([np.nan, np.nan, np.nan, np.nan, 3.0])
+
+        result = TradeRoutines.RollingMean(series, window=5)
+
+        np.testing.assert_allclose(result[4:], expected[4:], rtol=1e-6)
+
+    def test_RollingMeanNegative(self):
+        series = np.array([np.nan, np.nan, np.nan, np.nan])
+
+        result = TradeRoutines.RollingMean(series, window=3)
+
+        assert np.isnan(result).all(), "Expected all NaNs for insufficient data!"
+
+    def test_RollingMeanPerformance(self):
+        series = self.GenerateSeries(length=1_000_000).values
+        start = time.perf_counter()
+
+        TradeRoutines.RollingMean(series, window=5)
+
+        elapsed = time.perf_counter() - start
+
+        assert elapsed < 1.0, f"RollingMean too slow: {elapsed:.2f}s"
+
+    def test_RollingStdCheckType(self):
+        series = self.GenerateSeries(length=100).values
+
+        result = TradeRoutines.RollingStd(series, window=5)
+
+        assert isinstance(result, np.ndarray), "RollingStd must return a NumPy array!"
+
+    def test_RollingStdPositive(self):
+        series = np.array([1, 2, 3, 4, 5])
+        expected_std = np.std([1, 2, 3, 4, 5], ddof=1)
+
+        result = TradeRoutines.RollingStd(series, window=5)
+
+        np.testing.assert_allclose(result[4], expected_std, rtol=1e-6)
+
+    def test_RollingStdNegative(self):
+        series = np.array([np.nan, np.nan, np.nan, np.nan])
+
+        result = TradeRoutines.RollingStd(series, window=3)
+
+        assert np.isnan(result).all(), "Expected all NaNs for insufficient data!"
+
+    def test_RollingStdPerformance(self):
+        series = self.GenerateSeries(length=1_000_000).values
+        start = time.perf_counter()
+
+        TradeRoutines.RollingStd(series, window=5)
+
+        elapsed = time.perf_counter() - start
+
+        assert elapsed < 1.0, f"RollingStd too slow: {elapsed:.2f}s"
+
+    def test_FastBBandsCheckType(self):
+        series = self.GenerateSeries(length=100)
+
+        result = TradeRoutines.FastBBands(series, length=20)
+
+        assert isinstance(result, pd.DataFrame), "FastBBands must return a pandas DataFrame!"
+
+    def test_FastBBandsPositive(self):
+        series = pd.Series(np.arange(1, 51))
+
+        result = TradeRoutines.FastBBands(series, length=5, std=2)
+
+        assert all(col in result.columns for col in ["BBL_5_2.0", "BBM_5_2.0", "BBU_5_2.0", "BBB_5_2.0", "BBP_5_2.0"]), "Missing columns in BBands output!"
+
+    def test_FastBBandsNegative(self):
+        invalidInputs = [None, [], {}, "bad input"]
+
+        for badInput in invalidInputs:
+            result = TradeRoutines.FastBBands(badInput)  # type: ignore
+
+            assert result is None, f"Expected None for invalid input, got {result}"
+
+    def test_FastBBandsPerformance(self):
+        series = self.GenerateSeries(length=1_000_000)
+        start = time.perf_counter()
+
+        TradeRoutines.FastBBands(series, length=20)
+        elapsed = time.perf_counter() - start
+
+        assert elapsed < 1.5, f"FastBBands too slow: {elapsed:.2f}s"
