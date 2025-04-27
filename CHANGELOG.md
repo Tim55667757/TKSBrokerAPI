@@ -51,6 +51,7 @@
 * [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Счетчик типов операций был обновлён в отчёте по сделкам.
 * [#138](https://github.com/Tim55667757/TKSBrokerAPI/issues/138) Патч для np.NaN.
 * [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) В сотни раз ускорена работа метода `HampelFilter()`, особенно это заметно для длинных рядов, содержащих более 1 млн. значений.
+* [#148](https://github.com/Tim55667757/TKSBrokerAPI/issues/148) Реализована оптимизированная и ускоренная версия `FastBBands()`, вместо аналогичной медленной функции из pandas_ta.
 
 ##### Баг-фиксы
 
