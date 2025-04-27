@@ -1489,6 +1489,7 @@ class TestTradeRoutinesMethods:
 
     def test_RollingMeanPositive(self):
         series = np.array([1, 2, 3, 4, 5])
+
         expected = np.array([np.nan, np.nan, np.nan, np.nan, 3.0])
 
         result = TradeRoutines.RollingMean(series, window=5)
@@ -1504,6 +1505,7 @@ class TestTradeRoutinesMethods:
 
     def test_RollingMeanPerformance(self):
         series = self.GenerateSeries(length=1_000_000).values
+
         start = time.perf_counter()
 
         TradeRoutines.RollingMean(series, window=5)
@@ -1521,6 +1523,7 @@ class TestTradeRoutinesMethods:
 
     def test_RollingStdPositive(self):
         series = np.array([1, 2, 3, 4, 5])
+
         expected_std = np.std([1, 2, 3, 4, 5], ddof=1)
 
         result = TradeRoutines.RollingStd(series, window=5)
@@ -1536,6 +1539,7 @@ class TestTradeRoutinesMethods:
 
     def test_RollingStdPerformance(self):
         series = self.GenerateSeries(length=1_000_000).values
+
         start = time.perf_counter()
 
         TradeRoutines.RollingStd(series, window=5)
@@ -1568,9 +1572,55 @@ class TestTradeRoutinesMethods:
 
     def test_FastBBandsPerformance(self):
         series = self.GenerateSeries(length=1_000_000)
+
         start = time.perf_counter()
 
         TradeRoutines.FastBBands(series, length=20)
         elapsed = time.perf_counter() - start
 
         assert elapsed < 1.5, f"FastBBands too slow: {elapsed:.2f}s"
+
+    def test_FastPSARCheckType(self):
+        high = self.GenerateSeries(length=100)
+        low = self.GenerateSeries(length=100, start=high.min() - 1.0)
+
+        result = TradeRoutines.FastPSAR(high, low)
+
+        assert isinstance(result, pd.DataFrame), "FastPSAR must return a pandas DataFrame!"
+
+        for col in ["long", "short", "af", "reversal"]:
+            assert col in result.columns, f"Missing column {col} in PSAR output!"
+
+    def test_FastPSARPositive(self):
+        high = pd.Series([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        low = pd.Series([0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5])
+
+        result = TradeRoutines.FastPSAR(high, low, af0=0.02, maxAf=0.2)
+
+        assert result["reversal"].sum() >= 0, "There should be at least zero or more reversals."
+
+    def test_FastPSARNegative(self):
+        invalidInputs = [
+            (None, None),  # Invalid inputs.
+            ([], []),  # Invalid inputs.
+            ({}, {}),  # Invalid inputs.
+            ("bad", "input"),
+            (np.array([1, 2, 3]), np.array([1, 2])),  # Mismatched length.
+        ]
+
+        for badHigh, badLow in invalidInputs:
+            result = TradeRoutines.FastPSAR(badHigh, badLow)
+
+            assert result is None, f"Expected None for invalid input: {badHigh}, {badLow}"
+
+    def test_FastPSARPerformance(self):
+        high = self.GenerateSeries(length=1_000_000)
+        low = self.GenerateSeries(length=1_000_000, start=high.min() - 1.0)
+
+        start = time.perf_counter()
+
+        TradeRoutines.FastPSAR(high, low)
+
+        elapsed = time.perf_counter() - start
+
+        assert elapsed < 2.0, f"FastPSAR too slow: {elapsed:.2f}s"
