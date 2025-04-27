@@ -38,6 +38,7 @@ import math
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
+from numba import jit
 
 from typing import Union, Optional, Any
 
@@ -1229,3 +1230,146 @@ def EstimateTargetReachability(
 
     except Exception:
         return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
+
+
+@jit(nopython=True)
+def RollingMean(array: np.ndarray, window: int) -> np.ndarray:
+    """
+    Calculates a simple moving average (SMA) using a sliding window over a NumPy array.
+
+    :param array: A NumPy array of input data (e.g., closing prices).
+    :param window: The size of the rolling window for calculating the average. Must be a positive integer.
+
+    :return: A NumPy array containing the rolling mean values, with NaNs for positions before the first full window.
+    """
+    result = np.full(array.shape, np.nan)  # Initialize the result array with NaNs.
+
+    for i in range(window - 1, array.size):
+        result[i] = np.mean(array[i - window + 1:i + 1])  # Calculate mean over the sliding window.
+
+    return result
+
+
+@jit(nopython=True)
+def RollingStd(array: np.ndarray, window: int, ddof: int = 1) -> np.ndarray:
+    """
+    Calculates a rolling standard deviation over a NumPy array using a sliding window.
+
+    :param array: A NumPy array of input data (e.g., closing prices).
+    :param window: The size of the rolling window for calculating standard deviation.
+    :param ddof: Delta degrees of freedom. Default is 1.
+    :return: A NumPy array containing the rolling standard deviation values.
+    """
+    result = np.full(array.shape, np.nan)  # Initialize the result array with NaNs.
+
+    ddof = int(ddof)  # Ensure ddof is integer.
+
+    for i in range(window - 1, array.size):
+        slice_ = array[i - window + 1:i + 1]  # Extract the current sliding window.
+        mean_ = np.mean(slice_)  # Calculate the mean of the window.
+        diff = slice_ - mean_  # Calculate differences from the mean.
+        squaredDiffs = diff ** 2  # Square the differences.
+
+        sumSquared = np.sum(squaredDiffs)  # Sum of squared differences.
+        divisor = window - ddof  # Degrees of freedom correction.
+
+        variance = sumSquared / divisor  # type: ignore
+
+        result[i] = np.sqrt(variance)  # Standard deviation is the square root of variance.
+
+    return result
+
+
+def FastBBands(
+    close: Union[pd.Series, np.ndarray],
+    length: int = 5,
+    std: float = 2.0,
+    ddof: int = 0,
+    offset: int = 0,
+    **kwargs
+) -> Optional[pd.DataFrame]:
+    """
+    Calculates Bollinger Bands (BBANDS) using a fast NumPy-based implementation.
+
+    :param close: Series or array of closing prices.
+    :param length: Rolling window size for the moving average and standard deviation. Default is 5.
+    :param std: Number of standard deviations to determine the width of the bands. Default is 2.0.
+    :param ddof: Delta degrees of freedom for standard deviation calculation. Default is 0.
+    :param offset: How many periods to offset the resulting bands. Default is 0.
+    :param kwargs: Optional keyword arguments are forwarded for filling missing values.
+
+        Supported options (with default values):
+
+        - `fillna` (None): Value to fill missing data points (NaN values).
+        - `fill_method` (None): Method to fill missing data points (e.g., 'ffill', 'bfill').
+
+    :return: A pandas DataFrame containing the following columns:
+        - `lower`: Lower Bollinger Band.
+        - `mid`: Middle band (simple moving average).
+        - `upper`: Upper Bollinger Band.
+        - `bandwidth`: Percentage bandwidth between upper and lower bands.
+        - `percent`: Position of the close price within the bands (from 0 to 1).
+        Returns None if the input is invalid.
+    """
+    # Input validation:
+    if close is None or not isinstance(close, (pd.Series, np.ndarray)):
+        return None
+
+    closeArray = close.values if isinstance(close, pd.Series) else close
+
+    lengthParam = int(length) if length and length > 0 else 5
+    stdParam = float(std) if std and std > 0 else 2.0
+    ddofParam = int(ddof) if 0 <= ddof < lengthParam else 1
+    offsetParam = int(offset) if offset else 0
+
+    # Calculate moving average and standard deviation:
+    mid = RollingMean(closeArray, lengthParam)
+    stdev = RollingStd(closeArray, lengthParam, ddof=ddofParam)
+    deviations = stdParam * stdev
+
+    # Calculate upper and lower bands:
+    upper = mid + deviations
+    lower = mid - deviations
+
+    # Calculate bandwidth and percent:
+    ulr = np.where((upper - lower) == 0, np.nan, upper - lower)
+    bandwidth = 100 * ulr / mid
+    percent = np.where(ulr == 0, np.nan, (closeArray - lower) / ulr)
+
+    # Offset results if needed:
+    if offsetParam != 0:
+        lower = np.roll(lower, offsetParam)
+        mid = np.roll(mid, offsetParam)
+        upper = np.roll(upper, offsetParam)
+        bandwidth = np.roll(bandwidth, offsetParam)
+        percent = np.roll(percent, offsetParam)
+
+    # Convert results to Pandas Series:
+    lowerSeries = pd.Series(lower, name=f"BBL_{lengthParam}_{stdParam}")
+    midSeries = pd.Series(mid, name=f"BBM_{lengthParam}_{stdParam}")
+    upperSeries = pd.Series(upper, name=f"BBU_{lengthParam}_{stdParam}")
+    bandwidthSeries = pd.Series(bandwidth, name=f"BBB_{lengthParam}_{stdParam}")
+    percentSeries = pd.Series(percent, name=f"BBP_{lengthParam}_{stdParam}")
+
+    # Handle fills:
+    if "fillna" in kwargs:
+        for series in [lowerSeries, midSeries, upperSeries, bandwidthSeries, percentSeries]:
+            series.fillna(kwargs["fillna"], inplace=True)
+
+    if "fill_method" in kwargs:
+        for series in [lowerSeries, midSeries, upperSeries, bandwidthSeries, percentSeries]:
+            series.fillna(method=kwargs["fill_method"], inplace=True)
+
+    # Create a final DataFrame:
+    dataFrame = pd.DataFrame({
+        lowerSeries.name: lowerSeries,
+        midSeries.name: midSeries,
+        upperSeries.name: upperSeries,
+        bandwidthSeries.name: bandwidthSeries,
+        percentSeries.name: percentSeries,
+    })
+
+    dataFrame.name = f"BBANDS_{lengthParam}_{stdParam}"
+    dataFrame.category = "volatility"
+
+    return dataFrame
