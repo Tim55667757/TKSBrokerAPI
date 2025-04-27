@@ -604,6 +604,22 @@ class TestTradeRoutinesMethods:
                 # Serves as a stability test with noise.
                 [False, False, False, False, False, False],
             ),
+            (
+                {
+                    "series": pd.Series([1, 2, np.nan, 2, 1]),
+                    "window": 3, "sigma": 3, "scaleFactor": 1.4826,
+                },
+                # The presence of NaN in the middle should not cause anomalies. The method skips NaNs properly.
+                [False, False, False, False, False],
+            ),
+            (
+                {
+                    "series": pd.Series([np.nan, 1, 1, 11111111, 1, 1, np.nan]),
+                    "window": 1, "sigma": 1.1, "scaleFactor": 1.4826,
+                },
+                # The presence of NaN at the edges should not cause anomalies. The method skips NaNs properly.
+                [False, False, False, True, False, False, False],
+            ),
         ]
 
         for test in testData:

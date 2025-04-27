@@ -714,7 +714,8 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
         # Step 3: Detect anomalies for valid central values:
         new = pd.Series(False, index=series.index)
         threshold = sigma * scaleFactor * rollingMAD
-        new[rollingMAD.notna()] = delta[rollingMAD.notna()] > threshold[rollingMAD.notna()]
+        mask = rollingMAD.notna()
+        new.loc[mask] = (delta[mask] > threshold[mask])
 
         # Step 4: Handle boundary values manually (first and last `window` points):
         for i in list(range(window)) + list(range(len(series) - window, len(series))):
