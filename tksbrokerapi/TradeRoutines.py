@@ -32,16 +32,19 @@ The **TradeRoutines** library contains some methods used by trade scenarios impl
 # limitations under the License.
 
 
-from datetime import datetime, timedelta
-from dateutil.tz import tzutc
+# Standard library imports:
 import math
-import pandas as pd
+from datetime import datetime, timedelta
+from typing import Union, Optional, Any
+
+# Third-party library imports:
 import numpy as np
+import pandas as pd
+from dateutil.tz import tzutc
 from scipy.stats import norm
 from numba import jit
 
-from typing import Union, Optional, Any
-
+# Local application imports:
 from fuzzyroutines import FuzzyRoutines as fR  # Some routines to simplify working with fuzzy logic operators, fuzzy datasets and fuzzy scales.
 
 

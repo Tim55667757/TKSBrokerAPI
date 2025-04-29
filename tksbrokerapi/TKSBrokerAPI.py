@@ -85,41 +85,44 @@ How data is extended and used in TKSBrokerAPI:
 # limitations under the License.
 
 
+# Standard library imports:
 import sys
 import os
+import re
+import json
+import traceback as tb
+from time import sleep
+from argparse import ArgumentParser
+from importlib.metadata import version
+from multiprocessing import cpu_count, Lock
+from multiprocessing.pool import ThreadPool
+
+# Third-party library imports:
+import numpy as np
+import requests
+from dateutil.tz import tzlocal
+from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
 
 # Add the current dir for the local run:
 packageDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if packageDir not in sys.path:
     sys.path.insert(0, packageDir)
 
-from argparse import ArgumentParser
-from importlib.metadata import version
+# Workaround for old versions of `pandas_ta` that may use `np.NaN`
+# Some IDEs may warn that np.NaN is Final — suppressing redefinition safely
+try:
+    _ = np.NaN
 
-from dateutil.tz import tzlocal
-from time import sleep
+except AttributeError:
+    setattr(np, "NaN", np.nan)
 
-import re
-import json
-import requests
-import traceback as tb
-
-from multiprocessing import cpu_count, Lock
-from multiprocessing.pool import ThreadPool
-
-from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
-from tksbrokerapi.Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
-from tksbrokerapi.TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
-from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
-
-# Monkey Patch for PriceGenerator's `pandas_ta` module:
-import numpy as np
-if not hasattr(np, "NaN"):
-    np.NaN = np.nan
-
+# Local application imports:
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
 
+from tksbrokerapi.Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
+from tksbrokerapi.TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
+from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
 import tksbrokerapi.UniLogger as uLog  # Logger for TKSBrokerAPI
 
 from tksbrokerapi._version import __version__
