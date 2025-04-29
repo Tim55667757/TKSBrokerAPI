@@ -578,7 +578,7 @@ class TinkoffBrokerServer:
                     except requests.exceptions.RequestException as e:
                         counter += 1
 
-                        uLogger.warning("Request exception occurred: {}. Retry {}/{} after {} sec...".format(e, counter, self.retry, currentPause))
+                        uLogger.debug("Request exception occurred: {}. Retry {}/{} after {} sec...".format(e, counter, self.retry, currentPause))
 
                         sleep(currentPause)
 
