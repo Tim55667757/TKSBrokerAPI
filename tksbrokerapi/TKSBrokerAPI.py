@@ -509,7 +509,7 @@ class TinkoffBrokerServer:
 
     def _ParseJSON(self, rawData="{}") -> dict:
         """
-        Parse JSON from response string.
+        Parse JSON from the response string.
 
         :param rawData: this is a string with JSON-formatted text.
         :return: JSON (dictionary), parsed from server response string. If an error occurred, then returns empty dict `{}`.
@@ -550,7 +550,6 @@ class TinkoffBrokerServer:
             uLogger.debug("    - headers:\n{}".format(str(self.headers).replace(self.token, "*** request token ***")))
             uLogger.debug("    - body:\n{}".format(self.body))
 
-        # fast hack to avoid all operations with some tickers/FIGI
         responseJSON = {}
         oK = True
         for item in self.exclude:
@@ -566,34 +565,46 @@ class TinkoffBrokerServer:
                 counter = 0
                 response = None
                 errMsg = ""
+                currentPause = self.pause  # initial pause
 
                 while not response and counter <= self.retry:
-                    if reqType == "GET":
-                        response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
+                    try:
+                        if reqType == "GET":
+                            response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
-                    if reqType == "POST":
-                        response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
+                        if reqType == "POST":
+                            response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
-                    if self.moreDebug:
+                    except requests.exceptions.RequestException as e:
+                        counter += 1
+
+                        uLogger.warning("Request exception occurred: {}. Retry {}/{} after {} sec...".format(e, counter, self.retry, currentPause))
+
+                        sleep(currentPause)
+
+                        currentPause = min(currentPause * 2, 30)  # limit the maximum backoff to 60 seconds
+
+                        continue  # next retry attempt
+
+                    if self.moreDebug and response:
                         uLogger.debug("Response:")
                         uLogger.debug("    - status code: {}".format(response.status_code))
                         uLogger.debug("    - reason: {}".format(response.reason))
                         uLogger.debug("    - body length: {}".format(len(response.text)))
                         uLogger.debug("    - headers:\n{}".format(response.headers))
 
-                    # Server returns some headers:
-                    # - `x-ratelimit-limit` — shows the settings of the current user limit for this method.
-                    # - `x-ratelimit-remaining` — the number of remaining requests of this type per minute.
-                    # - `x-ratelimit-reset` — time in seconds before resetting the request counter.
-                    # See: https://tinkoff.github.io/investAPI/grpc/#kreya
-                    if "x-ratelimit-remaining" in response.headers.keys() and response.headers["x-ratelimit-remaining"] == "0":
+                    # check rate limit headers: https://tinkoff.github.io/investAPI/grpc/#kreya
+                    if response and "x-ratelimit-remaining" in response.headers.keys() and response.headers["x-ratelimit-remaining"] == "0":
                         rateLimitWait = int(response.headers["x-ratelimit-reset"])
+
                         uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
+
                         sleep(rateLimitWait)
 
-                    # Error status codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-                    if 400 <= response.status_code < 500:
+                    # handling 4xx client errors: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+                    if response and 400 <= response.status_code < 500:
                         msg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+
                         uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
 
                         if "code" in response.text and "message" in response.text:
@@ -605,25 +616,36 @@ class TinkoffBrokerServer:
 
                             else:
                                 msgDict = self._ParseJSON(rawData=response.text)
-                                uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict["message"]))
 
+                                uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
+
+                        responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                         counter = self.retry + 1  # do not retry for 4xx errors
 
-                    if 500 <= response.status_code < 600:
+                    # handling 5xx server errors:
+                    if response and 500 <= response.status_code < 600:
                         errMsg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+
                         uLogger.debug("    - not oK, {}".format(errMsg))
 
                         if "code" in response.text and "message" in response.text:
                             errMsgDict = self._ParseJSON(rawData=response.text)
-                            uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict["message"]))
 
+                            uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
+
+                        responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                         counter += 1
+                        response = None  # clear response to allow retry
 
                         if counter <= self.retry:
-                            uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, self.pause))
-                            sleep(self.pause)
+                            uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, currentPause))
 
-                responseJSON = self._ParseJSON(rawData=response.text)
+                            sleep(currentPause)
+
+                            currentPause = min(currentPause * 2, 60)  # limit the maximum backoff to 60 seconds
+
+                if response:
+                    responseJSON = self._ParseJSON(rawData=response.text)
 
                 if errMsg:
                     uLogger.error("Server returns not `oK` status! See full debug log. Errors messages: https://tinkoff.github.io/investAPI/errors/")

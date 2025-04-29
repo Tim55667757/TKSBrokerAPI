@@ -5,6 +5,8 @@
 import pytest
 from pathlib import Path
 from tksbrokerapi import TKSBrokerAPI
+from unittest.mock import patch, MagicMock
+import requests
 
 
 class TestTKSBrokerAPIMethods:
@@ -67,57 +69,123 @@ class TestTKSBrokerAPIMethods:
     def test_SendAPIRequestCheckType(self):
         self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
 
-        result = self.server.SendAPIRequest(
-            url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
-            reqType="POST",
-        )
+        # Create a fake response object:
+        fake_response = MagicMock()
+        fake_response.status_code = 200
+        fake_response.reason = "OK"
+        fake_response.text = '{}'
+        fake_response.headers = {}
 
-        assert isinstance(result, dict), "Not dict type returned!"
-
-    def test_SendAPIRequestPositive(self):
-        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
-
-        # TODO: want more tests with real responses and real bearer token
-        testData = [
-            (r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies", {'code': 3, 'description': None, 'message': None}),
-        ]
-
-        for test in testData:
+        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
             result = self.server.SendAPIRequest(
                 url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
                 reqType="POST",
             )
 
-            assert result == test[1], 'Expected: `{}`, actual: `{}`'.format(test[1], result)
+            assert isinstance(result, dict), "Not dict type returned!"
+
+    def test_SendAPIRequestPositive(self):
+        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
+
+        # Create a fake successful response object:
+        fake_response = MagicMock()
+        fake_response.status_code = 200
+        fake_response.reason = "OK"
+        fake_response.text = '{"success": true}'
+        fake_response.headers = {}
+
+        expected_result = {"success": True}
+
+        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert result == expected_result, f"Expected: {expected_result}, actual: {result}"
+
+    def test_SendAPIRequestNegative(self):
+        self.server.retry = 0
+        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
+
+        # Scenario 1: 401 Unauthorized (client error, 4xx):
+        fake_response_401 = MagicMock()
+        fake_response_401.status_code = 401
+        fake_response_401.reason = "Unauthorized"
+        fake_response_401.text = '{"message": "Authentication token is missing or invalid"}'
+        fake_response_401.headers = {}
+
+        with patch("requests.get", return_value=fake_response_401), patch("requests.post", return_value=fake_response_401):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when 401 error!"
+            assert result == {"message": "Authentication token is missing or invalid"}, f"Unexpected result: {result}"
+
+        # Scenario 2: 500 Internal Server Error (server error, 5xx):
+        fake_response_500 = MagicMock()
+        fake_response_500.status_code = 500
+        fake_response_500.reason = "Internal Server Error"
+        fake_response_500.text = '{"message": "Internal server error"}'
+        fake_response_500.headers = {}
+
+        with patch("requests.get", return_value=fake_response_500), patch("requests.post", return_value=fake_response_500):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when 500 error!"
+            assert result == {"message": "Internal server error"}, f"Expected empty dict on 500 error, actual: {result}"
+
+        # Scenario 3: RequestException (connection problem, timeout, DNS error, etc.):
+        with patch("requests.get", side_effect=requests.exceptions.RequestException("Mocked connection error")), \
+                patch("requests.post", side_effect=requests.exceptions.RequestException("Mocked connection error")):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when RequestException occurred!"
+            assert result == {}, f"Expected empty dict on RequestException, actual: {result}"
 
     def test_ShowInstrumentInfoCheckType(self):
         assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, show=False), str), "Not str type returned!"
 
     def test_ShowInstrumentInfoPositive(self):
         testData = [
-            # share:
             {"figi": "TCS00A103X66", "ticker": "POSI", "name": "Positive Technologies"},
-            # bond:
             {"figi": "TCS00A101YV8", "ticker": "RU000A101YV8", "name": "Позитив Текнолоджиз выпуск 1"},
-            # etf:
             {"figi": "BBG222222222", "ticker": "TGLD", "name": "Тинькофф Золото"},
-            # futures:
             {"figi": "FUTPLZL03220", "ticker": "PZH2", "name": "PLZL-3.22 Полюс Золото"},
-            # currency:
             {"figi": "BBG0013HRTL0", "ticker": "CNYRUB_TOM", "name": "Юань"},
         ]
 
-        for test in testData:
-            self.server.ticker = test["ticker"]
-            self.server.figi = ""
-            searched = self.server.SearchByTicker(requestPrice=False, show=False)
-            searched["limitOrderAvailableFlag"] = False
-            searched["sellAvailableFlag"] = False
-            searched["shortEnabledFlag"] = False
-            searched["marketOrderAvailableFlag"] = False
-            searched["apiTradeAvailableFlag"] = False
-            result = self.server.ShowInstrumentInfo(iJSON=searched, show=False)
-            assert test["name"] in result, "Some data in report is incorrect!"
+        # Prepare fake successful response
+        fake_response = MagicMock()
+        fake_response.status_code = 200
+        fake_response.reason = "OK"
+        fake_response.text = "{}"
+        fake_response.headers = {}
+
+        with patch("tksbrokerapi.TKSBrokerAPI.requests.get", return_value=fake_response), \
+                patch("tksbrokerapi.TKSBrokerAPI.requests.post", return_value=fake_response):
+            for test in testData:
+                self.server.ticker = test["ticker"]
+                self.server.figi = ""
+
+                searched = self.server.SearchByTicker(requestPrice=False, show=False)
+                searched["limitOrderAvailableFlag"] = False
+                searched["sellAvailableFlag"] = False
+                searched["shortEnabledFlag"] = False
+                searched["marketOrderAvailableFlag"] = False
+                searched["apiTradeAvailableFlag"] = False
+
+                result = self.server.ShowInstrumentInfo(iJSON=searched, show=False)
+
+                assert test["name"] in result, "Some data in report is incorrect!"
 
     def test_SearchByTickerCheckType(self):
         self.server.ticker = "IBM"
