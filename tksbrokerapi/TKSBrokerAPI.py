@@ -1853,7 +1853,9 @@ class TinkoffBrokerServer:
                     view["raw"]["Currencies"].append(item)  # Current price of currency in RUB.
 
                 else:
-                    uLogger.debug("See #127 bug: Since sanctions occurred at 27 Feb, 2003 Tinkoff Broker returns an error with some currencies! Trouble with FIGI: [{}].".format(self._figi))
+                    pass
+
+                    # uLogger.debug("See #127 bug: Since sanctions T-Investment Broker returns an error with some currencies. Trouble with FIGI: [{}].".format(self._figi))  # TODO something with this.
 
             elif item["instrumentType"] == "share":
                 view["raw"]["Shares"].append(item)
