@@ -1143,12 +1143,12 @@ self.timeout: global request timeout, 15 seconds by default.</p>
     </div>
     <a class="headerlink" href="#TinkoffBrokerServer.Listing"></a>
     
-            <div class="docstring"><p>Gets JSON with raw data about shares, currencies, bonds, etfs and futures from broker server.</p>
+            <div class="docstring"><p>Gets JSON with raw data about shares, currencies, bonds, ETFs, and futures from broker server.</p>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>Dictionary with all available broker instruments: currencies, shares, bonds, etfs and futures.</p>
+  <p>Dictionary with all available broker instruments: currencies, shares, bonds, ETFs, and futures.</p>
 </blockquote>
 </div>
 
@@ -1640,34 +1640,34 @@ One item is dict returned by <code>SearchByTicker(requestPrice=True)</code> or b
     </div>
     <a class="headerlink" href="#TinkoffBrokerServer.Overview"></a>
     
-            <div class="docstring"><p>Get portfolio: all open positions, orders and some statistics for current <code>accountId</code>.
+            <div class="docstring"><p>Get portfolio: all open positions, orders, some statistics for current <code>accountId</code>.
 If <code><a href="#TinkoffBrokerServer.overviewFile">overviewFile</a></code>, <code><a href="#TinkoffBrokerServer.overviewDigestFile">overviewDigestFile</a></code>, <code><a href="#TinkoffBrokerServer.overviewPositionsFile">overviewPositionsFile</a></code>, <code><a href="#TinkoffBrokerServer.overviewOrdersFile">overviewOrdersFile</a></code>, <code><a href="#TinkoffBrokerServer.overviewAnalyticsFile">overviewAnalyticsFile</a></code>
-and <code><a href="#TinkoffBrokerServer.overviewBondsCalendarFile">overviewBondsCalendarFile</a></code> are defined then also save information to file.</p>
+and <code><a href="#TinkoffBrokerServer.overviewBondsCalendarFile">overviewBondsCalendarFile</a></code> are defined, then also save information to file.</p>
 
 <p>WARNING! It is not recommended to run this method too many times in a loop! The server receives
 many requests about the state of the portfolio, and then, based on the received data, a large number
-of calculation and statistics are collected.</p>
+of calculations and statistics are collected.</p>
 
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>show</strong>:  if <code>False</code> then only dictionary returns, if <code>True</code> then show more debug information.</li>
+<li><strong>show</strong>:  if <code>False</code> then only dictionary returns if <code>True</code> then shows more debug information.</li>
 <li><strong>details</strong>:  how detailed should the information be?
 <ul>
 <li><code>full</code> — shows full available information about portfolio status (by default),</li>
 <li><code>positions</code> — shows only open positions,</li>
 <li><code>orders</code> — shows only sections of open limits and stop orders.</li>
-<li><code>digest</code> — show a short digest of the portfolio status,</li>
+<li><code>digest</code> — shows a short digest of the portfolio status,</li>
 <li><code>analytics</code> — shows only the analytics section and the distribution of the portfolio by various categories,</li>
-<li><code>calendar</code> — shows only the bonds calendar section (if these present in portfolio).</li>
+<li><code>calendar</code> — shows only the bonds calendar section (if these are present in portfolio).</li>
 </ul></li>
-<li><strong>onlyFiles</strong>:  if <code>True</code> then do not show Markdown table in the console, but only generates report files.</li>
+<li><strong>onlyFiles</strong>:  if <code>True</code>, then does not show the Markdown table in the console but only generates report files.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
 
 <blockquote>
-  <p>dictionary with client's raw portfolio and some statistics.</p>
+  <p>dictionary with a client's raw portfolio and some statistics.</p>
 </blockquote>
 </div>
 
