@@ -1941,24 +1941,25 @@ class TinkoffBrokerServer:
             if blocked > 0:
                 view["stat"]["blockedInstruments"][item["figi"]] = blocked
 
-        allBlocked = {**view["stat"]["blockedCurrencies"], **view["stat"]["blockedInstruments"]}
+        allBlocked = dict(view["stat"]["blockedCurrencies"])
+        allBlocked.update(view["stat"]["blockedInstruments"])
 
         if "rub" in allBlocked.keys():
             view["stat"]["blockedRUB"] = allBlocked["rub"]  # blocked rubles
 
-        # --- saving current total amount in RUB of all currencies (with ruble), shares, bonds, etfs, futures and currencies:
+        # --- saving the current total amount in RUB of all currencies (with ruble), shares, bonds, etfs, futures and currencies:
         view["stat"]["allCurrenciesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountCurrencies"]["units"], portfolioResponse["totalAmountCurrencies"]["nano"])
         view["stat"]["sharesCostRUB"] = NanoToFloat(portfolioResponse["totalAmountShares"]["units"], portfolioResponse["totalAmountShares"]["nano"])
         view["stat"]["bondsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountBonds"]["units"], portfolioResponse["totalAmountBonds"]["nano"])
         view["stat"]["etfsCostRUB"] = NanoToFloat(portfolioResponse["totalAmountEtf"]["units"], portfolioResponse["totalAmountEtf"]["nano"])
         view["stat"]["futuresCostRUB"] = NanoToFloat(portfolioResponse["totalAmountFutures"]["units"], portfolioResponse["totalAmountFutures"]["nano"])
-        view["stat"]["portfolioCostRUB"] = sum([
-            view["stat"]["allCurrenciesCostRUB"],
-            view["stat"]["sharesCostRUB"],
-            view["stat"]["bondsCostRUB"],
-            view["stat"]["etfsCostRUB"],
-            view["stat"]["futuresCostRUB"],
-        ])
+        view["stat"]["portfolioCostRUB"] = (
+            view["stat"]["allCurrenciesCostRUB"] +
+            view["stat"]["sharesCostRUB"] +
+            view["stat"]["bondsCostRUB"] +
+            view["stat"]["etfsCostRUB"] +
+            view["stat"]["futuresCostRUB"]
+        )
 
         # --- calculating some portfolio statistics:
         byComp = {}  # distribution by companies
@@ -2104,12 +2105,12 @@ class TinkoffBrokerServer:
 
         # total changes in Russian Ruble:
         view["stat"]["availableRUB"] = view["stat"]["funds"]["rub"]["total"]  # available RUB without other currencies
-        view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"].keys() else 0.
+        view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"] else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
 
         # --- pending limit orders sector data:
-        uniquePendingOrdersFIGIs = []  # unique FIGIs of pending limit orders to avoid many times price requests
+        uniquePendingOrdersFIGIs = set()  # unique FIGIs of pending limit orders to avoid many times price requests
         uniquePendingOrders = {}  # unique instruments with FIGIs as dictionary keys
 
         for item in view["raw"]["orders"]:
@@ -2118,7 +2119,7 @@ class TinkoffBrokerServer:
             if item["figi"] not in uniquePendingOrdersFIGIs:
                 instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
 
-                uniquePendingOrdersFIGIs.append(item["figi"])
+                uniquePendingOrdersFIGIs.add(item["figi"])
                 uniquePendingOrders[item["figi"]] = instrument
 
             else:
