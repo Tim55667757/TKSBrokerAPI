@@ -600,7 +600,7 @@ class TinkoffBrokerServer:
                         uLogger.debug("    - headers:\n{}".format(response.headers))
 
                     # check rate limit headers: https://tinkoff.github.io/investAPI/grpc/#kreya
-                    if response and "x-ratelimit-remaining" in response.headers.keys() and response.headers["x-ratelimit-remaining"] == "0":
+                    if response and response.headers and response.headers.get("x-ratelimit-remaining") == "0":
                         rateLimitWait = int(response.headers["x-ratelimit-reset"])
 
                         uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
