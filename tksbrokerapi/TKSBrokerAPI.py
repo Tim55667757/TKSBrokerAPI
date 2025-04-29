@@ -252,7 +252,7 @@ class TinkoffBrokerServer:
         See also: `SendAPIRequest()`.
         """
 
-        self.pause = 5
+        self.pause = 3
         """Sleep time in seconds between retries, in all network requests 5 seconds by default.
 
         See also: `SendAPIRequest()`.
@@ -575,6 +575,7 @@ class TinkoffBrokerServer:
 
                 while not response and counter <= self.retry:
                     try:
+                        # try to send REST-request:
                         if reqType == "GET":
                             response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
@@ -582,15 +583,30 @@ class TinkoffBrokerServer:
                             response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
                     except requests.exceptions.RequestException as e:
-                        counter += 1
+                        # catch expected connection/request exceptions:
+                        uLogger.debug("Request exception occurred: {}.".format(e))
 
-                        uLogger.debug("Request exception occurred: {}. Retry {}/{} after {} sec...".format(e, counter, self.retry, currentPause))
+                    except Exception as e:
+                        # catch any unexpected exception (safety net):
+                        uLogger.debug("Unexpected exception occurred during request: {}.".format(e))
 
-                        sleep(currentPause)
+                    finally:
+                        # always check: if no valid response received, increment counter and retry after a pause
+                        if not response:
+                            counter += 1  # increase retry counter
 
-                        currentPause = min(currentPause * 2, 30)  # limit the maximum backoff to 60 seconds
+                            if counter > self.retry:
+                                uLogger.debug("Maximum retry limit ({}) exceeded without success.".format(self.retry))
 
-                        continue  # next retry attempt
+                                return responseJSON  # explicitly exit the method
+
+                            uLogger.debug("Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
+
+                            sleep(currentPause)  # wait before the next retry
+
+                            currentPause = min(currentPause * 2, 30)  # exponentially increase wait time but limit maximum pause
+
+                            continue  # next retry attempt
 
                     if self.moreDebug and response:
                         uLogger.debug("Response:")
@@ -626,6 +642,9 @@ class TinkoffBrokerServer:
 
                                 uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
 
+                        else:
+                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
+
                         responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                         counter = self.retry + 1  # do not retry for 4xx errors
 
@@ -640,6 +659,9 @@ class TinkoffBrokerServer:
                             errMsgDict = self._ParseJSON(rawData=response.text)
 
                             uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
+
+                        else:
+                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
 
                         responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                         counter += 1
@@ -1847,6 +1869,12 @@ class TinkoffBrokerServer:
         uLogger.debug("Requesting portfolio of a client. Please wait...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
+
+        if not portfolioResponse:
+            uLogger.warning("Server returns an empty user's portfolio! Check the token and account ID.")
+
+            return view
+
         view["raw"]["positions"] = self.RequestPositions()  # current open positions by instruments (dict)
         view["raw"]["orders"] = self.RequestPendingOrders()  # current actual pending limit orders (list)
         view["raw"]["stopOrders"] = self.RequestStopOrders()  # current actual stop orders (list)
