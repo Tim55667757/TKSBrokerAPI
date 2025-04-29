@@ -518,7 +518,10 @@ class TinkoffBrokerServer:
         :return: JSON (dictionary), parsed from server response string. If an error occurred, then returns empty dict `{}`.
         """
         try:
-            responseJSON = json.loads(rawData) if rawData else {}
+            if not rawData or rawData.strip() in ("", "{}"):
+                return {}
+
+            responseJSON = json.loads(rawData)
 
             if self.moreDebug:
                 uLogger.debug("JSON formatted raw body data of response:\n{}".format(json.dumps(responseJSON, indent=4)))
@@ -527,7 +530,7 @@ class TinkoffBrokerServer:
 
         except Exception as e:
             uLogger.debug(tb.format_exc())
-            uLogger.error("An empty dict will be return, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
+            uLogger.error("An empty dict will be returned, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
 
             return {}
 

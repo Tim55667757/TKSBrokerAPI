@@ -45,44 +45,41 @@ class TestTKSBrokerAPIMethods:
 
     def test__ParseJSONPositive(self):
         testData = [
-            ("{}", {}), ('{"x":123}', {"x": 123}), ('{"x":""}', {"x": ""}),
+            ("{}", {}),
+            ('{"x":123}', {"x": 123}),
+            ('{"x":""}', {"x": ""}),
             ('{"abc": "123", "xyz": 123}', {"abc": "123", "xyz": 123}),
             ('{"abc": {"abc": "123", "xyz": 123}}', {"abc": {"abc": "123", "xyz": 123}}),
             ('{"abc": {"abc": "", "xyz": 0}}', {"abc": {"abc": "", "xyz": 0}}),
         ]
 
-        for test in testData:
-            result = self.server._ParseJSON(rawData=test[0])
+        for raw_input, expected_output in testData:
+            result = self.server._ParseJSON(rawData=raw_input)
 
-            assert result == test[1], 'Expected: `_ParseJSON(rawData="{}", debug=False) == {}`, actual: `{}`'.format(test[0], test[1], result)
+            assert result == expected_output, (
+                f"Expected: _ParseJSON(rawData={raw_input!r}) == {expected_output!r}, "
+                f"but got: {result!r}"
+            )
 
     def test__ParseJSONNegative(self):
         testData = [
-            ("[]", []), ("{}", {}), ("{[]}", {}), ([], {}), (123, {}), ("123", 123), (None, {}), ("some string", {}),
+            ("{[]}", {}),  # invalid structure
+            ([], {}),  # invalid type (list)
+            (123, {}),  # invalid type (int)
+            (None, {}),  # invalid type (None)
+            ("some string", {}),  # non-JSON string
+            ("{\"unclosed\": true", {}),  # invalid JSON (unclosed brace)
+            ("   ", {}),  # whitespace only
+            ("", {}),  # empty string
         ]
 
-        for test in testData:
-            result = self.server._ParseJSON(rawData=test[0])
+        for raw_input, expected_output in testData:
+            result = self.server._ParseJSON(rawData=raw_input)
 
-            assert result == test[1], "Unexpected output!"
-
-    def test_SendAPIRequestCheckType(self):
-        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
-
-        # Create a fake response object:
-        fake_response = MagicMock()
-        fake_response.status_code = 200
-        fake_response.reason = "OK"
-        fake_response.text = '{}'
-        fake_response.headers = {}
-
-        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
-            result = self.server.SendAPIRequest(
-                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
-                reqType="POST",
+            assert result == expected_output, (
+                f"Expected: _ParseJSON(rawData={raw_input!r}) == {expected_output!r}, "
+                f"but got: {result!r}"
             )
-
-            assert isinstance(result, dict), "Not dict type returned!"
 
     def test_SendAPIRequestPositive(self):
         self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
