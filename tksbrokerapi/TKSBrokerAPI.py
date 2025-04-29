@@ -609,7 +609,8 @@ class TinkoffBrokerServer:
 
                     # handling 4xx client errors: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
                     if response and 400 <= response.status_code < 500:
-                        msg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+                        bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
+                        msg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
                         uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
 
@@ -630,7 +631,8 @@ class TinkoffBrokerServer:
 
                     # handling 5xx server errors:
                     if response and 500 <= response.status_code < 600:
-                        errMsg = "status code: [{}], response body: {}".format(response.status_code, response.text)
+                        bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
+                        errMsg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
                         uLogger.debug("    - not oK, {}".format(errMsg))
 
