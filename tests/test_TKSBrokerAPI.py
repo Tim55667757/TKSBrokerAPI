@@ -148,6 +148,25 @@ class TestTKSBrokerAPIMethods:
             assert isinstance(result, dict), "Not dict type returned when RequestException occurred!"
             assert result == {}, f"Expected empty dict on RequestException, actual: {result}"
 
+    def test_SendAPIRequestNegativeWithEmptyToken(self):
+        self.server.headers["Authorization"] = "Bearer "
+        self.server.retry = 0
+
+        fake_response = MagicMock()
+        fake_response.status_code = 401
+        fake_response.reason = "Unauthorized"
+        fake_response.text = '{"message": "Authentication token is missing or invalid"}'
+        fake_response.headers = {}
+
+        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Result must be a dict even when empty token!"
+            assert result == {"message": "Authentication token is missing or invalid"}
+
     def test_ListingCheckType(self):
         with patch.object(self.server, "_IWrapper", return_value=("Shares", [])):
             result = self.server.Listing()
