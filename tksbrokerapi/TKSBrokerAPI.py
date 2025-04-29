@@ -718,7 +718,7 @@ class TinkoffBrokerServer:
             for ticker in iList[iType]:
                 iList[iType][ticker]["type"] = iType
 
-                if "minPriceIncrement" in iList[iType][ticker].keys():
+                if iList[iType][ticker].get("minPriceIncrement"):
                     iList[iType][ticker]["step"] = NanoToFloat(
                         iList[iType][ticker]["minPriceIncrement"]["units"],
                         iList[iType][ticker]["minPriceIncrement"]["nano"],
@@ -1727,7 +1727,7 @@ class TinkoffBrokerServer:
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
         rawResponse = self.SendAPIRequest(ordersURL, reqType="POST")
 
-        if "orders" in rawResponse.keys():
+        if rawResponse.get("orders"):
             rawOrders = rawResponse["orders"]
             uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
 
@@ -1757,7 +1757,7 @@ class TinkoffBrokerServer:
         stopOrdersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
         rawResponse = self.SendAPIRequest(stopOrdersURL, reqType="POST")
 
-        if "stopOrders" in rawResponse.keys():
+        if rawResponse.get("stopOrders"):
             rawStopOrders = rawResponse["stopOrders"]
             uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
 
