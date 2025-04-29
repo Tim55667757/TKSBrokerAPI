@@ -94,7 +94,7 @@ import traceback as tb
 from time import sleep
 from argparse import ArgumentParser
 from importlib.metadata import version
-from multiprocessing import cpu_count, Lock
+from multiprocessing import cpu_count
 
 # Third-party library imports:
 import numpy as np
@@ -192,8 +192,6 @@ class TinkoffBrokerServer:
 
         self._tag = ""
         """Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
-
-        self.__lock = Lock()  # initialize multiprocessing mutex lock
 
         self._precision = 4  # precision, signs after comma, e.g. 2 for instruments like PLZL, 4 for instruments like USDRUB, if -1 then auto detect it when load data-file
 
@@ -567,119 +565,118 @@ class TinkoffBrokerServer:
                 break
 
         if oK:
-            with self.__lock:  # acquire the mutex lock
-                counter = 0
-                response = None
-                errMsg = ""
-                currentPause = self.pause  # initial pause
+            counter = 0
+            response = None
+            errMsg = ""
+            currentPause = self.pause  # initial pause
 
-                while not response and counter <= self.retry:
-                    try:
-                        # try to send REST-request:
-                        if reqType == "GET":
-                            response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
+            while not response and counter <= self.retry:
+                try:
+                    # try to send REST-request:
+                    if reqType == "GET":
+                        response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
-                        if reqType == "POST":
-                            response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
+                    if reqType == "POST":
+                        response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
 
-                    except requests.exceptions.RequestException as e:
-                        # catch expected connection/request exceptions:
-                        uLogger.debug("Request exception occurred: {}.".format(e))
+                except requests.exceptions.RequestException as e:
+                    # catch expected connection/request exceptions:
+                    uLogger.debug("Request exception occurred: {}.".format(e))
 
-                    except Exception as e:
-                        # catch any unexpected exception (safety net):
-                        uLogger.debug("Unexpected exception occurred during request: {}.".format(e))
+                except Exception as e:
+                    # catch any unexpected exception (safety net):
+                    uLogger.debug("Unexpected exception occurred during request: {}.".format(e))
 
-                    finally:
-                        # always check: if no valid response received, increment counter and retry after a pause
-                        if not response:
-                            counter += 1  # increase retry counter
+                finally:
+                    # always check: if no valid response received, increment counter and retry after a pause
+                    if not response:
+                        counter += 1  # increase retry counter
 
-                            if counter > self.retry:
-                                uLogger.debug("Maximum retry limit ({}) exceeded without success.".format(self.retry))
+                        if counter > self.retry:
+                            uLogger.debug("Maximum retry limit ({}) exceeded without success.".format(self.retry))
 
-                                return responseJSON  # explicitly exit the method
+                            return responseJSON  # explicitly exit the method
 
-                            uLogger.debug("Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
+                        uLogger.debug("Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
 
-                            sleep(currentPause)  # wait before the next retry
+                        sleep(currentPause)  # wait before the next retry
 
-                            currentPause = min(currentPause * 2, 30)  # exponentially increase wait time but limit maximum pause
+                        currentPause = min(currentPause * 2, 30)  # exponentially increase wait time but limit maximum pause
 
-                            continue  # next retry attempt
+                        continue  # next retry attempt
 
-                    if self.moreDebug and response:
-                        uLogger.debug("Response:")
-                        uLogger.debug("    - status code: {}".format(response.status_code))
-                        uLogger.debug("    - reason: {}".format(response.reason))
-                        uLogger.debug("    - body length: {}".format(len(response.text)))
-                        uLogger.debug("    - headers:\n{}".format(response.headers))
+                if self.moreDebug and response:
+                    uLogger.debug("Response:")
+                    uLogger.debug("    - status code: {}".format(response.status_code))
+                    uLogger.debug("    - reason: {}".format(response.reason))
+                    uLogger.debug("    - body length: {}".format(len(response.text)))
+                    uLogger.debug("    - headers:\n{}".format(response.headers))
 
-                    # check rate limit headers: https://tinkoff.github.io/investAPI/grpc/#kreya
-                    if response and response.headers and response.headers.get("x-ratelimit-remaining") == "0":
-                        rateLimitWait = int(response.headers["x-ratelimit-reset"])
+                # check rate limit headers: https://tinkoff.github.io/investAPI/grpc/#kreya
+                if response and response.headers and response.headers.get("x-ratelimit-remaining") == "0":
+                    rateLimitWait = int(response.headers["x-ratelimit-reset"])
 
-                        uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
+                    uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
 
-                        sleep(rateLimitWait)
+                    sleep(rateLimitWait)
 
-                    # handling 4xx client errors: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-                    if response and 400 <= response.status_code < 500:
-                        bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
-                        msg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
+                # handling 4xx client errors: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+                if response and 400 <= response.status_code < 500:
+                    bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
+                    msg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
-                        uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
+                    uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
 
-                        if "code" in response.text and "message" in response.text:
-                            if "Authentication token is missing or invalid" in response.text:
-                                uLogger.warning("Authentication token is missing or invalid! Generate a new token, please.")
+                    if "code" in response.text and "message" in response.text:
+                        if "Authentication token is missing or invalid" in response.text:
+                            uLogger.warning("Authentication token is missing or invalid! Generate a new token, please.")
 
-                            elif "Insufficient privileges" in response.text:
-                                uLogger.warning("Insufficient privileges to perform this operation! Please verify that the token matches the user's account.")
-
-                            else:
-                                msgDict = self._ParseJSON(rawData=response.text)
-
-                                uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
+                        elif "Insufficient privileges" in response.text:
+                            uLogger.warning("Insufficient privileges to perform this operation! Please verify that the token matches the user's account.")
 
                         else:
-                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
+                            msgDict = self._ParseJSON(rawData=response.text)
 
-                        responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
-                        counter = self.retry + 1  # do not retry for 4xx errors
+                            uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
 
-                    # handling 5xx server errors:
-                    if response and 500 <= response.status_code < 600:
-                        bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
-                        errMsg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
+                    else:
+                        uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
 
-                        uLogger.debug("    - not oK, {}".format(errMsg))
+                    responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
+                    counter = self.retry + 1  # do not retry for 4xx errors
 
-                        if "code" in response.text and "message" in response.text:
-                            errMsgDict = self._ParseJSON(rawData=response.text)
+                # handling 5xx server errors:
+                if response and 500 <= response.status_code < 600:
+                    bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
+                    errMsg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
-                            uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
+                    uLogger.debug("    - not oK, {}".format(errMsg))
 
-                        else:
-                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
+                    if "code" in response.text and "message" in response.text:
+                        errMsgDict = self._ParseJSON(rawData=response.text)
 
-                        responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
-                        counter += 1
-                        response = None  # clear response to allow retry
+                        uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
 
-                        if counter <= self.retry:
-                            uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, currentPause))
+                    else:
+                        uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
 
-                            sleep(currentPause)
+                    responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
+                    counter += 1
+                    response = None  # clear response to allow retry
 
-                            currentPause = min(currentPause * 2, 60)  # limit the maximum backoff to 60 seconds
+                    if counter <= self.retry:
+                        uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, currentPause))
 
-                if response:
-                    responseJSON = self._ParseJSON(rawData=response.text)
+                        sleep(currentPause)
 
-                if errMsg:
-                    uLogger.error("Server returns not `oK` status! See full debug log. Errors messages: https://tinkoff.github.io/investAPI/errors/")
-                    uLogger.error("    - not oK, {}".format(errMsg))
+                        currentPause = min(currentPause * 2, 60)  # limit the maximum backoff to 60 seconds
+
+            if response:
+                responseJSON = self._ParseJSON(rawData=response.text)
+
+            if errMsg:
+                uLogger.error("Server returns not `oK` status! See full debug log. Errors messages: https://tinkoff.github.io/investAPI/errors/")
+                uLogger.error("    - not oK, {}".format(errMsg))
 
         return responseJSON
 
