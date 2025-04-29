@@ -151,6 +151,37 @@ class TestTKSBrokerAPIMethods:
             assert isinstance(result, dict), "Not dict type returned when RequestException occurred!"
             assert result == {}, f"Expected empty dict on RequestException, actual: {result}"
 
+    def test_ListingCheckType(self):
+        with patch.object(self.server, "_IWrapper", return_value=("Shares", [])):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Not dict type returned!"
+
+    def test_ListingPositive(self):
+        with patch.object(self.server, "_IWrapper", side_effect=lambda params: (
+                "Shares", [{"ticker": "AAPL", "minPriceIncrement": {"units": 0, "nano": 10000000}}]
+        ) if params["iType"] == "Shares" else (
+                "Bonds", [{"ticker": "BND", "minPriceIncrement": {"units": 0, "nano": 1000000}}]
+        )):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Result should be a dict!"
+            assert "Shares" in result, "Shares not in result!"
+            assert "Bonds" in result, "Bonds not in result!"
+            assert "AAPL" in result["Shares"], "Ticker AAPL not found!"
+            assert "BND" in result["Bonds"], "Ticker BND not found!"
+            assert result["Shares"]["AAPL"]["step"] == 0.01, "Incorrect step calculated!"
+            assert result["Bonds"]["BND"]["step"] == 0.001, "Incorrect step calculated!"
+
+    def test_ListingNegative(self):
+        # Mock _IWrapper to return incorrect/empty structures
+        with patch.object(self.server, "_IWrapper", return_value=("Unknown", [])):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Result should be a dict even on error!"
+            assert "Unknown" in result, "Expected 'Unknown' key not found!"
+            assert result["Unknown"] == {}, "Expected empty dict for Unknown instruments!"
+
     def test_ShowInstrumentInfoCheckType(self):
         assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, show=False), str), "Not str type returned!"
 
