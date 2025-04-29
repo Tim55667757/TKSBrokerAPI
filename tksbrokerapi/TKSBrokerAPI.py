@@ -1792,24 +1792,25 @@ class TinkoffBrokerServer:
     # noinspection PyTypeChecker
     def Overview(self, show: bool = False, details: str = "full", onlyFiles=False) -> dict:
         """
-        Get portfolio: all open positions, orders and some statistics for current `accountId`.
+        Get portfolio: all open positions, orders, some statistics for current `accountId`.
         If `overviewFile`, `overviewDigestFile`, `overviewPositionsFile`, `overviewOrdersFile`, `overviewAnalyticsFile`
-        and `overviewBondsCalendarFile` are defined then also save information to file.
+        and `overviewBondsCalendarFile` are defined, then also save information to file.
 
         WARNING! It is not recommended to run this method too many times in a loop! The server receives
         many requests about the state of the portfolio, and then, based on the received data, a large number
-        of calculation and statistics are collected.
+        of calculations and statistics are collected.
 
-        :param show: if `False` then only dictionary returns, if `True` then show more debug information.
+        :param show: if `False` then only dictionary returns if `True` then shows more debug information.
         :param details: how detailed should the information be?
         - `full` — shows full available information about portfolio status (by default),
         - `positions` — shows only open positions,
         - `orders` — shows only sections of open limits and stop orders.
-        - `digest` — show a short digest of the portfolio status,
+        - `digest` — shows a short digest of the portfolio status,
         - `analytics` — shows only the analytics section and the distribution of the portfolio by various categories,
-        - `calendar` — shows only the bonds calendar section (if these present in portfolio).
-        :param onlyFiles: if `True` then do not show Markdown table in the console, but only generates report files.
-        :return: dictionary with client's raw portfolio and some statistics.
+        - `calendar` — shows only the bonds calendar section (if these are present in portfolio).
+        :param onlyFiles: if `True`, then does not show the Markdown table in the console but only generates report files.
+
+        :return: dictionary with a client's raw portfolio and some statistics.
         """
         if self.accountId is None or not self.accountId:
             uLogger.error("Variable `accountId` must be defined for using this method!")
@@ -1817,13 +1818,13 @@ class TinkoffBrokerServer:
 
         view = {
             "raw": {  # --- raw portfolio responses from broker with user portfolio data:
-                "headers": {},  # list of dictionaries, response headers without "positions" section
-                "Currencies": [],  # list of dictionaries, open trades with currencies from "positions" section
-                "Shares": [],  # list of dictionaries, open trades with shares from "positions" section
-                "Bonds": [],  # list of dictionaries, open trades with bonds from "positions" section
-                "Etfs": [],  # list of dictionaries, open trades with etfs from "positions" section
-                "Futures": [],  # list of dictionaries, open trades with futures from "positions" section
-                "positions": {},  # raw response from broker: dictionary with current available or blocked currencies and instruments for client
+                "headers": {},  # list of dictionaries, response headers without the "positions" section
+                "Currencies": [],  # list of dictionaries, open trades with currencies from the "positions" section
+                "Shares": [],  # list of dictionaries, open trades with shares from the "positions" section
+                "Bonds": [],  # list of dictionaries, open trades with bonds from the "positions" section
+                "Etfs": [],  # list of dictionaries, open trades with etfs from the "positions" section
+                "Futures": [],  # list of dictionaries, open trades with futures from the "positions" section
+                "positions": {},  # raw response from broker: dictionary with current available or blocked currencies and instruments for the client
                 "orders": [],  # raw response from broker: list of dictionaries with all pending (market) orders
                 "stopOrders": [],  # raw response from broker: list of dictionaries with all stop orders
                 "currenciesCurrentPrices": {"rub": {"name": "Российский рубль", "currentPrice": 1.}},  # dict with prices of all currencies in RUB
@@ -1879,7 +1880,7 @@ class TinkoffBrokerServer:
         view["raw"]["orders"] = self.RequestPendingOrders()  # current actual pending limit orders (list)
         view["raw"]["stopOrders"] = self.RequestStopOrders()  # current actual stop orders (list)
 
-        # save response headers without "positions" section:
+        # save response headers without the "positions" section:
         for key in portfolioResponse.keys():
             if key != "positions":
                 view["raw"]["headers"][key] = portfolioResponse[key]
@@ -1929,15 +1930,17 @@ class TinkoffBrokerServer:
             else:
                 continue
 
-        # how many volume of currencies (by ISO currency name) are blocked:
-        for item in view["raw"]["positions"]["blocked"]:
+        # how many volumes of currencies (by ISO currency name) are blocked:
+        for item in view["raw"]["positions"].get("blocked", []):
             blocked = NanoToFloat(item["units"], item["nano"])
+
             if blocked > 0:
                 view["stat"]["blockedCurrencies"][item["currency"]] = blocked
 
-        # how many volume of instruments (by FIGI) are blocked:
-        for item in view["raw"]["positions"]["securities"]:
+        # how many volumes of instruments (by FIGI) are blocked:
+        for item in view["raw"]["positions"].get("securities", []):
             blocked = int(item["blocked"])
+
             if blocked > 0:
                 view["stat"]["blockedInstruments"][item["figi"]] = blocked
 
@@ -2103,8 +2106,13 @@ class TinkoffBrokerServer:
                 else:
                     continue
 
-        # total changes in Russian Ruble:
-        view["stat"]["availableRUB"] = view["stat"]["funds"]["rub"]["total"]  # available RUB without other currencies
+        # --- total changes in Russian Ruble:
+        if "rub" in view["stat"]["funds"]:
+            view["stat"]["availableRUB"] = view["stat"]["funds"]["rub"]["total"]  # available RUB without other currencies
+
+        else:
+            view["stat"]["availableRUB"] = 0.
+
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"] else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
         view["stat"]["totalChangesRUB"] = view["stat"]["portfolioCostRUB"] - startCost
@@ -2117,7 +2125,7 @@ class TinkoffBrokerServer:
             self._figi = item["figi"]
 
             if item["figi"] not in uniquePendingOrdersFIGIs:
-                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about instrument by FIGI, price requests only one time
+                instrument = self.SearchByFIGI(requestPrice=True)  # full raw info about an instrument by FIGI, price requests only one time
 
                 uniquePendingOrdersFIGIs.add(item["figi"])
                 uniquePendingOrders[item["figi"]] = instrument

@@ -167,6 +167,113 @@ class TestTKSBrokerAPIMethods:
             assert isinstance(result, dict), "Result must be a dict even when empty token!"
             assert result == {"message": "Authentication token is missing or invalid"}
 
+    def test_OverviewCheckType(self):
+        # Basic check that Overview returns the correct structure:
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 10000, "nano": 0},
+                "quantityLots": {"units": 10000, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 10000, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Overview must return a dict"
+            assert "raw" in result and "stat" in result and "analytics" in result, "Missing sections in Overview result"
+
+    def test_OverviewPositive(self):
+        # Test a positive, full Overview response
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 10000, "nano": 0},
+                "quantityLots": {"units": 10000, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 10000, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert result["stat"]["portfolioCostRUB"] >= 0, "Portfolio cost should be non-negative"
+            assert isinstance(result["analytics"], dict), "Analytics section must exist"
+
+    def test_OverviewNegative(self):
+        # Case 1: all four API responses are minimally valid
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 0, "nano": 0},
+                "quantityLots": {"units": 0, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 0, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Result must be dict even if empty"
+            assert isinstance(result["raw"], dict), "Raw section must exist"
+            assert isinstance(result["raw"]["Currencies"], list), "Currencies must be a list"
+            assert isinstance(result["raw"]["Shares"], list), "Shares must be a list"
+
+    def test_OverviewNegativeWithEmptyToken(self):
+        # Case 2: simulate empty auth token errors
+        fakeError = {
+            "message": "Authentication token is missing or invalid",
+            "positions": [],
+            "totalAmountCurrencies": {"units": 0, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0}
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakeError, fakeError, fakeError, fakeError
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Result must still be dict with auth error"
+            assert "raw" in result, "Raw section must still exist"
+            assert isinstance(result["raw"], dict), "Raw must be dict"
+
     def test_ListingCheckType(self):
         with patch.object(self.server, "_IWrapper", return_value=("Shares", [])):
             result = self.server.Listing()
