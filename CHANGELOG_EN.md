@@ -53,6 +53,7 @@ Release development in progress...
 * [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) Improved `HampelFilter()` performance: replaced nested MAD lambda with vectorized median calculation. Now passes 1M-element test in under 1s (was >90s on an older version).
 * [#148](https://github.com/Tim55667757/TKSBrokerAPI/issues/148) Implemented an improved version of `FastBBands()` than the similar function in pandas_ta lib.
 * [#149](https://github.com/Tim55667757/TKSBrokerAPI/issues/149) Implemented an improved version of `FastPSAR()` than the similar function in pandas_ta lib.
+* [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Improved `SendAPIRequest()`: added safe retries, error parsing, full unit tests; increased API client stability.
 
 ##### Bug fixes
 
