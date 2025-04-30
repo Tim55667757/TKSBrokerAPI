@@ -695,7 +695,7 @@ class TinkoffBrokerServer:
         result = []
 
         if iType in TKS_INSTRUMENTS:
-            uLogger.debug("Requesting available [{}] list. Please wait...".format(iType))
+            uLogger.debug("Requesting [{}] list. Please wait...".format(iType))
 
             # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
@@ -717,7 +717,7 @@ class TinkoffBrokerServer:
 
         :return: Dictionary with all available broker instruments: currencies, shares, bonds, ETFs, and futures.
         """
-        uLogger.debug("Requesting all available instruments for the current account. Please wait...")
+        uLogger.debug("Requesting available instruments for the current account. Please wait...")
         uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
 
         # These parameters are inserted into the requests: https://tinkoff.github.io/investAPI/swagger-ui/#/InstrumentsService
@@ -1057,7 +1057,7 @@ class TinkoffBrokerServer:
                 with open(self.infoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Info about instrument with ticker [{}] and FIGI [{}] was saved to file: [{}]".format(iJSON["ticker"], iJSON["figi"], os.path.abspath(self.infoFile)))
+                uLogger.info("Info about instrument with ticker [{}] and FIGI [{}]: [{}]".format(iJSON["ticker"], iJSON["figi"], os.path.abspath(self.infoFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.infoFile.replace(".md", ".html") if self.infoFile.endswith(".md") else self.infoFile + ".html"
@@ -1286,7 +1286,7 @@ class TinkoffBrokerServer:
             raise Exception("Ticker or FIGI required")
 
         else:
-            uLogger.debug("Requesting current prices: ticker [{}], FIGI [{}]. Please wait...".format(self._ticker, self._figi))
+            uLogger.debug("Requesting prices: ticker [{}], FIGI [{}]. Please wait...".format(self._ticker, self._figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
             priceURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook"
@@ -1416,7 +1416,7 @@ class TinkoffBrokerServer:
             with open(self.instrumentsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("All available instruments are saved to file: [{}]".format(os.path.abspath(self.instrumentsFile)))
+            uLogger.info("All available instruments: [{}]".format(os.path.abspath(self.instrumentsFile)))
 
             if self.useHTMLReports:
                 htmlFilePath = self.instrumentsFile.replace(".md", ".html") if self.instrumentsFile.endswith(".md") else self.instrumentsFile + ".html"
@@ -1504,7 +1504,7 @@ class TinkoffBrokerServer:
             with open(self.searchResultsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("Full search results were saved to file: [{}]".format(os.path.abspath(self.searchResultsFile)))
+            uLogger.info("Full search results: [{}]".format(os.path.abspath(self.searchResultsFile)))
 
             if self.useHTMLReports:
                 htmlFilePath = self.searchResultsFile.replace(".md", ".html") if self.searchResultsFile.endswith(".md") else self.searchResultsFile + ".html"
@@ -1580,7 +1580,7 @@ class TinkoffBrokerServer:
 
         onlyUniqueFIGIs = self.GetUniqueFIGIs(instruments)
 
-        uLogger.debug("Requesting current prices from Tinkoff Broker server...")
+        uLogger.debug("Requesting prices list from broker server...")
 
         iList = []  # trying to get info and current prices about all unique instruments:
         for self._figi in onlyUniqueFIGIs:
@@ -1638,7 +1638,7 @@ class TinkoffBrokerServer:
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Price list for all instruments saved to file: [{}]".format(os.path.abspath(self.pricesFile)))
+                uLogger.info("Price list: [{}]".format(os.path.abspath(self.pricesFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.pricesFile.replace(".md", ".html") if self.pricesFile.endswith(".md") else self.pricesFile + ".html"
@@ -1665,7 +1665,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `figi` must be defined for using this method!")
             raise Exception("FIGI required")
 
-        uLogger.debug("Requesting current trading status, FIGI: [{}]. Please wait...".format(self._figi))
+        uLogger.debug("Requesting trading status, FIGI: [{}]. Please wait...".format(self._figi))
 
         self.body = str({"figi": self._figi, "instrumentId": self._figi})
         tradingStatusURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus"
@@ -1690,7 +1690,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current actual user's portfolio. Please wait...")
+        uLogger.debug("Requesting user's portfolio. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPortfolio"
@@ -1715,7 +1715,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current open positions in currencies and instruments. Please wait...")
+        uLogger.debug("Requesting open positions in currencies and instruments. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         positionsURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPositions"
@@ -1740,7 +1740,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current actual pending limit orders. Please wait...")
+        uLogger.debug("Requesting pending limit orders. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
@@ -1770,7 +1770,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current actual stop orders. Please wait...")
+        uLogger.debug("Requesting stop orders. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         stopOrdersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
@@ -2601,7 +2601,7 @@ class TinkoffBrokerServer:
                 with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's portfolio was saved to file: [{}]".format(os.path.abspath(filename)))
+                uLogger.info("Client's portfolio: [{}]".format(os.path.abspath(filename)))
 
                 if self.useHTMLReports:
                     htmlFilePath = filename.replace(".md", ".html") if filename.endswith(".md") else filename + ".html"
@@ -2633,7 +2633,7 @@ class TinkoffBrokerServer:
 
         startDate, endDate = GetDatesAsString(start, end, userFormat=TKS_DATE_FORMAT, outputFormat=TKS_DATE_TIME_FORMAT)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
 
-        uLogger.debug("Requesting history of a client's operations. Please wait...")
+        uLogger.debug("Requesting history of operations. Please wait...")
 
         # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
         dealsURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetOperations"
@@ -2865,7 +2865,7 @@ class TinkoffBrokerServer:
                 with open(self.reportFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("History of a client's operations are saved to file: [{}]".format(os.path.abspath(self.reportFile)))
+                uLogger.info("Operations history: [{}]".format(os.path.abspath(self.reportFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.reportFile.replace(".md", ".html") if self.reportFile.endswith(".md") else self.reportFile + ".html"
@@ -3079,7 +3079,7 @@ class TinkoffBrokerServer:
 
         else:
             if show:
-                uLogger.debug("--output key is not defined. Parsed history file not saved to file, only Pandas DataFrame returns.")
+                uLogger.debug("--output key is not defined. Parsed history not saved to file, only Pandas DataFrame returns.")
 
         return history
 
@@ -3861,7 +3861,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened positions list...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] throw opened positions list...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
 
             for iType in TKS_INSTRUMENTS:
@@ -3904,7 +3904,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] in opened positions...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] in opened positions...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
 
             for iType in TKS_INSTRUMENTS:
@@ -3948,7 +3948,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["orders"]:
@@ -3991,7 +3991,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened pending limit orders list...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["orders"]:
@@ -4035,7 +4035,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["stopOrders"]:
@@ -4078,7 +4078,7 @@ class TinkoffBrokerServer:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching instrument with ticker [{}] throw opened stop orders list...".format(self._ticker))
+            uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
             msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
 
             for instrument in portfolio["stat"]["stopOrders"]:
@@ -4123,7 +4123,7 @@ class TinkoffBrokerServer:
             uLogger.error("Variable `accountId` must be defined for using this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting current available funds for withdrawal. Please wait...")
+        uLogger.debug("Requesting funds for withdrawal. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits"
@@ -4210,7 +4210,7 @@ class TinkoffBrokerServer:
                 with open(self.withdrawalLimitsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's withdrawal limits was saved to file: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
+                uLogger.info("Client's withdrawal limits: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.withdrawalLimitsFile.replace(".md", ".html") if self.withdrawalLimitsFile.endswith(".md") else self.withdrawalLimitsFile + ".html"
@@ -4236,20 +4236,20 @@ class TinkoffBrokerServer:
                    "closedDate": "1970-01-01T00:00:00Z", "accessLevel": "ACCOUNT_ACCESS_LEVEL_FULL_ACCESS"}, ...]}`.
                  If `closedDate="1970-01-01T00:00:00Z"` it means that account is active now.
         """
-        uLogger.debug("Requesting all brokerage accounts of current user detected by its token. Please wait...")
+        uLogger.debug("Requesting brokerage accounts of current user detected by its token. Please wait...")
 
         self.body = str({})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts"
         rawAccounts = self.SendAPIRequest(portfolioURL, reqType="POST")
 
         if self.moreDebug:
-            uLogger.debug("Records about available accounts successfully received")
+            uLogger.debug("Records about accounts successfully received")
 
         return rawAccounts
 
     def RequestUserInfo(self) -> dict:
         """
-        Method for requesting common user's information.
+        Method for requesting common user information.
 
         See also:
         - REST API: https://tinkoff.github.io/investAPI/swagger-ui/#/UsersService/UsersService_GetInfo
@@ -4261,7 +4261,7 @@ class TinkoffBrokerServer:
                  `{"premStatus": true, "qualStatus": false, "qualifiedForWorkWith": ["bond", "foreign_shares", "leverage",
                    "russian_shares", "structured_income_bonds"], "tariff": "premium"}`.
         """
-        uLogger.debug("Requesting common user's information. Please wait...")
+        uLogger.debug("Requesting common user information. Please wait...")
 
         self.body = str({})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetInfo"
@@ -4418,7 +4418,7 @@ class TinkoffBrokerServer:
 
         uniqueInstruments = self.GetUniqueFIGIs(instruments)
 
-        uLogger.debug("Requesting raw bonds calendar from server, transforming and extending it. Please wait...")
+        uLogger.debug("Requesting raw bonds calendar, transforming and extending it. Please wait...")
 
         iCount = len(uniqueInstruments)
         tooLong = iCount >= 20
@@ -4704,7 +4704,7 @@ class TinkoffBrokerServer:
                 with open(self.calendarFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Bond payments calendar was saved to file: [{}]".format(os.path.abspath(self.calendarFile)))
+                uLogger.info("Bond payments calendar: [{}]".format(os.path.abspath(self.calendarFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.calendarFile.replace(".md", ".html") if self.calendarFile.endswith(".md") else self.calendarFile + ".html"
@@ -4780,7 +4780,7 @@ class TinkoffBrokerServer:
                 with open(self.userAccountsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("User accounts were saved to file: [{}]".format(os.path.abspath(self.userAccountsFile)))
+                uLogger.info("User accounts: [{}]".format(os.path.abspath(self.userAccountsFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.userAccountsFile.replace(".md", ".html") if self.userAccountsFile.endswith(".md") else self.userAccountsFile + ".html"
@@ -4958,7 +4958,7 @@ class TinkoffBrokerServer:
                 with open(self.userInfoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("User data was saved to file: [{}]".format(os.path.abspath(self.userInfoFile)))
+                uLogger.info("User data: [{}]".format(os.path.abspath(self.userInfoFile)))
 
                 if self.useHTMLReports:
                     htmlFilePath = self.userInfoFile.replace(".md", ".html") if self.userInfoFile.endswith(".md") else self.userInfoFile + ".html"
