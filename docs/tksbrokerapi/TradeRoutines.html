@@ -69,6 +69,9 @@
                     <a class="function" href="#ReachShort">ReachShort</a>
             </li>
             <li>
+                    <a class="function" href="#FormatTimedelta">FormatTimedelta</a>
+            </li>
+            <li>
                     <a class="function" href="#GetDatesAsString">GetDatesAsString</a>
             </li>
             <li>
@@ -663,6 +666,49 @@ of candles just use <code>"Med"</code> Fuzzy Reach level.</li>
 
 <blockquote>
   <p>Dictionary with Fuzzy Reach level and Reach percents for the lowest close price, e.g. <code>{"reachFuzzy": "High", "reachPercent": 66.67}</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FormatTimedelta">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">FormatTimedelta</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">timeDelta</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span>, </span><span class="param"><span class="n">precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FormatTimedelta"></a>
+    
+            <div class="docstring"><p>Format a timedelta object into a readable string like "0:00:12" or "0:00:12.34".</p>
+
+<p>This function supports fixed-point precision formatting for seconds.
+Fractional seconds are rounded to the specified number of digits.
+No brackets are added — raw string like "H:MM:SS.ss" is returned.</p>
+
+<p>If the precision is invalid (not an int or out of range [0..6]),
+the function will return the default string representation of the timedelta.</p>
+
+<p>Examples:</p>
+
+<p>FormatTimedelta(timedelta(seconds=12.987), precision=0) -> "0:00:12"
+FormatTimedelta(timedelta(seconds=12.987), precision=1) -> "0:00:12.9"
+FormatTimedelta(timedelta(seconds=12.987), precision=2) -> "0:00:12.99"
+FormatTimedelta(timedelta(seconds=12.987), precision=5) -> "0:00:12.98700"
+FormatTimedelta(timedelta(seconds=12.987), precision="bad") -> "0:00:12.987000"</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>timeDelta</strong>:  Timedelta object to format.</li>
+<li><strong>precision</strong>:  Integer from 0 to 6 — how many digits to keep after seconds.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Formatted time string like "0:00:12" or "0:00:12.34". If precision is invalid, returns str(timeDelta).</p>
 </blockquote>
 </div>
 
