@@ -1640,3 +1640,106 @@ class TestTradeRoutinesMethods:
         elapsed = time.perf_counter() - start
 
         assert elapsed < 2.0, f"FastPSAR too slow: {elapsed:.2f}s"
+
+    def test_FormatTimedeltaCheckType(self):
+        td = timedelta(seconds=12.3456)
+
+        # Valid precision values — should return strings:
+        for precision in [0, 1, 2, 3, 6]:
+            result = TradeRoutines.FormatTimedelta(td, precision)
+
+            assert isinstance(result, str), f"Expected str, got {type(result)}"
+
+        # Invalid precision as string — should still return string:
+        result = TradeRoutines.FormatTimedelta(td, precision="bad")  # type: ignore[arg-type]
+
+        assert isinstance(result, str), f"Expected str fallback, got {type(result)}"
+
+    def test_FormatTimedeltaPositive(self):
+        testData = [
+            # Whole seconds, no decimals:
+            (timedelta(seconds=12.987), 0, "0:00:13"),
+
+            # One decimal place — rounding up:
+            (timedelta(seconds=12.987), 1, "0:00:13.0"),
+
+            # Two decimal places — cut just before 0.987:
+            (timedelta(seconds=12.987), 2, "0:00:12.99"),
+
+            # Hours and minutes with 3 digits:
+            (timedelta(hours=1, minutes=2, seconds=3.456), 3, "1:02:03.456"),
+
+            # Padding for fixed width with 5 digits:
+            (timedelta(hours=1, minutes=2, seconds=3.0001), 5, "1:02:03.00010"),
+
+            # Edge case — exactly 59.999 rounds up to 60.0:
+            (timedelta(seconds=59.999), 1, "0:01:00.0"),
+
+            # Edge case — 3599.999 rounds to full hour:
+            (timedelta(seconds=3599.999), 1, "1:00:00.0"),
+
+            # Edge case — full hour exact, no decimal:
+            (timedelta(hours=1), 0, "1:00:00"),
+
+            # Edge case — microsecond rounding up to next second:
+            (timedelta(seconds=59.9999), 2, "0:01:00.00"),
+
+            # Edge case — microsecond just under rounding threshold:
+            (timedelta(seconds=59.994), 2, "0:00:59.99"),
+
+            # Edge case — seconds == 0 with decimal:
+            (timedelta(seconds=0.499), 1, "0:00:00.5"),
+
+            # Edge case — zero duration:
+            (timedelta(seconds=0), 0, "0:00:00"),
+
+            # Edge case — high precision padding:
+            (timedelta(seconds=1.000001), 6, "0:00:01.000001"),
+        ]
+
+        for td, precision, expected in testData:
+            result = TradeRoutines.FormatTimedelta(td, precision)
+
+            assert result == expected, f"Incorrect output! FormatTimedelta({td}, {precision}) -> {result}, expected {expected}"
+
+    def test_FormatTimedeltaNegative(self):
+        testData = [
+            # Negative precision — fallback to raw str:
+            (timedelta(seconds=12.3456), -1),
+
+            # Precision too large — fallback to raw str:
+            (timedelta(seconds=12.3456), 10),
+
+            # Precision as string — fallback to raw str:
+            (timedelta(seconds=12.3456), "bad"),
+
+            # Precision is None — fallback to raw str:
+            (timedelta(seconds=12.3456), None),
+
+            # Precision as float — fallback to raw str:
+            (timedelta(seconds=12.3456), 2.0),
+
+            # Precision as list — fallback to raw str:
+            (timedelta(seconds=12.3456), [1]),
+
+            # Precision as dict — fallback to raw str:
+            (timedelta(seconds=12.3456), {"value": 2}),
+
+            # Precision as bool — fallback to raw str (even though bool is subclass of int!):
+            (timedelta(seconds=12.3456), True),
+
+            # Precision as complex number — fallback to raw str:
+            (timedelta(seconds=12.3456), complex(2, 0)),
+
+            # Precision as invalid string that looks numeric — fallback to raw str:
+            (timedelta(seconds=12.3456), "2"),
+
+            # Precision is object — fallback to raw str:
+            (timedelta(seconds=12.3456), object()),
+        ]
+
+        for td, precision in testData:
+            result = TradeRoutines.FormatTimedelta(td, precision)
+            expected = str(td)
+
+            assert result == expected, f"Incorrect fallback! FormatTimedelta({td}, {precision}) -> {result}, expected {expected}"
