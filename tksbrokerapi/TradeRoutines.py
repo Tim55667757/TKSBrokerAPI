@@ -380,6 +380,56 @@ def ReachShort(pClosing: pd.Series) -> dict[str, float]:
         return {"reachFuzzy": reachFuzzySell, "reachPercent": reachPercentSell}
 
 
+def FormatTimedelta(timeDelta: timedelta, precision: int = 0) -> str:
+    """
+    Format a timedelta object into a readable string like "0:00:12" or "0:00:12.34".
+
+    This function supports fixed-point precision formatting for seconds.
+    Fractional seconds are rounded to the specified number of digits.
+    No brackets are added — raw string like "H:MM:SS.ss" is returned.
+
+    If the precision is invalid (not an int or out of range [0..6]),
+    the function will return the default string representation of the timedelta.
+
+    Examples:
+
+    FormatTimedelta(timedelta(seconds=12.987), precision=0) -> "0:00:12"
+    FormatTimedelta(timedelta(seconds=12.987), precision=1) -> "0:00:12.9"
+    FormatTimedelta(timedelta(seconds=12.987), precision=2) -> "0:00:12.99"
+    FormatTimedelta(timedelta(seconds=12.987), precision=5) -> "0:00:12.98700"
+    FormatTimedelta(timedelta(seconds=12.987), precision="bad") -> "0:00:12.987000"
+
+    :param timeDelta: Timedelta object to format.
+    :param precision: Integer from 0 to 6 — how many digits to keep after seconds.
+
+    :return: Formatted time string like "0:00:12" or "0:00:12.34". If precision is invalid, returns str(timeDelta).
+    """
+    if not isinstance(precision, int) or not 0 <= precision <= 6:
+        return str(timeDelta)
+
+    try:
+        # Round the total number of seconds with required precision (e.g. 59.999 → 60.0):
+        rounded = round(timeDelta.total_seconds(), precision)
+
+        # Convert to hours, minutes, seconds (integers only):
+        hours, remainder = divmod(int(rounded), 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        fractional = rounded - int(rounded)  # Compute only the fractional part after integer seconds.
+
+        if precision == 0:
+            return f"{hours}:{minutes:02}:{seconds:02}"
+
+        else:
+            # Combine integer seconds and fractional part, format with leading zeros:
+            secondsWithFrac = f"{seconds + fractional:0{2 + precision + 1}.{precision}f}"
+
+            return f"{hours}:{minutes:02}:{secondsWithFrac}"
+
+    except Exception:
+        return str(timeDelta)
+
+
 def GetDatesAsString(start: str = None, end: str = None, userFormat: str = "%Y-%m-%d", outputFormat: str = "%Y-%m-%dT%H:%M:%SZ") -> tuple[str, str]:
     """
     Create tuple of date and time strings with timezone parsed from user-friendly date.
