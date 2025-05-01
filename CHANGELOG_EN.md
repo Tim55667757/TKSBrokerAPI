@@ -55,6 +55,7 @@ Release development in progress...
 * [#149](https://github.com/Tim55667757/TKSBrokerAPI/issues/149) Implemented an improved version of `FastPSAR()` than the similar function in pandas_ta lib.
 * [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Improved `SendAPIRequest()`: added safe retries, error parsing, full unit tests; increased API client stability.
 * [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Optimized the `Overview()` method for portfolio and added unit tests.
+* [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Added: `FormatTimedelta()` utility for formatting timedelta with optional precision, fallback to raw string on invalid input.
 
 ##### Bug fixes
 
