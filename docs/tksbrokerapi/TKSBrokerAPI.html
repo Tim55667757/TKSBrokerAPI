@@ -45,6 +45,36 @@
                     <a class="variable" href="#CPU_USAGES">CPU_USAGES</a>
             </li>
             <li>
+                    <a class="class" href="#RateLimiter">RateLimiter</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#RateLimiter.__init__">RateLimiter</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RateLimiter.methodLimits">methodLimits</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RateLimiter.counters">counters</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RateLimiter.timestamps">timestamps</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RateLimiter.events">events</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#RateLimiter.moreDebug">moreDebug</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RateLimiter.CheckRateLimit">CheckRateLimit</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RateLimiter.HandleServerRateLimit">HandleServerRateLimit</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#TinkoffBrokerServer">TinkoffBrokerServer</a>
                             <ul class="memberlist">
                         <li>
@@ -151,6 +181,9 @@
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.priceModel">priceModel</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TinkoffBrokerServer.rateLimiter">rateLimiter</a>
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.tag">tag</a>
@@ -502,6 +535,147 @@ dependencies, correlations, make predictions and suggest hypothesis.</li>
     
 
                 </section>
+                <section id="RateLimiter">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">RateLimiter</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter"></a>
+    
+    
+
+                            <div id="RateLimiter.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">RateLimiter</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">methodLimits</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.__init__"></a>
+    
+            <div class="docstring"><p>Initialize RateLimiter with given method limits (requests per minute).</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>methodLimits</strong>:  dict[str, int] with per-method RPM limits.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.methodLimits" class="classattr">
+                                <div class="attr variable">
+            <span class="name">methodLimits</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.methodLimits"></a>
+    
+            <div class="docstring"><p>Per-method RPM limits.</p>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.counters" class="classattr">
+                                <div class="attr variable">
+            <span class="name">counters</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.counters"></a>
+    
+            <div class="docstring"><p>Number of requests sent per method in the current window.</p>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.timestamps" class="classattr">
+                                <div class="attr variable">
+            <span class="name">timestamps</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.timestamps"></a>
+    
+            <div class="docstring"><p>Timestamp (monotonic) of the start of current window per method.</p>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.events" class="classattr">
+                                <div class="attr variable">
+            <span class="name">events</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.events"></a>
+    
+            <div class="docstring"><p>Synchronization event for each method to coordinate waiting.</p>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.moreDebug" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moreDebug</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.moreDebug"></a>
+    
+            <div class="docstring"><p>Enables more debug information in this class. <code>False</code> by default.</p>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.CheckRateLimit" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">CheckRateLimit</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">methodName</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.CheckRateLimit"></a>
+    
+            <div class="docstring"><p>Check if the request for the method can proceed. Wait if needed.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>methodName</strong>:  str with the method name.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="RateLimiter.HandleServerRateLimit" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">HandleServerRateLimit</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">methodName</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">waitTime</span><span class="p">:</span> <span class="nb">int</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RateLimiter.HandleServerRateLimit"></a>
+    
+            <div class="docstring"><p>Handle server-enforced rate limit using cooperative waiting.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>methodName</strong>:  str with the method name.</li>
+<li><strong>waitTime</strong>:  int time in seconds to wait before retrying the request.</li>
+</ul>
+</div>
+
+
+                            </div>
+                </section>
                 <section id="TinkoffBrokerServer">
                     <div class="attr class">
             
@@ -669,7 +843,7 @@ request will be sent without retries. This allows you to reduce the number of ca
     </div>
     <a class="headerlink" href="#TinkoffBrokerServer.pause"></a>
     
-            <div class="docstring"><p>Sleep time in seconds between retries, in all network requests 5 seconds by default.</p>
+            <div class="docstring"><p>Sleep time in seconds between retries, in all network requests 3 seconds by default.</p>
 
 <p>See also: <code><a href="#TinkoffBrokerServer.SendAPIRequest">SendAPIRequest()</a></code>.</p>
 </div>
@@ -1051,6 +1225,19 @@ bonds payment calendar, some statistics will be stored. Default: <code>ext-bonds
             <div class="docstring"><p>PriceGenerator object to work with candles data: load, render interact and non-interact charts and so on.</p>
 
 <p>See also: <code><a href="#TinkoffBrokerServer.LoadHistory">LoadHistory()</a></code>, <code><a href="#TinkoffBrokerServer.ShowHistoryChart">ShowHistoryChart()</a></code> and the PriceGenerator project: <a href="https://github.com/Tim55667757/PriceGenerator">https://github.com/Tim55667757/PriceGenerator</a></p>
+</div>
+
+
+                            </div>
+                            <div id="TinkoffBrokerServer.rateLimiter" class="classattr">
+                                <div class="attr variable">
+            <span class="name">rateLimiter</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TinkoffBrokerServer.rateLimiter"></a>
+    
+            <div class="docstring"><p>RateLimiter object to work with given method limits (requests per minute) from <code>TKS_METHOD_LIMITS</code>.</p>
 </div>
 
 
