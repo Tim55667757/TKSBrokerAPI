@@ -31,6 +31,7 @@ Release development in progress...
 * [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) "Orders Grid Setter" was implemented. This script can be set up a grid of orders (limit or stop, buy or sell) with defined steps and lots for a lot of instruments by its tickers in parallel mode conveyor.
 * [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) CI/CD on GitHub Actions is implemented.
 * [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Target Probability Estimation, the Big Core feature is implemented.
+* [#152](https://github.com/Tim55667757/TKSBrokerAPI/issues/152) Centralized throttling with cooperative waiting added to `SendAPIRequest()`.
 
 ##### Improvements
 
