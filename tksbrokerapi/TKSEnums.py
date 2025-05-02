@@ -17,7 +17,7 @@ Module **TKSEnums** contains a lot of constants from enums sections of Tinkoff O
 - **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 """
 
-# Copyright (c) 2022 Gilmillin Timur Mansurovich
+# Copyright (c) 2025 Gilmillin Timur Mansurovich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,6 +30,56 @@ Module **TKSEnums** contains a lot of constants from enums sections of Tinkoff O
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+TKS_METHOD_LIMITS = {
+    # Default
+    "default": 50,  # Default fallback for unknown or uncategorized endpoints
+
+    # Orders
+    "PostOrder": 50,  # Place order (POST /orders)
+    "CancelOrder": 50,  # Cancel order (POST /orders/cancel)
+    "GetOrders": 50,  # Get active orders (GET /orders)
+
+    # Stop-orders
+    "PostStopOrder": 25,  # Place stop-order (POST /stop-orders)
+    "CancelStopOrder": 25,  # Cancel stop-order (POST /stop-orders/cancel)
+    "GetStopOrders": 25,  # Get stop-orders (GET /stop-orders)
+
+    # Portfolio & positions
+    "GetPortfolio": 100,  # Get portfolio (GET /operations/portfolio)
+    "GetPositions": 100,  # Get positions (GET /operations/positions)
+    "GetWithdrawLimits": 100,  # Get withdrawal limits (GET /operations/withdraw-limits)
+
+    # Market data
+    "GetCandles": 150,  # Get candles (GET /market/candles)
+    "GetOrderBook": 150,  # Get orderbook (GET /market/orderbook)
+    "GetLastPrices": 150,  # Get last prices (GET /market/last-prices)
+    "GetTradingStatus": 150,  # Get trading status (GET /market/trading-status)
+    "GetClosePrices": 150,  # Get close prices (GET /market/close-prices)
+
+    # History zip-archive
+    "getHistory": 30,  # Get history (GET history-data) https://tinkoff.github.io/investAPI/get_history/
+
+    # Instruments
+    "SearchByFigi": 100,  # Search by FIGI (GET /market/search/by-figi)
+    "SearchByTicker": 100,  # Search by ticker (GET /market/search/by-ticker)
+    "GetInstrumentBy": 100,  # Generic search endpoint (GET /market/search)
+
+    # Operations
+    "GetOperations": 100,  # Get operations (GET /operations)
+
+    # Users
+    "GetAccounts": 50,  # Get accounts (GET /user/accounts)
+    "GetInfo": 50,  # Get user info (GET /user/info)
+    "GetMarginAttributes": 50,  # Margin info (GET /user/margin-attributes)
+    "GetUserTariff": 50,  # Get tariff info (GET /user/tariff)
+
+    # Reports
+    "GetBrokerReport": 100,  # Get broker report (POST /operations/broker-report)
+    "GetDividendsForeignIssuer": 100  # Dividends from foreign issuers (POST /operations/dividends/foreign)
+}
+"""Unary method limits (per minute) from Tinkoff API: https://tinkoff.github.io/investAPI/limits/"""
 
 
 TKS_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"

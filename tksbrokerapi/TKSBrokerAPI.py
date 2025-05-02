@@ -70,7 +70,7 @@ How data is extended and used in TKSBrokerAPI:
 7. Profit!
 """
 
-# Copyright (c) 2022 Gilmillin Timur Mansurovich
+# Copyright (c) 2025 Gilmillin Timur Mansurovich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -91,8 +91,10 @@ import os
 import re
 import json
 import traceback as tb
-from time import sleep
+import threading
+from time import sleep, monotonic
 from argparse import ArgumentParser
+from collections import defaultdict
 from importlib.metadata import version
 from multiprocessing import cpu_count
 
@@ -137,6 +139,112 @@ uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerA
 
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
+
+
+class RateLimiter:
+    def __init__(self, methodLimits: dict[str, int]):
+        """
+        Initialize RateLimiter with given method limits (requests per minute).
+
+        :param methodLimits: dict[str, int] with per-method RPM limits.
+        """
+        self.methodLimits = methodLimits
+        """Per-method RPM limits."""
+
+        self.counters = defaultdict(int)
+        """Number of requests sent per method in the current window."""
+
+        self.timestamps = defaultdict(float)
+        """Timestamp (monotonic) of the start of current window per method."""
+
+        self.events = defaultdict(threading.Event)
+        """Synchronization event for each method to coordinate waiting."""
+
+        self.moreDebug = False
+        """Enables more debug information in this class. `False` by default."""
+
+    def CheckRateLimit(self, methodName: str) -> None:
+        """
+        Check if the request for the method can proceed. Wait if needed.
+
+        :param methodName: str with the method name.
+        """
+        now = monotonic()
+        limit = self.methodLimits.get(methodName, self.methodLimits["default"])
+
+        if self.timestamps[methodName] == 0.0:
+            self.timestamps[methodName] = now
+            elapsed = 0.0
+
+        else:
+            elapsed = now - self.timestamps[methodName]
+
+        if self.moreDebug:
+            uLogger.debug(f"[RateLimiter] Checking method='{methodName}': counter={self.counters[methodName]}, elapsed={elapsed:.2f}s, limit={limit}")
+
+        # Reset counters if the time window has passed:
+        if elapsed > 60.0:
+            if self.moreDebug:
+                uLogger.debug(f"[RateLimiter] Resetting window for method='{methodName}' after {elapsed:.2f}s.")
+
+            self.counters[methodName] = 0
+            self.timestamps[methodName] = now
+            self.events[methodName].set()
+            self.events[methodName].clear()
+
+        # If the limit is exceeded, wait cooperatively:
+        if self.counters[methodName] >= limit:
+            event = self.events[methodName]
+
+            if event.is_set():
+                if self.moreDebug:
+                    uLogger.debug(f"[RateLimiter] Method='{methodName}' is waiting on event from another thread...")
+
+                event.wait()
+
+            else:
+                waitTime = max(0.0, 60.0 - elapsed)
+
+                uLogger.debug(f"[RateLimiter] Limit reached for method='{methodName}'. Waiting {waitTime:.2f}s...")
+
+                sleep(waitTime)
+
+                self.counters[methodName] = 0
+                self.timestamps[methodName] = monotonic()
+
+                event.set()
+                event.clear()
+
+        self.counters[methodName] += 1
+
+    def HandleServerRateLimit(self, methodName: str, waitTime: int) -> None:
+        """
+        Handle server-enforced rate limit using cooperative waiting.
+
+        :param methodName: str with the method name.
+        :param waitTime: int time in seconds to wait before retrying the request.
+        """
+        uLogger.debug(f"[RateLimiter] Server-enforced limit for method='{methodName}', waitTime={waitTime}s.")
+
+        event = self.events[methodName]
+
+        if event.is_set():
+            if self.moreDebug:
+                uLogger.debug(f"[RateLimiter] Method='{methodName}' waiting on event triggered by server limit...")
+
+            event.wait()
+
+        else:
+            if self.moreDebug:
+                uLogger.debug(f"[RateLimiter] Sleeping {waitTime}s due to server rate limit for method='{methodName}'.")
+
+            sleep(waitTime)
+
+            self.counters[methodName] = 0
+            self.timestamps[methodName] = monotonic()
+
+            event.set()
+            event.clear()
 
 
 class TinkoffBrokerServer:
@@ -251,7 +359,7 @@ class TinkoffBrokerServer:
         """
 
         self.pause = 3
-        """Sleep time in seconds between retries, in all network requests 5 seconds by default.
+        """Sleep time in seconds between retries, in all network requests 3 seconds by default.
 
         See also: `SendAPIRequest()`.
         """
@@ -448,6 +556,9 @@ class TinkoffBrokerServer:
         See also: `LoadHistory()`, `ShowHistoryChart()` and the PriceGenerator project: https://github.com/Tim55667757/PriceGenerator
         """
 
+        self.rateLimiter = RateLimiter(methodLimits=TKS_METHOD_LIMITS)  # init RateLimiter object to work with `TKS_METHOD_LIMITS`
+        """RateLimiter object to work with given method limits (requests per minute) from `TKS_METHOD_LIMITS`."""
+
     @property
     def tag(self) -> str:
         """Identification TKSBrokerAPI tag in log messages to simplify debugging when platform instances runs in parallel mode. Default: `""` (empty string)."""
@@ -571,6 +682,9 @@ class TinkoffBrokerServer:
             currentPause = self.pause  # initial pause
 
             while not response and counter <= self.retry:
+                methodName = url.split("/")[-1].split("?")[0]  # method name in `TKS_METHOD_LIMITS`
+                self.rateLimiter.CheckRateLimit(methodName)  # checking rate limits...
+
                 try:
                     # try to send REST-request:
                     if reqType == "GET":
@@ -616,9 +730,7 @@ class TinkoffBrokerServer:
                 if response and response.headers and response.headers.get("x-ratelimit-remaining") == "0":
                     rateLimitWait = int(response.headers["x-ratelimit-reset"])
 
-                    uLogger.debug("Rate limit exceeded. Waiting {} sec. for reset rate limit and then repeat again...".format(rateLimitWait))
-
-                    sleep(rateLimitWait)
+                    self.rateLimiter.HandleServerRateLimit(methodName, rateLimitWait)  # wait if broker returns rate limit
 
                 # handling 4xx client errors: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
                 if response and 400 <= response.status_code < 500:
@@ -5117,7 +5229,8 @@ def Main(**kwargs):
             # --- set some options:
 
             if args.more:
-                trader.moreDebug = True
+                trader.moreDebug = True  # enables more debug information in class TinkoffBrokerServer class
+                trader.rateLimiter.moreDebug = True  # enables more debug information in RateLimiter class
                 uLogger.warning("More debug mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
 
             if args.html:
