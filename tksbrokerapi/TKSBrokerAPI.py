@@ -643,7 +643,7 @@ class TinkoffBrokerServer:
 
             return {}
 
-    def SendAPIRequest(self, url: str, reqType: str = "GET") -> dict:
+    def SendAPIRequest(self, url: str, reqType: str = "GET", methodName: Optional[str] = None) -> dict:
         """
         Send GET or POST request to broker server and receive JSON object.
 
@@ -652,6 +652,8 @@ class TinkoffBrokerServer:
         self.timeout: global request timeout, 15 seconds by default.
         :param url: url with REST request.
         :param reqType: send "GET" or "POST" request. "GET" by default.
+        :param methodName: optional manual override for REST method name (used for throttling).
+
         :return: response JSON (dictionary) from broker.
         """
         if reqType.upper() not in ("GET", "POST"):
@@ -682,7 +684,10 @@ class TinkoffBrokerServer:
             currentPause = self.pause  # initial pause
 
             while not response and counter <= self.retry:
-                methodName = url.split("/")[-1].split("?")[0]  # method name in `TKS_METHOD_LIMITS`
+                # Use methodName override if provided, else extract from URL:
+                if not methodName:
+                    methodName = url.split("/")[-1].split("?")[0]  # method name in `TKS_METHOD_LIMITS`
+
                 self.rateLimiter.CheckRateLimit(methodName)  # checking rate limits...
 
                 try:

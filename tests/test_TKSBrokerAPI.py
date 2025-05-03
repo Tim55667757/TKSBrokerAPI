@@ -97,9 +97,11 @@ class TestTKSBrokerAPIMethods:
             result = self.server.SendAPIRequest(
                 url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
                 reqType="POST",
+                methodName="TestMethod"  # manual override entrypoint method
             )
 
             assert result == expected_result, f"Expected: {expected_result}, actual: {result}"
+            assert self.server.rateLimiter.counters["TestMethod"] >= 1, "RateLimiter did not count the overridden method name."
 
     def test_SendAPIRequestNegative(self):
         self.server.retry = 0

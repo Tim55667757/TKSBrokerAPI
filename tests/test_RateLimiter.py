@@ -98,3 +98,14 @@ class TestRateLimiter:
         # Reaching limit on 'anotherMethod' should not block 'testMethod'
         limiter.CheckRateLimit("testMethod")
         assert limiter.counters["testMethod"] == 3
+
+    def test_ManualMethodNameOverride(self, limiter):
+        """
+        Verifies that manually specified methodName is honored and used for rate limiting.
+        """
+        limiter.methodLimits["CustomMethod"] = 5  # Set a high enough limit to avoid blocking
+
+        for _ in range(3):
+            limiter.CheckRateLimit("CustomMethod")
+
+        assert limiter.counters["CustomMethod"] == 3
