@@ -267,6 +267,9 @@ class TinkoffBrokerServer:
                          If you don't want to use cache and always updates raw data then set `useCache=False`.
         :param defaultCache: path to default cache file. `dump.json` by default.
         """
+        self.rateLimiter = RateLimiter(methodLimits=TKS_METHOD_LIMITS)  # init RateLimiter object to work with `TKS_METHOD_LIMITS`
+        """RateLimiter object to work with given method limits (requests per minute) from `TKS_METHOD_LIMITS`."""
+
         if token is None or not token:
             try:
                 self.token = r"{}".format(os.environ["TKS_API_TOKEN"])
@@ -555,9 +558,6 @@ class TinkoffBrokerServer:
 
         See also: `LoadHistory()`, `ShowHistoryChart()` and the PriceGenerator project: https://github.com/Tim55667757/PriceGenerator
         """
-
-        self.rateLimiter = RateLimiter(methodLimits=TKS_METHOD_LIMITS)  # init RateLimiter object to work with `TKS_METHOD_LIMITS`
-        """RateLimiter object to work with given method limits (requests per minute) from `TKS_METHOD_LIMITS`."""
 
     @property
     def tag(self) -> str:
