@@ -697,7 +697,7 @@ dependencies, correlations, make predictions and suggest hypothesis.</li>
                             <div id="TinkoffBrokerServer.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TinkoffBrokerServer</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">token</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">accountId</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">useCache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">defaultCache</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;dump.json&#39;</span></span>)</span>
+        <span class="name">TinkoffBrokerServer</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">token</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">accountId</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">useCache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">defaultCache</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;dump.json&#39;</span>,</span><span class="param">	<span class="n">moreDebug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span>)</span>
 
         
     </div>
@@ -712,9 +712,12 @@ dependencies, correlations, make predictions and suggest hypothesis.</li>
 <li><strong>accountId</strong>:  string with numeric user account ID in Tinkoff Broker. It can be found in broker's reports.
 Also, this variable can be set from environment variable <code>TKS_ACCOUNT_ID</code>.</li>
 <li><strong>useCache</strong>:  use default cache file with raw data to use instead of <code><a href="#TinkoffBrokerServer.iList">iList</a></code>.
-True by default. Cache is auto-update if new day has come.
+<code>True</code> by default. Cache is auto-update if new day has come.
 If you don't want to use cache and always updates raw data then set <code>useCache=False</code>.</li>
 <li><strong>defaultCache</strong>:  path to default cache file. <code>dump.json</code> by default.</li>
+<li><strong>moreDebug</strong>:  if <code>True</code>, enables detailed debug-level logging for API requests, data processing,
+history segmentation, and other internal stages. Useful for development and diagnostics.
+<code>False</code> by default.</li>
 </ul>
 </div>
 
