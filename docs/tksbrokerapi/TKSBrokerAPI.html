@@ -81,6 +81,12 @@
                                 <a class="function" href="#TinkoffBrokerServer.__init__">TinkoffBrokerServer</a>
                         </li>
                         <li>
+                                <a class="variable" href="#TinkoffBrokerServer.moreDebug">moreDebug</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#TinkoffBrokerServer.rateLimiter">rateLimiter</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#TinkoffBrokerServer.version">version</a>
                         </li>
                         <li>
@@ -112,9 +118,6 @@
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.body">body</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#TinkoffBrokerServer.moreDebug">moreDebug</a>
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.useHTMLReports">useHTMLReports</a>
@@ -181,9 +184,6 @@
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.priceModel">priceModel</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#TinkoffBrokerServer.rateLimiter">rateLimiter</a>
                         </li>
                         <li>
                                 <a class="variable" href="#TinkoffBrokerServer.tag">tag</a>
@@ -407,7 +407,7 @@
 <p><a href="https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111"><img src="https://badgen.net/badge/gift/donate/green" alt="gift" /></a></p>
 
 <p><strong>TKSBrokerAPI</strong> is the trading platform for automation and simplifying the implementation of trading scenarios,
-as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways:
+as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI Platform may be used in two ways:
 from the console, it has a rich keys and commands, or you can use it as Python module with <code>python import</code>.</p>
 
 <p>TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive
@@ -417,7 +417,7 @@ the necessary information from the broker. It is easy enough to integrate into v
 
 <ul>
 <li><strong>Open account for trading:</strong> <a href="https://tinkoff.ru/sl/AaX1Et1omnH">https://tinkoff.ru/sl/AaX1Et1omnH</a></li>
-<li><strong>TKSBrokerAPI module documentation:</strong> <a href="https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html">https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html</a></li>
+<li><strong>TKSBrokerAPI Platform documentation:</strong> <a href="https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html">https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html</a></li>
 <li><strong>CLI examples:</strong> <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples">https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples</a></li>
 <li><strong>Used constants are in the TKSEnums module:</strong> <a href="https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html">https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html</a></li>
 <li><strong>About Tinkoff Invest API:</strong> <a href="https://tinkoff.github.io/investAPI/">https://tinkoff.github.io/investAPI/</a></li>
@@ -425,7 +425,7 @@ the necessary information from the broker. It is easy enough to integrate into v
 <li><strong>How to implement trading scenario in Python:</strong> <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import">https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import</a></li>
 </ul>
 
-<p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import">Using the TKSBrokerAPI module</a>,
+<p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import">Using the TKSBrokerAPI Platform</a>,
 you can implement any trading scenario in Python. Many system used for making trading decisions about buying or selling
 (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need
 to perform trading operations: place orders, open and close transactions. The <code>TKSBrokerAPI</code> module will act as an
@@ -444,7 +444,7 @@ as well as perform routine tasks on your behalf in <a href="https://tinkoff.ru/s
 <li>Profit!</li>
 </ol>
 
-<p>But where to get this "brilliant trading algorithm"? The TKSBrokerAPI platform will also help you solve the problem
+<p>But where to get this "brilliant trading algorithm"? The TKSBrokerAPI Platform will also help you solve the problem
 of obtaining primary, "raw" data on trading instruments (shares, bonds, funds, futures and currencies) from the broker
 server, for their future analysis in any analytical tool convenient for you. To do this, the methods of the TKSBrokerAPI
 module provide the ability to extend and save data in classic formats: XLSX and CSV (for analysis in spreadsheet editors),
@@ -459,10 +459,10 @@ on the prices of any instrument as OHLCV-candlesticks.</p>
 
 <p><a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-extend-data-flow.png?raw=true" alt="TKSBrokerAPI-extend-data-flow" width="780" /></a></p>
 
-<p>How data is extended and used in TKSBrokerAPI:</p>
+<p>How data is extended and used in TKSBrokerAPI Platform:</p>
 
 <ol>
-<li>You request the data you need from the Tinkoff Investments broker server using the TKSBrokerAPI module:
+<li>You request the data you need from the Tinkoff Investments broker server:
 <ul>
 <li>in this module, almost all methods return "raw" data from the server in the form of a Python dictionary.</li>
 </ul></li>
@@ -720,6 +720,32 @@ If you don't want to use cache and always updates raw data then set <code>useCac
 
 
                             </div>
+                            <div id="TinkoffBrokerServer.moreDebug" class="classattr">
+                                <div class="attr variable">
+            <span class="name">moreDebug</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TinkoffBrokerServer.moreDebug"></a>
+    
+            <div class="docstring"><p>Enables more debug information in this class, such as net request and response headers in all methods. <code>False</code> by default.</p>
+</div>
+
+
+                            </div>
+                            <div id="TinkoffBrokerServer.rateLimiter" class="classattr">
+                                <div class="attr variable">
+            <span class="name">rateLimiter</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TinkoffBrokerServer.rateLimiter"></a>
+    
+            <div class="docstring"><p>RateLimiter object to work with given method limits (requests per minute) from <code>TKS_METHOD_LIMITS</code>.</p>
+</div>
+
+
+                            </div>
                             <div id="TinkoffBrokerServer.version" class="classattr">
                                 <div class="attr variable">
             <span class="name">version</span>
@@ -728,7 +754,7 @@ If you don't want to use cache and always updates raw data then set <code>useCac
     </div>
     <a class="headerlink" href="#TinkoffBrokerServer.version"></a>
     
-            <div class="docstring"><p>Current TKSBrokerAPI version: major.minor, but the build number define at the build-server only.</p>
+            <div class="docstring"><p>Current TKSBrokerAPI Platform version: major.minor, but the build number define at the build-server only.</p>
 
 <p>Latest version: <a href="https://pypi.org/project/tksbrokerapi/">https://pypi.org/project/tksbrokerapi/</a></p>
 </div>
@@ -877,19 +903,6 @@ Default: <code>{"Content-Type": "application/json", "accept": "application/json"
             <div class="docstring"><p>Request body which send to broker server. Default: <code>None</code>.</p>
 
 <p>See also: <code><a href="#TinkoffBrokerServer.SendAPIRequest">SendAPIRequest()</a></code>.</p>
-</div>
-
-
-                            </div>
-                            <div id="TinkoffBrokerServer.moreDebug" class="classattr">
-                                <div class="attr variable">
-            <span class="name">moreDebug</span>
-
-        
-    </div>
-    <a class="headerlink" href="#TinkoffBrokerServer.moreDebug"></a>
-    
-            <div class="docstring"><p>Enables more debug information in this class, such as net request and response headers in all methods. <code>False</code> by default.</p>
 </div>
 
 
@@ -1229,19 +1242,6 @@ bonds payment calendar, some statistics will be stored. Default: <code>ext-bonds
 
 
                             </div>
-                            <div id="TinkoffBrokerServer.rateLimiter" class="classattr">
-                                <div class="attr variable">
-            <span class="name">rateLimiter</span>
-
-        
-    </div>
-    <a class="headerlink" href="#TinkoffBrokerServer.rateLimiter"></a>
-    
-            <div class="docstring"><p>RateLimiter object to work with given method limits (requests per minute) from <code>TKS_METHOD_LIMITS</code>.</p>
-</div>
-
-
-                            </div>
                             <div id="TinkoffBrokerServer.tag" class="classattr">
                                 <div class="attr variable">
             <span class="name">tag</span><span class="annotation">: str</span>
@@ -1292,7 +1292,7 @@ More tickers aliases here: <code>TKSEnums.TKS_TICKER_ALIASES</code>.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">SendAPIRequest</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">url</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+        <span class="name">SendAPIRequest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">url</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span>,</span><span class="param">	<span class="n">methodName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
 
         
     </div>
@@ -1309,6 +1309,7 @@ self.timeout: global request timeout, 15 seconds by default.</p>
 <ul>
 <li><strong>url</strong>:  url with REST request.</li>
 <li><strong>reqType</strong>:  send "GET" or "POST" request. "GET" by default.</li>
+<li><strong>methodName</strong>:  optional manual override for REST method name (used for throttling).</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
@@ -3089,7 +3090,7 @@ otherwise save to file <code><a href="#TinkoffBrokerServer.calendarFile">calenda
     </div>
     <a class="headerlink" href="#Args"></a>
     
-            <div class="docstring"><p>If <code><a href="#Main">Main()</a></code> function is imported as module, then this class used to convert arguments from **kwargs as object.</p>
+            <div class="docstring"><p>If the <code>Main ()</code> function is imported as module, then this class used to convert arguments from **kwargs as object.</p>
 </div>
 
 
@@ -3116,7 +3117,7 @@ otherwise save to file <code><a href="#TinkoffBrokerServer.calendarFile">calenda
     </div>
     <a class="headerlink" href="#ParseArgs"></a>
     
-            <div class="docstring"><p>This function get and parse command line keys.</p>
+            <div class="docstring"><p>This function gets and parses command line keys.</p>
 </div>
 
 
@@ -3131,7 +3132,7 @@ otherwise save to file <code><a href="#TinkoffBrokerServer.calendarFile">calenda
     </div>
     <a class="headerlink" href="#Main"></a>
     
-            <div class="docstring"><p>Main function for work with TKSBrokerAPI in the console.</p>
+            <div class="docstring"><p>Main function for work with TKSBrokerAPI Platform in the console.</p>
 
 <p>See examples:</p>
 
