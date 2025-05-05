@@ -1303,6 +1303,42 @@ class TestTradeRoutinesMethods:
             # Ensuring reasonable performance (adjust 1.0s limit as needed):
             assert elapsed < 1.0, f"Performance issue for size {size}: took {elapsed:.2f}s"
 
+    def test_EstimateTargetReachabilityFallbackTriggeredByInternalError(self):
+        seriesLow = pd.Series([
+            100.0, 100.5, 101.0, 100.8, 101.2, 101.5, 102.0, 102.2, 102.5, 102.8,
+            103.0, 103.2, 103.5, 104.0, 104.5, 104.8, 105.0, 105.5, 106.0, 106.2,
+            106.5, 106.8, 107.0, 107.5, 107.8, 108.0, 108.2, 108.5, 109.0, 109.5,
+            109.8, 110.0, 110.2, 110.5, 110.8, 111.0, 112.5, 113.0, 115.2, 116.5,
+            115.8, 114.0, 113.5, 116.0, 117.2, 118.5, 115.0, 115.2, 115.5, 116.0
+        ])
+
+        seriesHigh = pd.Series([
+            100.0, 103.3, 106.7, 111.0, 107.2, 109.5, 111.8, 112.0, 115.5, 117.0,
+            113.2, 113.5, 143.8, 115.0, 111.5, 110.0, 109.2, 112.5, 113.0, 116.0
+        ])
+
+        currentPrice = seriesLow.iloc[-1]
+        targetPrice = currentPrice * 1.02
+
+        # Run and assert fallback to (0.0, "Min")
+        p, f = TradeRoutines.EstimateTargetReachability(
+            seriesLowTF=seriesLow,
+            seriesHighTF=seriesHigh,
+            currentPrice=currentPrice,
+            targetPrice=targetPrice,
+            horizonLowTF=12,
+            horizonHighTF=4,
+            ddof=2
+        )
+
+        # This test verifies that if the internal logic is incorrect (e.g. using `.name` on a dict),
+        # it causes an exception that triggers fallback to (0.0, "Min") — even though we expect
+        # a high probability based on the trend. This ensures that such bugs are not silently masked.
+        assert 0.70 <= p <= 1 and f == "High", (
+            "Expected high probability, but got fallback (0.0, 'Min'). "
+            "Likely internal error (e.g., '.name' used on dict)."
+        )
+
     def test_LogReturnsCheckType(self):
         series = self.GenerateSeries(100)
 

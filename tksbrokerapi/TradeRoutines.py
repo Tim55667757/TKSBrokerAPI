@@ -1278,7 +1278,7 @@ def EstimateTargetReachability(
         pIntegral = alpha * pBayes + (1 - alpha) * pAverage
 
         # --- Formula (15): Fuzzy classification of the final probability:
-        fIntegral = FUZZY_SCALE.Fuzzy(pIntegral).name
+        fIntegral = FUZZY_SCALE.Fuzzy(pIntegral)["name"]
 
         return pIntegral, fIntegral
 
