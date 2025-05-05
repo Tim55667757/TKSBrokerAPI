@@ -9,7 +9,7 @@
 [![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 **TKSBrokerAPI** is the trading platform for automation and simplifying the implementation of trading scenarios,
-as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI platform may be used in two ways:
+as well as working with Tinkoff Invest API server via the REST protocol. The TKSBrokerAPI Platform may be used in two ways:
 from the console, it has a rich keys and commands, or you can use it as Python module with `python import`.
 
 TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive
@@ -17,14 +17,14 @@ the necessary information from the broker. It is easy enough to integrate into v
 
 See also:
 - **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
-- **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
+- **TKSBrokerAPI Platform documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Usage-examples
 - **Used constants are in the TKSEnums module:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSEnums.html
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
 - **How to implement trading scenario in Python:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import
 
-[Using the TKSBrokerAPI module](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import),
+[Using the TKSBrokerAPI Platform](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md#Module-import),
 you can implement any trading scenario in Python. Many system used for making trading decisions about buying or selling
 (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need
 to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an
@@ -40,7 +40,7 @@ The scheme of trade scenario automation with TKSBrokerAPI is very simple:
 4. TKSBrokerAPI takes care of all the work with the Tinkoff Investments broker infrastructure.
 5. Profit!
 
-But where to get this "brilliant trading algorithm"? The TKSBrokerAPI platform will also help you solve the problem
+But where to get this "brilliant trading algorithm"? The TKSBrokerAPI Platform will also help you solve the problem
 of obtaining primary, "raw" data on trading instruments (shares, bonds, funds, futures and currencies) from the broker
 server, for their future analysis in any analytical tool convenient for you. To do this, the methods of the TKSBrokerAPI
 module provide the ability to extend and save data in classic formats: XLSX and CSV (for analysis in spreadsheet editors),
@@ -55,8 +55,8 @@ on the prices of any instrument as OHLCV-candlesticks.
 
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/docs/media/TKSBrokerAPI-extend-data-flow.png?raw=true" alt="TKSBrokerAPI-extend-data-flow" width="780" /></a>
 
-How data is extended and used in TKSBrokerAPI:
-1. You request the data you need from the Tinkoff Investments broker server using the TKSBrokerAPI module:
+How data is extended and used in TKSBrokerAPI Platform:
+1. You request the data you need from the Tinkoff Investments broker server:
    - in this module, almost all methods return "raw" data from the server in the form of a Python dictionary.
 2. Then they are processed and extended:
    - with various statistics, parameters and some analytical reports.
@@ -122,10 +122,10 @@ except AttributeError:
 from pricegenerator.PriceGenerator import PriceGenerator, uLogger  # This module has a lot of instruments to work with candles data (https://github.com/Tim55667757/PriceGenerator)
 from pricegenerator.UniLogger import DisableLogger as PGDisLog  # Method for disable log from PriceGenerator
 
-from tksbrokerapi.Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI module
+from tksbrokerapi.Templates import *  # Some html-templates used by reporting methods in TKSBrokerAPI Platform
 from tksbrokerapi.TKSEnums import *  # A lot of constants from enums sections: https://tinkoff.github.io/investAPI/swagger-ui/
-from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI module
-import tksbrokerapi.UniLogger as uLog  # Logger for TKSBrokerAPI
+from tksbrokerapi.TradeRoutines import *  # This library contains some methods used by trade scenarios implemented with TKSBrokerAPI Platform
+import tksbrokerapi.UniLogger as uLog  # Logger for TKSBrokerAPI Platform
 
 from tksbrokerapi._version import __version__
 
@@ -133,9 +133,9 @@ from tksbrokerapi._version import __version__
 # --- Common technical parameters:
 
 PGDisLog(uLogger.handlers[0])  # Disable 3-rd party logging from PriceGenerator
-uLogger = uLog.UniLogger  # init logger for TKSBrokerAPI
-uLogger.level = 10  # debug level by default for TKSBrokerAPI module
-uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerAPI module
+uLogger = uLog.UniLogger  # re-init logger for TKSBrokerAPI Platform
+uLogger.level = 10  # debug level by default for TKSBrokerAPI Platform
+uLogger.handlers[0].level = 20  # info level by default for STDOUT of TKSBrokerAPI Platform
 
 CPU_COUNT = cpu_count()  # host's real CPU count
 CPU_USAGES = CPU_COUNT - 1 if CPU_COUNT > 1 else 1  # how many CPUs will be used for parallel calculations
@@ -205,7 +205,7 @@ class RateLimiter:
             else:
                 waitTime = max(0.0, 60.0 - elapsed)
 
-                uLogger.debug(f"[RateLimiter] Limit reached for method='{methodName}'. Waiting {waitTime:.2f}s...")
+                uLogger.debug(f"[RateLimiter] 🔥 Limit reached for method='{methodName}'. Waiting {waitTime:.2f}s...")
 
                 sleep(waitTime)
 
@@ -224,7 +224,7 @@ class RateLimiter:
         :param methodName: str with the method name.
         :param waitTime: int time in seconds to wait before retrying the request.
         """
-        uLogger.debug(f"[RateLimiter] Server-enforced limit for method='{methodName}', waitTime={waitTime}s.")
+        uLogger.debug(f"[RateLimiter] 🔥 Server-enforced limit for method='{methodName}', waitTime={waitTime}s.")
 
         event = self.events[methodName]
 
@@ -255,7 +255,7 @@ class TinkoffBrokerServer:
 
     About `token`: https://tinkoff.github.io/investAPI/token/
     """
-    def __init__(self, token: str, accountId: str = None, useCache: bool = True, defaultCache: str = "dump.json") -> None:
+    def __init__(self, token: str, accountId: str = None, useCache: bool = True, defaultCache: str = "dump.json", moreDebug: bool = False) -> None:
         """
         Main class init.
 
@@ -263,40 +263,50 @@ class TinkoffBrokerServer:
         :param accountId: string with numeric user account ID in Tinkoff Broker. It can be found in broker's reports.
                           Also, this variable can be set from environment variable `TKS_ACCOUNT_ID`.
         :param useCache: use default cache file with raw data to use instead of `iList`.
-                         True by default. Cache is auto-update if new day has come.
+                         `True` by default. Cache is auto-update if new day has come.
                          If you don't want to use cache and always updates raw data then set `useCache=False`.
         :param defaultCache: path to default cache file. `dump.json` by default.
+        :param moreDebug: if `True`, enables detailed debug-level logging for API requests, data processing,
+                          history segmentation, and other internal stages. Useful for development and diagnostics.
+                          `False` by default.
         """
+        self.moreDebug = moreDebug
+        """Enables more debug information in this class, such as net request and response headers in all methods. `False` by default."""
+
         self.rateLimiter = RateLimiter(methodLimits=TKS_METHOD_LIMITS)  # init RateLimiter object to work with `TKS_METHOD_LIMITS`
         """RateLimiter object to work with given method limits (requests per minute) from `TKS_METHOD_LIMITS`."""
 
         if token is None or not token:
             try:
                 self.token = r"{}".format(os.environ["TKS_API_TOKEN"])
-                uLogger.debug("Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
+                if self.moreDebug:
+                    uLogger.debug("Bearer token for Tinkoff OpenAPI set up from environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
 
             except KeyError:
-                uLogger.error("`--token` key or environment variable `TKS_API_TOKEN` is required! See https://tinkoff.github.io/investAPI/token/")
+                uLogger.error("❌ Missing `--token` command-line argument or environment variable `TKS_API_TOKEN`. See https://tinkoff.github.io/investAPI/token/")
                 raise Exception("Token required")
 
         else:
             self.token = token  # highly priority than environment variable 'TKS_API_TOKEN'
-            uLogger.debug("Bearer token for Tinkoff OpenAPI set up from class variable `token`")
+            if self.moreDebug:
+                uLogger.debug("Bearer token for Tinkoff OpenAPI set up from class variable `token`")
 
         if accountId is None or not accountId:
             try:
                 self.accountId = r"{}".format(os.environ["TKS_ACCOUNT_ID"])
-                uLogger.debug("Main account ID [{}] set up from environment variable `TKS_ACCOUNT_ID`".format(self.accountId))
+                if self.moreDebug:
+                    uLogger.debug("Main account ID [{}] set up from environment variable `TKS_ACCOUNT_ID`".format(self.accountId))
 
             except KeyError:
-                uLogger.warning("`--account-id` key or environment variable `TKS_ACCOUNT_ID` undefined! Some of operations may be unavailable (overview, trading etc).")
+                uLogger.warning("⚠️ `--account-id` key or environment variable `TKS_ACCOUNT_ID` is not defined. Some operations may be unavailable (overview, trading, etc).")
 
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
-            uLogger.debug("Main account ID [{}] set up from class variable `accountId`".format(self.accountId))
+            if self.moreDebug:
+                uLogger.debug("Main account ID [{}] set up from class variable `accountId`".format(self.accountId))
 
-        self.version = __version__  # duplicate here used TKSBrokerAPI main version
-        """Current TKSBrokerAPI version: major.minor, but the build number define at the build-server only.
+        self.version = __version__
+        """Current TKSBrokerAPI Platform version: major.minor, but the build number define at the build-server only.
 
         Latest version: https://pypi.org/project/tksbrokerapi/
         """
@@ -343,7 +353,8 @@ class TinkoffBrokerServer:
         See also: API method https://tinkoff.github.io/investAPI/#tinkoff-invest-api_1 and `SendAPIRequest()`.
         """
 
-        uLogger.debug("Broker API server: {}".format(self.server))
+        if self.moreDebug:
+            uLogger.debug("Broker API server: {}".format(self.server))
 
         self.timeout = 15
         """Server operations timeout in seconds. Default: `15`.
@@ -385,9 +396,6 @@ class TinkoffBrokerServer:
 
         See also: `SendAPIRequest()`.
         """
-
-        self.moreDebug = False
-        """Enables more debug information in this class, such as net request and response headers in all methods. `False` by default."""
 
         self.useHTMLReports = False
         """
@@ -528,7 +536,7 @@ class TinkoffBrokerServer:
                 curTime = datetime.now(tzutc())
 
                 if (curTime.day > dumpTime.day) or (curTime.month > dumpTime.month) or (curTime.year > dumpTime.year):
-                    uLogger.debug("Local cache may be outdated! It has last modified [{}] UTC. Updating from broker server, Please wait...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
+                    uLogger.debug("⚠️ Cached instrument data may be outdated (last modified [{}] UTC). Updating from broker server, please wait...".format(dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
                     self.DumpInstruments(forceUpdate=True)  # updating self.iList and dump it
 
@@ -536,17 +544,17 @@ class TinkoffBrokerServer:
                     self.iList = json.load(open(self.iListDumpFile, mode="r", encoding="UTF-8"))  # load iList from dump
 
                     if not self.iList or self.iList == {"Currencies": {}, "Shares": {}, "Bonds": {}, "Etfs": {}, "Futures": {}}:
-                        uLogger.debug("Dump file is empty. Trying to request the new instruments list from broker server, Please wait...")
+                        uLogger.debug("🕳️ Dump file is empty. Requesting new instrument list from broker server, please wait...")
 
                         self.DumpInstruments(forceUpdate=True)  # force update self.iList and create new dump file
 
-                    uLogger.debug("Local cache with raw instruments data is used: [{}]. Last modified: [{}] UTC".format(
+                    uLogger.debug("📄 Loaded cached instrument data from [{}], last modified [{}] UTC".format(
                         os.path.abspath(self.iListDumpFile),
                         dumpTime.strftime(TKS_PRINT_DATE_TIME_FORMAT),
                     ))
 
             else:
-                uLogger.debug("Local cache with raw instruments data not exists! Creating new dump, Please wait...")
+                uLogger.debug("🕳️ Local cache with raw instrument data not found. Creating new dump from broker server, please wait...")
                 self.DumpInstruments(forceUpdate=True)  # updating self.iList and creating default dump file
 
         else:
@@ -573,13 +581,15 @@ class TinkoffBrokerServer:
             for handler in uLogger.handlers:
                 handler.setFormatter(uLog.logging.Formatter(uLog.formatStringWithTag.format(tag=self._tag)))
 
-            uLogger.debug("Custom TKSBrokerAPI tag was set: {}".format(self._tag))
+            if self.moreDebug:
+                uLogger.debug(f"Custom TKSBrokerAPI tag was set: {self._tag}")
 
         else:
             for handler in uLogger.handlers:
                 handler.setFormatter(uLog.logging.Formatter(uLog.formatString))
 
-            uLogger.debug("Default logger format is used")
+            if self.moreDebug:
+                uLogger.debug("Default logger format is used")
 
     @property
     def ticker(self) -> str:
@@ -639,7 +649,7 @@ class TinkoffBrokerServer:
 
         except Exception as e:
             uLogger.debug(tb.format_exc())
-            uLogger.error("An empty dict will be returned, because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
+            uLogger.debug("📭 An empty dict will be returned because an error occurred in `_ParseJSON()` method with comment: {}".format(e))
 
             return {}
 
@@ -656,8 +666,9 @@ class TinkoffBrokerServer:
 
         :return: response JSON (dictionary) from broker.
         """
-        if reqType.upper() not in ("GET", "POST"):
-            uLogger.error("You can define request type: `GET` or `POST`!")
+        httpMethods = ("GET", "POST")  # allowed http methods
+        if reqType.upper() not in httpMethods:
+            uLogger.error(f"❌ Invalid request type! Allowed HTTP methods are: {', '.join(httpMethods)}.")
             raise Exception("Incorrect value")
 
         if self.moreDebug:
@@ -671,8 +682,7 @@ class TinkoffBrokerServer:
         oK = True
         for item in self.exclude:
             if item in url:
-                if self.moreDebug:
-                    uLogger.warning("Do not execute operations with list of this tickers/FIGI: {}".format(str(self.exclude)))
+                uLogger.debug("🚫 Operation skipped: ticker or FIGI is in the exclude list: {}".format(str(self.exclude)))
 
                 oK = False
                 break
@@ -700,11 +710,11 @@ class TinkoffBrokerServer:
 
                 except requests.exceptions.RequestException as e:
                     # catch expected connection/request exceptions:
-                    uLogger.debug("Request exception occurred: {}.".format(e))
+                    uLogger.debug("📡 Request exception occurred while communicating with broker server: {}".format(e))
 
                 except Exception as e:
                     # catch any unexpected exception (safety net):
-                    uLogger.debug("Unexpected exception occurred during request: {}.".format(e))
+                    uLogger.debug("💥 Unexpected exception occurred during broker request: {}".format(e))
 
                 finally:
                     # always check: if no valid response received, increment counter and retry after a pause
@@ -712,11 +722,11 @@ class TinkoffBrokerServer:
                         counter += 1  # increase retry counter
 
                         if counter > self.retry:
-                            uLogger.debug("Maximum retry limit ({}) exceeded without success.".format(self.retry))
+                            uLogger.debug("💥 Maximum retry limit ({}) exceeded without success.".format(self.retry))
 
                             return responseJSON  # explicitly exit the method
 
-                        uLogger.debug("Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
+                        uLogger.debug("🔄 Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
 
                         sleep(currentPause)  # wait before the next retry
 
@@ -742,22 +752,25 @@ class TinkoffBrokerServer:
                     bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
                     msg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
-                    uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
+                    if self.moreDebug:
+                        uLogger.debug("    - not oK, but do not retry for 4xx errors, {}".format(msg))
 
                     if "code" in response.text and "message" in response.text:
                         if "Authentication token is missing or invalid" in response.text:
-                            uLogger.warning("Authentication token is missing or invalid! Generate a new token, please.")
+                            uLogger.warning("⚠️ Authentication token is missing or invalid. Please generate a new token.")
 
                         elif "Insufficient privileges" in response.text:
-                            uLogger.warning("Insufficient privileges to perform this operation! Please verify that the token matches the user's account.")
+                            uLogger.warning("⚠️ Insufficient privileges to perform this operation. Make sure the token belongs to the correct account.")
 
                         else:
                             msgDict = self._ParseJSON(rawData=response.text)
 
-                            uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
+                            if self.moreDebug:
+                                uLogger.debug("HTTP-status code [{}], server message: {}".format(response.status_code, msgDict.get("message", "")))
 
                     else:
-                        uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
+                        if self.moreDebug:
+                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
 
                     responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                     counter = self.retry + 1  # do not retry for 4xx errors
@@ -767,22 +780,25 @@ class TinkoffBrokerServer:
                     bodyPreview = response.text[:256] + ("..." if len(response.text) > 256 else "")
                     errMsg = "status code: [{}], response body: {}".format(response.status_code, bodyPreview)
 
-                    uLogger.debug("    - not oK, {}".format(errMsg))
+                    if self.moreDebug:
+                        uLogger.debug("    - not oK, {}".format(errMsg))
 
                     if "code" in response.text and "message" in response.text:
                         errMsgDict = self._ParseJSON(rawData=response.text)
 
-                        uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
+                        if self.moreDebug:
+                            uLogger.debug("HTTP-status code [{}], error message: {}".format(response.status_code, errMsgDict.get("message", "")))
 
                     else:
-                        uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
+                        if self.moreDebug:
+                            uLogger.debug("HTTP-status code [{}], raw server response: {}".format(response.status_code, response.text))
 
                     responseJSON = self._ParseJSON(rawData=response.text)  # parse response for errors
                     counter += 1
                     response = None  # clear response to allow retry
 
                     if counter <= self.retry:
-                        uLogger.debug("Retry: [{}]. Wait {} sec. and try again...".format(counter, currentPause))
+                        uLogger.debug("🔄 Retry {}/{} after {} sec...".format(counter, self.retry, currentPause))
 
                         sleep(currentPause)
 
@@ -792,8 +808,8 @@ class TinkoffBrokerServer:
                 responseJSON = self._ParseJSON(rawData=response.text)
 
             if errMsg:
-                uLogger.error("Server returns not `oK` status! See full debug log. Errors messages: https://tinkoff.github.io/investAPI/errors/")
-                uLogger.error("    - not oK, {}".format(errMsg))
+                uLogger.error("❌ Server returned a non-OK status! See full debug log. Error codes: https://tinkoff.github.io/investAPI/errors/")
+                uLogger.error(f"    - Error message: {errMsg}")
 
         return responseJSON
 
@@ -812,7 +828,8 @@ class TinkoffBrokerServer:
         result = []
 
         if iType in TKS_INSTRUMENTS:
-            uLogger.debug("Requesting [{}] list. Please wait...".format(iType))
+            if self.moreDebug:
+                uLogger.debug("Requesting [{}] list. Please wait...".format(iType))
 
             # all instruments have the same body in API v2 requests:
             self.body = str({"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"})  # Enum: [INSTRUMENT_STATUS_UNSPECIFIED, INSTRUMENT_STATUS_BASE, INSTRUMENT_STATUS_ALL]
@@ -834,8 +851,9 @@ class TinkoffBrokerServer:
 
         :return: Dictionary with all available broker instruments: currencies, shares, bonds, ETFs, and futures.
         """
-        uLogger.debug("Requesting available instruments for the current account. Please wait...")
-        uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
+        if self.moreDebug:
+            uLogger.debug("Requesting available instruments for the current account. Please wait...")
+            uLogger.debug("CPU usages for parallel requests: [{}]".format(CPU_USAGES))
 
         # These parameters are inserted into the requests: https://tinkoff.github.io/investAPI/swagger-ui/#/InstrumentsService
         # iType is the instrument type, it must be one of the supported types listed in TKS_INSTRUMENTS.
@@ -875,7 +893,7 @@ class TinkoffBrokerServer:
                             otherwise just saves exist `iList` as XLSX-file (default: `dump.xlsx`) .
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
-            uLogger.error("Output name of dump file must be defined!")
+            uLogger.error("❌ Output dump filename must be defined!")
             raise Exception("Filename required")
 
         if not self.iList or forceUpdate:
@@ -904,7 +922,7 @@ class TinkoffBrokerServer:
                     freeze_panes=(1, 1),
                 )  # saving as XLSX-file with freeze first row and column as headers
 
-        uLogger.info("XLSX-file with instruments dump for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxDumpFile)))
+        uLogger.info(f"📊 XLSX file with instruments dump saved for further use by data scientists or stock analysts: [{os.path.abspath(xlsxDumpFile)}]")
 
     def DumpInstruments(self, forceUpdate: bool = True) -> str:
         """
@@ -918,7 +936,7 @@ class TinkoffBrokerServer:
         :return: serialized JSON formatted `str` with full data of instruments, also saved to the `--output` JSON-file.
         """
         if self.iListDumpFile is None or not self.iListDumpFile:
-            uLogger.error("Output name of dump file must be defined!")
+            uLogger.error("❌ Output dump filename must be defined!")
             raise Exception("Filename required")
 
         if not self.iList or forceUpdate:
@@ -929,10 +947,10 @@ class TinkoffBrokerServer:
             fH.write(jsonDump)
 
         if not self.iList or self.iList == {"Currencies": {}, "Shares": {}, "Bonds": {}, "Etfs": {}, "Futures": {}}:
-            uLogger.error("Instruments list is empty! Maybe broker server is not available, try later...")
+            uLogger.error("❌ Instruments list is empty! The broker server might be unavailable — please try again later.")
             raise Exception("Instruments list is empty")
 
-        uLogger.debug("New cache of instruments data was created: [{}]".format(os.path.abspath(self.iListDumpFile)))
+        uLogger.debug(f"🆕 New cache of instrument data created: [{os.path.abspath(self.iListDumpFile)}]")
 
         return jsonDump
 
@@ -1174,14 +1192,16 @@ class TinkoffBrokerServer:
                 with open(self.infoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Info about instrument with ticker [{}] and FIGI [{}]: [{}]".format(iJSON["ticker"], iJSON["figi"], os.path.abspath(self.infoFile)))
+                uLogger.info(
+                    f"📄 Info about instrument with ticker [{iJSON['ticker']}] and FIGI [{iJSON['figi']}] saved to file: [{os.path.abspath(self.infoFile)}]"
+                )
 
                 if self.useHTMLReports:
                     htmlFilePath = self.infoFile.replace(".md", ".html") if self.infoFile.endswith(".md") else self.infoFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Main information", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 Report also converted to HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return infoText
 
@@ -1198,11 +1218,12 @@ class TinkoffBrokerServer:
             uLogger.debug("Searching information about instrument by it's ticker [{}] ...".format(self._ticker))
 
         if not self._ticker:
-            uLogger.warning("self._ticker variable have not be empty!")
+            if self.moreDebug:
+                uLogger.debug("Variable `self._ticker` must not be empty.")
 
         else:
             if self._ticker in TKS_TICKERS_OR_FIGI_EXCLUDED:
-                uLogger.warning("Instrument with ticker [{}] not allowed for trading!".format(self._ticker))
+                uLogger.error("❌ Instrument with ticker [{}] is not allowed for trading!".format(self._ticker))
                 raise Exception("Instrument not allowed")
 
             if not self.iList:
@@ -1249,7 +1270,7 @@ class TinkoffBrokerServer:
                 self.ShowInstrumentInfo(iJSON=tickerJSON, show=True)  # print info as Markdown text
 
         else:
-            if show:
+            if show and self.moreDebug:
                 uLogger.debug("Ticker [{}] not found in available broker instrument's list!".format(self._ticker))
 
         return tickerJSON
@@ -1267,11 +1288,12 @@ class TinkoffBrokerServer:
             uLogger.debug("Searching information about instrument by it's FIGI [{}] ...".format(self._figi))
 
         if not self._figi:
-            uLogger.warning("self._figi variable have not be empty!")
+            if self.moreDebug:
+                uLogger.debug("Variable `self._figi` must not be empty.")
 
         else:
             if self._figi in TKS_TICKERS_OR_FIGI_EXCLUDED:
-                uLogger.warning("Instrument with figi [{}] not allowed for trading!".format(self._figi))
+                uLogger.error("❌ Instrument with FIGI [{}] is not allowed for trading!".format(self._figi))
                 raise Exception("Instrument not allowed")
 
             if not self.iList:
@@ -1343,7 +1365,7 @@ class TinkoffBrokerServer:
                 self.ShowInstrumentInfo(iJSON=figiJSON, show=True)  # print info as Markdown text
 
         else:
-            if show:
+            if show and self.moreDebug:
                 uLogger.debug("FIGI [{}] not found in available broker instrument's list!".format(self._figi))
 
         return figiJSON
@@ -1383,11 +1405,11 @@ class TinkoffBrokerServer:
         prices = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}
 
         if self.depth < 1:
-            uLogger.error("Depth of Market (DOM) must be >=1!")
+            uLogger.error("❌ Depth of Market (DOM) value must be ≥ 1!")
             raise Exception("Incorrect value")
 
         if not (self._ticker or self._figi):
-            uLogger.error("self._ticker or self._figi variables must be defined!")
+            uLogger.error("❌ Either `ticker` or `figi` must be defined!")
             raise Exception("Ticker or FIGI required")
 
         if self._ticker and not self._figi:
@@ -1399,11 +1421,12 @@ class TinkoffBrokerServer:
             self._ticker = instrumentByFigi["ticker"] if instrumentByFigi else ""
 
         if not self._figi:
-            uLogger.error("FIGI is not defined!")
+            uLogger.error("❌ FIGI is not defined!")
             raise Exception("Ticker or FIGI required")
 
         else:
-            uLogger.debug("Requesting prices: ticker [{}], FIGI [{}]. Please wait...".format(self._ticker, self._figi))
+            if self.moreDebug:
+                uLogger.debug("Requesting prices: ticker [{}], FIGI [{}]. Please wait...".format(self._ticker, self._figi))
 
             # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetOrderBook
             priceURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetOrderBook"
@@ -1430,7 +1453,8 @@ class TinkoffBrokerServer:
                 prices["closePrice"] = round(NanoToFloat(pricesResponse["closePrice"]["units"], pricesResponse["closePrice"]["nano"]), 6) if "closePrice" in pricesResponse.keys() else 0
 
             else:
-                uLogger.debug("Ticker [{}], FIGI [{}], server return an empty or error response! Response body: {}".format(self._ticker, self._figi, pricesResponse))
+                if self.moreDebug:
+                    uLogger.debug("Ticker [{}], FIGI [{}], server return an empty or error response! Response body: {}".format(self._ticker, self._figi, pricesResponse))
 
             if show:
                 if prices["buy"] or prices["sell"]:
@@ -1475,10 +1499,10 @@ class TinkoffBrokerServer:
 
                     infoText = "".join(info)
 
-                    uLogger.info("Current prices in order book:\n\n{}".format(infoText))
+                    uLogger.info(f"📈 Current prices in order book:\n\n{infoText}")
 
                 else:
-                    uLogger.info("Instrument: ticker [{}], FIGI [{}]. Orders book is empty at this time!".format(self._ticker, self._figi))
+                    uLogger.info(f"ℹ️ Instrument: ticker [{self._ticker}], FIGI [{self._figi}]. Order book is currently empty.")
 
         return prices
 
@@ -1533,14 +1557,14 @@ class TinkoffBrokerServer:
             with open(self.instrumentsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("All available instruments: [{}]".format(os.path.abspath(self.instrumentsFile)))
+            uLogger.info(f"📄 List of all available instruments saved to file: [{os.path.abspath(self.instrumentsFile)}]")
 
             if self.useHTMLReports:
                 htmlFilePath = self.instrumentsFile.replace(".md", ".html") if self.instrumentsFile.endswith(".md") else self.instrumentsFile + ".html"
                 with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                     fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="List of instruments", commonCSS=COMMON_CSS, markdown=infoText))
 
-                uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                uLogger.info(f"🌐 Report also converted to HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return infoText
 
@@ -1586,7 +1610,8 @@ class TinkoffBrokerServer:
         if resultsLen == 0:
             info.append("\nNo results\n")
             infoShort.append("\nNo results\n")
-            uLogger.info("No results. Try changing your search pattern.")
+
+            uLogger.info("ℹ️ No results found. Try adjusting your search pattern.")
 
         else:
             for iType in searchResults:
@@ -1615,20 +1640,20 @@ class TinkoffBrokerServer:
 
         if show and not onlyFiles:
             uLogger.info(infoTextShort)
-            uLogger.info("You can view info about found instruments with key `--info`, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
+            uLogger.info("ℹ️ You can view details about found instruments using the `--info` key, e.g.: `tksbrokerapi -t IBM --info` or `tksbrokerapi -f BBG000BLNNH6 --info`")
 
         if self.searchResultsFile and (show or onlyFiles):
             with open(self.searchResultsFile, "w", encoding="UTF-8") as fH:
                 fH.write(infoText)
 
-            uLogger.info("Full search results: [{}]".format(os.path.abspath(self.searchResultsFile)))
+            uLogger.info(f"📄 Full search results saved to file: [{os.path.abspath(self.searchResultsFile)}]")
 
             if self.useHTMLReports:
                 htmlFilePath = self.searchResultsFile.replace(".md", ".html") if self.searchResultsFile.endswith(".md") else self.searchResultsFile + ".html"
                 with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                     fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Search results", commonCSS=COMMON_CSS, markdown=infoText))
 
-                uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                uLogger.info(f"🌐 Report also converted to HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return searchResults
 
@@ -1650,7 +1675,8 @@ class TinkoffBrokerServer:
                     if self.aliases[iName] not in requestedInstruments:
                         requestedInstruments.append(self.aliases[iName])
 
-        uLogger.debug("Requested instruments without duplicates of tickers or FIGIs: {}".format(requestedInstruments))
+        if self.moreDebug:
+            uLogger.debug("Requested instruments without duplicates of tickers or FIGIs: {}".format(requestedInstruments))
 
         onlyUniqueFIGIs = []
         for iName in requestedInstruments:
@@ -1668,12 +1694,13 @@ class TinkoffBrokerServer:
 
                 if not iData:
                     self._figi = ""
-                    uLogger.debug("Instrument [{}] not in list of available instruments for current token!".format(iName))
+                    uLogger.debug("🚫 Instrument [{}] not in list of available instruments for current token!".format(iName))
 
             if iData and iData["figi"] not in onlyUniqueFIGIs:
                 onlyUniqueFIGIs.append(iData["figi"])
 
-        uLogger.debug("Unique list of FIGIs: {}".format(onlyUniqueFIGIs))
+        if self.moreDebug:
+            uLogger.debug("Unique list of FIGIs: {}".format(onlyUniqueFIGIs))
 
         return onlyUniqueFIGIs
 
@@ -1692,12 +1719,13 @@ class TinkoffBrokerServer:
                  One item is dict returned by `SearchByTicker()` or `SearchByFIGI()` methods.
         """
         if instruments is None or not instruments:
-            uLogger.error("You must define some of tickers or FIGIs to request it's actual prices!")
+            uLogger.error("❌ You must define at least one ticker or FIGI to request actual prices!")
             raise Exception("Ticker or FIGI required")
 
         onlyUniqueFIGIs = self.GetUniqueFIGIs(instruments)
 
-        uLogger.debug("Requesting prices list from broker server...")
+        if self.moreDebug:
+            uLogger.debug("Requesting prices list from broker server...")
 
         iList = []  # trying to get info and current prices about all unique instruments:
         for self._figi in onlyUniqueFIGIs:
@@ -1749,20 +1777,20 @@ class TinkoffBrokerServer:
             infoText = "".join(info)
 
             if show and not onlyFiles:
-                uLogger.info("Only instruments with unique FIGIs are shown:\n{}".format(infoText))
+                uLogger.info(f"ℹ️ Only instruments with unique FIGIs are shown:\n{infoText}")
 
             if self.pricesFile and (show or onlyFiles):
                 with open(self.pricesFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Price list: [{}]".format(os.path.abspath(self.pricesFile)))
+                uLogger.info(f"📄 Price list saved to file: [{os.path.abspath(self.pricesFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.pricesFile.replace(".md", ".html") if self.pricesFile.endswith(".md") else self.pricesFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Current prices", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 Report also converted to HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return infoText
 
@@ -1779,10 +1807,11 @@ class TinkoffBrokerServer:
                   "limitOrderAvailableFlag": false, "marketOrderAvailableFlag": false, "apiTradeAvailableFlag": true}`
         """
         if self._figi is None or not self._figi:
-            uLogger.error("Variable `figi` must be defined for using this method!")
+            uLogger.error("❌ Variable `figi` must be defined to use this method!")
             raise Exception("FIGI required")
 
-        uLogger.debug("Requesting trading status, FIGI: [{}]. Please wait...".format(self._figi))
+        if self.moreDebug:
+            uLogger.debug("Requesting trading status, FIGI: [{}]. Please wait...".format(self._figi))
 
         self.body = str({"figi": self._figi, "instrumentId": self._figi})
         tradingStatusURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetTradingStatus"
@@ -1804,10 +1833,11 @@ class TinkoffBrokerServer:
         :return: dictionary with user's portfolio.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting user's portfolio. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting user's portfolio. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPortfolio"
@@ -1829,10 +1859,11 @@ class TinkoffBrokerServer:
         :return: dictionary with open positions by instruments.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting open positions in currencies and instruments. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting open positions in currencies and instruments. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         positionsURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetPositions"
@@ -1854,10 +1885,11 @@ class TinkoffBrokerServer:
         :return: list of dictionaries with pending limit orders.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting pending limit orders. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting pending limit orders. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         ordersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/GetOrders"
@@ -1865,11 +1897,13 @@ class TinkoffBrokerServer:
 
         if rawResponse.get("orders"):
             rawOrders = rawResponse["orders"]
-            uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
+            if self.moreDebug:
+                uLogger.debug("[{}] records about pending limit orders received".format(len(rawOrders)))
 
         else:
             rawOrders = []
-            uLogger.debug("No pending limit orders returned! rawResponse = {}".format(rawResponse))
+            if self.moreDebug:
+                uLogger.debug("No pending limit orders returned! rawResponse = {}".format(rawResponse))
 
         return rawOrders
 
@@ -1884,10 +1918,11 @@ class TinkoffBrokerServer:
         :return: list of dictionaries with stop orders.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting stop orders. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting stop orders. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         stopOrdersURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/GetStopOrders"
@@ -1895,11 +1930,13 @@ class TinkoffBrokerServer:
 
         if rawResponse.get("stopOrders"):
             rawStopOrders = rawResponse["stopOrders"]
-            uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
+            if self.moreDebug:
+                uLogger.debug("[{}] records about stop orders received".format(len(rawStopOrders)))
 
         else:
             rawStopOrders = []
-            uLogger.debug("No stop orders returned! rawResponse = {}".format(rawResponse))
+            if self.moreDebug:
+                uLogger.debug("No stop orders returned! rawResponse = {}".format(rawResponse))
 
         return rawStopOrders
 
@@ -1927,7 +1964,7 @@ class TinkoffBrokerServer:
         :return: dictionary with a client's raw portfolio and some statistics.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         view = {
@@ -1979,14 +2016,15 @@ class TinkoffBrokerServer:
         availableDetails = ["full", "positions", "orders", "analytics", "calendar", "digest"]
         if details not in availableDetails:
             details = "full"
-            uLogger.debug("Requested incorrect details! The `details` must be one of this strings: {}. Details parameter set to `full` be default.".format(availableDetails))
+            uLogger.debug(f"ℹ️ Requested incorrect `details` value: '{details}'. Allowed values: {', '.join(availableDetails)}. Defaulting to 'full'.")
 
-        uLogger.debug("Requesting portfolio of a client. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting portfolio of a client. Please wait...")
 
         portfolioResponse = self.RequestPortfolio()  # current user's portfolio (dict)
 
         if not portfolioResponse:
-            uLogger.warning("Server returns an empty user's portfolio! Check the token and account ID.")
+            uLogger.warning("⚠️ Server returned an empty user portfolio. Please check the token and account ID.")
 
             return view
 
@@ -2025,9 +2063,8 @@ class TinkoffBrokerServer:
                     view["raw"]["Currencies"].append(item)  # Current price of currency in RUB.
 
                 else:
-                    pass
-
-                    # uLogger.debug("See #127 bug: Since sanctions T-Investment Broker returns an error with some currencies. Trouble with FIGI: [{}].".format(self._figi))  # TODO something with this.
+                    if self.moreDebug:
+                        uLogger.debug("See #127 bug: Since sanctions T-Investment Broker returns an error with some currencies. Trouble with FIGI: [{}].".format(self._figi))  # TODO something with this.
 
             elif item["instrumentType"] == "share":
                 view["raw"]["Shares"].append(item)
@@ -2425,15 +2462,15 @@ class TinkoffBrokerServer:
 
             # Whatever the value `details`, header not changes:
             info = [
-                "# Client's portfolio\n\n",
-                "* **Actual on date:** [{} UTC]\n".format(actualOnDate),
-                "* **Account ID:** [{}]\n".format(self.accountId),
+                "# 💼 Client's portfolio\n\n",
+                "* 📆 **Actual on date:** [{} UTC]\n".format(actualOnDate),
+                "* 📄 **Account ID:** [{}]\n".format(self.accountId),
             ]
 
             if details in ["full", "positions", "digest"]:
                 info.extend([
-                    "* **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                    "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
+                    "* 💰 **Portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                    "* 💸 **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n\n".format(
                         "+" if view["stat"]["totalChangesRUB"] > 0 else "",
                         view["stat"]["totalChangesRUB"],
                         "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
@@ -2443,7 +2480,7 @@ class TinkoffBrokerServer:
 
             if details in ["full", "positions"]:
                 info.extend([
-                    "## Open positions\n\n",
+                    "## 📈 Open positions\n\n",
                     "| Ticker [FIGI]               | Volume (blocked)                | Lots     | Curr. price  | Avg. price   | Current volume cost | Profit (%)                   |\n",
                     "|-----------------------------|---------------------------------|----------|--------------|--------------|---------------------|------------------------------|\n",
                 ])
@@ -2451,7 +2488,7 @@ class TinkoffBrokerServer:
                 def _SplitStr(CostRUB: float = 0, typeStr: str = "", noTradeStr: str = "") -> list:
                     return [
                         "|                             |                                 |          |              |              |                     |                              |\n",
-                        "| {:<27} |                                 |          |              |              | {:>19} |                              |\n".format(
+                        "| {:<26} |                                 |          |              |              | {:>19} |                              |\n".format(
                             noTradeStr if noTradeStr else typeStr,
                             "" if noTradeStr else "**{:.2f} RUB**".format(CostRUB),
                         ),
@@ -2482,58 +2519,58 @@ class TinkoffBrokerServer:
 
                 # --- Show currencies section:
                 if view["stat"]["Currencies"]:
-                    info.extend(_SplitStr(CostRUB=view["stat"]["allCurrenciesCostRUB"], typeStr="**Currencies:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["allCurrenciesCostRUB"], typeStr="💵 **Currencies:**"))
                     for item in view["stat"]["Currencies"]:
                         info.append(_InfoStr(item, isCurr=True))
 
                 else:
-                    info.extend(_SplitStr(noTradeStr="**Currencies:** no trades"))
+                    info.extend(_SplitStr(noTradeStr="💵 **Currencies:** no trades"))
 
                 # --- Show shares section:
                 if view["stat"]["Shares"]:
-                    info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="**Shares:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["sharesCostRUB"], typeStr="📃 **Shares:**"))
 
                     for item in view["stat"]["Shares"]:
                         info.append(_InfoStr(item))
 
                 else:
-                    info.extend(_SplitStr(noTradeStr="**Shares:** no trades"))
+                    info.extend(_SplitStr(noTradeStr="📃 **Shares:** no trades"))
 
                 # --- Show bonds section:
                 if view["stat"]["Bonds"]:
-                    info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="**Bonds:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["bondsCostRUB"], typeStr="🧾 **Bonds:**"))
 
                     for item in view["stat"]["Bonds"]:
                         info.append(_InfoStr(item))
 
                 else:
-                    info.extend(_SplitStr(noTradeStr="**Bonds:** no trades"))
+                    info.extend(_SplitStr(noTradeStr="🧾 **Bonds:** no trades"))
 
                 # --- Show etfs section:
                 if view["stat"]["Etfs"]:
-                    info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="**Etfs:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["etfsCostRUB"], typeStr="🏦 **Etfs:**"))
 
                     for item in view["stat"]["Etfs"]:
                         info.append(_InfoStr(item))
 
                 else:
-                    info.extend(_SplitStr(noTradeStr="**Etfs:** no trades"))
+                    info.extend(_SplitStr(noTradeStr="🏦 **Etfs:** no trades"))
 
                 # --- Show futures section:
                 if view["stat"]["Futures"]:
-                    info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="**Futures:**"))
+                    info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="⏳ **Futures:**"))
 
                     for item in view["stat"]["Futures"]:
                         info.append(_InfoStr(item))
 
                 else:
-                    info.extend(_SplitStr(noTradeStr="**Futures:** no trades"))
+                    info.extend(_SplitStr(noTradeStr="⏳ **Futures:** no trades"))
 
             if details in ["full", "orders"]:
                 # --- Show pending limit orders section:
                 if view["stat"]["orders"]:
                     info.extend([
-                        "\n## Opened pending limit-orders: [{}]\n".format(len(view["stat"]["orders"])),
+                        "\n## ⏳ Opened pending limit-orders: [{}]\n".format(len(view["stat"]["orders"])),
                         "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)       |\n",
                         "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|-------------------------|\n",
                     ])
@@ -2556,12 +2593,12 @@ class TinkoffBrokerServer:
                         ))
 
                 else:
-                    info.append("\n## Total pending limit-orders: [0]\n")
+                    info.append("\n## ⏳ Total pending limit-orders: [0]\n")
 
                 # --- Show stop orders section:
                 if view["stat"]["stopOrders"]:
                     info.extend([
-                        "\n## Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"])),
+                        "\n## 🔔 Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"])),
                         "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price    | Limit price     | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
                         "|-----------------------------|--------------------------------------|--------|-------------------------|-----------------|-----------------|-----------|-------------|--------------|---------------------|---------------------|\n",
                     ])
@@ -2587,22 +2624,22 @@ class TinkoffBrokerServer:
                         ))
 
                 else:
-                    info.append("\n## Total stop-orders: [0]\n")
+                    info.append("\n## 🔔 Total stop-orders: [0]\n")
 
             if details in ["full", "analytics"]:
                 # -- Show analytics section:
                 if view["stat"]["portfolioCostRUB"] > 0:
                     info.extend([
-                        "\n# Analytics\n\n"
-                        "* **Actual on date:** [{} UTC]\n".format(actualOnDate),
-                        "* **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
-                        "* **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
+                        "\n# 📊 Analytics\n\n"
+                        "* 📆 **Actual on date:** [{} UTC]\n".format(actualOnDate),
+                        "* 💰 **Current total portfolio cost:** {:.2f} RUB\n".format(view["stat"]["portfolioCostRUB"]),
+                        "* 💸 **Changes:** {}{:.2f} RUB ({}{:.2f}%)\n".format(
                             "+" if view["stat"]["totalChangesRUB"] > 0 else "",
                             view["stat"]["totalChangesRUB"],
                             "+" if view["stat"]["totalChangesPercentRUB"] > 0 else "",
                             view["stat"]["totalChangesPercentRUB"],
                         ),
-                        "\n## Portfolio distribution by assets\n"
+                        "\n## 🎯 Portfolio distribution by assets\n"
                         "\n| Type                               | Uniques | Percent  | Current cost       |\n",
                         "|------------------------------------|---------|----------|--------------------|\n",
                     ])
@@ -2619,7 +2656,7 @@ class TinkoffBrokerServer:
                     aSepLine = "|----------------------------------------------|----------|--------------------|\n"
 
                     info.extend([
-                        "\n## Portfolio distribution by companies\n"
+                        "\n## 🏢 Portfolio distribution by companies\n"
                         "\n| Company                                      | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
@@ -2637,7 +2674,7 @@ class TinkoffBrokerServer:
                             ))
 
                     info.extend([
-                        "\n## Portfolio distribution by sectors\n"
+                        "\n## 🛠️ Portfolio distribution by sectors\n"
                         "\n| Sector                                       | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
@@ -2651,7 +2688,7 @@ class TinkoffBrokerServer:
                             ))
 
                     info.extend([
-                        "\n## Portfolio distribution by currencies\n"
+                        "\n## 💱 Portfolio distribution by currencies\n"
                         "\n| Instruments currencies                       | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
@@ -2665,7 +2702,7 @@ class TinkoffBrokerServer:
                             ))
 
                     info.extend([
-                        "\n## Portfolio distribution by countries\n"
+                        "\n## 🌍 Portfolio distribution by countries\n"
                         "\n| Assets by country                            | Percent  | Current cost       |\n",
                         aSepLine,
                     ])
@@ -2686,7 +2723,7 @@ class TinkoffBrokerServer:
                     info.append("\n" + self.ShowBondsCalendar(extBonds=view["analytics"]["bondsCalendar"], show=False))
 
                 else:
-                    info.append("\n# Bond payments calendar\n\nNo bonds in the portfolio to create payments calendar\n")
+                    info.append("\n# 📅 Bond payments calendar\n\nNo bonds in the portfolio to create payments calendar\n")
 
             infoText = "".join(info)
 
@@ -2718,14 +2755,14 @@ class TinkoffBrokerServer:
                 with open(filename, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's portfolio: [{}]".format(os.path.abspath(filename)))
+                uLogger.info(f"💼 Client's portfolio saved to: [{os.path.abspath(filename)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = filename.replace(".md", ".html") if filename.endswith(".md") else filename + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Client's portfolio", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 Portfolio information was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return view
 
@@ -2745,12 +2782,13 @@ class TinkoffBrokerServer:
                  and dictionary with custom stats: operations in different currencies, withdrawals, incomes etc.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         startDate, endDate = GetDatesAsString(start, end, userFormat=TKS_DATE_FORMAT, outputFormat=TKS_DATE_TIME_FORMAT)  # Example: ("2000-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
 
-        uLogger.debug("Requesting history of operations. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting history of operations. Please wait...")
 
         # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/OperationsService/OperationsService_GetOperations
         dealsURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetOperations"
@@ -2764,7 +2802,7 @@ class TinkoffBrokerServer:
             splitLine2 = "|                     |              |              |            |           |                 |            |                                                                    |\n"  # Operations section
             nextDay = ""
 
-            info = ["# Client's operations\n\n* **Period:** from [{}] to [{}]\n\n## Summary (operations executed only)\n\n".format(startDate.split("T")[0], endDate.split("T")[0])]
+            info = ["# 🧾 Client's operations\n\n* 📆 **Period:** from [{}] to [{}]\n\n## 📊 Summary (operations executed only)\n\n".format(startDate.split("T")[0], endDate.split("T")[0])]
 
             if len(ops) > 0:
                 customStat = {
@@ -2881,7 +2919,7 @@ class TinkoffBrokerServer:
                 info.extend([
                     "| Report sections            |                               |                              |                      |                        |\n",
                     "|----------------------------|-------------------------------|------------------------------|----------------------|------------------------|\n",
-                    "| **Actions:**               | Trades: {:<21} | Trading volumes:             |                      |                        |\n".format(customStat["opsCount"]),
+                    "| 🛒 **Actions:**            | Trades: {:<21} | Trading volumes              |                      |                        |\n".format(customStat["opsCount"]),
                     "|                            |   Buy: {:<22} | {:<28} |                      |                        |\n".format(
                         "{} ({:.1f}%)".format(customStat["buyCount"], 100 * customStat["buyCount"] / customStat["opsCount"]) if customStat["opsCount"] != 0 else 0,
                         "  rub, buy: {:<16}".format("{:.2f}".format(customStat["buyTotal"]["rub"])) if customStat["buyTotal"]["rub"] != 0 else "  —",
@@ -2917,7 +2955,7 @@ class TinkoffBrokerServer:
                     )
 
                 # --- view "Payments" lines:
-                info.append("| **Payments:**              | Deposit on broker account:    | Withdrawals:                 | Dividends income:    | Coupons income:        |\n")
+                info.append("| 💳 **Payments:**           | Deposit on broker account     | Withdrawals                  | Dividends income     | Coupons income         |\n")
                 paymentsKeys = sorted(list(set(list(customStat["payIn"].keys()) + list(customStat["payOut"].keys()) + list(customStat["divs"].keys()) + list(customStat["coupons"].keys()))))
 
                 for key in paymentsKeys:
@@ -2926,14 +2964,14 @@ class TinkoffBrokerServer:
                 info.append(splitLine1)
 
                 # --- view "Commissions and taxes" lines:
-                info.append("| **Commissions and taxes:** | Broker commissions:           | Service commissions:         | Margin commissions:  | All taxes/corrections: |\n")
+                info.append("| 🪙 **Commissions/taxes:**  | Broker commissions            | Service commissions          | Margin commissions   | All taxes/corrections  |\n")
                 comKeys = sorted(list(set(list(customStat["brokerCom"].keys()) + list(customStat["serviceCom"].keys()) + list(customStat["marginCom"].keys()) + list(customStat["allTaxes"].keys()))))
 
                 for key in comKeys:
                     info.append(_InfoStr(customStat["brokerCom"], customStat["serviceCom"], customStat["marginCom"], customStat["allTaxes"], key))
 
                 info.extend([
-                    "\n## All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
+                    "\n## 🧮 All operations{}\n\n".format("" if showCancelled else " (without cancelled status)"),
                     "| Date and time       | FIGI         | Ticker       | Asset      | Value     | Payment         | Status     | Operation type                                                     |\n",
                     "|---------------------|--------------|--------------|------------|-----------|-----------------|------------|--------------------------------------------------------------------|\n",
                 ])
@@ -2982,14 +3020,14 @@ class TinkoffBrokerServer:
                 with open(self.reportFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Operations history: [{}]".format(os.path.abspath(self.reportFile)))
+                uLogger.info(f"📄 Operations report saved to file: [{os.path.abspath(self.reportFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.reportFile.replace(".md", ".html") if self.reportFile.endswith(".md") else self.reportFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Client's operations", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 The report was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return ops, customStat
 
@@ -3021,12 +3059,12 @@ class TinkoffBrokerServer:
         headers = ["date", "time", "open", "high", "low", "close", "volume"]  # sequence and names of column headers
         history = None  # empty pandas object for history
 
-        if interval not in TKS_CANDLE_INTERVALS.keys():
-            uLogger.error("Interval parameter must be string with current available values: `1min`, `5min`, `15min`, `hour` and `day`.")
+        if interval not in TKS_CANDLE_INTERVALS:
+            uLogger.error(f"❌ Invalid `interval` value! Allowed values are: {', '.join(TKS_CANDLE_INTERVALS)}.")
             raise Exception("Incorrect value")
 
         if not (self._ticker or self._figi):
-            uLogger.error("Ticker or FIGI must be defined!")
+            uLogger.error("❌ Either `ticker` or `figi` must be defined!")
             raise Exception("Ticker or FIGI required")
 
         if self._ticker and not self._figi:
@@ -3053,20 +3091,18 @@ class TinkoffBrokerServer:
         # calculate data blocks count:
         blocks = 1 if length < TKS_CANDLE_INTERVALS[interval][2] else 1 + length // TKS_CANDLE_INTERVALS[interval][2]
 
-        if show:
-            uLogger.debug("Requesting history candlesticks, ticker: [{}], FIGI: [{}]. Please wait...".format(self._ticker, self._figi))
-            if self.moreDebug:
-                uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
-                uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
-                uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
-                uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
+        if show and self.moreDebug:
+            uLogger.debug("Original requested time period in local time: from [{}] to [{}]".format(start, end))
+            uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
+            uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
+            uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
 
         tempOld = None  # pandas object for old history, if --only-missing key present
         lastTime = None  # datetime object of last old candle in file
 
         if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
             try:
-                if self.moreDebug and show:
+                if show and self.moreDebug:
                     uLogger.debug("--only-missing key present, add only last missing candles...")
                     uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
 
@@ -3088,7 +3124,7 @@ class TinkoffBrokerServer:
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
-                uLogger.error("An issue occurred when loading from file [{}], maybe incorrect format? File will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
+                uLogger.error("📝 An issue occurred while loading file [{}] — possibly due to incorrect format. It will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
 
         responseJSONs = []  # raw history blocks of data
 
@@ -3097,13 +3133,13 @@ class TinkoffBrokerServer:
             tail = length % TKS_CANDLE_INTERVALS[interval][2] if item + 1 == blocks else TKS_CANDLE_INTERVALS[interval][2]
             blockStart = blockEnd - timedelta(minutes=TKS_CANDLE_INTERVALS[interval][1] * tail)
 
-            if self.moreDebug and show:
+            if show and self.moreDebug:
                 uLogger.debug("[Block #{}/{}] time period: [{}] UTC - [{}] UTC".format(
                     item + 1, blocks, blockStart.strftime(TKS_DATE_TIME_FORMAT), blockEnd.strftime(TKS_DATE_TIME_FORMAT),
                 ))
 
             if blockStart == blockEnd:
-                if self.moreDebug and show:
+                if show and self.moreDebug:
                     uLogger.debug("Skipped this zero-length block...")
 
             else:
@@ -3118,7 +3154,8 @@ class TinkoffBrokerServer:
                 responseJSON = self.SendAPIRequest(historyURL, reqType="POST")
 
                 if "code" in responseJSON.keys():
-                    uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
+                    if show and self.moreDebug:
+                        uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
 
                 else:
                     if "candles" in responseJSON.keys():
@@ -3128,7 +3165,7 @@ class TinkoffBrokerServer:
                         responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
 
                     else:
-                        if self.moreDebug and show:
+                        if show and self.moreDebug:
                             uLogger.debug("`candles` key not in responseJSON keys! Block #{}/{} is empty".format(item + 1, blocks))
 
             blockEnd = blockStart
@@ -3158,7 +3195,7 @@ class TinkoffBrokerServer:
                     curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
 
                     if curTime == lastTime:
-                        if show:
+                        if show and self.moreDebug:
                             uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
                         index = i
@@ -3169,34 +3206,35 @@ class TinkoffBrokerServer:
             else:
                 history = tempHistory  # if no `--only-missing` key then load full data from server
 
-            if self.moreDebug and show:
+            if show and self.moreDebug:
                 uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
 
         if show:
             if history is not None and not history.empty:
-                printCount = len(responseJSONs)  # candles to show in console
-                uLogger.info("Here's requested history between [{}] UTC and [{}] UTC, not-empty candles count: [{}]\n{}".format(
-                    strStartDate.replace("T", " ").replace("Z", ""), strEndDate.replace("T", " ").replace("Z", ""), len(history[-printCount:]),
-                    pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-printCount:], max_cols=20, index=False),
-                ))
+                printCount = len(responseJSONs)  # candles to show in the console
+                uLogger.info(
+                    f"📊 Loaded candlestick history between [{strStartDate.replace('T', ' ').replace('Z', '')}] UTC and "
+                    f"[{strEndDate.replace('T', ' ').replace('Z', '')}] UTC. Non-empty candles: [{len(history[-printCount:])}]\n"
+                    f"{pd.DataFrame.to_string(history[['date', 'time', 'open', 'high', 'low', 'close', 'volume']][-printCount:], max_cols=20, index=False)}"
+                )
 
             else:
-                uLogger.warning("Received an empty candles history!")
+                uLogger.warning("⚠️ Received empty candles history. No data to display.")
 
         if self.historyFile is not None:
             if history is not None and not history.empty:
                 history.to_csv(self.historyFile, sep=csvSep, index=False, header=False)
 
                 if show:
-                    uLogger.info("Ticker [{}], FIGI [{}], tf: [{}], history saved: [{}]".format(self._ticker, self._figi, interval, os.path.abspath(self.historyFile)))
+                    uLogger.info(f"📊 Ticker [{self._ticker}], FIGI [{self._figi}], timeframe: [{interval}], candle history saved to file: [{os.path.abspath(self.historyFile)}]")
 
             else:
                 if show:
-                    uLogger.warning("Empty history received! File NOT updated: [{}]".format(os.path.abspath(self.historyFile)))
+                    uLogger.warning("⚠️ Empty candles history received. File was not updated: [{}]".format(os.path.abspath(self.historyFile)))
 
         else:
-            if show:
-                uLogger.debug("--output key is not defined. Parsed history not saved to file, only Pandas DataFrame returns.")
+            if show and self.moreDebug:
+                uLogger.debug("`--output` key is not defined. Parsed history was not saved to file, only a Pandas DataFrame was returned.")
 
         return history
 
@@ -3213,7 +3251,7 @@ class TinkoffBrokerServer:
         """
         loadedHistory = None  # empty pandas object for history
 
-        if show:
+        if show and self.moreDebug:
             uLogger.debug("Loading candles history with PriceGenerator module. Please wait...")
 
         if os.path.exists(filePath):
@@ -3222,7 +3260,7 @@ class TinkoffBrokerServer:
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
-                uLogger.error("An issue occurred when loading from file [{}]! Maybe incorrect strings format? Check it, please. Message: {}".format(os.path.abspath(filePath), e))
+                uLogger.error("📝 Failed to load file [{}]! Possibly due to incorrect string format. Please check the file. Message: {}".format(os.path.abspath(filePath), e))
 
             tfStr = self.priceModel.FormattedDelta(
                 self.priceModel.timeframe,
@@ -3234,17 +3272,16 @@ class TinkoffBrokerServer:
 
             if show:
                 if loadedHistory is not None and not loadedHistory.empty:
-                    uLogger.info("Rows count loaded: [{}], detected timeframe of candles: [{}]. Showing some last rows:\n{}".format(
-                        len(loadedHistory),
-                        tfStr,
-                        pd.DataFrame.to_string(loadedHistory[-10:], max_cols=20)),
+                    uLogger.info(
+                        f"📊 Loaded [{len(loadedHistory)}] rows of candle data, detected timeframe: [{tfStr}]. Showing last rows:\n"
+                        f"{pd.DataFrame.to_string(loadedHistory[-10:], max_cols=20)}"
                     )
 
                 else:
-                    uLogger.warning("It was loaded an empty history! Path: [{}]".format(os.path.abspath(filePath)))
+                    uLogger.warning(f"⚠️ Loaded empty candles history from file: [{os.path.abspath(filePath)}]")
 
         else:
-            uLogger.error("File with candles history does not exist! Check the path: [{}]".format(filePath))
+            uLogger.error("📄 OHLCV-candles history file not found! Check the path: [{}]".format(filePath))
 
         return loadedHistory
 
@@ -3277,22 +3314,24 @@ class TinkoffBrokerServer:
                 self.priceModel.prices["datetime"] = pd.to_datetime(candles.date + ' ' + candles.time, utc=True)  # PriceGenerator uses "datetime" column with date and time
 
         else:
-            uLogger.error("`candles` variable must be path string to the csv-file with candles in OHLCV-model or like Pandas Dataframe object!")
+            uLogger.error("❌ `candles` must be either a path string to a CSV file with OHLCV candles or a Pandas DataFrame object.")
             raise Exception("Incorrect value")
 
         self.priceModel.horizon = len(self.priceModel.prices)  # use length of candles data as horizon in PriceGenerator
 
         if interact:
-            uLogger.debug("Rendering interactive candles chart. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Rendering interactive candles chart. Please wait...")
 
             self.priceModel.RenderBokeh(fileName=self.htmlHistoryFile, viewInBrowser=openInBrowser)
 
         else:
-            uLogger.debug("Rendering non-interactive candles chart. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Rendering non-interactive candles chart. Please wait...")
 
             self.priceModel.RenderGoogle(fileName=self.htmlHistoryFile, viewInBrowser=openInBrowser)
 
-        uLogger.info("Rendered candles chart: [{}]".format(os.path.abspath(self.htmlHistoryFile)))
+        uLogger.info(f"📊 Rendered candles chart: [{os.path.abspath(self.htmlHistoryFile)}]")
 
     def Trade(self, operation: str, lots: int = 1, tp: float = 0., sl: float = 0., expDate: str = "Undefined") -> dict:
         """
@@ -3310,15 +3349,15 @@ class TinkoffBrokerServer:
         :return: JSON with response from broker server.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         if operation is None or not operation or operation not in ("Buy", "Sell"):
-            uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
+            uLogger.error("❌ Invalid `operation` value! Allowed values are: `Buy` or `Sell`.")
             raise Exception("Incorrect value")
 
         if lots is None or lots < 1:
-            uLogger.warning("You must define trade volume > 0: integer count of lots! For current operation lots reset to 1.")
+            uLogger.warning("⚠️ Invalid trade volume: lots must be a positive integer. Default value [1] will be used.")
             lots = 1
 
         if tp is None or tp < 0:
@@ -3331,14 +3370,19 @@ class TinkoffBrokerServer:
             expDate = "Undefined"
 
         if not (self._ticker or self._figi):
-            uLogger.error("Ticker or FIGI must be defined!")
+            uLogger.error("❌ Either `ticker` or `figi` must be defined!")
             raise Exception("Ticker or FIGI required")
 
         instrument = self.SearchByTicker(requestPrice=True) if self._ticker else self.SearchByFIGI(requestPrice=True)
         self._ticker = instrument["ticker"]
         self._figi = instrument["figi"]
 
-        uLogger.debug("Opening [{}] market order: ticker [{}], FIGI [{}], lots [{}], TP [{:.4f}], SL [{:.4f}], expiration date of TP/SL orders [{}]. Please wait...".format(operation, self._ticker, self._figi, lots, tp, sl, expDate))
+        uLogger.debug(
+            f"🛒 Opening [{operation}] market order: "
+            f"ticker [{self._ticker}], FIGI [{self._figi}], lots [{lots}], "
+            f"TP [{tp:.4f}], SL [{sl:.4f}], "
+            f"expiration date of TP/SL orders [{expDate}]. Please wait..."
+        )
 
         openTradeURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder"
         self.body = str({
@@ -3351,13 +3395,13 @@ class TinkoffBrokerServer:
         response = self.SendAPIRequest(openTradeURL, reqType="POST")
 
         if "orderId" in response.keys():
-            uLogger.info("[{}] market order [{}] was executed: ticker [{}], FIGI [{}], lots [{}]. Total order price: [{:.4f} {}] (with commission: [{:.2f} {}]). Average price of lot: [{:.2f} {}]".format(
-                operation, response["orderId"],
-                self._ticker, self._figi, lots,
-                NanoToFloat(response["totalOrderAmount"]["units"], response["totalOrderAmount"]["nano"]), response["totalOrderAmount"]["currency"],
-                NanoToFloat(response["initialCommission"]["units"], response["initialCommission"]["nano"]), response["initialCommission"]["currency"],
-                NanoToFloat(response["executedOrderPrice"]["units"], response["executedOrderPrice"]["nano"]), response["executedOrderPrice"]["currency"],
-            ))
+            uLogger.info(
+                f"🛒 [{operation}] market order [{response['orderId']}] was executed: "
+                f"ticker [{self._ticker}], FIGI [{self._figi}], lots [{lots}]. "
+                f"Total order price: [{NanoToFloat(response['totalOrderAmount']['units'], response['totalOrderAmount']['nano']):.4f} {response['totalOrderAmount']['currency']}] "
+                f"(with commission: [{NanoToFloat(response['initialCommission']['units'], response['initialCommission']['nano']):.2f} {response['initialCommission']['currency']}]). "
+                f"Average price of lot: [{NanoToFloat(response['executedOrderPrice']['units'], response['executedOrderPrice']['nano']):.2f} {response['executedOrderPrice']['currency']}]"
+            )
 
             if tp > 0:
                 self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=tp, limitPrice=tp, stopType="TP", expDate=expDate)
@@ -3366,7 +3410,7 @@ class TinkoffBrokerServer:
                 self.Order(operation="Sell" if operation == "Buy" else "Buy", orderType="Stop", lots=lots, targetPrice=sl, limitPrice=sl, stopType="SL", expDate=expDate)
 
         else:
-            uLogger.warning("Not `oK` status received! Market order not executed. See full debug log and try again open order later.")
+            uLogger.warning(f"⚠️ Received non-OK status for ticker [{self._ticker}]. Market order was not executed.")
 
         return response
 
@@ -3411,7 +3455,7 @@ class TinkoffBrokerServer:
                          This avoids unnecessary downloading data from the server.
         """
         if instruments is None or not instruments:
-            uLogger.error("List of tickers or FIGIs must be defined for using this method!")
+            uLogger.error("❌ A list of tickers or FIGIs must be provided to use this method!")
             raise Exception("Ticker or FIGI required")
 
         if isinstance(instruments, str):
@@ -3423,11 +3467,12 @@ class TinkoffBrokerServer:
                 portfolio = self.Overview(show=False)
 
             allOpened = [item["figi"] for iType in TKS_INSTRUMENTS for item in portfolio["stat"][iType]]
-            uLogger.debug("All opened instruments by it's FIGI: {}".format(", ".join(allOpened)))
+            if self.moreDebug:
+                uLogger.debug("All opened instruments by it's FIGI: {}".format(", ".join(allOpened)))
 
             for self._figi in uniqueInstruments:
                 if self._figi not in allOpened:
-                    uLogger.warning("Instrument with FIGI [{}] not in open positions list!".format(self._figi))
+                    uLogger.debug(f"🔍 Instrument with FIGI [{self._figi}] is not present in the list of open positions.")
                     continue
 
                 # search open trade info about instrument by ticker:
@@ -3445,7 +3490,7 @@ class TinkoffBrokerServer:
                     self._ticker = instrument["ticker"]
                     self._figi = instrument["figi"]
 
-                    uLogger.debug("Closing trade of instrument: ticker [{}], FIGI[{}], lots [{}]{}. Please wait...".format(
+                    uLogger.debug("📤 Closing trade of instrument: ticker [{}], FIGI[{}], lots [{}]{}. Please wait...".format(
                         self._ticker,
                         self._figi,
                         int(instrument["volume"]),
@@ -3456,17 +3501,13 @@ class TinkoffBrokerServer:
 
                     if tradeLots > 0:
                         if instrument["blocked"] > 0:
-                            uLogger.warning("Just for your information: there are [{}] lots blocked for instrument [{}]! Available only [{}] lots to closing trade.".format(
-                                instrument["blocked"],
-                                self._ticker,
-                                tradeLots,
-                            ))
+                            uLogger.info(f"ℹ️ {instrument['blocked']} lots are blocked for instrument [{self._ticker}]. Only [{tradeLots}] lots available to close the position.")
 
                         # if direction is "Long" then we need sell, if direction is "Short" then we need buy:
                         self.Trade(operation="Sell" if instrument["direction"] == "Long" else "Buy", lots=tradeLots)
 
                     else:
-                        uLogger.warning("There are no available lots for instrument [{}] to closing trade at this moment! Try again later or cancel some orders.".format(self._ticker))
+                        uLogger.warning(f"⚠️ No available not blocked lots to close position for ticker [{self._ticker}]. All lots may be reserved by pending orders. Try again later or cancel some orders manually.")
 
     def CloseAllTrades(self, iType: str, portfolio: dict = None) -> None:
         """
@@ -3477,20 +3518,21 @@ class TinkoffBrokerServer:
                          This avoids unnecessary downloading data from the server.
         """
         if iType not in TKS_INSTRUMENTS:
-            uLogger.warning("Type of the instrument must be one of supported types: {}. Given: [{}]".format(", ".join(TKS_INSTRUMENTS), iType))
+            uLogger.warning(f"⚠️ Instrument type must be one of the supported types: {', '.join(TKS_INSTRUMENTS)}. Given: [{iType}].")
 
         else:
             if portfolio is None or not portfolio:
                 portfolio = self.Overview(show=False)
 
             tickers = [item["ticker"] for item in portfolio["stat"][iType]]
-            uLogger.debug("Instrument tickers with type [{}] that will be closed: {}".format(iType, tickers))
+            if self.moreDebug:
+                uLogger.debug("Instrument tickers with type [{}] that will be closed: {}".format(iType, tickers))
 
             if tickers and portfolio:
                 self.CloseTrades(tickers, portfolio)
 
             else:
-                uLogger.info("Instrument tickers with type [{}] not found, nothing to close.".format(iType))
+                uLogger.info(f"ℹ️ Instrument tickers with type [{iType}] not found — nothing to close.")
 
     def Order(self, operation: str, orderType: str, lots: int, targetPrice: float, limitPrice: float = 0., stopType: str = "Limit", expDate: str = "Undefined") -> dict:
         """
@@ -3525,23 +3567,23 @@ class TinkoffBrokerServer:
         :return: JSON with response from broker server.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         if operation is None or not operation or operation not in ("Buy", "Sell"):
-            uLogger.error("You must define operation type only one of them: `Buy` or `Sell`!")
+            uLogger.error("❌ Invalid `operation` value! Allowed values are: `Buy` or `Sell`.")
             raise Exception("Incorrect value")
 
         if orderType is None or not orderType or orderType not in ("Limit", "Stop"):
-            uLogger.error("You must define order type only one of them: `Limit` or `Stop`!")
+            uLogger.error("❌ Invalid `orderType` value! Allowed values are: `Limit` or `Stop`.")
             raise Exception("Incorrect value")
 
         if lots is None or lots < 1:
-            uLogger.error("You must define trade volume > 0: integer count of lots!")
+            uLogger.error("❌ Invalid `lots` value! Trade volume must be an integer greater than 0.")
             raise Exception("Incorrect value")
 
         if targetPrice is None or targetPrice <= 0:
-            uLogger.error("Target price for limit-order must be greater than 0!")
+            uLogger.error("❌ Invalid `targetPrice`! It must be greater than 0 for limit orders.")
             raise Exception("Incorrect value")
 
         if limitPrice is None or limitPrice <= 0:
@@ -3554,7 +3596,7 @@ class TinkoffBrokerServer:
             expDate = "Undefined"
 
         if not (self._ticker or self._figi):
-            uLogger.error("Tocker or FIGI must be defined!")
+            uLogger.error("❌ Either `ticker` or `figi` must be defined!")
             raise Exception("Ticker or FIGI required")
 
         response = {}
@@ -3564,10 +3606,10 @@ class TinkoffBrokerServer:
 
         if orderType == "Limit":
             uLogger.debug(
-                "Creating pending limit-order: ticker [{}], FIGI [{}], action [{}], lots [{}] and the target price [{:.2f} {}]. Please wait...".format(
-                    self._ticker, self._figi,
-                    operation, lots, targetPrice, instrument["currency"],
-                ))
+                f"📋 Creating pending limit-order: "
+                f"ticker [{self._ticker}], FIGI [{self._figi}], action [{operation}], lots [{lots}] "
+                f"and the target price [{targetPrice:.2f} {instrument['currency']}]. Please wait..."
+            )
 
             openOrderURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OrdersService/PostOrder"
             self.body = str({
@@ -3582,36 +3624,39 @@ class TinkoffBrokerServer:
 
             if "orderId" in response.keys():
                 uLogger.info(
-                    "Limit-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{} {}]".format(
-                        response["orderId"], self._ticker, self._figi, operation, lots,
-                        "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
-                    ))
+                    f"📋 Limit-order [{response['orderId']}] was created: "
+                    f"ticker [{self._ticker}], FIGI [{self._figi}], action [{operation}], lots [{lots}], "
+                    f"target price [{'{:.4f}'.format(targetPrice).rstrip('0').rstrip('.')} {instrument['currency']}]"
+                )
 
                 if "lastPrice" in instrument["currentPrice"].keys() and instrument["currentPrice"]["lastPrice"]:
                     if operation == "Buy" and targetPrice > instrument["currentPrice"]["lastPrice"]:
-                        uLogger.warning("Your order was executed as a market order, not as a limit order! Comment: because your target price [{:.2f} {}] was higher than current price [{:.2f} {}] broker immediately opened `Buy` market order, such as if you did simple `--buy` operation.".format(
-                            targetPrice, instrument["currency"],
-                            instrument["currentPrice"]["lastPrice"], instrument["currency"],
-                        ))
+                        uLogger.warning(
+                            f"⚠️ Your limit order was executed as a market order! "
+                            f"Reason: your target price [{targetPrice:.2f} {instrument['currency']}] is higher than current price "
+                            f"[{instrument['currentPrice']['lastPrice']:.2f} {instrument['currency']}], "
+                            f"so broker immediately opened a `Buy` market order, as if you had used `--buy`."
+                        )
 
                     if operation == "Sell" and targetPrice < instrument["currentPrice"]["lastPrice"]:
-                        uLogger.warning("Your order was executed as a market order, not as a limit order! Comment: because your target price [{:.2f} {}] was lower than current price [{:.2f} {}] broker immediately opened `Sell` market order, such as if you did simple `--sell` operation.".format(
-                            targetPrice, instrument["currency"],
-                            instrument["currentPrice"]["lastPrice"], instrument["currency"],
-                        ))
+                        uLogger.warning(
+                            f"⚠️ Your limit order was executed as a market order! "
+                            f"Reason: your target price [{targetPrice:.2f} {instrument['currency']}] is lower than current price "
+                            f"[{instrument['currentPrice']['lastPrice']:.2f} {instrument['currency']}], "
+                            f"so broker immediately opened a `Sell` market order, as if you had used `--sell`."
+                        )
 
             else:
-                uLogger.warning("Not `oK` status received! Limit order not opened. See full debug log and try again open order later.")
+                uLogger.warning("⚠️ Received non-OK status. Limit order was not opened. See full debug log and try again later.")
 
         if orderType == "Stop":
             uLogger.debug(
-                "Creating stop-order: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{:.2f} {}], limit price [{:.2f} {}], stop-order type [{}] and local expiration date [{}]. Please wait...".format(
-                    self._ticker, self._figi,
-                    operation, lots,
-                    targetPrice, instrument["currency"],
-                    limitPrice, instrument["currency"],
-                    stopType, expDate,
-                ))
+                f"🔔 Creating stop-order: "
+                f"ticker [{self._ticker}], FIGI [{self._figi}], action [{operation}], lots [{lots}], "
+                f"target price [{targetPrice:.2f} {instrument['currency']}], "
+                f"limit price [{limitPrice:.2f} {instrument['currency']}], "
+                f"stop-order type [{stopType}] and local expiration date [{expDate}]. Please wait..."
+            )
 
             openOrderURL = self.server + r"/tinkoff.public.invest.api.contract.v1.StopOrdersService/PostStopOrder"
             expDateUTC = "" if expDate == "Undefined" else datetime.strptime(expDate, TKS_PRINT_DATE_TIME_FORMAT).replace(tzinfo=tzlocal()).astimezone(tzutc()).strftime(TKS_DATE_TIME_FORMAT_EXT)
@@ -3636,29 +3681,37 @@ class TinkoffBrokerServer:
 
             if "stopOrderId" in response.keys():
                 uLogger.info(
-                    "Stop-order [{}] was created: ticker [{}], FIGI [{}], action [{}], lots [{}], target price [{} {}], limit price [{} {}], stop-order type [{}] and expiration date [{} UTC]".format(
-                        response["stopOrderId"], self._ticker, self._figi, operation, lots,
-                        "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
-                        "{:.4f}".format(limitPrice).rstrip("0").rstrip("."), instrument["currency"],
-                        TKS_STOP_ORDER_TYPES[stopOrderType],
-                        datetime.strptime(expDateUTC, TKS_DATE_TIME_FORMAT_EXT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT) if expDateUTC else TKS_STOP_ORDER_EXPIRATION_TYPES["STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED"],
-                    ))
+                    f"🔔 Stop-order [{response['stopOrderId']}] was created: "
+                    f"ticker [{self._ticker}], FIGI [{self._figi}], action [{operation}], lots [{lots}], "
+                    f"target price [{'{:.4f}'.format(targetPrice).rstrip('0').rstrip('.')} {instrument['currency']}], "
+                    f"limit price [{'{:.4f}'.format(limitPrice).rstrip('0').rstrip('.')} {instrument['currency']}], "
+                    f"stop-order type [{TKS_STOP_ORDER_TYPES[stopOrderType]}] and "
+                    f"expiration date [{datetime.strptime(expDateUTC, TKS_DATE_TIME_FORMAT_EXT).replace(tzinfo=tzutc()).astimezone(tzutc()).strftime(TKS_PRINT_DATE_TIME_FORMAT) if expDateUTC else TKS_STOP_ORDER_EXPIRATION_TYPES['STOP_ORDER_EXPIRATION_TYPE_UNSPECIFIED']}] UTC"
+                )
 
                 if "lastPrice" in instrument["currentPrice"].keys() and instrument["currentPrice"]["lastPrice"]:
                     if operation == "Buy" and targetPrice < instrument["currentPrice"]["lastPrice"] and stopType != "TP":
-                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target buy price [{} {}] is lower than the current price [{} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
-                            "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
-                            "{:.4f}".format(instrument["currentPrice"]["lastPrice"]).rstrip("0").rstrip("."), instrument["currency"],
-                        ))
+                        uLogger.warning(
+                            f"⚠️ The broker will cancel this order after some time. "
+                            f"Comment: you placed the wrong stop order because the target buy price "
+                            f"[{'{:.4f}'.format(targetPrice).rstrip('0').rstrip('.')} {instrument['currency']}] is lower than the current price "
+                            f"[{'{:.4f}'.format(instrument['currentPrice']['lastPrice']).rstrip('0').rstrip('.')} {instrument['currency']}]. "
+                            f"Also try to set up order type as `TP` if you want to place stop order at that price."
+                        )
 
                     if operation == "Sell" and targetPrice > instrument["currentPrice"]["lastPrice"] and stopType != "TP":
-                        uLogger.warning("The broker will cancel this order after some time. Comment: you placed the wrong stop order because the target sell price [{} {}] is higher than the current price [{} {}]. Also try to set up order type as `TP` if you want to place stop order at that price.".format(
-                            "{:.4f}".format(targetPrice).rstrip("0").rstrip("."), instrument["currency"],
-                            "{:.4f}".format(instrument["currentPrice"]["lastPrice"]).rstrip("0").rstrip("."), instrument["currency"],
-                        ))
+                        uLogger.warning(
+                            f"⚠️ The broker will cancel this order after some time. "
+                            f"Comment: you placed the wrong stop order because the target sell price "
+                            f"[{'{:.4f}'.format(targetPrice).rstrip('0').rstrip('.')} {instrument['currency']}] is higher than the current price "
+                            f"[{'{:.4f}'.format(instrument['currentPrice']['lastPrice']).rstrip('0').rstrip('.')} {instrument['currency']}]. "
+                            f"Also try to set up order type as `TP` if you want to place stop order at that price."
+                        )
 
             else:
-                uLogger.warning("Not `oK` status received! Stop order not opened. See full debug log and try again open order later.")
+                uLogger.warning(
+                    "⚠️ Received non-OK status. Stop order was not opened. See full debug log and try again later."
+                )
 
         return response
 
@@ -3738,7 +3791,7 @@ class TinkoffBrokerServer:
         :param allStopOrdersIDs: pre-received lists of all active stop orders.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         if orderIDs:
@@ -3755,12 +3808,17 @@ class TinkoffBrokerServer:
                 idInStopOrders = orderID in allStopOrdersIDs
 
                 if not (idInPendingOrders or idInStopOrders):
-                    uLogger.warning("Order not found by ID: [{}]. Maybe cancelled already? Check it with `--overview` key.".format(orderID))
+                    uLogger.warning(
+                        f"⚠️ Order not found by ID: [{orderID}]. "
+                        f"Perhaps it has already been cancelled? "
+                        f"Check the current status using the `--overview` key."
+                    )
                     continue
 
                 else:
                     if idInPendingOrders:
-                        uLogger.debug("Cancelling pending order with ID: [{}]. Please wait...".format(orderID))
+                        if self.moreDebug:
+                            uLogger.debug("Cancelling pending order with ID: [{}]. Please wait...".format(orderID))
 
                         # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/OrdersService/OrdersService_CancelOrder
                         self.body = str({"accountId": self.accountId, "orderId": orderID})
@@ -3771,13 +3829,17 @@ class TinkoffBrokerServer:
                             if self.moreDebug:
                                 uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
 
-                            uLogger.info("Pending order with ID [{}] successfully cancel".format(orderID))
+                            uLogger.info(f"❎ Pending order with ID [{orderID}] was successfully cancelled.")
 
                         else:
-                            uLogger.warning("Unknown issue occurred when cancelling pending order with ID: [{}]. Check ID and try again.".format(orderID))
+                            uLogger.warning(
+                                f"⚠️ Unknown issue occurred while cancelling pending order with ID [{orderID}]. "
+                                f"Check the ID and try again."
+                            )
 
                     elif idInStopOrders:
-                        uLogger.debug("Cancelling stop order with ID: [{}]. Please wait...".format(orderID))
+                        if self.moreDebug:
+                            uLogger.debug("Cancelling stop order with ID: [{}]. Please wait...".format(orderID))
 
                         # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/StopOrdersService/StopOrdersService_CancelStopOrder
                         self.body = str({"accountId": self.accountId, "stopOrderId": orderID})
@@ -3788,10 +3850,13 @@ class TinkoffBrokerServer:
                             if self.moreDebug:
                                 uLogger.debug("Success time marker received from server: [{}] (UTC)".format(responseJSON["time"]))
 
-                            uLogger.info("Stop order with ID [{}] successfully cancel".format(orderID))
+                            uLogger.info(f"❎ Stop order with ID [{orderID}] was successfully cancelled.")
 
                         else:
-                            uLogger.warning("Unknown issue occurred when cancelling stop order with ID: [{}]. Check ID and try again.".format(orderID))
+                            uLogger.warning(
+                                f"⚠️ Unknown issue occurred while cancelling stop order with ID [{orderID}]. "
+                                f"Check the ID and try again."
+                            )
 
                     else:
                         continue
@@ -3809,12 +3874,14 @@ class TinkoffBrokerServer:
         lenSOrders = len(allStopOrdersIDs)
 
         if lenOrders > 0 or lenSOrders > 0:
-            uLogger.info("Found: [{}] opened pending and [{}] stop orders. Let's trying to cancel it all. Please wait...".format(lenOrders, lenSOrders))
+            uLogger.debug(
+                f"🔎 Found [{lenOrders}] pending orders and [{lenSOrders}] stop orders. Attempting to cancel all — please wait..."
+            )
 
             self.CloseOrders(allOrdersIDs + allStopOrdersIDs, allOrdersIDs, allStopOrdersIDs)
 
         else:
-            uLogger.info("Orders not found, nothing to cancel.")
+            uLogger.info("ℹ️ No active orders found — nothing to cancel.")
 
     def CloseAll(self, *args) -> None:
         """
@@ -3828,7 +3895,9 @@ class TinkoffBrokerServer:
         overview = self.Overview(show=False)  # get all open trades info
 
         if len(args) == 0:
-            uLogger.debug("Closing all available (not blocked) opened trades and orders. Currency positions you must closes manually using buy or sell operations! Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all available (not blocked) opened trades and orders. Currency positions you must closes manually using buy or sell operations! Please wait...")
+
             self.CloseAllOrders()  # close all pending and stop orders
 
             for iType in TKS_INSTRUMENTS:
@@ -3836,7 +3905,9 @@ class TinkoffBrokerServer:
                     self.CloseAllTrades(iType, overview)  # close all positions of instruments with same type without currencies
 
         else:
-            uLogger.debug("Closing all available {}. Currency positions you must closes manually using buy or sell operations! Please wait...".format(list(args)))
+            if self.moreDebug:
+                uLogger.debug("Closing all available {}. Currency positions you must closes manually using buy or sell operations! Please wait...".format(list(args)))
+
             lowerArgs = [x.lower() for x in args]
 
             if "orders" in lowerArgs:
@@ -3858,7 +3929,7 @@ class TinkoffBrokerServer:
         :param instrument: string with ticker.
         """
         if instrument is None or not instrument:
-            uLogger.error("Ticker name must be defined for using this method!")
+            uLogger.error("❌ Variable `ticker` must be defined to use this method!")
             raise Exception("Ticker required")
 
         overview = self.Overview(show=False)  # get user portfolio with all open trades info
@@ -3870,15 +3941,21 @@ class TinkoffBrokerServer:
         stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
 
         if limitAll and self.IsInLimitOrders(portfolio=overview):
-            uLogger.debug("Closing all opened pending limit orders for the instrument with ticker [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all opened pending limit orders for the instrument with ticker [{}]. Please wait...")
+
             self.CloseOrders(orderIDs=self.GetLimitOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
 
         if stopAll and self.IsInStopOrders(portfolio=overview):
-            uLogger.debug("Closing all opened stop orders for the instrument with ticker [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all opened stop orders for the instrument with ticker [{}]. Please wait...")
+
             self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
 
         if self.IsInPortfolio(portfolio=overview):
-            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all available (not blocked) opened trade for the instrument with ticker [{}]. Please wait...")
+
             self.CloseTrades(instruments=[instrument], portfolio=overview)
 
     def CloseAllByFIGI(self, instrument: str) -> None:
@@ -3893,7 +3970,7 @@ class TinkoffBrokerServer:
         :param instrument: string with FIGI id.
         """
         if instrument is None or not instrument:
-            uLogger.error("FIGI id must be defined for using this method!")
+            uLogger.error("❌ Variable `figi` must be defined to use this method!")
             raise Exception("FIGI required")
 
         overview = self.Overview(show=False)  # get user portfolio with all open trades info
@@ -3905,15 +3982,21 @@ class TinkoffBrokerServer:
         stopAll = [item["orderID"] for item in overview["stat"]["stopOrders"]]  # list of all stop order IDs
 
         if limitAll and self.IsInLimitOrders(portfolio=overview):
-            uLogger.debug("Closing all opened pending limit orders for the instrument with FIGI [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all opened pending limit orders for the instrument with FIGI [{}]. Please wait...")
+
             self.CloseOrders(orderIDs=self.GetLimitOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
 
         if stopAll and self.IsInStopOrders(portfolio=overview):
-            uLogger.debug("Closing all opened stop orders for the instrument with FIGI [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all opened stop orders for the instrument with FIGI [{}]. Please wait...")
+
             self.CloseOrders(orderIDs=self.GetStopOrderIDs(portfolio=overview), allOrdersIDs=limitAll, allStopOrdersIDs=stopAll)
 
         if self.IsInPortfolio(portfolio=overview):
-            uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Please wait...")
+            if self.moreDebug:
+                uLogger.debug("Closing all available (not blocked) opened trade for the instrument with FIGI [{}]. Please wait...")
+
             self.CloseTrades(instruments=[instrument], portfolio=overview)
 
     @staticmethod
@@ -3972,37 +4055,46 @@ class TinkoffBrokerServer:
         :return: `True` if portfolio contains open position with given instrument, `False` otherwise.
         """
         result = False
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] throw opened positions list...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened positions list...".format(self._ticker))
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
                     if instrument["ticker"] == self._ticker:
                         result = True
-                        msg = "Instrument with ticker [{}] is present in open positions".format(self._ticker)
                         break
 
+            if result:
+                uLogger.debug("🧐 Instrument with ticker [{}] is present in open positions".format(self._ticker))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with ticker [{}] not found in open positions".format(self._ticker))
+
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in open positions".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self._figi))
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
                     if instrument["figi"] == self._figi:
                         result = True
-                        msg = "Instrument with FIGI [{}] is present in open positions".format(self._figi)
                         break
 
-        else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+            if result:
+                uLogger.debug("🧐 Instrument with FIGI [{}] is present in open positions".format(self._figi))
 
-        uLogger.debug(msg)
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with FIGI [{}] not found in open positions".format(self._figi))
+
+        else:
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4015,37 +4107,44 @@ class TinkoffBrokerServer:
         :return: dict with instrument if portfolio contains open position with this instrument, `None` otherwise.
         """
         result = None
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] in opened positions...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in open positions".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened positions list...".format(self._ticker))
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
                     if instrument["ticker"] == self._ticker:
                         result = instrument
-                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self._ticker, instrument["figi"])
+
+                        uLogger.debug("🧐 Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self._ticker, instrument["figi"]))
+
                         break
 
+            if not result and self.moreDebug:
+                uLogger.debug("Instrument with ticker [{}] not found in open positions".format(self._ticker))
+
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throwout opened positions...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in open positions".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching instrument with FIGI [{}] throw opened positions list...".format(self._figi))
 
             for iType in TKS_INSTRUMENTS:
                 for instrument in portfolio["stat"][iType]:
                     if instrument["figi"] == self._figi:
                         result = instrument
-                        msg = "Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(instrument["ticker"], self._figi)
+
+                        uLogger.debug("🧐 Instrument with ticker [{}] and FIGI [{}] is present in open positions".format(self._ticker, instrument["figi"]))
+
                         break
 
-        else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+            if not result and self.moreDebug:
+                uLogger.debug("Instrument with FIGI [{}] not found in open positions".format(self._figi))
 
-        uLogger.debug(msg)
+        else:
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4059,35 +4158,44 @@ class TinkoffBrokerServer:
         :return: `True` if limit orders list contains some limit orders for the instrument, `False` otherwise.
         """
         result = False
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
 
             for instrument in portfolio["stat"]["orders"]:
                 if instrument["ticker"] == self._ticker:
                     result = True
-                    msg = "Instrument with ticker [{}] is present in limit orders list".format(self._ticker)
                     break
 
+            if result:
+                uLogger.debug("🧐 Instrument with ticker [{}] is present in limit orders list".format(self._ticker))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with ticker [{}] not found in limit orders list".format(self._ticker))
+
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
 
             for instrument in portfolio["stat"]["orders"]:
                 if instrument["figi"] == self._figi:
                     result = True
-                    msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self._figi)
                     break
 
-        else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+            if result:
+                uLogger.debug("🧐 Instrument with FIGI [{}] is present in limit orders list".format(self._figi))
 
-        uLogger.debug(msg)
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with FIGI [{}] not found in limit orders list".format(self._figi))
+
+        else:
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4102,37 +4210,42 @@ class TinkoffBrokerServer:
         :return: list with `orderID`s of limit orders.
         """
         result = []
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in opened pending limit orders list".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened pending limit orders list...".format(self._ticker))
 
             for instrument in portfolio["stat"]["orders"]:
                 if instrument["ticker"] == self._ticker:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with ticker [{}] is present in limit orders list".format(self._ticker)
+                uLogger.debug("🧐 Instrument with ticker [{}] is present in limit orders list".format(self._ticker))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with ticker [{}] not found in limit orders list".format(self._ticker))
 
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in opened pending limit orders list".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching instrument with FIGI [{}] throw opened pending limit orders list...".format(self._figi))
 
             for instrument in portfolio["stat"]["orders"]:
                 if instrument["figi"] == self._figi:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with FIGI [{}] is present in opened pending limit orders list".format(self._figi)
+                uLogger.debug("🧐 Instrument with FIGI [{}] is present in limit orders list".format(self._figi))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with FIGI [{}] not found in limit orders list".format(self._figi))
 
         else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
-
-        uLogger.debug(msg)
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4146,35 +4259,44 @@ class TinkoffBrokerServer:
         :return: `True` if stop orders list contains some stop orders for the instrument, `False` otherwise.
         """
         result = False
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
 
             for instrument in portfolio["stat"]["stopOrders"]:
                 if instrument["ticker"] == self._ticker:
                     result = True
-                    msg = "Instrument with ticker [{}] is present in stop orders list".format(self._ticker)
                     break
 
+            if result:
+                uLogger.debug("🧐 Instrument with ticker [{}] is present in stop orders list".format(self._ticker))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with ticker [{}] not found in stop orders list".format(self._ticker))
+
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching FIGI [{}] throw opened stop orders list...".format(self._figi))
 
             for instrument in portfolio["stat"]["stopOrders"]:
                 if instrument["figi"] == self._figi:
                     result = True
-                    msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self._figi)
                     break
 
-        else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
+            if result:
+                uLogger.debug("🧐 Instrument with FIGI [{}] is present in stop orders list".format(self._figi))
 
-        uLogger.debug(msg)
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with FIGI [{}] not found in stop orders list".format(self._figi))
+
+        else:
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4189,37 +4311,42 @@ class TinkoffBrokerServer:
         :return: list with `orderID`s of stop orders.
         """
         result = []
-        msg = "Instrument not defined!"
 
         if portfolio is None or not portfolio:
             portfolio = self.Overview(show=False)
 
         if self._ticker:
-            uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
-            msg = "Instrument with ticker [{}] is not present in opened stop orders list".format(self._ticker)
+            if self.moreDebug:
+                uLogger.debug("Searching ticker [{}] throw opened stop orders list...".format(self._ticker))
 
             for instrument in portfolio["stat"]["stopOrders"]:
                 if instrument["ticker"] == self._ticker:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with ticker [{}] is present in stop orders list".format(self._ticker)
+                uLogger.debug("🧐 Instrument with ticker [{}] is present in stop orders list".format(self._ticker))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with ticker [{}] not found in stop orders list".format(self._ticker))
 
         elif self._figi:
-            uLogger.debug("Searching instrument with FIGI [{}] throw opened stop orders list...".format(self._figi))
-            msg = "Instrument with FIGI [{}] is not present in opened stop orders list".format(self._figi)
+            if self.moreDebug:
+                uLogger.debug("Searching FIGI [{}] throw opened stop orders list...".format(self._figi))
 
             for instrument in portfolio["stat"]["stopOrders"]:
                 if instrument["figi"] == self._figi:
                     result.append(instrument["orderID"])
 
             if result:
-                msg = "Instrument with FIGI [{}] is present in opened stop orders list".format(self._figi)
+                uLogger.debug("🧐 Instrument with FIGI [{}] is present in stop orders list".format(self._figi))
+
+            else:
+                if self.moreDebug:
+                    uLogger.debug("Instrument with FIGI [{}] not found in stop orders list".format(self._figi))
 
         else:
-            uLogger.warning("Instrument must be defined by `ticker` (highly priority) or `figi`!")
-
-        uLogger.debug(msg)
+            uLogger.debug("⚠️ Instrument must be defined using either `ticker` (high priority) or `figi`!")
 
         return result
 
@@ -4237,10 +4364,11 @@ class TinkoffBrokerServer:
                  positions of the portfolio and `blockedGuarantee` is locked money under collateral for futures.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
-        uLogger.debug("Requesting funds for withdrawal. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting funds for withdrawal. Please wait...")
 
         self.body = str({"accountId": self.accountId})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.OperationsService/GetWithdrawLimits"
@@ -4262,7 +4390,7 @@ class TinkoffBrokerServer:
         :return: dict with raw parsed data from server and some calculated statistics about it.
         """
         if self.accountId is None or not self.accountId:
-            uLogger.error("Variable `accountId` must be defined for using this method!")
+            uLogger.error("❌ Variable `accountId` must be defined to use this method!")
             raise Exception("Account ID required")
 
         rawLimits = self.RequestLimits()  # raw response with current available funds for withdrawal
@@ -4327,14 +4455,14 @@ class TinkoffBrokerServer:
                 with open(self.withdrawalLimitsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Client's withdrawal limits: [{}]".format(os.path.abspath(self.withdrawalLimitsFile)))
+                uLogger.info(f"📄 Client's withdrawal limits saved to file: [{os.path.abspath(self.withdrawalLimitsFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.withdrawalLimitsFile.replace(".md", ".html") if self.withdrawalLimitsFile.endswith(".md") else self.withdrawalLimitsFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Withdrawal limits", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 The report was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return view
 
@@ -4353,7 +4481,8 @@ class TinkoffBrokerServer:
                    "closedDate": "1970-01-01T00:00:00Z", "accessLevel": "ACCOUNT_ACCESS_LEVEL_FULL_ACCESS"}, ...]}`.
                  If `closedDate="1970-01-01T00:00:00Z"` it means that account is active now.
         """
-        uLogger.debug("Requesting brokerage accounts of current user detected by its token. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting brokerage accounts of current user detected by its token. Please wait...")
 
         self.body = str({})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetAccounts"
@@ -4378,7 +4507,8 @@ class TinkoffBrokerServer:
                  `{"premStatus": true, "qualStatus": false, "qualifiedForWorkWith": ["bond", "foreign_shares", "leverage",
                    "russian_shares", "structured_income_bonds"], "tariff": "premium"}`.
         """
-        uLogger.debug("Requesting common user information. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting common user information. Please wait...")
 
         self.body = str({})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetInfo"
@@ -4410,20 +4540,21 @@ class TinkoffBrokerServer:
         """
         if accountId is None or not accountId:
             if self.accountId is None or not self.accountId:
-                uLogger.error("Variable `accountId` must be defined for using this method!")
+                uLogger.error("❌ Variable `accountId` must be defined to use this method!")
                 raise Exception("Account ID required")
 
             else:
                 accountId = self.accountId  # use `self.accountId` (main ID) by default
 
-        uLogger.debug("Requesting margin calculation for accountId [{}]. Please wait...".format(accountId))
+        if self.moreDebug:
+            uLogger.debug("Requesting margin calculation for accountId [{}]. Please wait...".format(accountId))
 
         self.body = str({"accountId": accountId})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetMarginAttributes"
         rawMargin = self.SendAPIRequest(portfolioURL, reqType="POST")
 
         if rawMargin == {"code": 3, "message": "account margin status is disabled", "description": "30051"}:
-            uLogger.debug("Server response: margin status is disabled for current accountId [{}]".format(accountId))
+            uLogger.debug("🚫 Margin status is disabled for current accountId [{}]".format(accountId))
             rawMargin = {}
 
         else:
@@ -4447,7 +4578,8 @@ class TinkoffBrokerServer:
                  `{"unaryLimits": [{"limitPerMinute": 0, "methods": ["methods", "methods"]}, ...],
                    "streamLimits": [{"streams": ["streams", "streams"], "limit": 6}, ...]}`.
         """
-        uLogger.debug("Requesting limits of current tariff. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting limits of current tariff. Please wait...")
 
         self.body = str({})
         portfolioURL = self.server + r"/tinkoff.public.invest.api.contract.v1.UsersService/GetUserTariff"
@@ -4481,25 +4613,23 @@ class TinkoffBrokerServer:
                    "couponEndDate": "2023-07-26T00:00:00Z", "couponPeriod": 91}, {...}, ...]}`
         """
         if iJSON["figi"] is None or not iJSON["figi"]:
-            uLogger.error("FIGI must be defined for using this method!")
+            uLogger.error("❌ Field `figi` in `iJSON` must be defined to use this method!")
             raise Exception("FIGI required")
 
         startDate = iJSON["placementDate"] if "placementDate" in iJSON.keys() else "1970-01-01T00:00:00.000Z"
         endDate = iJSON["maturityDate"] if "maturityDate" in iJSON.keys() else "2099-12-31T23:59:59.000Z"
 
-        uLogger.debug("Requesting bond payment calendar, {}FIGI: [{}], from: [{}], to: [{}]. Please wait...".format(
-            "ticker: [{}], ".format(iJSON["ticker"]) if "ticker" in iJSON.keys() else "",
-            self._figi,
-            startDate,
-            endDate,
-        ))
+        if self.moreDebug:
+            uLogger.debug("Requesting bond payment calendar, {}FIGI: [{}], from: [{}], to: [{}]. Please wait...".format(
+                "ticker: [{}], ".format(iJSON["ticker"]) if "ticker" in iJSON.keys() else "", self._figi, startDate, endDate,
+            ))
 
         self.body = str({"figi": iJSON["figi"], "from": startDate, "to": endDate})
         calendarURL = self.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/GetBondCoupons"
         calendar = self.SendAPIRequest(calendarURL, reqType="POST")
 
         if calendar == {"code": 3, "message": "instrument type is not bond", "description": "30048"}:
-            uLogger.warning("Instrument type is not bond!")
+            uLogger.warning("⚠️ Instrument type is not `bond`.")
 
         else:
             if self.moreDebug:
@@ -4527,7 +4657,7 @@ class TinkoffBrokerServer:
                  - info about coupon: https://tinkoff.github.io/investAPI/instruments/#coupon
         """
         if instruments is None or not instruments:
-            uLogger.error("List of tickers or FIGIs must be defined for using this method!")
+            uLogger.error("❌ Variable `instruments` (list of tickers or FIGIs) must be defined to use this method!")
             raise Exception("Ticker or FIGI required")
 
         if isinstance(instruments, str):
@@ -4535,12 +4665,16 @@ class TinkoffBrokerServer:
 
         uniqueInstruments = self.GetUniqueFIGIs(instruments)
 
-        uLogger.debug("Requesting raw bonds calendar, transforming and extending it. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Requesting raw bonds calendar, transforming and extending it. Please wait...")
 
         iCount = len(uniqueInstruments)
         tooLong = iCount >= 20
         if tooLong:
-            uLogger.warning("You requested a lot of bonds! Operation will takes more time. Please wait...")
+            uLogger.warning(
+                "⚠️ You requested a large number of instruments (bonds). "
+                "The operation may take more time. Please wait..."
+            )
 
         bonds = None
         for i, self._figi in enumerate(uniqueInstruments):
@@ -4637,14 +4771,11 @@ class TinkoffBrokerServer:
                     bonds = pd.concat([bonds, pd.DataFrame.from_records(data=[iData], columns=colNames)], axis=0, ignore_index=True)
 
             else:
-                uLogger.warning("Instrument is not a bond!")
+                uLogger.warning("⚠️ Instrument is not of `bond` type!")
 
             processed = round(100 * (i + 1) / iCount, 1)
             if tooLong and processed % 5 == 0:
-                uLogger.info("{}% processed [{} / {}]...".format(round(processed), i + 1, iCount))
-
-            else:
-                uLogger.debug("{}% bonds processed [{} / {}]...".format(processed, i + 1, iCount))
+                uLogger.debug("{}% processed [{}/{}]...".format(round(processed), i + 1, iCount))
 
         bonds.index = bonds["ticker"].tolist()  # replace indexes with ticker names
 
@@ -4664,7 +4795,7 @@ class TinkoffBrokerServer:
                     freeze_panes=(1, 1),
                 )  # saving as XLSX-file with freeze first row and column as headers
 
-            uLogger.info("XLSX-file with extended bonds data for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(self.bondsXLSXFile)))
+            uLogger.info(f"📄 XLSX file with extended bond data saved for further use by data scientists or market analysts: [{os.path.abspath(self.bondsXLSXFile)}]")
 
         return bonds
 
@@ -4687,7 +4818,8 @@ class TinkoffBrokerServer:
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
             extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=False)
 
-        uLogger.debug("Generating bond payments calendar data. Please wait...")
+        if self.moreDebug:
+            uLogger.debug("Generating bond payments calendar data. Please wait...")
 
         colNames = ["Paid", "Payment date", "FIGI", "Ticker", "Name", "No.", "Value", "Currency", "Coupon type", "Period", "End registry date", "Coupon start date", "Coupon end date"]
         colID = ["paid", "couponDate", "figi", "ticker", "name", "couponNumber", "payOneBond", "payCurrency", "couponType", "couponPeriod", "fixDate", "couponStartDate", "couponEndDate"]
@@ -4745,7 +4877,7 @@ class TinkoffBrokerServer:
 
                     del humanReadable  # release df in memory
 
-                uLogger.info("XLSX-file with bond payments calendar for further used by data scientists or stock analytics: [{}]".format(os.path.abspath(xlsxCalendarFile)))
+                uLogger.info(f"📄 XLSX file with bond payment calendar saved for further use by data scientists or market analysts: [{os.path.abspath(xlsxCalendarFile)}]")
 
         return calendar
 
@@ -4768,7 +4900,7 @@ class TinkoffBrokerServer:
         if extBonds is None or not isinstance(extBonds, pd.DataFrame) or extBonds.empty:
             extBonds = self.ExtendBondsData(instruments=[self._figi, self._ticker], xlsx=show or onlyFiles)
 
-        infoText = "# Bond payments calendar\n\n"
+        infoText = "# 📅 Bond payments calendar\n\n"
 
         calendar = self.CreateBondsCalendar(extBonds, xlsx=show or onlyFiles)  # generate Pandas DataFrame with full calendar data
 
@@ -4821,14 +4953,14 @@ class TinkoffBrokerServer:
                 with open(self.calendarFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("Bond payments calendar: [{}]".format(os.path.abspath(self.calendarFile)))
+                uLogger.info(f"📄 Bond payment calendar saved to file: [{os.path.abspath(self.calendarFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.calendarFile.replace(".md", ".html") if self.calendarFile.endswith(".md") else self.calendarFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="Bond payments calendar", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 The bond payment calendar was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         else:
             infoText += "No data\n"
@@ -4897,14 +5029,14 @@ class TinkoffBrokerServer:
                 with open(self.userAccountsFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("User accounts: [{}]".format(os.path.abspath(self.userAccountsFile)))
+                uLogger.info(f"📄 User accounts information saved to file: [{os.path.abspath(self.userAccountsFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.userAccountsFile.replace(".md", ".html") if self.userAccountsFile.endswith(".md") else self.userAccountsFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="User accounts", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 User accounts report was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return view
 
@@ -5075,21 +5207,21 @@ class TinkoffBrokerServer:
                 with open(self.userInfoFile, "w", encoding="UTF-8") as fH:
                     fH.write(infoText)
 
-                uLogger.info("User data: [{}]".format(os.path.abspath(self.userInfoFile)))
+                uLogger.info(f"📄 User data saved to file: [{os.path.abspath(self.userInfoFile)}]")
 
                 if self.useHTMLReports:
                     htmlFilePath = self.userInfoFile.replace(".md", ".html") if self.userInfoFile.endswith(".md") else self.userInfoFile + ".html"
                     with open(htmlFilePath, "w", encoding="UTF-8") as fH:
                         fH.write(Template(text=MAIN_INFO_TEMPLATE).render(mainTitle="User info", commonCSS=COMMON_CSS, markdown=infoText))
 
-                    uLogger.info("The report has also been converted to an HTML file: [{}]".format(os.path.abspath(htmlFilePath)))
+                    uLogger.info(f"🌐 User data report was also saved as an HTML file: [{os.path.abspath(htmlFilePath)}]")
 
         return view
 
 
 class Args:
     """
-    If `Main()` function is imported as module, then this class used to convert arguments from **kwargs as object.
+    If the `Main ()` function is imported as module, then this class used to convert arguments from **kwargs as object.
     """
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -5099,10 +5231,10 @@ class Args:
 
 
 def ParseArgs():
-    """This function get and parse command line keys."""
+    """This function gets and parses command line keys."""
     parser = ArgumentParser()  # command-line string parser
 
-    parser.description = "TKSBrokerAPI is a trading platform for automation on Python to simplify the implementation of trading scenarios and work with Tinkoff Invest API server via the REST protocol. See examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"
+    parser.description = "TKSBrokerAPI is a trading platform designed to automate and simplify trading scenarios. It integrates with the Tinkoff Invest API server using the REST protocol. The platform can be used in two flexible ways: Command-Line Interface (CLI) and Python Library. This feature-rich API is perfect for trading enthusiasts and professional developers creating advanced automation solutions. See examples: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md"
     parser.usage = "\n/as module/ python TKSBrokerAPI.py [some options] [one command]\n/as CLI tool/ tksbrokerapi [some options] [one command]"
 
     # --- options:
@@ -5181,7 +5313,7 @@ def ParseArgs():
 
 def Main(**kwargs):
     """
-    Main function for work with TKSBrokerAPI in the console.
+    Main function for work with TKSBrokerAPI Platform in the console.
 
     See examples:
     - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
@@ -5197,8 +5329,11 @@ def Main(**kwargs):
 
     exitCode = 0
     start = datetime.now(tzutc())
-    uLogger.debug("=-" * 50)
-    uLogger.debug(">>> TKSBrokerAPI module started at: [{}] UTC, it is [{}] local time".format(
+
+    if args.more:
+        uLogger.debug("=-" * 50)
+
+    uLogger.debug("🚀 TKSBrokerAPI Platform started at: [{}] UTC, it is [{}] local time".format(
         start.strftime(TKS_PRINT_DATE_TIME_FORMAT),
         start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
     ))
@@ -5212,13 +5347,14 @@ def Main(**kwargs):
     except Exception:
         buildVersion = __version__ + ".dev0"  # if an errors occurred then also set version as major.minor.dev0
 
-    uLogger.debug("TKSBrokerAPI major.minor.build version used: [{}]".format(buildVersion))
-    uLogger.debug("Host CPU count: [{}]".format(CPU_COUNT))
+    uLogger.debug("⚙️ TKSBrokerAPI Platform version used: v{}".format(buildVersion))
+    if args.more:
+        uLogger.debug("Host CPU count: [{}]".format(CPU_COUNT))
 
     try:
         if args.version:
-            print("TKSBrokerAPI {}".format(buildVersion))
-            uLogger.debug("User requested current TKSBrokerAPI major.minor.build version: [{}]".format(buildVersion))
+            print("⚙️ TKSBrokerAPI Platform v{}".format(buildVersion))
+            uLogger.debug("User requested current TKSBrokerAPI Platform major.minor.build version: [{}]".format(buildVersion))
 
         else:
             # Init class for trading with Tinkoff Broker:
@@ -5236,7 +5372,11 @@ def Main(**kwargs):
             if args.more:
                 trader.moreDebug = True  # enables more debug information in class TinkoffBrokerServer class
                 trader.rateLimiter.moreDebug = True  # enables more debug information in RateLimiter class
-                uLogger.warning("More debug mode is enabled! See network requests, responses and its headers in the full log or run TKSBrokerAPI platform with the `--verbosity 10` to show theres in console.")
+
+                uLogger.warning(
+                    "⚠️ `--more` debug mode is enabled! Network requests, responses and headers will be shown in the log. "
+                    "Use `--verbosity 10` to print them directly to console."
+                )
 
             if args.html:
                 trader.useHTMLReports = True
@@ -5285,7 +5425,7 @@ def Main(**kwargs):
 
             elif args.info:
                 if not (args.ticker or args.figi):
-                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    uLogger.error("❌ Either `--ticker` or `--figi` key must be defined for this operation!")
                     raise Exception("Ticker or FIGI required")
 
                 if args.output is not None:
@@ -5311,7 +5451,7 @@ def Main(**kwargs):
 
             elif args.price:
                 if not (args.ticker or args.figi):
-                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    uLogger.error("❌ Either `--ticker` key or `--figi` key must be defined for this operation!")
                     raise Exception("Ticker or FIGI required")
 
                 trader.GetCurrentPrices(show=True)
@@ -5371,7 +5511,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    uLogger.error("❌ You must specify 0 to 2 values after `--deals`: `[DATE_START] [DATE_END]`.")
                     raise Exception("Incorrect value")
 
             elif args.history is not None:
@@ -5398,7 +5538,7 @@ def Main(**kwargs):
                         )
 
                 else:
-                    uLogger.error("You must specify 0-2 parameters: [DATE_START] [DATE_END]")
+                    uLogger.error("❌ You must specify 0 to 2 values after `--history`: `[DATE_START] [DATE_END]`.")
                     raise Exception("Incorrect value")
 
             elif args.load_history is not None:
@@ -5425,7 +5565,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 1-5 parameters to open trade: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                    uLogger.error("❌ You must specify 1 to 5 values after `--trade`: [`Buy` or `Sell`] [lots ≥ 1] [take profit ≥ 0] [stop loss ≥ 0] [TP/SL expiration date or `Undefined`]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.buy is not None:
                 if 0 <= len(args.buy) <= 4:
@@ -5437,7 +5577,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 0-4 parameters to open buy position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                    uLogger.error("❌ You must specify 0 to 4 values after `--buy`: [lots ≥ 1] [take profit ≥ 0] [stop loss ≥ 0] [TP/SL expiration date or `Undefined`]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.sell is not None:
                 if 0 <= len(args.sell) <= 4:
@@ -5449,7 +5589,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 0-4 parameters to open sell position: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See: `python TKSBrokerAPI.py --help`")
+                    uLogger.error("❌ You must specify 0 to 4 values after `--sell`: [lots ≥ 1] [take profit ≥ 0] [stop loss ≥ 0] [TP/SL expiration date or `Undefined`]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.order:
                 if 4 <= len(args.order) <= 7:
@@ -5464,7 +5604,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 4-7 parameters to open order: [direction `Buy` or `Sell`] [order type `Limit` or `Stop`] [lots] [target price] [maybe for stop-order: [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See: `python TKSBrokerAPI.py --help`")
+                    uLogger.error("❌ You must specify 4 to 7 values after `--order`: [`Buy` or `Sell`] [`Limit` or `Stop`] [lots ≥ 1] [target price > 0] [optional: limit price ≥ 0] [stop type: `Limit`, `SL`, or `TP`] [expiration date or `Undefined`]. See: `python TKSBrokerAPI.py --help`")
 
             elif args.buy_limit:
                 trader.BuyLimit(lots=int(args.buy_limit[0]), targetPrice=args.buy_limit[1])
@@ -5496,7 +5636,7 @@ def Main(**kwargs):
                     )
 
                 else:
-                    uLogger.error("You must specify 2-5 parameters for sell stop-order: [lots] [target price] [limit price, >= 0] [stop type, Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]. See: python TKSBrokerAPI.py --help")
+                    uLogger.error("❌ You must specify 2 to 5 values after `--sell-stop`: [lots ≥ 1] [target price > 0] [optional: limit price ≥ 0] [stop type: `Limit`, `SL`, or `TP`] [expiration date or `Undefined`]. See: `python TKSBrokerAPI.py --help`")
 
             # elif args.buy_order_grid is not None:
             #     # update order grid work with api v2
@@ -5528,7 +5668,7 @@ def Main(**kwargs):
 
             elif args.close_trade:
                 if not (args.ticker or args.figi):
-                    uLogger.error("`--ticker` key or `--figi` key is required for this operation!")
+                    uLogger.error("❌ Either `--ticker` or `--figi` key must be defined for this operation!")
                     raise Exception("Ticker or FIGI required")
 
                 if args.ticker:
@@ -5569,8 +5709,8 @@ def Main(**kwargs):
                 trader.OverviewAccounts(show=True)
 
             else:
-                uLogger.error("There is no command to execute! One of the possible commands must be selected. See help with `--help` key.")
-                raise Exception("There is no command to execute")
+                uLogger.error("🔴 No command to execute! You must specify one of the supported commands. See help: `--help`.")
+                raise Exception("No command to execute")
 
     except Exception:
         trace = tb.format_exc()
@@ -5578,10 +5718,10 @@ def Main(**kwargs):
 
         for e in ["socket.gaierror", "nodename nor servname provided", "or not known", "NewConnectionError", "[Errno 8]", "Failed to establish a new connection"]:
             if e in trace:
-                uLogger.error("Check your Internet connection! Failed to establish connection to broker server!")
+                uLogger.error("📡 Check your Internet connection! Failed to establish connection to broker server!")
                 break
 
-        uLogger.debug("Please, check issues or request a new one at https://github.com/Tim55667757/TKSBrokerAPI/issues")
+        uLogger.debug("🛠️ Please, check existing issues or request a new one at https://github.com/Tim55667757/TKSBrokerAPI/issues")
         exitCode = 255  # an error occurred, must be open a ticket for this issue
 
     finally:
@@ -5592,16 +5732,15 @@ def Main(**kwargs):
                 uLogger.debug("All operations were finished success (summary code is 0).")
 
         else:
-            uLogger.error("An issue occurred with TKSBrokerAPI module! See full debug log in [{}] or run TKSBrokerAPI once again with the key `--debug-level 10`. Summary code: {}".format(
-                os.path.abspath(uLog.defaultLogFile), exitCode,
-            ))
+            uLogger.error("⛔ An issue occurred in TKSBrokerAPI Platform! See full debug log in [{}]. Summary code: {}".format(os.path.abspath(uLog.defaultLogFile), exitCode))
 
-        uLogger.debug(">>> TKSBrokerAPI module work duration: [{}]".format(finish - start))
-        uLogger.debug(">>> TKSBrokerAPI module finished: [{} UTC], it is [{}] local time".format(
+        uLogger.debug("🕒 TKSBrokerAPI Platform work duration: [{}]".format(finish - start))
+        uLogger.debug("🛬 TKSBrokerAPI Platform finished: [{} UTC], it is [{}] local time".format(
             finish.strftime(TKS_PRINT_DATE_TIME_FORMAT),
             finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT),
         ))
-        uLogger.debug("=-" * 50)
+        if args.more:
+            uLogger.debug("=-" * 50)
 
         if not kwargs:
             sys.exit(exitCode)
