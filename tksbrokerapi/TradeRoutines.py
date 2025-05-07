@@ -1599,3 +1599,36 @@ def FastPSAR(
     dataFrame.category = "trend"
 
     return dataFrame
+
+
+@jit(nopython=True)
+def FastHurst(series: np.ndarray) -> float:
+    """
+    Fast estimation of Hurst exponent using the rescaled range (R/S) method.
+
+    :param series: NumPy array of prices (1D).
+
+    :return: Hurst exponent ∈ [0.0, 1.0].
+    """
+    n = series.shape[0]
+
+    if n < 20:
+        return 0.5  # Not enough data.
+
+    mean = np.mean(series)
+    dev = series - mean
+    cumulative = np.cumsum(dev)  # Cumulative sum of deviations from mean.
+    R = np.max(cumulative) - np.min(cumulative)  # Rescaled range (R).
+    S = np.std(series)  # Standard deviation (S).
+
+    epsilon = 1e-15  # Minimal non-zero threshold for stability. The slightly above float64 machine epsilon.
+
+    if S < epsilon:
+        # If standard deviation is very close to zero, fallback to 0.5:
+        result = 0.5
+
+    else:
+        # Compute Hurst exponent using R/S method:
+        result = np.log(R / S) / np.log(n)  # type: ignore
+
+    return result
