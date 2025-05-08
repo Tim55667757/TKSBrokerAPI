@@ -1775,3 +1775,35 @@ def PhaseConfidence(phase: float, direction: str) -> float:
     :return: Confidence modifier ∈ [0.0, 1.0].
     """
     return 1.0 - phase if direction.lower() == "buy" else phase if direction.lower() == "sell" else 0.5
+
+
+def AdjustProbabilityByChaosAndPhaseTrust(
+        pModel: float, chaos: float, phase: float, wModel: float = 1.0, wChaos: float = 0.5, wPhase: float = 0.3
+) -> float:
+    """
+    Final-adjusted probability after applying chaos and phase trust modifiers.
+
+    :param pModel: Base probability from the main model.
+    :param chaos: Chaos trust coefficient ∈ [0.0, 1.0].
+    :param phase: Phase trust coefficient ∈ [0.0, 1.0].
+    :param wModel: Weight for the original model probability.
+    :param wChaos: Weight for chaos confidence.
+    :param wPhase: Weight for phase confidence.
+
+    :return: Adjusted probability ∈ [0.0, 1.0].
+    """
+    totalWeight = wModel + wChaos + wPhase  # Total weight sum for normalization.
+    epsilon = 1e-15  # Minimal threshold to avoid division by near-zero.
+
+    if totalWeight < epsilon:
+        return 0.0  # Fallback if all weights are too small or zero.
+
+    numerator = (
+        wModel * pModel +
+        wChaos * pModel * chaos +
+        wPhase * pModel * phase
+    )  # Weighted components.
+
+    result = numerator / totalWeight  # Final probability.
+
+    return min(1.0, max(0.0, result))  # Clamp result to [0.0, 1.0].
