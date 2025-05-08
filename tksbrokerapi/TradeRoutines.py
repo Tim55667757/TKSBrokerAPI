@@ -1724,3 +1724,29 @@ def ChaosMeasure(series: np.ndarray, model: str = "hurst") -> float:
 
     # Return calculations of the selected model or the neutral fallback: 0.5 is an average expected value across supported chaos metrics:
     return dispatch.get(model.lower(), 0.5)
+
+
+def ChaosConfidence(value: float, model: str) -> float:
+    """
+    Converts chaos metric value into the trust coefficient in [0.0, 1.0].
+
+    For supported models:
+        - hurst: symmetric parabola with peak at `0.5`;
+        - dfa: linear fade from `0.5`;
+        - sampen: inverse — low entropy means high trust.
+
+    :param value: Chaos measures value.
+    :param model: One of the values
+        - `hurst`: fast estimation of Hurst exponent using the rescaled range (R/S) method, `FastHurst()`;
+        - `sampen`: fast Sample Entropy for chaos estimation, see `FastSampEn()`;
+        - `dfa`: fast Detrended Fluctuation Analysis (DFA) estimator, see `FastDfa()`.
+
+    :return: Confidence coefficient ∈ [0.0, 1.0].
+    """
+    funcs = {
+        "hurst": lambda v: max(0.0, 1.0 - 4.0 * (v - 0.5) ** 2),  # Peak at 0.5 (symmetric parabola).
+        "dfa": lambda v: max(0.0, 1.0 - abs(v - 0.5)),  # Linearly fades from 0.5.
+        "sampen": lambda v: max(0.0, 1.0 - v),  # Inverse relationship: more entropy → less trust.
+    }
+
+    return funcs.get(model.lower(), lambda _: 1.0)(value)  # Default: full confidence if a model unknown.
