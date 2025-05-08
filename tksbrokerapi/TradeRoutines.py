@@ -1750,3 +1750,28 @@ def ChaosConfidence(value: float, model: str) -> float:
     }
 
     return funcs.get(model.lower(), lambda _: 1.0)(value)  # Default: full confidence if a model unknown.
+
+
+def PhaseLocation(price: float, lower: float, upper: float) -> float:
+    """
+    Normalized phase location of price in [0.0, 1.0] inside the Bollinger channel.
+
+    :param price: Current price of the asset.
+    :param lower: Lower Bollinger band.
+    :param upper: Upper Bollinger band.
+
+    :return: Phase position ∈ [0.0, 1.0], where 0.0 is bottom, 1.0 is top.
+    """
+    return 0.5 if upper == lower else max(0.0, min(1.0, (price - lower) / (upper - lower)))
+
+
+def PhaseConfidence(phase: float, direction: str) -> float:
+    """
+    Trust modifier based on the current phase and direction of signal.
+
+    :param phase: Normalized price position ∈ [0.0, 1.0] in the channel.
+    :param direction: Signal direction — must be `Buy` or `Sell`.
+
+    :return: Confidence modifier ∈ [0.0, 1.0].
+    """
+    return 1.0 - phase if direction.lower() == "buy" else phase if direction.lower() == "sell" else 0.5
