@@ -1779,3 +1779,52 @@ class TestTradeRoutinesMethods:
             expected = str(td)
 
             assert result == expected, f"Incorrect fallback! FormatTimedelta({td}, {precision}) -> {result}, expected {expected}"
+
+    def test_FastHurstCheckType(self):
+        series = self.GenerateSeries(length=100, mu=0.001, sigma=0.01).values
+
+        result = TradeRoutines.FastHurst(series)
+
+        assert isinstance(result, float), "FastHurst must return a float!"
+
+    def test_FastHurstPositive(self):
+        testData = [
+            (self.GenerateSeries(length=300, mu=0.001, sigma=0.02).values, (0.0, 1.0)),
+            (self.GenerateSeries(length=10_000, mu=0.002, sigma=0.01).values, (0.0, 1.0)),
+            (self.GenerateSeries(length=25, mu=0.0, sigma=0.015).values, (0.0, 1.0)),
+        ]
+
+        for series, expectedRange in testData:
+            result = TradeRoutines.FastHurst(series)
+
+            assert expectedRange[0] <= result <= expectedRange[1], f"Result out of expected range: {result}"
+
+    def test_FastHurstNegative(self):
+        # Constant input must return exactly 0.5
+        series = self.GenerateSeries(length=100, mu=0.0, sigma=0.0).values
+        result = TradeRoutines.FastHurst(series)
+
+        assert abs(result - 0.5) < 1e-6, f"Expected 0.5 for constant input, got {result}"
+
+        # Short input (< 20) must return 0.5
+        series = self.GenerateSeries(length=10, mu=0.001, sigma=0.01).values
+        result = TradeRoutines.FastHurst(series)
+
+        assert result == 0.5, f"Expected 0.5 for short input, got {result}"
+
+    def test_FastHurstPerformance(self):
+        # Warm-up to trigger Numba JIT compilation:
+        _ = TradeRoutines.FastHurst(np.ones(100))
+
+        sizes = [10, 100, 500, 1000, 5000, 10000, 50000, 100000, 300000, 500000, 1000000]
+
+        for size in sizes:
+            series = self.GenerateSeries(length=size, mu=0.001, sigma=0.01).values
+
+            startTime = time.perf_counter()
+
+            _ = TradeRoutines.FastHurst(series)
+
+            elapsed = time.perf_counter() - startTime
+
+            assert elapsed < 0.5, f"FastHurst too slow for size {size}: took {elapsed:.2f}s"
