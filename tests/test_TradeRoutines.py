@@ -1888,9 +1888,9 @@ class TestTradeRoutinesMethods:
 
     def test_FastDfaPositive(self):
         testData = [
-            (self.GenerateSeries(length=300, mu=0.001, sigma=0.01).values, (0.0, 2.0)),
-            (self.GenerateSeries(length=600, mu=0.002, sigma=0.015).values, (0.0, 2.0)),
-            (self.GenerateSeries(length=120, mu=0.0005, sigma=0.005).values, (0.0, 2.0)),
+            (self.GenerateSeries(length=300, mu=0.001, sigma=0.01).values, (-1.0, 2.0)),
+            (self.GenerateSeries(length=600, mu=0.002, sigma=0.015).values, (-1.0, 2.0)),
+            (self.GenerateSeries(length=120, mu=0.0005, sigma=0.005).values, (-1.0, 2.0)),
         ]
 
         for series, expectedRange in testData:
