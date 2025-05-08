@@ -1612,6 +1612,7 @@ def FastHurst(series: np.ndarray) -> float:
     """
     n = series.shape[0]
 
+    # Empirical threshold: Hurst is unstable on fewer than 20 points.
     if n < 20:
         return 0.5  # Not enough data.
 
