@@ -1556,7 +1556,6 @@ def FastSampEn(series: np.ndarray, embeddingDim: int = 2, tolerance: float = 0.2
     return result
 
 
-@jit(nopython=True)
 def FastDfa(series: np.ndarray, scale: int = 12) -> float:
     """
     Fast Detrended Fluctuation Analysis (DFA) estimator.

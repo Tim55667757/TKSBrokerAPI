@@ -1878,3 +1878,49 @@ class TestTradeRoutinesMethods:
 
             # Performance constraint for vectorized NumPy implementation:
             assert elapsed < 1.5, f"FastSampEn too slow for size {size}: took {elapsed:.2f}s"
+
+    def test_FastDfaCheckType(self):
+        series = self.GenerateSeries(length=120, mu=0.001, sigma=0.01).values
+
+        result = TradeRoutines.FastDfa(series)
+
+        assert isinstance(result, float), "FastDfa must return a float!"
+
+    def test_FastDfaPositive(self):
+        testData = [
+            (self.GenerateSeries(length=300, mu=0.001, sigma=0.01).values, (0.0, 2.0)),
+            (self.GenerateSeries(length=600, mu=0.002, sigma=0.015).values, (0.0, 2.0)),
+            (self.GenerateSeries(length=120, mu=0.0005, sigma=0.005).values, (0.0, 2.0)),
+        ]
+
+        for series, expectedRange in testData:
+            result = TradeRoutines.FastDfa(series)
+
+            assert expectedRange[0] <= result <= expectedRange[1], f"Result out of expected range: {result}"
+
+    def test_FastDfaNegative(self):
+        # Case: short series (n <= scale) must return 0.5
+        series = self.GenerateSeries(length=10, mu=0.001, sigma=0.01).values
+        result = TradeRoutines.FastDfa(series)
+
+        assert result == 0.5, f"Expected 0.5 for short input, got {result}"
+
+        # Case: constant input must produce a valid float (may vary, but must not fail)
+        series = self.GenerateSeries(length=120, mu=0.0, sigma=0.0).values
+        result = TradeRoutines.FastDfa(series)
+
+        assert isinstance(result, float), "Expected float even for constant input"
+
+    def test_FastDfaPerformance(self):
+        sizes = [120, 300, 600, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
+
+        for size in sizes:
+            series = self.GenerateSeries(length=size, mu=0.001, sigma=0.01).values
+
+            startTime = time.perf_counter()
+
+            _ = TradeRoutines.FastDfa(series)
+
+            elapsed = time.perf_counter() - startTime
+
+            assert elapsed < 1.5, f"FastDfa too slow for size {size}: took {elapsed:.2f}s"
