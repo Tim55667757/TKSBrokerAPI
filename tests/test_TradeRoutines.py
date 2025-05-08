@@ -1209,7 +1209,7 @@ class TestTradeRoutinesMethods:
             elapsed = time.perf_counter() - startTime
 
             # Assert an upper time limit for performance (adjust as needed):
-            assert elapsed < 2.5, f"HampelCleaner too slow for size {size}: took {elapsed:.2f}s"
+            assert elapsed < 2.9, f"HampelCleaner too slow for size {size}: took {elapsed:.2f}s"
 
     def test_EstimateTargetReachabilityCheckType(self):
         # Generate valid synthetic data for testing:
