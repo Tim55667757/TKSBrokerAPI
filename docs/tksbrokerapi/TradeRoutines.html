@@ -134,6 +134,30 @@
             <li>
                     <a class="function" href="#FastPSAR">FastPSAR</a>
             </li>
+            <li>
+                    <a class="function" href="#FastHurst">FastHurst</a>
+            </li>
+            <li>
+                    <a class="function" href="#FastSampEn">FastSampEn</a>
+            </li>
+            <li>
+                    <a class="function" href="#FastDfa">FastDfa</a>
+            </li>
+            <li>
+                    <a class="function" href="#ChaosMeasure">ChaosMeasure</a>
+            </li>
+            <li>
+                    <a class="function" href="#ChaosConfidence">ChaosConfidence</a>
+            </li>
+            <li>
+                    <a class="function" href="#PhaseLocation">PhaseLocation</a>
+            </li>
+            <li>
+                    <a class="function" href="#PhaseConfidence">PhaseConfidence</a>
+            </li>
+            <li>
+                    <a class="function" href="#AdjustProbabilityByChaosAndPhaseTrust">AdjustProbabilityByChaosAndPhaseTrust</a>
+            </li>
     </ul>
 
 
@@ -1589,6 +1613,253 @@ anomalies, or gaps may distort volatility and probability estimates.</li>
       - <code>af</code>: Acceleration Factor values over time.
       - <code>reversal</code>: <code>1</code> if reversal detected on this candle, otherwise <code>0</code>.
       Returns <code>None</code> if input is invalid.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FastHurst">
+                    <div class="attr function">
+                    <div class="decorator">@jit(nopython=True)</div>
+
+        <span class="def">def</span>
+        <span class="name">FastHurst</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">series</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FastHurst"></a>
+    
+            <div class="docstring"><p>Fast estimation of Hurst exponent using the rescaled range (R/S) method.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>series</strong>:  NumPy array of prices (1D).</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Hurst exponent ∈ [0.0, 1.0].</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FastSampEn">
+                    <div class="attr function">
+                    <div class="decorator">@jit(nopython=True)</div>
+
+        <span class="def">def</span>
+        <span class="name">FastSampEn</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">series</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>,</span><span class="param">	<span class="n">embeddingDim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>,</span><span class="param">	<span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FastSampEn"></a>
+    
+            <div class="docstring"><p>Fast Sample Entropy for chaos estimation.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>series</strong>:  NumPy array of floats.</li>
+<li><strong>embeddingDim</strong>:  Embedding dimension m.</li>
+<li><strong>tolerance</strong>:  Tolerance r.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Sample entropy.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="FastDfa">
+                    <div class="attr function">
+                    <div class="decorator">@jit(nopython=True)</div>
+
+        <span class="def">def</span>
+        <span class="name">FastDfa</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">series</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">scale</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#FastDfa"></a>
+    
+            <div class="docstring"><p>Fast Detrended Fluctuation Analysis (DFA) estimator.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>series</strong>:  NumPy array of floats.</li>
+<li><strong>scale</strong>:  Box size for detrending.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Scaling exponent alpha.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="ChaosMeasure">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">ChaosMeasure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">series</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>, </span><span class="param"><span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hurst&#39;</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ChaosMeasure"></a>
+    
+            <div class="docstring"><p>Dispatches to a selected chaos estimation model.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>series</strong>:  NumPy array of floats.</li>
+<li><strong>model</strong>:  One of the values
+<ul>
+<li><code>hurst</code>: fast estimation of Hurst exponent using the rescaled range (R/S) method, <code><a href="#FastHurst">FastHurst()</a></code>;</li>
+<li><code>sampen</code>: fast Sample Entropy for chaos estimation, see <code><a href="#FastSampEn">FastSampEn()</a></code>;</li>
+<li><code>dfa</code>: fast Detrended Fluctuation Analysis (DFA) estimator, see <code><a href="#FastDfa">FastDfa()</a></code>.</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Chaos value.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="ChaosConfidence">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">ChaosConfidence</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">value</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">model</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ChaosConfidence"></a>
+    
+            <div class="docstring"><p>Converts chaos metric value into the trust coefficient in [0.0, 1.0].</p>
+
+<p>For supported models:
+    - hurst: symmetric parabola with peak at <code>0.5</code>;
+    - dfa: linear fade from <code>0.5</code>;
+    - sampen: inverse — low entropy means high trust.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>value</strong>:  Chaos measures value.</li>
+<li><strong>model</strong>:  One of the values
+<ul>
+<li><code>hurst</code>: fast estimation of Hurst exponent using the rescaled range (R/S) method, <code><a href="#FastHurst">FastHurst()</a></code>;</li>
+<li><code>sampen</code>: fast Sample Entropy for chaos estimation, see <code><a href="#FastSampEn">FastSampEn()</a></code>;</li>
+<li><code>dfa</code>: fast Detrended Fluctuation Analysis (DFA) estimator, see <code><a href="#FastDfa">FastDfa()</a></code>.</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Confidence coefficient ∈ [0.0, 1.0].</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="PhaseLocation">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">PhaseLocation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">price</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">lower</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">upper</span><span class="p">:</span> <span class="nb">float</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PhaseLocation"></a>
+    
+            <div class="docstring"><p>Normalized phase location of price in [0.0, 1.0] inside the Bollinger channel.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>price</strong>:  Current price of the asset.</li>
+<li><strong>lower</strong>:  Lower Bollinger band.</li>
+<li><strong>upper</strong>:  Upper Bollinger band.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Phase position ∈ [0.0, 1.0], where 0.0 is bottom, 1.0 is top.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="PhaseConfidence">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">PhaseConfidence</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">phase</span><span class="p">:</span> <span class="nb">float</span>, </span><span class="param"><span class="n">direction</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PhaseConfidence"></a>
+    
+            <div class="docstring"><p>Trust modifier based on the current phase and direction of signal.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>phase</strong>:  Normalized price position ∈ [0.0, 1.0] in the channel.</li>
+<li><strong>direction</strong>:  Signal direction — must be <code>Buy</code> or <code>Sell</code>.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Confidence modifier ∈ [0.0, 1.0].</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="AdjustProbabilityByChaosAndPhaseTrust">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">AdjustProbabilityByChaosAndPhaseTrust</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">pModel</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">chaos</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">phase</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">wModel</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>,</span><span class="param">	<span class="n">wChaos</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>,</span><span class="param">	<span class="n">wPhase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span></span><span class="return-annotation">) -> <span class="nb">float</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#AdjustProbabilityByChaosAndPhaseTrust"></a>
+    
+            <div class="docstring"><p>Final-adjusted probability after applying chaos and phase trust modifiers.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>pModel</strong>:  Base probability from the main model.</li>
+<li><strong>chaos</strong>:  Chaos trust coefficient ∈ [0.0, 1.0].</li>
+<li><strong>phase</strong>:  Phase trust coefficient ∈ [0.0, 1.0].</li>
+<li><strong>wModel</strong>:  Weight for the original model probability.</li>
+<li><strong>wChaos</strong>:  Weight for chaos confidence.</li>
+<li><strong>wPhase</strong>:  Weight for phase confidence.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>Adjusted probability ∈ [0.0, 1.0].</p>
 </blockquote>
 </div>
 
