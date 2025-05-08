@@ -1699,6 +1699,10 @@ def EstimateTargetReachability(
     horizonHighTF: int,
     ddof: int = 2,
     cleanWithHampel: bool = False,
+    useChaos: bool = False,
+    chaosModel: str = "hurst",
+    usePhase: bool = False,
+    phaseDirection: Optional[str] = None,
     **kwargs
 ) -> tuple[float, str]:
     """
@@ -1724,25 +1728,31 @@ def EstimateTargetReachability(
     :param cleanWithHampel: If `True`, applies outlier cleaning to both input series before computing log returns
                             using `HampelCleaner()` (`False` by default). Recommended for real market data where spikes,
                             anomalies, or gaps may distort volatility and probability estimates.
+    :param useChaos: If `True`, modifies the final probability based on chaos confidence (Hurst, DFA, etc.).
+    :param chaosModel: Chaos model to use
+        - `hurst`: fast estimation of Hurst exponent using the rescaled range (R/S) method, `FastHurst()`;
+        - `sampen`: fast Sample Entropy for chaos estimation, see `FastSampEn()`;
+        - `dfa`: fast Detrended Fluctuation Analysis (DFA) estimator, see `FastDfa()`.
+    :param usePhase: If `True`, modifies the final probability based on Bollinger-band phase, see `FastBBands()`.
+    :param phaseDirection: Trade direction: `Buy` or `Sell` (required for phase confidence).
     :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
-
-        Supported options (with default values):
-
+                   Supported options (with default values):
         - `window` (5): Sliding window size for `HampelCleaner()`.
         - `sigma` (3): Threshold multiplier for anomaly detection.
         - `scaleFactor` (`1.4826`): Scaling factor for MAD.
-        - `strategy` ("neighborAvg"): Outlier replacement strategy:
-            • `"neighborAvg"` – average of adjacent neighbors. Good for a smooth, low-noise series.
-            • `"prev"` – previous valid value. Preserves a trend direction.
-            • `"const"` – constant fallback. Use for API glitches or corrupted data.
-            • `"medianWindow"` – local median window. **Best default for real-world candles.**
-            • `"rollingMean"` – centered mean smoothing for low-volatility series.
-        - `fallbackValue` (`0.0`): Constant value for use in `"const"` strategy or edge cases.
+        - `strategy` (default `neighborAvg`): Outlier replacement strategy:
+            • `neighborAvg` – average of adjacent neighbors. Good for a smooth, low-noise series.
+            • `prev` – previous valid value. Preserves a trend direction.
+            • `const` – constant fallback. Use for API glitches or corrupted data.
+            • `medianWindow` – local median window. **Best default for real-world candles.**
+            • `rollingMean` – centered mean smoothing for low-volatility series.
+        - `fallbackValue` (`0.0`): Constant value for use in `const` strategy or edge cases.
         - `medianWindow` (`3`): Window size for `"medianWindow"` strategy.
 
-    :return: A tuple `(pIntegral, fIntegral)`, where:
-        - `pIntegral` is a float in range `[0.0, 1.0]` — estimated probability of reaching the target.
-        - `fIntegral` is a fuzzy label: one of `["Min", "Low", "Med", "High", "Max"]`.
+    :return: A tuple `(pFinal, fFinal)`, where:
+        - `pFinal` is a float in range `[0.0, 1.0]` — final adjusted probability of reaching the target,
+           optionally modified by chaos and phase confidence if enabled.
+        - `fFinal` is a fuzzy label: one of `["Min", "Low", "Med", "High", "Max"]`, based on `pFinal`.
     """
     try:
         # Convert lists to Pandas Series if needed:
@@ -1803,10 +1813,33 @@ def EstimateTargetReachability(
         # --- Formula (12): Final integrated probability:
         pIntegral = alpha * pBayes + (1 - alpha) * pAverage
 
-        # --- Formula (15): Fuzzy classification of the final probability:
-        fIntegral = FUZZY_SCALE.Fuzzy(pIntegral)["name"]
+        # --- Chaos trust modifier (if enabled):
+        chaosTrust = 1.0
+        if useChaos:
+            chaosL = ChaosMeasure(seriesLowTF.values, model=chaosModel)
+            confL = ChaosConfidence(chaosL, chaosModel)
 
-        return pIntegral, fIntegral
+            chaosH = ChaosMeasure(seriesHighTF.values, model=chaosModel)
+            confH = ChaosConfidence(chaosH, chaosModel)
+
+            chaosTrust = alpha * confL + (1 - alpha) * confH
+
+        # --- Phase trust modifier (if enabled):
+        phaseTrust = 1.0
+        if usePhase and phaseDirection:
+            bbLower = min(seriesLowTF.values[-1], seriesHighTF.values[-1])
+            bbUpper = max(seriesLowTF.values[-1], seriesHighTF.values[-1])
+            phase = PhaseLocation(currentPrice, bbLower, bbUpper)
+
+            phaseTrust = PhaseConfidence(phase, phaseDirection)
+
+        # --- Apply combined trust modifiers:
+        pFinal = pIntegral if chaosTrust == phaseTrust == 1.0 else AdjustProbabilityByChaosAndPhaseTrust(pIntegral, chaosTrust, phaseTrust)
+
+        # --- Formula (15): Fuzzy classification of the final probability:
+        fFinal = FUZZY_SCALE.Fuzzy(pFinal)["name"]
+
+        return pFinal, fFinal
 
     except Exception:
         return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
