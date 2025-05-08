@@ -1828,3 +1828,52 @@ class TestTradeRoutinesMethods:
             elapsed = time.perf_counter() - startTime
 
             assert elapsed < 0.5, f"FastHurst too slow for size {size}: took {elapsed:.2f}s"
+
+    def test_FastSampEnCheckType(self):
+        series = self.GenerateSeries(length=100, mu=0.001, sigma=0.02).values
+
+        result = TradeRoutines.FastSampEn(series)
+
+        assert isinstance(result, float), "FastSampEn must return a float!"
+
+    def test_FastSampEnPositive(self):
+        testData = [
+            (self.GenerateSeries(length=300, mu=0.001, sigma=0.02).values, (0.0, 5.0)),
+            (self.GenerateSeries(length=500, mu=0.001, sigma=0.01).values, (0.0, 5.0)),
+            (self.GenerateSeries(length=1000, mu=0.002, sigma=0.03).values, (0.0, 5.0)),
+        ]
+
+        for series, expectedRange in testData:
+            result = TradeRoutines.FastSampEn(series)
+
+            assert expectedRange[0] <= result <= expectedRange[1], f"Result out of expected range: {result}"
+
+    def test_FastSampEnNegative(self):
+        # Case: too short input must return 0.0
+        series = self.GenerateSeries(length=3, mu=0.001, sigma=0.01).values
+        result = TradeRoutines.FastSampEn(series)
+
+        assert result == 0.0, f"Expected 0.0 for short input, got {result}"
+
+        # Case: constant input must return 0.0 due to no matches
+        series = self.GenerateSeries(length=100, mu=0.0, sigma=0.0).values
+        result = TradeRoutines.FastSampEn(series)
+
+        assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for constant input, got {result}"
+
+    def test_FastSampEnPerformance(self):
+        # Warm-up to trigger Numba JIT compilation:
+        _ = TradeRoutines.FastSampEn(np.ones(100))
+
+        sizes = [10, 100, 300, 500, 750, 1000]  # Restricted due to O(n²) complexity
+
+        for size in sizes:
+            series = self.GenerateSeries(length=size, mu=0.001, sigma=0.01).values
+
+            startTime = time.perf_counter()
+
+            _ = TradeRoutines.FastSampEn(series)
+
+            elapsed = time.perf_counter() - startTime
+
+            assert elapsed < 1.0, f"FastSampEn too slow for size {size}: took {elapsed:.2f}s"

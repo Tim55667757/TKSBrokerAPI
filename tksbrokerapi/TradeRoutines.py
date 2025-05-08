@@ -1528,7 +1528,11 @@ def FastSampEn(series: np.ndarray, embeddingDim: int = 2, tolerance: float = 0.2
     if length <= embeddingDim + 1:
         return 0.0  # Not enough data to compute entropy.
 
-    stdVal = float(np.std(series))  # Precompute standard deviation at once.
+    stdVal = float(np.std(series))  # Precompute standard deviation once for a distance threshold.
+
+    # If the series has no variation, entropy is undefined, then fallback to 0.0:
+    if stdVal < 1e-15:
+        return 0.0
 
     # Count the number of matches of dimension m:
     def _Phi(m: int, stdValue: float) -> int:
