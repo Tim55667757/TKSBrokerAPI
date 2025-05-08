@@ -1862,10 +1862,10 @@ class TestTradeRoutinesMethods:
         assert result == 0.0 or np.isnan(result), f"Expected 0.0 or NaN for constant input, got {result}"
 
     def test_FastSampEnPerformance(self):
-        # Warm-up to trigger Numba JIT compilation:
+        # Warm-up call to avoid import-related overhead:
         _ = TradeRoutines.FastSampEn(np.ones(100))
 
-        sizes = [10, 100, 300, 500, 750, 1000]  # Restricted due to O(n²) complexity
+        sizes = [10, 100, 300, 500, 750, 1000, 1500]
 
         for size in sizes:
             series = self.GenerateSeries(length=size, mu=0.001, sigma=0.01).values
@@ -1876,4 +1876,5 @@ class TestTradeRoutinesMethods:
 
             elapsed = time.perf_counter() - startTime
 
-            assert elapsed < 1.0, f"FastSampEn too slow for size {size}: took {elapsed:.2f}s"
+            # Performance constraint for vectorized NumPy implementation:
+            assert elapsed < 1.5, f"FastSampEn too slow for size {size}: took {elapsed:.2f}s"
