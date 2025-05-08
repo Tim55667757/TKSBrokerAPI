@@ -1702,3 +1702,25 @@ def FastDfa(series: np.ndarray, scale: int = 12) -> float:
         flucts[i] = np.sqrt(np.mean((segment - fit) ** 2))  # Root-mean-square deviation from the trend.
 
     return np.log(np.mean(flucts)) / np.log(scale)  # Log-log slope = DFA exponent (alpha).
+
+
+def ChaosMeasure(series: np.ndarray, model: str = "hurst") -> float:
+    """
+    Dispatches to a selected chaos estimation model.
+
+    :param series: NumPy array of floats.
+    :param model: One of the values
+        - `hurst`: fast estimation of Hurst exponent using the rescaled range (R/S) method, `FastHurst()`;
+        - `sampen`: fast Sample Entropy for chaos estimation, see `FastSampEn()`;
+        - `dfa`: fast Detrended Fluctuation Analysis (DFA) estimator, see `FastDfa()`.
+
+    :return: Chaos value.
+    """
+    dispatch = {
+        "hurst": FastHurst(series),
+        "dfa": FastDfa(series),
+        "sampen": FastSampEn(series),
+    }
+
+    # Return calculations of the selected model or the neutral fallback: 0.5 is an average expected value across supported chaos metrics:
+    return dispatch.get(model.lower(), 0.5)
