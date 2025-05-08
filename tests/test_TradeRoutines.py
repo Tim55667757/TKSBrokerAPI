@@ -1924,3 +1924,79 @@ class TestTradeRoutinesMethods:
             elapsed = time.perf_counter() - startTime
 
             assert elapsed < 1.5, f"FastDfa too slow for size {size}: took {elapsed:.2f}s"
+
+    def test_ChaosMeasureCheckType(self):
+        series = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+
+        result = TradeRoutines.ChaosMeasure(series, model="hurst")
+
+        assert isinstance(result, float), "ChaosMeasure must return a float!"
+
+    def test_ChaosMeasurePositive(self):
+        testData = [
+            (np.array([1.0] * 100), "hurst", 0.5),
+            (np.linspace(1.0, 2.0, 100), "dfa", float),  # Smooth trend
+            (np.array([1.0, 2.0, 1.0, 2.0, 1.0] * 20), "sampen", float),  # Repeating pattern
+        ]
+
+        for series, model, expected in testData:
+            result = TradeRoutines.ChaosMeasure(series, model)
+
+            if isinstance(expected, float):
+                assert abs(result - expected) < 1e-6, f"Expected {expected}, got {result}"
+
+            else:
+                assert isinstance(result, expected), f"Expected type {expected}, got {type(result)}"
+
+    def test_ChaosMeasureNegative(self):
+        series = np.array([1.0, 2.0, 3.0, 4.0])
+
+        result = TradeRoutines.ChaosMeasure(series, model="unknown")
+
+        assert result == 0.5, f"Expected fallback value 0.5, got {result}"
+
+    def test_ChaosConfidenceCheckType(self):
+        result = TradeRoutines.ChaosConfidence(0.5, model="hurst")
+
+        assert isinstance(result, float), "ChaosConfidence must return a float!"
+
+    def test_ChaosConfidencePositive(self):
+        testData = [
+            # Hurst: peak at 0.5, symmetric parabola
+            (0.0, "hurst", 0.0),
+            (0.25, "hurst", 0.75),
+            (0.5, "hurst", 1.0),
+            (0.75, "hurst", 0.75),
+            (1.0, "hurst", 0.0),
+
+            # DFA: linear from 0.5
+            (0.0, "dfa", 0.5),
+            (0.25, "dfa", 0.75),
+            (0.5, "dfa", 1.0),
+            (0.75, "dfa", 0.75),
+            (1.0, "dfa", 0.5),
+
+            # SampEn: inverse
+            (0.0, "sampen", 1.0),
+            (0.25, "sampen", 0.75),
+            (0.5, "sampen", 0.5),
+            (0.75, "sampen", 0.25),
+            (1.0, "sampen", 0.0),
+        ]
+
+        for value, model, expected in testData:
+            result = TradeRoutines.ChaosConfidence(value, model)
+
+            assert abs(result - expected) < 1e-6, f"Expected {expected} for {model}({value}), got {result}"
+
+    def test_ChaosConfidenceNegative(self):
+        testData = [
+            (0.0, "unknown"),
+            (0.5, "other"),
+            (1.0, "wtf"),
+        ]
+
+        for value, model in testData:
+            result = TradeRoutines.ChaosConfidence(value, model)
+
+            assert result == 1.0, f"Expected fallback 1.0 for model={model}, got {result}"
