@@ -2065,3 +2065,57 @@ class TestTradeRoutinesMethods:
             result = TradeRoutines.PhaseConfidence(phase, direction)
 
             assert result == 0.5, f"Fallback confidence must be 0.5 for direction={direction}, got {result}"
+
+    def test_AdjustProbabilityCheckType(self):
+        result = TradeRoutines.AdjustProbabilityByChaosAndPhaseTrust(pModel=0.7, chaos=0.9, phase=0.8)
+
+        assert isinstance(result, float), "AdjustProbability must return a float!"
+
+    def test_AdjustProbabilityPositive(self):
+        testData = [
+            # Typical weights
+            (0.8, 0.9, 0.7, 1.0, 0.5, 0.3),
+
+            # No correction applied (trust = 1.0)
+            (0.6, 1.0, 1.0, 1.0, 0.5, 0.3),
+
+            # Full correction suppression (trust = 0.0)
+            (0.6, 0.0, 0.0, 1.0, 0.5, 0.3),
+
+            # Only model used (others zeroed)
+            (0.4, 0.5, 0.9, 1.0, 0.0, 0.0),
+
+            # Only chaos used
+            (0.5, 1.0, 1.0, 0.0, 1.0, 0.0),
+
+            # Only phase used
+            (0.5, 0.0, 1.0, 0.0, 0.0, 1.0),
+
+            # Weights summing to 1.8
+            (0.9, 0.3, 0.4, 0.5, 0.8, 0.5),
+        ]
+
+        for pModel, chaos, phase, wModel, wChaos, wPhase in testData:
+            result = TradeRoutines.AdjustProbabilityByChaosAndPhaseTrust(
+                pModel, chaos, phase, wModel, wChaos, wPhase
+            )
+
+            assert 0.0 <= result <= 1.0, f"Result out of bounds: {result}"
+
+    def test_AdjustProbabilityNegative(self):
+        testData = [
+            # Total weight = 0 — must return 0.0
+            (0.9, 1.0, 1.0, 0.0, 0.0, 0.0),
+
+            # Negative weights — must still return valid float
+            (0.6, 0.5, 0.5, -1.0, 1.0, 1.0),
+            (2.0, 1.5, 1.5, 1.0, 0.5, 0.3),
+            (-1.0, 1.0, 1.0, 1.0, 0.5, 0.3),
+        ]
+
+        for pModel, chaos, phase, wModel, wChaos, wPhase in testData:
+            result = TradeRoutines.AdjustProbabilityByChaosAndPhaseTrust(pModel, chaos, phase, wModel, wChaos, wPhase)
+
+            assert isinstance(result, float), f"Result must be float, got {type(result)}"
+
+            assert 0.0 <= result <= 1.0, f"Adjusted probability out of range: {result}"
