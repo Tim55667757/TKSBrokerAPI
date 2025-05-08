@@ -2000,3 +2000,68 @@ class TestTradeRoutinesMethods:
             result = TradeRoutines.ChaosConfidence(value, model)
 
             assert result == 1.0, f"Expected fallback 1.0 for model={model}, got {result}"
+
+    def test_PhaseLocationCheckType(self):
+        result = TradeRoutines.PhaseLocation(price=105.0, lower=100.0, upper=110.0)
+
+        assert isinstance(result, float), "PhaseLocation must return a float!"
+
+    def test_PhaseLocationPositive(self):
+        testData = [
+            (100.0, 100.0, 110.0, 0.0),
+            (105.0, 100.0, 110.0, 0.5),
+            (110.0, 100.0, 110.0, 1.0),
+            (95.0, 100.0, 110.0, 0.0),
+            (120.0, 100.0, 110.0, 1.0),
+            (105.0, 100.0, 100.0, 0.5),
+        ]
+
+        for price, lower, upper, expected in testData:
+            result = TradeRoutines.PhaseLocation(price, lower, upper)
+
+            assert abs(result - expected) < 1e-15, f"PhaseLocation({price}, {lower}, {upper}) → {result}, expected {expected}"
+
+    def test_PhaseLocationNegative(self):
+        testData = [
+            (float("inf"), 100.0, 110.0),
+            (-float("inf"), 100.0, 110.0),
+            (105.0, float("nan"), 110.0),
+            (105.0, 100.0, float("nan")),
+        ]
+
+        for price, lower, upper in testData:
+            result = TradeRoutines.PhaseLocation(price, lower, upper)
+
+            assert isinstance(result, float)
+
+    def test_PhaseConfidenceCheckType(self):
+        result = TradeRoutines.PhaseConfidence(phase=0.3, direction="Buy")
+
+        assert isinstance(result, float), "PhaseConfidence must return a float!"
+
+    def test_PhaseConfidencePositive(self):
+        testData = [
+            (0.0, "Buy", 1.0),
+            (0.5, "buy", 0.5),
+            (1.0, "buy", 0.0),
+            (0.0, "Sell", 0.0),
+            (0.5, "sell", 0.5),
+            (1.0, "sell", 1.0),
+        ]
+
+        for phase, direction, expected in testData:
+            result = TradeRoutines.PhaseConfidence(phase, direction)
+
+            assert abs(result - expected) < 1e-15, f"{direction}: Phase={phase} → {result}, expected {expected}"
+
+    def test_PhaseConfidenceNegative(self):
+        testData = [
+            (0.0, "unknown"),
+            (0.5, ""),
+            (1.0, "???"),
+        ]
+
+        for phase, direction in testData:
+            result = TradeRoutines.PhaseConfidence(phase, direction)
+
+            assert result == 0.5, f"Fallback confidence must be 0.5 for direction={direction}, got {result}"
