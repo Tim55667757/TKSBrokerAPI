@@ -1672,3 +1672,33 @@ def FastSampEn(series: np.ndarray, embeddingDim: int = 2, tolerance: float = 0.2
     result = -np.log(countM1 / countM)  # Compute entropy.
 
     return result
+
+
+@jit(nopython=True)
+def FastDfa(series: np.ndarray, scale: int = 12) -> float:
+    """
+    Fast Detrended Fluctuation Analysis (DFA) estimator.
+
+    :param series: NumPy array of floats.
+    :param scale: Box size for detrending.
+
+    :return: Scaling exponent alpha.
+    """
+    n = len(series)
+    if n <= scale:
+        return 0.5  # Not enough data to compute DFA.
+
+    cumdev = np.cumsum(series - np.mean(series))  # Integrated (profile) series with zero mean.
+    num = n // scale  # Number of segments of size `scale`.
+    flucts = np.empty(num)  # Storage for local fluctuations in each segment.
+
+    for i in range(num):
+        segment = cumdev[i * scale:(i + 1) * scale]  # Extract a segment of integrated series.
+
+        x = np.arange(scale)  # Time index for polyfit.
+        coeffs = np.polyfit(x, segment, 1)  # Fit linear trend (1st degree polynomial).
+        fit = coeffs[0] * x + coeffs[1]  # Reconstruct the trend line over a segment.
+
+        flucts[i] = np.sqrt(np.mean((segment - fit) ** 2))  # Root-mean-square deviation from the trend.
+
+    return np.log(np.mean(flucts)) / np.log(scale)  # Log-log slope = DFA exponent (alpha).
