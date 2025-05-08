@@ -1632,3 +1632,42 @@ def FastHurst(series: np.ndarray) -> float:
         result = np.log(R / S) / np.log(n)  # type: ignore
 
     return result
+
+
+@jit(nopython=True)
+def FastSampEn(series: np.ndarray, embeddingDim: int = 2, tolerance: float = 0.2) -> float:
+    """
+    Fast Sample Entropy for chaos estimation.
+
+    :param series: NumPy array of floats.
+    :param embeddingDim: Embedding dimension m.
+    :param tolerance: Tolerance r.
+
+    :return: Sample entropy.
+    """
+    length = len(series)
+    if length <= embeddingDim + 1:
+        return 0.0  # Not enough data to compute entropy.
+
+    stdVal = float(np.std(series))  # Precompute standard deviation at once.
+
+    # Count the number of matches of dimension m:
+    def _Phi(m: int, stdValue: float) -> int:
+        count = 0
+        for i in range(length - m):
+            for j in range(i + 1, length - m):
+                if np.all(np.abs(series[i:i + m] - series[j:j + m]) <= tolerance * stdValue):
+                    count += 1
+
+        return count
+
+    countM = _Phi(embeddingDim, stdVal)
+    countM1 = _Phi(embeddingDim + 1, stdVal)
+
+    # If no matches found, return 0.0:
+    if countM == 0 or countM1 == 0:
+        return 0.0
+
+    result = -np.log(countM1 / countM)  # Compute entropy.
+
+    return result
