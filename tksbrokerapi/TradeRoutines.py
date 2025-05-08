@@ -1164,128 +1164,6 @@ def VolatilityWeight(sigmaLow: float, sigmaHigh: float) -> float:
     return sigmaHigh / (sigmaHigh + sigmaLow)
 
 
-def EstimateTargetReachability(
-    seriesLowTF: Union[list, pd.Series],
-    seriesHighTF: Union[list, pd.Series],
-    currentPrice: float,
-    targetPrice: float,
-    horizonLowTF: int,
-    horizonHighTF: int,
-    ddof: int = 2,
-    cleanWithHampel: bool = False,
-    **kwargs
-) -> tuple[float, str]:
-    """
-    Estimates the probability of reaching a target price using two price series from different timeframes.
-    Implements full methodology: log returns, volatility with Bessel correction, effective drift, z-score,
-    cumulative probability, Bayesian aggregation, volatility-based weighting, and fuzzy classification.
-
-    References:
-
-    1. (RU article) https://teletype.in/@tgilmullin/target-probability
-       Will the Price Hit the Target: Assessing Probability Instead of Guessing.
-
-    2. (RU article on which the formulas are based)
-       Statistical Estimation of the Probability of Reaching a Target Price Considering Volatility and Returns Across Different Timeframes.
-
-    :param seriesLowTF: A close-price series from the lower timeframe.
-    :param seriesHighTF: A close-price series from the higher timeframe.
-    :param currentPrice: The current price of the asset.
-    :param targetPrice: The target price to be reached or exceeded.
-    :param horizonLowTF: The forecast horizon in candles for the lower timeframe.
-    :param horizonHighTF: The forecast horizon in candles for the higher timeframe.
-    :param ddof: Degrees of freedom for volatility estimation (use 2 as per article).
-    :param cleanWithHampel: If `True`, applies outlier cleaning to both input series before computing log returns
-                            using `HampelCleaner()` (`False` by default). Recommended for real market data where spikes,
-                            anomalies, or gaps may distort volatility and probability estimates.
-    :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
-
-        Supported options (with default values):
-
-        - `window` (5): Sliding window size for `HampelCleaner()`.
-        - `sigma` (3): Threshold multiplier for anomaly detection.
-        - `scaleFactor` (`1.4826`): Scaling factor for MAD.
-        - `strategy` ("neighborAvg"): Outlier replacement strategy:
-            • `"neighborAvg"` – average of adjacent neighbors. Good for a smooth, low-noise series.
-            • `"prev"` – previous valid value. Preserves a trend direction.
-            • `"const"` – constant fallback. Use for API glitches or corrupted data.
-            • `"medianWindow"` – local median window. **Best default for real-world candles.**
-            • `"rollingMean"` – centered mean smoothing for low-volatility series.
-        - `fallbackValue` (`0.0`): Constant value for use in `"const"` strategy or edge cases.
-        - `medianWindow` (`3`): Window size for `"medianWindow"` strategy.
-
-    :return: A tuple `(pIntegral, fIntegral)`, where:
-        - `pIntegral` is a float in range `[0.0, 1.0]` — estimated probability of reaching the target.
-        - `fIntegral` is a fuzzy label: one of `["Min", "Low", "Med", "High", "Max"]`.
-    """
-    try:
-        # Convert lists to Pandas Series if needed:
-        if isinstance(seriesLowTF, list):
-            seriesLowTF = pd.Series(seriesLowTF)
-
-        if isinstance(seriesHighTF, list):
-            seriesHighTF = pd.Series(seriesHighTF)
-
-        # Validate input ranges:
-        if (
-            len(seriesLowTF) < 2 or len(seriesHighTF) < 2 or
-            horizonLowTF <= 0 or horizonHighTF <= 0 or
-            currentPrice <= 0 or targetPrice <= 0
-        ):
-            return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
-
-        # Optional Hampel-based outlier cleaning before log-return computation:
-        if cleanWithHampel:
-            seriesLowTF = HampelCleaner(seriesLowTF, **kwargs)
-            seriesHighTF = HampelCleaner(seriesHighTF, **kwargs)
-
-        # --- Formulas (2)–(3): Compute log returns and mean returns:
-        rLow = LogReturns(seriesLowTF)
-        rHigh = LogReturns(seriesHighTF)
-
-        muL = MeanReturn(rLow)
-        muH = MeanReturn(rHigh)
-
-        # --- Formula (4): Compute volatility with Bessel correction (ddof):
-        sigmaL = Volatility(rLow, ddof)
-        sigmaH = Volatility(rHigh, ddof)
-
-        # Validate computed statistics:
-        if not all(map(np.isfinite, [muL, sigmaL, muH, sigmaH])) or sigmaL == 0 or sigmaH == 0:
-            return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
-
-        # --- Formula (5): Log target ratio between target and current price:
-        logTarget = math.log(targetPrice / currentPrice)
-
-        # --- Formula (6): Compute z-scores using drift and volatility:
-        zL = ZScore(logTarget, muL, sigmaL, horizonLowTF)
-        zH = ZScore(logTarget, muH, sigmaH, horizonHighTF)
-
-        # --- Formula (8): Compute cumulative probabilities:
-        pL = 1 - norm.cdf(zL)
-        pH = 1 - norm.cdf(zH)
-
-        # --- Formula (9): Arithmetic mean of the two probabilities:
-        pAverage = (pL + pH) / 2
-
-        # --- Formula (10): Bayesian aggregation:
-        pBayes = BayesianAggregation(pL, pH)
-
-        # --- Formula (11): Compute alpha weight from volatilities:
-        alpha = VolatilityWeight(sigmaL, sigmaH)
-
-        # --- Formula (12): Final integrated probability:
-        pIntegral = alpha * pBayes + (1 - alpha) * pAverage
-
-        # --- Formula (15): Fuzzy classification of the final probability:
-        fIntegral = FUZZY_SCALE.Fuzzy(pIntegral)["name"]
-
-        return pIntegral, fIntegral
-
-    except Exception:
-        return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
-
-
 @jit(nopython=True)
 def RollingMean(array: np.ndarray, window: int) -> np.ndarray:
     """
@@ -1807,3 +1685,125 @@ def AdjustProbabilityByChaosAndPhaseTrust(
     result = numerator / totalWeight  # Final probability.
 
     return min(1.0, max(0.0, result))  # Clamp result to [0.0, 1.0].
+
+
+def EstimateTargetReachability(
+    seriesLowTF: Union[list, pd.Series],
+    seriesHighTF: Union[list, pd.Series],
+    currentPrice: float,
+    targetPrice: float,
+    horizonLowTF: int,
+    horizonHighTF: int,
+    ddof: int = 2,
+    cleanWithHampel: bool = False,
+    **kwargs
+) -> tuple[float, str]:
+    """
+    Estimates the probability of reaching a target price using two price series from different timeframes.
+    Implements full methodology: log returns, volatility with Bessel correction, effective drift, z-score,
+    cumulative probability, Bayesian aggregation, volatility-based weighting, and fuzzy classification.
+
+    References:
+
+    1. (RU article) https://teletype.in/@tgilmullin/target-probability
+       Will the Price Hit the Target: Assessing Probability Instead of Guessing.
+
+    2. (RU article on which the formulas are based)
+       Statistical Estimation of the Probability of Reaching a Target Price Considering Volatility and Returns Across Different Timeframes.
+
+    :param seriesLowTF: A close-price series from the lower timeframe.
+    :param seriesHighTF: A close-price series from the higher timeframe.
+    :param currentPrice: The current price of the asset.
+    :param targetPrice: The target price to be reached or exceeded.
+    :param horizonLowTF: The forecast horizon in candles for the lower timeframe.
+    :param horizonHighTF: The forecast horizon in candles for the higher timeframe.
+    :param ddof: Degrees of freedom for volatility estimation (use 2 as per article).
+    :param cleanWithHampel: If `True`, applies outlier cleaning to both input series before computing log returns
+                            using `HampelCleaner()` (`False` by default). Recommended for real market data where spikes,
+                            anomalies, or gaps may distort volatility and probability estimates.
+    :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
+
+        Supported options (with default values):
+
+        - `window` (5): Sliding window size for `HampelCleaner()`.
+        - `sigma` (3): Threshold multiplier for anomaly detection.
+        - `scaleFactor` (`1.4826`): Scaling factor for MAD.
+        - `strategy` ("neighborAvg"): Outlier replacement strategy:
+            • `"neighborAvg"` – average of adjacent neighbors. Good for a smooth, low-noise series.
+            • `"prev"` – previous valid value. Preserves a trend direction.
+            • `"const"` – constant fallback. Use for API glitches or corrupted data.
+            • `"medianWindow"` – local median window. **Best default for real-world candles.**
+            • `"rollingMean"` – centered mean smoothing for low-volatility series.
+        - `fallbackValue` (`0.0`): Constant value for use in `"const"` strategy or edge cases.
+        - `medianWindow` (`3`): Window size for `"medianWindow"` strategy.
+
+    :return: A tuple `(pIntegral, fIntegral)`, where:
+        - `pIntegral` is a float in range `[0.0, 1.0]` — estimated probability of reaching the target.
+        - `fIntegral` is a fuzzy label: one of `["Min", "Low", "Med", "High", "Max"]`.
+    """
+    try:
+        # Convert lists to Pandas Series if needed:
+        if isinstance(seriesLowTF, list):
+            seriesLowTF = pd.Series(seriesLowTF)
+
+        if isinstance(seriesHighTF, list):
+            seriesHighTF = pd.Series(seriesHighTF)
+
+        # Validate input ranges:
+        if (
+            len(seriesLowTF) < 2 or len(seriesHighTF) < 2 or
+            horizonLowTF <= 0 or horizonHighTF <= 0 or
+            currentPrice <= 0 or targetPrice <= 0
+        ):
+            return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
+
+        # Optional Hampel-based outlier cleaning before log-return computation:
+        if cleanWithHampel:
+            seriesLowTF = HampelCleaner(seriesLowTF, **kwargs)
+            seriesHighTF = HampelCleaner(seriesHighTF, **kwargs)
+
+        # --- Formulas (2)–(3): Compute log returns and mean returns:
+        rLow = LogReturns(seriesLowTF)
+        rHigh = LogReturns(seriesHighTF)
+
+        muL = MeanReturn(rLow)
+        muH = MeanReturn(rHigh)
+
+        # --- Formula (4): Compute volatility with Bessel correction (ddof):
+        sigmaL = Volatility(rLow, ddof)
+        sigmaH = Volatility(rHigh, ddof)
+
+        # Validate computed statistics:
+        if not all(map(np.isfinite, [muL, sigmaL, muH, sigmaH])) or sigmaL == 0 or sigmaH == 0:
+            return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
+
+        # --- Formula (5): Log target ratio between target and current price:
+        logTarget = math.log(targetPrice / currentPrice)
+
+        # --- Formula (6): Compute z-scores using drift and volatility:
+        zL = ZScore(logTarget, muL, sigmaL, horizonLowTF)
+        zH = ZScore(logTarget, muH, sigmaH, horizonHighTF)
+
+        # --- Formula (8): Compute cumulative probabilities:
+        pL = 1 - norm.cdf(zL)
+        pH = 1 - norm.cdf(zH)
+
+        # --- Formula (9): Arithmetic mean of the two probabilities:
+        pAverage = (pL + pH) / 2
+
+        # --- Formula (10): Bayesian aggregation:
+        pBayes = BayesianAggregation(pL, pH)
+
+        # --- Formula (11): Compute alpha weight from volatilities:
+        alpha = VolatilityWeight(sigmaL, sigmaH)
+
+        # --- Formula (12): Final integrated probability:
+        pIntegral = alpha * pBayes + (1 - alpha) * pAverage
+
+        # --- Formula (15): Fuzzy classification of the final probability:
+        fIntegral = FUZZY_SCALE.Fuzzy(pIntegral)["name"]
+
+        return pIntegral, fIntegral
+
+    except Exception:
+        return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
