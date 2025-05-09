@@ -1318,12 +1318,12 @@ class TestTradeRoutinesMethods:
 
             elapsed = time.perf_counter() - startTime
 
-            print(
-                f"Size: {size:>6}, "
-                f"Time: {elapsed:.5f}s, "
-                f"Prob: {pIntegral:.4f}, "
-                f"Fuzzy: {fIntegral}"
-            )
+            # print(
+            #     f"Size: {size:>6}, "
+            #     f"Time: {elapsed:.5f}s, "
+            #     f"Prob: {pIntegral:.4f}, "
+            #     f"Fuzzy: {fIntegral}"
+            # )
 
             assert elapsed < 1.0, f"Performance issue for size {size}: took {elapsed:.2f}s"
 
