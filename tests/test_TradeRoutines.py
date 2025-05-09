@@ -1233,15 +1233,22 @@ class TestTradeRoutinesMethods:
             (self.GenerateSeries(150), self.GenerateSeries(40), 12, 3),
             (self.GenerateSeries(300), self.GenerateSeries(60), 20, 5),
             (self.GenerateSeries(1000), self.GenerateSeries(100), 15, 4),
+            (
+                self.GenerateSeries(250), self.GenerateSeries(80), 10, 3,
+                {"useChaos": True, "chaosModel": "hurst", "chaosTail": 100, "usePhase": True, "phaseDirection": "Buy"}
+            ),
         ]
 
-        for seriesLowTF, seriesHighTF, horizonLowTF, horizonHighTF in testCases:
+        for test in testCases:
+            seriesLowTF, seriesHighTF, horizonLowTF, horizonHighTF = test[:4]
+            kwargs = test[4] if len(test) > 4 else {}
+
             currentPrice = seriesLowTF.iloc[-1]
             targetPrice = currentPrice * 1.07
 
             pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
                 seriesLowTF, seriesHighTF, currentPrice, targetPrice,
-                horizonLowTF, horizonHighTF, ddof=2
+                horizonLowTF, horizonHighTF, ddof=2, **kwargs
             )
 
             # Probability must be within [0, 1]:
@@ -1262,12 +1269,22 @@ class TestTradeRoutinesMethods:
             (validSeries, validSeries, 100, -110, 10, 5),  # Negative target price
             (validSeries, validSeries, 100, 110, 0, 5),  # Zero horizon
             (emptySeries, emptySeries, 100, 110, 10, 5),  # Empty Pandas series
+
+            # Edge cases with chaos/phase flags (should still return fallback):
+            ([], [], 100, 110, 10, 5, {"useChaos": True, "chaosTail": 0}),
+            ([100], [100], 100, 110, 10, 5, {"usePhase": True, "phaseDirection": "Sell"}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": -100, "usePhase": True}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": None, "usePhase": True}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": 101, "usePhase": True}),
         ]
 
-        for seriesLowTF, seriesHighTF, currentPrice, targetPrice, horizonLowTF, horizonHighTF in testCases:
+        for test in testCases:
+            seriesLowTF, seriesHighTF, currentPrice, targetPrice, horizonLowTF, horizonHighTF = test[:6]
+            kwargs = test[6] if len(test) > 6 else {}
+
             pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
                 seriesLowTF, seriesHighTF, currentPrice, targetPrice,
-                horizonLowTF, horizonHighTF, ddof=2
+                horizonLowTF, horizonHighTF, ddof=2, **kwargs
             )
 
             # Must fallback to zero probability and "Min":
@@ -1276,7 +1293,10 @@ class TestTradeRoutinesMethods:
             )
 
     def test_EstimateTargetReachabilityPerformance(self):
-        sizes = [1000, 5000, 10000, 50000]
+        # Warm-up JIT compilation for FastHurst:
+        _ = TradeRoutines.FastHurst(np.ones(100))
+
+        sizes = [1000, 5000, 10000, 50000, 100000]
 
         for size in sizes:
             seriesLowTF = self.GenerateSeries(size)
@@ -1284,11 +1304,26 @@ class TestTradeRoutinesMethods:
             currentPrice = seriesLowTF.iloc[-1]
             targetPrice = currentPrice * 1.05
 
+            # Enable chaos and phase modifiers with tail slicing:
+            kwargs = {
+                "useChaos": True,
+                "chaosModel": "hurst",
+                "chaosTail": 1001,
+                "usePhase": True,
+                "phaseDirection": "Buy",
+            }
+
             startTime = time.perf_counter()
 
             pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
-                seriesLowTF, seriesHighTF, currentPrice, targetPrice,
-                horizonLowTF=12, horizonHighTF=4, ddof=2
+                seriesLowTF=seriesLowTF,
+                seriesHighTF=seriesHighTF,
+                currentPrice=currentPrice,
+                targetPrice=targetPrice,
+                horizonLowTF=12,
+                horizonHighTF=4,
+                ddof=2,
+                **kwargs
             )
 
             elapsed = time.perf_counter() - startTime
@@ -1300,7 +1335,6 @@ class TestTradeRoutinesMethods:
                 f"Fuzzy: {fIntegral}"
             )
 
-            # Ensuring reasonable performance (adjust 1.0s limit as needed):
             assert elapsed < 1.0, f"Performance issue for size {size}: took {elapsed:.2f}s"
 
     def test_EstimateTargetReachabilityFallbackTriggeredByInternalError(self):

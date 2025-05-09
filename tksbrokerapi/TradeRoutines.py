@@ -1701,6 +1701,7 @@ def EstimateTargetReachability(
     cleanWithHampel: bool = False,
     useChaos: bool = False,
     chaosModel: str = "hurst",
+    chaosTail: Optional[int] = None,
     usePhase: bool = False,
     phaseDirection: Optional[str] = None,
     **kwargs
@@ -1733,6 +1734,7 @@ def EstimateTargetReachability(
         - `hurst`: fast estimation of Hurst exponent using the rescaled range (R/S) method, `FastHurst()`;
         - `sampen`: fast Sample Entropy for chaos estimation, see `FastSampEn()`;
         - `dfa`: fast Detrended Fluctuation Analysis (DFA) estimator, see `FastDfa()`.
+    :param chaosTail: Optional tail length of the series `seriesLowTF` and `seriesHighTF` used for chaos estimation. If `None`, use the full series.
     :param usePhase: If `True`, modifies the final probability based on Bollinger-band phase, see `FastBBands()`.
     :param phaseDirection: Trade direction: `Buy` or `Sell` (required for phase confidence).
     :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
@@ -1816,10 +1818,13 @@ def EstimateTargetReachability(
         # --- Chaos trust modifier (if enabled):
         chaosTrust = 1.0
         if useChaos:
-            chaosL = ChaosMeasure(seriesLowTF.values, model=chaosModel)
+            tailL = seriesLowTF.values[-chaosTail:] if chaosTail else seriesLowTF.values
+            tailH = seriesHighTF.values[-chaosTail:] if chaosTail else seriesHighTF.values
+
+            chaosL = ChaosMeasure(tailL, model=chaosModel)
             confL = ChaosConfidence(chaosL, chaosModel)
 
-            chaosH = ChaosMeasure(seriesHighTF.values, model=chaosModel)
+            chaosH = ChaosMeasure(tailH, model=chaosModel)
             confH = ChaosConfidence(chaosH, chaosModel)
 
             chaosTrust = alpha * confL + (1 - alpha) * confH
