@@ -1699,11 +1699,8 @@ def EstimateTargetReachability(
     horizonHighTF: int,
     ddof: int = 2,
     cleanWithHampel: bool = False,
-    useChaos: bool = False,
-    chaosModel: str = "hurst",
-    chaosTail: Optional[int] = None,
-    usePhase: bool = False,
-    phaseDirection: Optional[str] = None,
+    chaosTrust: float = 1.0,
+    phaseTrust: float = 1.0,
     **kwargs
 ) -> tuple[float, str]:
     """
@@ -1729,14 +1726,8 @@ def EstimateTargetReachability(
     :param cleanWithHampel: If `True`, applies outlier cleaning to both input series before computing log returns
                             using `HampelCleaner()` (`False` by default). Recommended for real market data where spikes,
                             anomalies, or gaps may distort volatility and probability estimates.
-    :param useChaos: If `True`, modifies the final probability based on chaos confidence (Hurst, DFA, etc.).
-    :param chaosModel: Chaos model to use
-        - `hurst`: fast estimation of Hurst exponent using the rescaled range (R/S) method, `FastHurst()`;
-        - `sampen`: fast Sample Entropy for chaos estimation, see `FastSampEn()`;
-        - `dfa`: fast Detrended Fluctuation Analysis (DFA) estimator, see `FastDfa()`.
-    :param chaosTail: Optional tail length of the series `seriesLowTF` and `seriesHighTF` used for chaos estimation. If `None`, use the full series.
-    :param usePhase: If `True`, modifies the final probability based on Bollinger-band phase, see `FastBBands()`.
-    :param phaseDirection: Trade direction: `Buy` or `Sell` (required for phase confidence).
+    :param chaosTrust: Trust coefficient based on chaos metric ∈ [0.0, 1.0]. Default is `1.0` (no modification), see also `ChaosConfidence()`.
+    :param phaseTrust: Trust coefficient based on Bollinger-band phase ∈ [0.0, 1.0]. Default is` 1.0` (no modification), see also `PhaseConfidence()`.
     :param kwargs: Optional keyword arguments are forwarded to `HampelCleaner()` if `cleanWithHampel` is `True`.
                    Supported options (with default values):
         - `window` (5): Sliding window size for `HampelCleaner()`.
@@ -1815,31 +1806,15 @@ def EstimateTargetReachability(
         # --- Formula (12): Final integrated probability:
         pIntegral = alpha * pBayes + (1 - alpha) * pAverage
 
-        # --- Chaos trust modifier (if enabled):
-        chaosTrust = 1.0
-        if useChaos:
-            tailL = seriesLowTF.values[-chaosTail:] if chaosTail else seriesLowTF.values
-            tailH = seriesHighTF.values[-chaosTail:] if chaosTail else seriesHighTF.values
-
-            chaosL = ChaosMeasure(tailL, model=chaosModel)
-            confL = ChaosConfidence(chaosL, chaosModel)
-
-            chaosH = ChaosMeasure(tailH, model=chaosModel)
-            confH = ChaosConfidence(chaosH, chaosModel)
-
-            chaosTrust = alpha * confL + (1 - alpha) * confH
-
-        # --- Phase trust modifier (if enabled):
-        phaseTrust = 1.0
-        if usePhase and phaseDirection:
-            bbLower = min(seriesLowTF.values[-1], seriesHighTF.values[-1])
-            bbUpper = max(seriesLowTF.values[-1], seriesHighTF.values[-1])
-            phase = PhaseLocation(currentPrice, bbLower, bbUpper)
-
-            phaseTrust = PhaseConfidence(phase, phaseDirection)
-
         # --- Apply combined trust modifiers:
-        pFinal = pIntegral if chaosTrust == phaseTrust == 1.0 else AdjustProbabilityByChaosAndPhaseTrust(pIntegral, chaosTrust, phaseTrust)
+        if chaosTrust == 1.0 and phaseTrust == 1.0:
+            pFinal = pIntegral
+
+        elif not (0.0 <= chaosTrust <= 1.0 and 0.0 <= phaseTrust <= 1.0):
+            pFinal = pIntegral  # Skip adjustment if trust coefficients are invalid.
+
+        else:
+            pFinal = AdjustProbabilityByChaosAndPhaseTrust(pIntegral, chaosTrust, phaseTrust)
 
         # --- Formula (15): Fuzzy classification of the final probability:
         fFinal = FUZZY_SCALE.Fuzzy(pFinal)["name"]

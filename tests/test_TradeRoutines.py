@@ -1220,7 +1220,7 @@ class TestTradeRoutinesMethods:
 
         # Test function call:
         pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
-            seriesLowTF, seriesHighTF, currentPrice, targetPrice, 12, 4, ddof=2
+            seriesLowTF, seriesHighTF, currentPrice, targetPrice, 12, 4, ddof=2, chaosTrust=1.0, phaseTrust=1.0
         )
 
         # Check return types:
@@ -1230,25 +1230,21 @@ class TestTradeRoutinesMethods:
 
     def test_EstimateTargetReachabilityPositive(self):
         testCases = [
-            (self.GenerateSeries(150), self.GenerateSeries(40), 12, 3),
-            (self.GenerateSeries(300), self.GenerateSeries(60), 20, 5),
-            (self.GenerateSeries(1000), self.GenerateSeries(100), 15, 4),
-            (
-                self.GenerateSeries(250), self.GenerateSeries(80), 10, 3,
-                {"useChaos": True, "chaosModel": "hurst", "chaosTail": 100, "usePhase": True, "phaseDirection": "Buy"}
-            ),
+            (self.GenerateSeries(150), self.GenerateSeries(40), 12, 3, 1.0, 1.0),
+            (self.GenerateSeries(300), self.GenerateSeries(60), 20, 5, 1.0, 0.9),
+            (self.GenerateSeries(1000), self.GenerateSeries(100), 15, 4, 0.9, 1.0),
+            (self.GenerateSeries(250), self.GenerateSeries(80), 10, 3, 0.9, 0.8),
         ]
 
         for test in testCases:
-            seriesLowTF, seriesHighTF, horizonLowTF, horizonHighTF = test[:4]
-            kwargs = test[4] if len(test) > 4 else {}
+            seriesLowTF, seriesHighTF, horizonLowTF, horizonHighTF, chaosTrust, phaseTrust = test
 
             currentPrice = seriesLowTF.iloc[-1]
             targetPrice = currentPrice * 1.07
 
             pIntegral, fIntegral = TradeRoutines.EstimateTargetReachability(
                 seriesLowTF, seriesHighTF, currentPrice, targetPrice,
-                horizonLowTF, horizonHighTF, ddof=2, **kwargs
+                horizonLowTF, horizonHighTF, ddof=2, chaosTrust=chaosTrust, phaseTrust=phaseTrust
             )
 
             # Probability must be within [0, 1]:
@@ -1271,11 +1267,11 @@ class TestTradeRoutinesMethods:
             (emptySeries, emptySeries, 100, 110, 10, 5),  # Empty Pandas series
 
             # Edge cases with chaos/phase flags (should still return fallback):
-            ([], [], 100, 110, 10, 5, {"useChaos": True, "chaosTail": 0}),
-            ([100], [100], 100, 110, 10, 5, {"usePhase": True, "phaseDirection": "Sell"}),
-            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": -100, "usePhase": True}),
-            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": None, "usePhase": True}),
-            (validSeries, validSeries, 100, 110, 10, 0, {"useChaos": True, "chaosTail": 101, "usePhase": True}),
+            ([], [], 100, 110, 10, 5, {"chaosTrust": 0, "phaseTrust": 0}),
+            ([100], [100], 100, 110, 10, 5, {"chaosTrust": -1, "phaseTrust": -1}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"chaosTrust": 0, "phaseTrust": -1}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"chaosTrust": -1, "phaseTrust": 0}),
+            (validSeries, validSeries, 100, 110, 10, 0, {"chaosTrust": 100, "phaseTrust": 100}),
         ]
 
         for test in testCases:
@@ -1305,13 +1301,7 @@ class TestTradeRoutinesMethods:
             targetPrice = currentPrice * 1.05
 
             # Enable chaos and phase modifiers with tail slicing:
-            kwargs = {
-                "useChaos": True,
-                "chaosModel": "hurst",
-                "chaosTail": 1001,
-                "usePhase": True,
-                "phaseDirection": "Buy",
-            }
+            kwargs = {"chaosTrust": 0.8, "phaseTrust": 0.7}
 
             startTime = time.perf_counter()
 
