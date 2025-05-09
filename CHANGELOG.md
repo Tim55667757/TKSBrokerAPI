@@ -32,6 +32,7 @@
 * [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) Реализовано CI/CD на GitHub Actions.
 * [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Реализована оценка вероятности достижимости ценой целевых уровней.
 * [#152](https://github.com/Tim55667757/TKSBrokerAPI/issues/152) Добавлен централизованный троттлинг с кооперативным ожиданием в `SendAPIRequest()`.
+* [#154](https://github.com/Tim55667757/TKSBrokerAPI/issues/154) Добавлены модели оценки хаоса (Hurst, SampEn, DFA) и фазовая фильтрация в метод `EstimateTargetReachability()`. Реализованы доверительные коэффициенты, агрегация вероятности, расширенные тесты и оптимизация производительности.
 
 ##### Улучшения
 

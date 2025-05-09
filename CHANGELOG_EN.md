@@ -32,6 +32,7 @@ Release development in progress...
 * [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) CI/CD on GitHub Actions is implemented.
 * [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Target Probability Estimation, the Big Core feature is implemented.
 * [#152](https://github.com/Tim55667757/TKSBrokerAPI/issues/152) Centralized throttling with cooperative waiting added to `SendAPIRequest()`.
+* [#154](https://github.com/Tim55667757/TKSBrokerAPI/issues/154) Integrated chaos metrics (Hurst, SampEn, DFA) and phase filtering into `EstimateTargetReachability()`. Added trust coefficients, probability adjustment logic, full test coverage and performance optimization.
 
 ##### Improvements
 
