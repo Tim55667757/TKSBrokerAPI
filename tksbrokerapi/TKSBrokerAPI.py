@@ -94,7 +94,7 @@ import traceback as tb
 import threading
 from time import sleep, monotonic
 from argparse import ArgumentParser
-from collections import defaultdict
+from collections import defaultdict, Counter
 from importlib.metadata import version
 from multiprocessing import cpu_count
 
@@ -3223,6 +3223,15 @@ class TinkoffBrokerServer:
 
         if self.historyFile is not None:
             if history is not None and not history.empty:
+                # Auto-round float values to the actual precision used in data before saving to CSV:
+                columnsToRound = ["open", "high", "low", "close"]
+
+                if all(col in history.columns for col in columnsToRound):
+                    combined = pd.Series(np.concatenate([history[col].values for col in columnsToRound]))
+                    precision = DetermineDecimalPrecision(combined)
+
+                    history[columnsToRound] = history[columnsToRound].round(precision)
+
                 history.to_csv(self.historyFile, sep=csvSep, index=False, header=False)
 
                 if show:
