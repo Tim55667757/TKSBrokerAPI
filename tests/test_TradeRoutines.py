@@ -2143,3 +2143,60 @@ class TestTradeRoutinesMethods:
             assert isinstance(result, float), f"Result must be float, got {type(result)}"
 
             assert 0.0 <= result <= 1.0, f"Adjusted probability out of range: {result}"
+
+    def test_DetermineDecimalPrecisionCheckType(self):
+        result = TradeRoutines.DetermineDecimalPrecision([1.2345, 1.2, 1.0])
+
+        assert isinstance(result, int), "DetermineDecimalPrecision must return int type!"
+
+    def test_DetermineDecimalPrecisionPositive(self):
+        testData = [
+            ([1.0, 2.0, 3.0], 0),  # integers only
+            ([1.1, 2.22, 3.333], 3),  # increasing fractional depth
+            ([1.123456, 1.123457], 6),  # equal significant digits
+            ([0.000001, 0.000002], 6),  # small values
+            ([1.999999], 6),  # maximum before rounding to int
+            ([1.00000001, 1.00000009], 8),  # nearly integer
+            ([123.456789012345], 15),  # precision up to float64 limit
+            ([0.1] * 100, 1),  # repeated value
+            ([3.0, 3.1, 3.12, 3.123, 3.1234, 3.12345], 5),  # stepwise precision
+            ([10.999999999999999], 15),  # close to float edge
+            ([1e-10, 2e-10, 5e-11], 11),  # scientific notation
+            ([1.123456789012345, 1.123456789012346], 15),  # float64 precision test
+        ]
+
+        for series, expected in testData:
+            result = TradeRoutines.DetermineDecimalPrecision(series)
+
+            assert result == expected, f"Incorrect output! Input: {series}, Expected: {expected}, Got: {result}"
+
+    def test_DetermineDecimalPrecisionNegative(self):
+        testData = [
+            [],  # empty list
+            [None, None],  # only None
+            [np.nan, np.nan],  # only NaN
+            pd.Series([]),  # empty pandas Series
+            pd.Series([None]),  # Series with None
+            pd.Series([np.nan]),  # Series with NaN
+            [float("inf"), float("-inf")],  # infinities
+            [np.inf, -np.inf, np.nan],  # mix of invalid floats
+            [None, np.nan, float("inf")],  # mixed invalid types
+            [1.0, None, np.nan],  # partially valid input
+            ["a", "b", "c"],  # non-numeric strings
+            [True, False],  # boolean values interpreted as 1.0 and 0.0
+        ]
+
+        for series in testData:
+            result = TradeRoutines.DetermineDecimalPrecision(series)
+
+            assert result == 0, f"Expected 0 for empty or invalid input: {series}, Got: {result}"
+
+    def test_DetermineDecimalPrecisionPerformance(self):
+        data = np.random.uniform(0.000001, 1.0, size=1_000_000)
+
+        start = time.perf_counter()
+        result = TradeRoutines.DetermineDecimalPrecision(data)
+        elapsed = time.perf_counter() - start
+
+        assert isinstance(result, int), "Result must be int type!"
+        assert elapsed < 0.5, f"DetermineDecimalPrecision too slow: took {elapsed:.2f}s"

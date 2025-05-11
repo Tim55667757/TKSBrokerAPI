@@ -1823,3 +1823,40 @@ def EstimateTargetReachability(
 
     except Exception:
         return 0.0, FUZZY_LEVELS[0]  # (0, "Min")
+
+
+def DetermineDecimalPrecision(values: Union[list, np.ndarray, pd.Series], maxDigits: int = 15, sampleSize: int = 100) -> int:
+    """
+    Determines the actual number of decimal digits used in values (not minimal sufficient, but visible).
+    Fast and suitable for float formatting before saving to CSV.
+
+    :param values: List, array or Series of floats.
+    :param maxDigits: Max digits to detect (default `15`).
+    :param sampleSize: How many values to sample if an array is large.
+
+    :return: actual max number of digits after the decimal point.
+    """
+    try:
+        array = np.asarray(values, dtype=np.float64)  # Convert to NumPy array of float64.
+        array = array[np.isfinite(array)]  # Remove NaN and infinities.
+
+        if len(array) == 0:  # If no valid values — return 0.
+            return 0
+
+        if len(array) > sampleSize:  # If an array is large — subsample randomly.
+            array = np.random.choice(array, size=sampleSize, replace=False)
+
+        result = 0
+        for v in array:
+            s = f"{v:.{maxDigits}f}".rstrip("0").rstrip(".")  # Format float, remove trailing zeros and dot.
+
+            if "." in s:
+                result = max(result, len(s.split(".")[1]))  # Count digits after a decimal point.
+
+            if result >= maxDigits:  # Early exit if max reached.
+                break
+
+        return result
+
+    except Exception:
+        return 0  # Fallback: return 0 in case of error.
