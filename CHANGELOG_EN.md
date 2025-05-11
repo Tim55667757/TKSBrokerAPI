@@ -76,6 +76,7 @@ Release development in progress...
 * [#127](https://github.com/Tim55667757/TKSBrokerAPI/issues/127) Bug fixed: `KeyError: 'name'`, in `Overview()` method.
 * [#128](https://github.com/Tim55667757/TKSBrokerAPI/issues/128) Bug fixed: `RUB000UTSTOM` FIGI not in `dump.json`. Since 7 March 2023 RUB000UTSTOM FIGI have excluded from the currency list.
 * [#142](https://github.com/Tim55667757/TKSBrokerAPI/issues/142) Bug fixed: ImportError after pip install TKSBrokerAPI.
+* [#129](https://github.com/Tim55667757/TKSBrokerAPI/issues/129) Added `DetermineDecimalPrecision()` utility and integrated it into `History()` for automatic rounding of float values before saving to CSV and avoid rounding bug.
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
 

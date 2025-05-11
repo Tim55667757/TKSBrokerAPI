@@ -158,6 +158,9 @@
             <li>
                     <a class="function" href="#EstimateTargetReachability">EstimateTargetReachability</a>
             </li>
+            <li>
+                    <a class="function" href="#DetermineDecimalPrecision">DetermineDecimalPrecision</a>
+            </li>
     </ul>
 
 
@@ -1802,7 +1805,7 @@ Applies smooth correction while preserving a general shape; works well for low-v
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">EstimateTargetReachability</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">seriesLowTF</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">seriesHighTF</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">currentPrice</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">targetPrice</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">horizonLowTF</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">horizonHighTF</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>,</span><span class="param">	<span class="n">cleanWithHampel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">useChaos</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">chaosModel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;hurst&#39;</span>,</span><span class="param">	<span class="n">chaosTail</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">usePhase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">phaseDirection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">EstimateTargetReachability</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">seriesLowTF</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">seriesHighTF</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">currentPrice</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">targetPrice</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">horizonLowTF</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">horizonHighTF</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">ddof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>,</span><span class="param">	<span class="n">cleanWithHampel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">chaosTrust</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>,</span><span class="param">	<span class="n">phaseTrust</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>:</span></span>
 
         
     </div>
@@ -1834,16 +1837,8 @@ Statistical Estimation of the Probability of Reaching a Target Price Considering
 <li><strong>cleanWithHampel</strong>:  If <code>True</code>, applies outlier cleaning to both input series before computing log returns
 using <code><a href="#HampelCleaner">HampelCleaner()</a></code> (<code>False</code> by default). Recommended for real market data where spikes,
 anomalies, or gaps may distort volatility and probability estimates.</li>
-<li><strong>useChaos</strong>:  If <code>True</code>, modifies the final probability based on chaos confidence (Hurst, DFA, etc.).</li>
-<li><strong>chaosModel</strong>:  Chaos model to use
-<ul>
-<li><code>hurst</code>: fast estimation of Hurst exponent using the rescaled range (R/S) method, <code><a href="#FastHurst">FastHurst()</a></code>;</li>
-<li><code>sampen</code>: fast Sample Entropy for chaos estimation, see <code><a href="#FastSampEn">FastSampEn()</a></code>;</li>
-<li><code>dfa</code>: fast Detrended Fluctuation Analysis (DFA) estimator, see <code><a href="#FastDfa">FastDfa()</a></code>.</li>
-</ul></li>
-<li><strong>chaosTail</strong>:  Optional tail length of the series <code>seriesLowTF</code> and <code>seriesHighTF</code> used for chaos estimation. If <code>None</code>, use the full series.</li>
-<li><strong>usePhase</strong>:  If <code>True</code>, modifies the final probability based on Bollinger-band phase, see <code><a href="#FastBBands">FastBBands()</a></code>.</li>
-<li><strong>phaseDirection: Trade direction</strong>:  <code>Buy</code> or <code>Sell</code> (required for phase confidence).</li>
+<li><strong>chaosTrust</strong>:  Trust coefficient based on chaos metric ∈ [0.0, 1.0]. Default is <code>1.0</code> (no modification), see also <code><a href="#ChaosConfidence">ChaosConfidence()</a></code>.</li>
+<li><strong>phaseTrust</strong>:  Trust coefficient based on Bollinger-band phase ∈ [0.0, 1.0]. Default is<code>1.0</code> (no modification), see also <code><a href="#PhaseConfidence">PhaseConfidence()</a></code>.</li>
 <li><strong>kwargs</strong>:  Optional keyword arguments are forwarded to <code><a href="#HampelCleaner">HampelCleaner()</a></code> if <code>cleanWithHampel</code> is <code>True</code>.
            Supported options (with default values):
 <ul>
@@ -1868,6 +1863,36 @@ anomalies, or gaps may distort volatility and probability estimates.</li>
       - <code>pFinal</code> is a float in range <code>[0.0, 1.0]</code> — final adjusted probability of reaching the target,
          optionally modified by chaos and phase confidence if enabled.
       - <code>fFinal</code> is a fuzzy label: one of <code>["Min", "Low", "Med", "High", "Max"]</code>, based on <code>pFinal</code>.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="DetermineDecimalPrecision">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">DetermineDecimalPrecision</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span>,</span><span class="param">	<span class="n">maxDigits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span>,</span><span class="param">	<span class="n">sampleSize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#DetermineDecimalPrecision"></a>
+    
+            <div class="docstring"><p>Determines the actual number of decimal digits used in values (not minimal sufficient, but visible).
+Fast and suitable for float formatting before saving to CSV.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>values</strong>:  List, array or Series of floats.</li>
+<li><strong>maxDigits</strong>:  Max digits to detect (default <code>15</code>).</li>
+<li><strong>sampleSize</strong>:  How many values to sample if an array is large.</li>
+</ul>
+
+<h6 id="returns">Returns</h6>
+
+<blockquote>
+  <p>actual max number of digits after the decimal point.</p>
 </blockquote>
 </div>
 
