@@ -2264,11 +2264,7 @@ class TinkoffBrokerServer:
                     continue
 
         # --- total changes in Russian Ruble:
-        if "rub" in view["stat"]["funds"]:
-            view["stat"]["availableRUB"] = view["stat"]["funds"]["rub"]["total"]  # available RUB without other currencies
-
-        else:
-            view["stat"]["availableRUB"] = 0.
+        view["stat"]["availableRUB"] = view["stat"]["funds"].get("rub", {"total": 0.0}).get("total", 0.0)  # Safe access to RUB funds.
 
         view["stat"]["totalChangesPercentRUB"] = NanoToFloat(view["raw"]["headers"]["expectedYield"]["units"], view["raw"]["headers"]["expectedYield"]["nano"]) if "expectedYield" in view["raw"]["headers"] else 0.
         startCost = view["stat"]["portfolioCostRUB"] / (1 + view["stat"]["totalChangesPercentRUB"] / 100)
