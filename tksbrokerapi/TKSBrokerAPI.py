@@ -2577,7 +2577,7 @@ class TinkoffBrokerServer:
                 if view["stat"]["orders"]:
                     info.extend([
                         "\n## ⏳ Opened pending limit-orders: [{}]\n".format(len(view["stat"]["orders"])),
-                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (% delta) | Target price  | Action    | Type      | Create date (UTC)       |\n",
+                        "\n| Ticker [FIGI]               | Order ID       | Lots (exec.) | Current price (Δ%)      | Target        | Action    | Type      | Created, UTC            |\n",
                         "|-----------------------------|----------------|--------------|-------------------------|---------------|-----------|-----------|-------------------------|\n",
                     ])
 
@@ -2603,31 +2603,35 @@ class TinkoffBrokerServer:
 
                 # --- Show stop orders section:
                 if view["stat"]["stopOrders"]:
-                    info.extend([
-                        "\n## 🔔 Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"])),
-                        "\n| Ticker [FIGI]               | Stop order ID                        | Lots   | Current price (% delta) | Target price    | Limit price     | Action    | Type        | Expire type  | Create date (UTC)   | Expiration (UTC)    |\n",
-                        "|-----------------------------|--------------------------------------|--------|-------------------------|-----------------|-----------------|-----------|-------------|--------------|---------------------|---------------------|\n",
-                    ])
+                    info.extend(["\n## 🔔 Opened stop-orders: [{}]\n".format(len(view["stat"]["stopOrders"]))])
+
+                    grouped = {}  # Group stop-orders by ticker [FIGI]
 
                     for item in view["stat"]["stopOrders"]:
-                        info.append("| {:<27} | {:<14} | {:<6} | {:>23} | {:>15} | {:>15} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
-                            "{} [{}]".format(item["ticker"], item["figi"]),
-                            item["orderID"],
-                            item["lotsRequested"],
-                            "{} {} ({}{:.2f}%)".format(
-                                "{}".format(item["currentPrice"]) if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])),
-                                item["baseCurrencyName"],
-                                "+" if item["percentChanges"] > 0 else "",
-                                float(item["percentChanges"]),
-                            ),
-                            "{:.4f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
-                            "{:.4f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
-                            item["action"],
-                            item["type"],
-                            item["expType"],
-                            item["createDate"],
-                            item["expDate"],
-                        ))
+                        key = "{} [{}]".format(item["ticker"], item["figi"])
+                        grouped.setdefault(key, []).append(item)
+
+                    for title, items in grouped.items():
+                        info.extend([
+                            "\n### {}\n".format(title),
+                            "\n| Stop order ID                        | Lots   | Current price (Δ%)       | Target          | Limit           | Action    | Type        | Expiry       | Created, UTC        | Expires, UTC        |\n",
+                            "|--------------------------------------|--------|--------------------------|-----------------|-----------------|-----------|-------------|--------------|---------------------|---------------------|\n",
+                        ])
+
+                        for item in items:
+                            info.append(
+                                "| {:<36} | {:<6} | {:>24} | {:>15} | {:>15} | {:<9} | {:<11} | {:<12} | {:<19} | {:<19} |\n".format(
+                                    item["orderID"],
+                                    item["lotsRequested"],
+                                    "{} {} ({}{:.2f}%)".format(item["currentPrice"] if isinstance(item["currentPrice"], str) else "{:.2f}".format(float(item["currentPrice"])), item["baseCurrencyName"], "+" if item["percentChanges"] > 0 else "", float(item["percentChanges"])),
+                                    "{:.4f} {}".format(float(item["targetPrice"]), item["baseCurrencyName"]),
+                                    "{:.4f} {}".format(float(item["limitPrice"]), item["baseCurrencyName"]) if item["limitPrice"] and item["limitPrice"] != item["targetPrice"] else TKS_ORDER_TYPES["ORDER_TYPE_MARKET"],
+                                    item["action"],
+                                    item["type"],
+                                    item["expType"],
+                                    item["createDate"],
+                                    item["expDate"],
+                                ))
 
                 else:
                     info.append("\n## 🔔 Total stop-orders: [0]\n")
