@@ -6,7 +6,7 @@ numpy >= 1.23.5  # BSD-3-Clause License
 scipy >= 1.13.1  # BSD-3-Clause License
 numba >= 0.59.1  # BSD-2-Clause License
 llvmlite >= 0.42.0  # BSD-2-Clause License
-pandas >= 1.5.2  # MIT License
+pandas >= 2.2.3  # MIT License
 
 # Service utilities:
 requests >= 2.32.0  # Apache-2.0 License
