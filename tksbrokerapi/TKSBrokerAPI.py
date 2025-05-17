@@ -615,7 +615,10 @@ class TinkoffBrokerServer:
 
     @property
     def figi(self) -> str:
-        """String with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
+        """
+        String with FIGI identifier. FIGIs are case-sensitive and must be used as provided.
+
+        Example: ticker `GOOGL` has FIGI `BBG009S39JX6`.
 
         See also: `SearchByFIGI()`, `SearchInstruments()`.
         """
@@ -623,11 +626,14 @@ class TinkoffBrokerServer:
 
     @figi.setter
     def figi(self, value):
-        """Setter for string with FIGI, e.g. ticker `GOOGL` has FIGI `BBG009S39JX6`. FIGIs may be upper case only.
+        """
+        Setter for FIGI. FIGIs are case-sensitive and must be stored exactly as provided.
+
+        Do not apply case conversion to avoid breaking identification in the Tinkoff Invest API.
 
         See also: `SearchByFIGI()`, `SearchInstruments()`.
         """
-        self._figi = str(value).upper()  # FIGI may be upper case only
+        self._figi = str(value)  # Preserve FIGI case as-is.
 
     def _ParseJSON(self, rawData="{}") -> dict:
         """
@@ -5400,7 +5406,7 @@ def Main(**kwargs):
                     trader.ticker = ticker
 
             if args.figi:
-                trader.figi = str(args.figi).upper()  # FIGIs may be upper case only
+                trader.figi = str(args.figi)  # FIGIs are case-sensitive — do not convert case.
 
             if args.depth is not None:
                 trader.depth = args.depth
@@ -5684,7 +5690,7 @@ def Main(**kwargs):
                     trader.CloseTrades([str(args.ticker).upper()])  # close only one trade by ticker (priority)
 
                 else:
-                    trader.CloseTrades([str(args.figi).upper()])  # close only one trade by FIGI
+                    trader.CloseTrades([str(args.figi)])  # FIGIs are case-sensitive — must be used as-is
 
             elif args.close_trades is not None:
                 trader.CloseTrades(args.close_trades)  # close trades for list of tickers
@@ -5694,7 +5700,7 @@ def Main(**kwargs):
                     trader.CloseAllByTicker(instrument=str(args.ticker).upper())
 
                 elif args.figi:
-                    trader.CloseAllByFIGI(instrument=str(args.figi).upper())
+                    trader.CloseAllByFIGI(instrument=str(args.figi))  # Preserve FIGI case (do not modify).
 
                 else:
                     trader.CloseAll(*args.close_all)
