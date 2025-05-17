@@ -4806,7 +4806,6 @@ class TinkoffBrokerServer:
                     writer,
                     sheet_name="Extended bonds data",
                     index=True,
-                    encoding="UTF-8",
                     freeze_panes=(1, 1),
                 )  # saving as XLSX-file with freeze first row and column as headers
 
