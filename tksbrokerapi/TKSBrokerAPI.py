@@ -3134,9 +3134,9 @@ class TinkoffBrokerServer:
 
                 tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
 
-                tempOld["date"] = pd.to_datetime(tempOld["date"])  # load date "as is"
+                tempOld["date"] = pd.to_datetime(tempOld["date"], format="%Y.%m.%d")  # load date "as is"
                 tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
-                tempOld["time"] = pd.to_datetime(tempOld["time"])  # load time "as is"
+                tempOld["time"] = pd.to_datetime(tempOld["time"], format="%H:%M")  # load time "as is"
                 tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
 
                 # get last datetime object from last string in file or minus 1 delta if file is empty:
