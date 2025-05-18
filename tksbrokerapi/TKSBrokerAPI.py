@@ -103,7 +103,7 @@ import numpy as np
 import requests
 from dateutil.tz import tzlocal
 from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Add the current dir for the local run:
 packageDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -3037,6 +3037,26 @@ class TinkoffBrokerServer:
 
         return ops, customStat
 
+    def _DownloadHistoryBlock(self, blockStart, blockEnd, interval):
+        """
+        Internal method for downloading a single history block (used in threads).
+        """
+        # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
+        historyURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles"
+
+        self.body = str({
+            "figi": self._figi,
+            "from": blockStart.strftime(TKS_DATE_TIME_FORMAT),
+            "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
+            "interval": TKS_CANDLE_INTERVALS[interval][0]
+        })
+
+        if self.moreDebug:
+            threadName = threading.current_thread().name
+            uLogger.debug(f"Started downloading block [{blockStart} — {blockEnd}] in thread [{threadName}]")
+
+        return blockStart, blockEnd, self.SendAPIRequest(historyURL, reqType="POST", methodName="GetCandles")
+
     def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = True) -> pd.DataFrame:
         """
         This method returns last history candles of the current instrument defined by `ticker` or `figi` (FIGI id).
@@ -3133,48 +3153,41 @@ class TinkoffBrokerServer:
                 uLogger.error("📝 An issue occurred while loading file [{}] — possibly due to incorrect format. It will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
 
         responseJSONs = []  # raw history blocks of data
-
+        blockRanges = []
         blockEnd = dtEnd
+
         for item in range(blocks):
             tail = length % TKS_CANDLE_INTERVALS[interval][2] if item + 1 == blocks else TKS_CANDLE_INTERVALS[interval][2]
             blockStart = blockEnd - timedelta(minutes=TKS_CANDLE_INTERVALS[interval][1] * tail)
 
-            if show and self.moreDebug:
-                uLogger.debug("[Block #{}/{}] time period: [{}] UTC - [{}] UTC".format(
-                    item + 1, blocks, blockStart.strftime(TKS_DATE_TIME_FORMAT), blockEnd.strftime(TKS_DATE_TIME_FORMAT),
-                ))
+            if blockStart != blockEnd:
+                blockRanges.append((blockStart, blockEnd))
 
-            if blockStart == blockEnd:
-                if show and self.moreDebug:
-                    uLogger.debug("Skipped this zero-length block...")
+            blockEnd = blockStart
 
-            else:
-                # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
-                historyURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles"
-                self.body = str({
-                    "figi": self._figi,
-                    "from": blockStart.strftime(TKS_DATE_TIME_FORMAT),
-                    "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
-                    "interval": TKS_CANDLE_INTERVALS[interval][0]
-                })
-                responseJSON = self.SendAPIRequest(historyURL, reqType="POST")
+        with ThreadPoolExecutor(max_workers=min(CPU_USAGES, len(blockRanges))) as executor:
+            futures = [executor.submit(self._DownloadHistoryBlock, bStart, bEnd, interval) for bStart, bEnd in blockRanges]
 
-                if "code" in responseJSON.keys():
-                    if show and self.moreDebug:
-                        uLogger.debug("An issue occurred and block #{}/{} is empty".format(item + 1, blocks))
+            for future in as_completed(futures):
+                try:
+                    bStart, bEnd, responseJSON = future.result()
 
-                else:
-                    if "candles" in responseJSON.keys():
+                    if "code" in responseJSON:
+                        if show and self.moreDebug:
+                            uLogger.debug(f"Block [{bStart} — {bEnd}] returned an error or empty result")
+
+                    elif "candles" in responseJSON:
                         if start is not None and (start.lower() == "yesterday" or start == end) and interval == "day" and len(responseJSON["candles"]) > 1:
                             responseJSON["candles"] = responseJSON["candles"][:-1]  # removes last candle for "yesterday" request
 
-                        responseJSONs = responseJSON["candles"] + responseJSONs  # add more old history behind newest dates
+                        responseJSONs.extend(responseJSON["candles"])
 
                     else:
                         if show and self.moreDebug:
-                            uLogger.debug("`candles` key not in responseJSON keys! Block #{}/{} is empty".format(item + 1, blocks))
+                            uLogger.debug(f"`candles` key missing in block [{bStart} — {bEnd}]")
 
-            blockEnd = blockStart
+                except Exception as e:
+                    uLogger.debug(f"❌ Error while downloading history block: {e}")
 
         if responseJSONs:
             tempHistory = pd.DataFrame(
@@ -3211,6 +3224,12 @@ class TinkoffBrokerServer:
 
             else:
                 history = tempHistory  # if no `--only-missing` key then load full data from server
+
+            # Sorting blocks by date and time:
+            history["__dt"] = pd.to_datetime(history["date"] + " " + history["time"], format="%Y.%m.%d %H:%M")
+            history.sort_values(by="__dt", inplace=True)
+            history.drop(columns=["__dt"], inplace=True)
+            history.reset_index(drop=True, inplace=True)
 
             if show and self.moreDebug:
                 uLogger.debug("Last 3 rows of received history:\n{}".format(pd.DataFrame.to_string(history[["date", "time", "open", "high", "low", "close", "volume"]][-3:], max_cols=20, index=False)))
