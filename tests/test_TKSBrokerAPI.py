@@ -14,8 +14,11 @@ class TestTKSBrokerAPIMethods:
     @pytest.fixture(scope="function", autouse=True)
     def init(self):
         TKSBrokerAPI.uLogger.level = 50  # Disable debug logging while test, logger CRITICAL = 50
-        TKSBrokerAPI.uLogger.handlers[0].level = 50  # Disable debug logging for STDOUT
-        TKSBrokerAPI.uLogger.handlers[1].level = 50  # Disable debug logging for log.txt
+
+        # Disable debug logging for STDOUT and log.txt:
+        if TKSBrokerAPI.uLogger.handlers:
+            for h in TKSBrokerAPI.uLogger.handlers:
+                h.setLevel(50)
 
         # set up default parameters:
         Path("./tests/InstrumentsDump.json").touch()  # "touching" file to avoid updating by "file outdated" trigger

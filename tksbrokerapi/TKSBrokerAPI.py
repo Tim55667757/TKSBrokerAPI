@@ -659,7 +659,7 @@ class TinkoffBrokerServer:
 
             return {}
 
-    def SendAPIRequest(self, url: str, reqType: str = "GET", methodName: Optional[str] = None, _internalBody: Optional[dict|str] = None) -> dict:
+    def SendAPIRequest(self, url: str, reqType: str = "GET", methodName: Optional[str] = None, _internalBody: Optional[Union[dict, str]] = None) -> dict:
         """
         Send GET or POST request to broker server and receive JSON object.
 
