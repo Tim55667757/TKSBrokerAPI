@@ -461,6 +461,28 @@ class TestTKSBrokerAPIMethods:
 
             assert mockHistory.call_count == len(tickersList), "History() must be call once for every ticker"
 
+        # Check string ticker instead of list
+        singleTicker = "GAZP"
+        kwargsSingle = {
+            "token": "t4", "accountId": "acc4", "useCache": True,
+            "interval": "hour", "onlyMissing": True, "show": False
+        }
+
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=True), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockSingle, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=singleTicker,
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                **kwargsSingle
+            )
+
+            assert mockSingle.call_count == 1, "History() must be called once when single ticker passed as string"
+
     def test_HistoryAutoUpdaterNegative(self):
         # Errors in _HistoryAutoUpdaterWrapper
         testData = [
