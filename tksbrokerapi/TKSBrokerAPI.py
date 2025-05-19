@@ -3101,6 +3101,37 @@ class TinkoffBrokerServer:
             instrumentByFIGI = self.SearchByFIGI(requestPrice=False)
             self._ticker = instrumentByFIGI["ticker"] if instrumentByFIGI else ""
 
+        tempOld = None  # pandas object for old history, if --only-missing key present
+        lastTime = None  # datetime object of last old candle in file
+
+        # If onlyMissing == True and history file exist — load it and get date of the last candle:
+        if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
+            try:
+                if show and self.moreDebug:
+                    uLogger.debug("--only-missing key present, add only last missing candles...")
+                    uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
+
+                tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
+
+                tempOld["date"] = pd.to_datetime(tempOld["date"])
+                tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")
+                tempOld["time"] = pd.to_datetime(tempOld["time"])
+                tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")
+
+                if len(tempOld) > 0:
+                    lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
+
+                else:
+                    lastTime = datetime.utcnow().replace(tzinfo=tzutc()) - timedelta(days=1)
+
+                tempOld = tempOld[:-1]  # remove possibly incomplete last candle
+
+                strStartDate = lastTime.strftime(TKS_DATE_TIME_FORMAT)
+
+            except Exception as e:
+                uLogger.debug(tb.format_exc())
+                uLogger.error("📝 An issue occurred while loading file [{}] — possibly due to incorrect format. It will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
+
         dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
         dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
         if interval.lower() != "day":
@@ -3122,9 +3153,6 @@ class TinkoffBrokerServer:
             uLogger.debug("Requested time period is about from [{}] UTC to [{}] UTC".format(strStartDate, strEndDate))
             uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
             uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
-
-        tempOld = None  # pandas object for old history, if --only-missing key present
-        lastTime = None  # datetime object of last old candle in file
 
         if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
             try:
