@@ -13,6 +13,7 @@ requests >= 2.32.0  # Apache-2.0 License
 openpyxl >= 3.0.10  # MIT License
 Mako >= 1.2.4  # MIT License
 python-dateutil >= 2.8.1  # Apache-2.0 License
+pycron >= 3.0.0  # MIT License
 
 # Project packages:
 PriceGenerator >= 1.4.93  # Apache-2.0 License
