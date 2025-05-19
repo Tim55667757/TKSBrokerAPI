@@ -403,3 +403,103 @@ class TestTKSBrokerAPIMethods:
 
         for i, line in enumerate(result):
             assert line + "\n" == iListInfo[i], 'Check `ShowInstrumentsInfo()` method! It returns different info than in `./tests/InstrumentsInfoDump.txt`\nLine: {}\nExpected: `{}`\nActual: `{}`'.format(i + 1, iListInfo[i], line + "\n")
+
+    def test_HistoryAutoUpdaterPositive(self):
+        testData = [
+            {
+                "task": {
+                    "ticker": "GAZP",
+                    "kwargs": {
+                        "token": "t1", "accountId": "acc1", "useCache": True,
+                        "interval": "hour", "onlyMissing": True, "show": False
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "SBER",
+                    "kwargs": {
+                        "token": "t2", "accountId": "acc2", "useCache": False,
+                        "interval": "day", "onlyMissing": False, "show": True
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "YNDX",
+                    "kwargs": {
+                        "token": "t3", "accountId": "acc3", "interval": "15min"
+                    }
+                }
+            },
+        ]
+
+        # Check _HistoryAutoUpdaterWrapper()
+        for item in testData:
+            with patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockHistory, \
+                 patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None):
+                TKSBrokerAPI._HistoryAutoUpdaterWrapper(item["task"])
+
+                assert mockHistory.call_count == 1, f"History() not used for {item['task']['ticker']}"
+
+        # Check HistoryAutoUpdater()
+        tickersList = [item["task"]["ticker"] for item in testData]
+        kwargs = testData[0]["task"]["kwargs"]  # All used the same kwargs for updater tests
+
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=True), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockHistory, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=tickersList,
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                **kwargs
+            )
+
+            assert mockHistory.call_count == len(tickersList), "History() must be call once for every ticker"
+
+    def test_HistoryAutoUpdaterNegative(self):
+        # Errors in _HistoryAutoUpdaterWrapper
+        testData = [
+            {
+                "task": {
+                    "ticker": "BAD1",
+                    "kwargs": {
+                        "token": "err1", "accountId": "acc", "interval": "hour"
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "BAD2",
+                    "kwargs": {
+                        "token": "err2"
+                    }
+                }
+            },
+        ]
+
+        for item in testData:
+            with patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", side_effect=Exception("mocked error")), \
+                    patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None):
+                with pytest.raises(Exception, match="mocked error"):
+                    TKSBrokerAPI._HistoryAutoUpdaterWrapper(item["task"])
+
+        # Check HistoryAutoUpdater if cron broken
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=False), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History") as mockHistory, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=["GAZP", "SBER"],
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                token="x", accountId="y", interval="hour"
+            )
+
+            assert mockHistory.call_count == 0, "History() do not run if cron not triggered"
