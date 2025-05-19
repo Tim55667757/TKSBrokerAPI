@@ -56,9 +56,12 @@
 * [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) В сотни раз ускорена работа метода `HampelFilter()`, особенно это заметно для длинных рядов, содержащих более 1 млн. значений.
 * [#148](https://github.com/Tim55667757/TKSBrokerAPI/issues/148) Реализована оптимизированная и ускоренная версия `FastBBands()`, вместо аналогичной медленной функции из pandas_ta.
 * [#149](https://github.com/Tim55667757/TKSBrokerAPI/issues/149) Реализована оптимизированная и ускоренная версия `FastPSAR()`, вместо аналогичной медленной функции из pandas_ta.
+* [#144](https://github.com/Tim55667757/TKSBrokerAPI/issues/144) Реализована функция `CalculateAdaptiveCacheReserve()` для адаптивного динамического управления объёмом ликвидности.
 * [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Улучшена базовая функция `SendAPIRequest()`: безопасные повторы, разбор ошибок, полные тесты; повышена стабильность клиента.
 * [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Оптимизирован метод `Overview()` для портфеля и добавлены юнит-тесты.
 * [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Добавлена мини-функция `FormatTimedelta()` для форматирования timedelta с точностью до секунд, с возвратом строки по умолчанию при ошибках.
+* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88 Улучшен вид таблицы со стоп-ордерами в `--overview`.
+* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91 Тикеры теперь можно указывать в любом формате (регистронезависимые).
 
 ##### Баг-фиксы
 
@@ -78,6 +81,9 @@
 * [#128](https://github.com/Tim55667757/TKSBrokerAPI/issues/128) Был исправлен баг: `RUB000UTSTOM` FIGI отсутствует в `dump.json`. С 7 марта 2023 RUB000UTSTOM FIGI перестал возвращаться брокером в списке валют через API.
 * [#142](https://github.com/Tim55667757/TKSBrokerAPI/issues/142) Был исправлен баг: ImportError после установки и запуска TKSBrokerAPI.
 * [#129](https://github.com/Tim55667757/TKSBrokerAPI/issues/129) Добавлена функция `DetermineDecimalPrecision()` и интеграция в метод `History()` для автоматического округления цен перед сохранением в CSV, чтобы избежать ошибок округления.
+* [#131](https://github.com/Tim55667757/TKSBrokerAPI/issues/131) Исправлена ошибка при наличии "запрещённых" валют "недружественных" стран в портфеле.
+* [#133](https://github.com/Tim55667757/TKSBrokerAPI/issues/133) Исправлен TypeError при экспорте в XLSX.
+* [#137](https://github.com/Tim55667757/TKSBrokerAPI/issues/137) Исправлен KeyError: 'rub', если кеш в рублях равен нулю в портфеле (обычно при открытии счёта, до первого пополнения).
 
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — опубликована

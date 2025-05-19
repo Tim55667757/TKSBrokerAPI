@@ -56,9 +56,12 @@ Release development in progress...
 * [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) Improved `HampelFilter()` performance: replaced nested MAD lambda with vectorized median calculation. Now passes 1M-element test in under 1s (was >90s on an older version).
 * [#148](https://github.com/Tim55667757/TKSBrokerAPI/issues/148) Implemented an improved version of `FastBBands()` than the similar function in pandas_ta lib.
 * [#149](https://github.com/Tim55667757/TKSBrokerAPI/issues/149) Implemented an improved version of `FastPSAR()` than the similar function in pandas_ta lib.
+* [#144](https://github.com/Tim55667757/TKSBrokerAPI/issues/144) Implemented `CalculateAdaptiveCacheReserve()` method for Dynamic Liquidity Reserve Management.
 * [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Improved `SendAPIRequest()`: added safe retries, error parsing, full unit tests; increased API client stability.
 * [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Optimized the `Overview()` method for portfolio and added unit tests.
 * [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Added: `FormatTimedelta()` utility for formatting timedelta with optional precision, fallback to raw string on invalid input.
+* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88 Simplify view of the "Opened stop-orders" table with `--overview` key.
+* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91 Implement possibility to set tickers in lower-case.
 
 ##### Bug fixes
 
@@ -78,6 +81,9 @@ Release development in progress...
 * [#128](https://github.com/Tim55667757/TKSBrokerAPI/issues/128) Bug fixed: `RUB000UTSTOM` FIGI not in `dump.json`. Since 7 March 2023 RUB000UTSTOM FIGI have excluded from the currency list.
 * [#142](https://github.com/Tim55667757/TKSBrokerAPI/issues/142) Bug fixed: ImportError after pip install TKSBrokerAPI.
 * [#129](https://github.com/Tim55667757/TKSBrokerAPI/issues/129) Added `DetermineDecimalPrecision()` utility and integrated it into `History()` for automatic rounding of float values before saving to CSV and avoid rounding bug.
+* [#131](https://github.com/Tim55667757/TKSBrokerAPI/issues/131) Fixed error in `Overview()` caused by presence of restricted or unsupported currencies in portfolio.
+* [#133](https://github.com/Tim55667757/TKSBrokerAPI/issues/133) Fixed TypeError when export to XLSX.
+* [#137](https://github.com/Tim55667757/TKSBrokerAPI/issues/137) Fixed KeyError: 'rub' if cash in RUB == 0 in portfolio.
 
 ### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
 
