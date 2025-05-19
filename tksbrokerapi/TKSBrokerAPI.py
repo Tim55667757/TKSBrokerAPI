@@ -659,16 +659,18 @@ class TinkoffBrokerServer:
 
             return {}
 
-    def SendAPIRequest(self, url: str, reqType: str = "GET", methodName: Optional[str] = None) -> dict:
+    def SendAPIRequest(self, url: str, reqType: str = "GET", methodName: Optional[str] = None, _internalBody: Optional[dict|str] = None) -> dict:
         """
         Send GET or POST request to broker server and receive JSON object.
 
         self.header: must be defining with dictionary of headers.
         self.body: if define then used as request body. None by default.
         self.timeout: global request timeout, 15 seconds by default.
+
         :param url: url with REST request.
         :param reqType: send "GET" or "POST" request. "GET" by default.
         :param methodName: optional manual override for REST method name (used for throttling).
+        :param _internalBody: DO NOT use this variable in your scripts! This is debug variable for internal used only.
 
         :return: response JSON (dictionary) from broker.
         """
@@ -677,12 +679,14 @@ class TinkoffBrokerServer:
             uLogger.error(f"❌ Invalid request type! Allowed HTTP methods are: {', '.join(httpMethods)}.")
             raise Exception("Incorrect value")
 
+        requestBody = self.body if _internalBody is None else _internalBody
+
         if self.moreDebug:
             uLogger.debug("Request parameters:")
             uLogger.debug("    - REST API URL: {}".format(url))
             uLogger.debug("    - request type: {}".format(reqType))
             uLogger.debug("    - headers:\n{}".format(str(self.headers).replace(self.token, "*** request token ***")))
-            uLogger.debug("    - body:\n{}".format(self.body))
+            uLogger.debug("    - body:\n{}".format(requestBody))
 
         responseJSON = {}
         oK = True
@@ -709,10 +713,10 @@ class TinkoffBrokerServer:
                 try:
                     # try to send REST-request:
                     if reqType == "GET":
-                        response = requests.get(url, headers=self.headers, data=self.body, timeout=self.timeout)
+                        response = requests.get(url, headers=self.headers, data=requestBody, timeout=self.timeout)
 
                     if reqType == "POST":
-                        response = requests.post(url, headers=self.headers, data=self.body, timeout=self.timeout)
+                        response = requests.post(url, headers=self.headers, data=requestBody, timeout=self.timeout)
 
                 except requests.exceptions.RequestException as e:
                     # catch expected connection/request exceptions:
@@ -3044,7 +3048,7 @@ class TinkoffBrokerServer:
         # REST API for request: https://tinkoff.github.io/investAPI/swagger-ui/#/MarketDataService/MarketDataService_GetCandles
         historyURL = self.server + r"/tinkoff.public.invest.api.contract.v1.MarketDataService/GetCandles"
 
-        self.body = str({
+        reqBody = str({
             "figi": self._figi,
             "from": blockStart.strftime(TKS_DATE_TIME_FORMAT),
             "to": blockEnd.strftime(TKS_DATE_TIME_FORMAT),
@@ -3055,7 +3059,7 @@ class TinkoffBrokerServer:
             threadName = threading.current_thread().name
             uLogger.debug(f"Started downloading block [{blockStart} — {blockEnd}] in thread [{threadName}]")
 
-        return blockStart, blockEnd, self.SendAPIRequest(historyURL, reqType="POST", methodName="GetCandles")
+        return blockStart, blockEnd, self.SendAPIRequest(historyURL, reqType="POST", methodName="GetCandles", _internalBody=reqBody)
 
     def History(self, start: str = None, end: str = None, interval: str = "hour", onlyMissing: bool = False, csvSep: str = ",", show: bool = True) -> pd.DataFrame:
         """
@@ -3082,6 +3086,13 @@ class TinkoffBrokerServer:
                  `["date", "time", "open", "high", "low", "close", "volume"]`.
         """
         strStartDate, strEndDate = GetDatesAsString(start, end, userFormat=TKS_DATE_FORMAT, outputFormat=TKS_DATE_TIME_FORMAT)  # example: ("2020-01-01T00:00:00Z", "2022-12-31T23:59:59Z")
+        strStartDateOriginal = strStartDate  # Save original date
+
+        dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
+        dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
+        if interval.lower() != "day":
+            dtEnd += timedelta(seconds=1)  # adds 1 sec for requests, because day end returned by `TradeRoutines.GetDatesAsString()` is 23:59:59
+
         headers = ["date", "time", "open", "high", "low", "close", "volume"]  # sequence and names of column headers
         history = None  # empty pandas object for history
 
@@ -3113,29 +3124,27 @@ class TinkoffBrokerServer:
 
                 tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
 
-                tempOld["date"] = pd.to_datetime(tempOld["date"])
-                tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")
-                tempOld["time"] = pd.to_datetime(tempOld["time"])
-                tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")
+                tempOld["date"] = pd.to_datetime(tempOld["date"], format="%Y.%m.%d")  # load date "as is"
+                tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
+                tempOld["time"] = pd.to_datetime(tempOld["time"], format="%H:%M")  # load time "as is"
+                tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
 
                 if len(tempOld) > 0:
                     lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
+                    tempOld = tempOld[:-1]  # always remove possibly incomplete last candle
+
+                    # Update dtStart if only file is not empty:
+                    dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())
+                    dtStart = max(dtStart, lastTime)
+                    strStartDate = dtStart.strftime(TKS_DATE_TIME_FORMAT)
 
                 else:
-                    lastTime = datetime.utcnow().replace(tzinfo=tzutc()) - timedelta(days=1)
-
-                tempOld = tempOld[:-1]  # remove possibly incomplete last candle
-
-                strStartDate = lastTime.strftime(TKS_DATE_TIME_FORMAT)
+                    tempOld = None
+                    lastTime = None
 
             except Exception as e:
                 uLogger.debug(tb.format_exc())
-                uLogger.error("📝 An issue occurred while loading file [{}] — possibly due to incorrect format. It will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
-
-        dtStart = datetime.strptime(strStartDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from start time string
-        dtEnd = datetime.strptime(strEndDate, TKS_DATE_TIME_FORMAT).replace(tzinfo=tzutc())  # datetime object from end time string
-        if interval.lower() != "day":
-            dtEnd += timedelta(seconds=1)  # adds 1 sec for requests, because day end returned by `TradeRoutines.GetDatesAsString()` is 23:59:59
+                uLogger.debug(f"⚠️ An issue occurred while loading file [{os.path.abspath(self.historyFile)}] — possibly due to incorrect format. It will be rewritten. Message: {e}")
 
         delta = dtEnd - dtStart  # current UTC time minus last time in file
         deltaMinutes = delta.days * 1440 + delta.seconds // 60  # minutes between start and end dates
@@ -3154,44 +3163,27 @@ class TinkoffBrokerServer:
             uLogger.debug("Calculated history length: [{}], interval: [{}]".format(length, interval))
             uLogger.debug("Data blocks, count: [{}], max candles in block: [{}]".format(blocks, TKS_CANDLE_INTERVALS[interval][2]))
 
-        if onlyMissing and self.historyFile is not None and self.historyFile and os.path.exists(self.historyFile):
-            try:
-                if show and self.moreDebug:
-                    uLogger.debug("--only-missing key present, add only last missing candles...")
-                    uLogger.debug("History file will be updated: [{}]".format(os.path.abspath(self.historyFile)))
-
-                tempOld = pd.read_csv(self.historyFile, sep=csvSep, header=None, names=headers)
-
-                tempOld["date"] = pd.to_datetime(tempOld["date"], format="%Y.%m.%d")  # load date "as is"
-                tempOld["date"] = tempOld["date"].dt.strftime("%Y.%m.%d")  # convert date to string
-                tempOld["time"] = pd.to_datetime(tempOld["time"], format="%H:%M")  # load time "as is"
-                tempOld["time"] = tempOld["time"].dt.strftime("%H:%M")  # convert time to string
-
-                # get last datetime object from last string in file or minus 1 delta if file is empty:
-                if len(tempOld) > 0:
-                    lastTime = datetime.strptime(tempOld.date.iloc[-1] + " " + tempOld.time.iloc[-1], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
-
-                else:
-                    lastTime = dtEnd - timedelta(days=1)  # history file is empty, so last date set at -1 day
-
-                tempOld = tempOld[:-1]  # always remove last old candle because it may be incompletely at the current time
-
-            except Exception as e:
-                uLogger.debug(tb.format_exc())
-                uLogger.error("📝 An issue occurred while loading file [{}] — possibly due to incorrect format. It will be rewritten. Message: {}".format(os.path.abspath(self.historyFile), e))
-
         responseJSONs = []  # raw history blocks of data
         blockRanges = []
         blockEnd = dtEnd
 
-        for item in range(blocks):
-            tail = length % TKS_CANDLE_INTERVALS[interval][2] if item + 1 == blocks else TKS_CANDLE_INTERVALS[interval][2]
-            blockStart = blockEnd - timedelta(minutes=TKS_CANDLE_INTERVALS[interval][1] * tail)
+        maxCandlesPerBlock = TKS_CANDLE_INTERVALS[interval][2]
+        minutesPerCandle = TKS_CANDLE_INTERVALS[interval][1]
 
-            if blockStart != blockEnd:
+        # Calculate blocks for downloading:
+        for _ in range(blocks):
+            blockSize = min(length, maxCandlesPerBlock)
+            deltaMinutes = blockSize * minutesPerCandle
+            blockStart = blockEnd - timedelta(minutes=deltaMinutes)
+
+            if blockStart < dtStart:
+                blockStart = dtStart  # cut last tail
+
+            if blockStart < blockEnd:
                 blockRanges.append((blockStart, blockEnd))
 
             blockEnd = blockStart
+            length -= blockSize
 
         with ThreadPoolExecutor(max_workers=min(CPU_USAGES, len(blockRanges))) as executor:
             futures = [executor.submit(self._DownloadHistoryBlock, bStart, bEnd, interval) for bStart, bEnd in blockRanges]
@@ -3234,14 +3226,18 @@ class TinkoffBrokerServer:
             tempHistory["date"] = tempHistory["date"].dt.strftime("%Y.%m.%d")
             tempHistory["time"] = tempHistory["time"].dt.strftime("%H:%M")
 
+            # Drop duplicates in temp:
+            tempHistory.drop_duplicates(subset=["date", "time"], keep="last", inplace=True)
+            tempHistory.reset_index(drop=True, inplace=True)
+
             # append only newest candles to old history if --only-missing key present:
             if onlyMissing and tempOld is not None and lastTime is not None:
-                index = 0  # find start index in tempHistory data:
+                index = len(tempHistory)  # no need for append by default
 
                 for i, item in tempHistory.iterrows():
                     curTime = datetime.strptime(item["date"] + " " + item["time"], "%Y.%m.%d %H:%M").replace(tzinfo=tzutc())
 
-                    if curTime == lastTime:
+                    if curTime >= lastTime:
                         if show and self.moreDebug:
                             uLogger.debug("History will be updated starting from the date: [{}]".format(curTime.strftime(TKS_PRINT_DATE_TIME_FORMAT)))
 
@@ -3249,6 +3245,10 @@ class TinkoffBrokerServer:
                         break
 
                 history = pd.concat([tempOld, tempHistory[index:]], ignore_index=True)
+
+                # Drop duplicates in temp:
+                history.drop_duplicates(subset=["date", "time"], keep="last", inplace=True)
+                history.reset_index(drop=True, inplace=True)
 
             else:
                 history = tempHistory  # if no `--only-missing` key then load full data from server
@@ -3264,10 +3264,11 @@ class TinkoffBrokerServer:
 
         if show:
             if history is not None and not history.empty:
-                printCount = len(responseJSONs)  # candles to show in the console
+                printCount = min(len(history), 10)
+
                 uLogger.info(
-                    f"📊 Loaded candlestick history between [{strStartDate.replace('T', ' ').replace('Z', '')}] UTC and "
-                    f"[{strEndDate.replace('T', ' ').replace('Z', '')}] UTC. Non-empty candles: [{len(history[-printCount:])}]\n"
+                    f"📊 Loaded candlestick history between [{strStartDateOriginal.replace('T', ' ').replace('Z', '')}] UTC and "
+                    f"[{strEndDate.replace('T', ' ').replace('Z', '')}] UTC. Non-empty candles in history: [{len(history)}], showed last [{printCount}] candles:\n"
                     f"{pd.DataFrame.to_string(history[['date', 'time', 'open', 'high', 'low', 'close', 'volume']][-printCount:], max_cols=20, index=False)}"
                 )
 

@@ -1297,7 +1297,7 @@ More tickers aliases here: <code>TKSEnums.TKS_TICKER_ALIASES</code>.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">SendAPIRequest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">url</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span>,</span><span class="param">	<span class="n">methodName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+        <span class="name">SendAPIRequest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">url</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">reqType</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span>,</span><span class="param">	<span class="n">methodName</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_internalBody</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
 
         
     </div>
@@ -1315,6 +1315,7 @@ self.timeout: global request timeout, 15 seconds by default.</p>
 <li><strong>url</strong>:  url with REST request.</li>
 <li><strong>reqType</strong>:  send "GET" or "POST" request. "GET" by default.</li>
 <li><strong>methodName</strong>:  optional manual override for REST method name (used for throttling).</li>
+<li><strong>_internalBody</strong>:  DO NOT use this variable in your scripts! This is debug variable for internal used only.</li>
 </ul>
 
 <h6 id="returns">Returns</h6>
