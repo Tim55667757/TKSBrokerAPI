@@ -43,9 +43,9 @@
 3. [Auth](#Auth)
    - [Token](#Token)
    - [User account ID](#User-account-ID)
-4. [Usage examples](#Usage-examples)
+4. [Reference](#Reference)
+5. [Usage examples](#Usage-examples)
    - [Command line](#Command-line)
-     - [Reference](#Reference)
      - [Local cache](#Local-cache)
      - [Get a list of all instruments available for trading](#Get-a-list-of-all-instruments-available-for-trading)
      - [Find an instrument](#Find-an-instrument)
@@ -215,6 +215,9 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Download historical data from the broker's server in the OHLCV price model (intervals available: `1min`, `5min`, `15min`, `hour` and `day` for any period of time, starting from `1970-01-01`);
    - common key `--history` and additional keys: `--interval`, `--only-missing` and `--csv-sep`;
    - API-method: [`History()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.History).
+- Cron-based multithreaded history auto-updater with per-ticker output (with similar options as in previous);
+   - common key `--history-auto-updater` and additional keys: `--crontab`, `--date-start`, `--wait-after-iteration` and `--wait-next`;
+   - API-method: [`HistoryAutoUpdater()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#HistoryAutoUpdater).
 - Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
   - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
   - API-method: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
@@ -326,6 +329,108 @@ There are three options for setting the user account ID:
 - or you can pre-set a special variable in the user environment: `TKS_ACCOUNT_ID=your_id_number`.
 
 
+## Reference
+
+The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be shown in the console.
+
+```commandline
+tksbrokerapi --help
+```
+
+### 🚀 How to launch
+
+You can use the platform in two ways:
+
+```bash
+# As Python module
+python TKSBrokerAPI.py [options] [command]
+
+# As CLI tool (if installed with entry point)
+tksbrokerapi [options] [command]
+```
+
+### 💡 Platform Overview
+
+**TKSBrokerAPI** is a trading platform designed to automate and simplify trading scenarios. It works with the **Tinkoff Invest API (REST)** and supports full-cycle trading, data fetching, order management, and signal execution.
+
+Explore [usage examples](#Usage-examples).
+
+### ⚙️ Options
+
+| Option                          | Description                                                                   | Example                         |
+|---------------------------------|-------------------------------------------------------------------------------|---------------------------------|
+| `--token TOKEN`                 | API token. If not provided, uses env `TKS_API_TOKEN`.                         | `--token abc123`                |
+| `--account-id ACCOUNT_ID`       | Account ID. Can be taken from broker reports and set to env `TKS_ACCOUNT_ID`. | `--account-id 123456789`        |
+| `--ticker TICKER`, `-t TICKER`  | Ticker name, e.g. `GAZP`, `SBER`, `USD`.                                      | `--ticker YNDX`                 |
+| `--figi FIGI`, `-f FIGI`        | Instrument FIGI code.                                                         | `--figi BBG000TJ6F42`           |
+| `--depth DEPTH`                 | Depth of Market (DOM), integer ≥1.                                            | `--depth 10`                    |
+| `--output OUTPUT`               | Filepath to save output data (CSV, MD, XLSX).                                 | `--output deals.md`             |
+| `--interval INTERVAL`           | Candlestick interval: `1min`, `5min`, `15min`, `hour`, `day`.                 | `--interval hour`               |
+| `--date-start DATE`, `-ds DATE` | Start date for historical data.                                               | `--date-start 2024-01-01`       |
+| `--only-missing`                | Append only new candles to history files.                                     | `--only-missing`                |
+| `--html`                        | Generate HTML reports from Markdown.                                          | `--html`                        |
+| `--debug-level N`, `-v N`       | Logging level: 10=DEBUG, 20=INFO, etc.                                        | `-v 20`                         |
+| `--more`                        | Enable extended logging including HTTP headers.                               | `--more`                        |
+| `--tag TAG`                     | Optional tag to distinguish parallel runs.                                    | `--tag "Backtest#1"`            |
+| `--crontab CRON`                | Cron expression in pycron format.                                             | `--crontab "*/5 10-23 * * 1-5"` |
+| `--wait-after-iteration SECS`   | Pause after each cron iteration.                                              | `--wait-after-iteration 60`     |
+| `--wait-next SECS`              | Pause before next cron check.                                                 | `--wait-next 2`                 |
+| `--no-cache`                    | Ignore local `dump.json` cache.                                               | `--no-cache`                    |
+| `--csv-sep SEP`                 | CSV separator, default `,`.                                                   | `--csv-sep ;`                   |
+| `--no-cancelled`                | Do not show cancelled deals.                                                  | `--no-cancelled`                |
+| `--version`, `--ver`            | Show version of TKSBrokerAPI.                                                 | `--version`                     |
+
+### 🛠 Commands
+
+#### 🔍 Market Data
+
+| Command               | Description                          | Example                   |
+|-----------------------|--------------------------------------|---------------------------|
+| `--list`, `-l`        | Show all available instruments.      | `--list`                  |
+| `--search NAME`, `-s` | Search instruments by name/ticker.   | `--search "Gazpr"`        |
+| `--info`, `-i`        | Get full info for ticker or FIGI.    | `--ticker YDEX --info`    |
+| `--calendar`, `-c`    | Show bonds payment calendar.         | `--calendar SBER`         |
+| `--price`             | Show price for a single instrument.  | `--ticker GAZP --price`   |
+| `--prices`, `-p`      | Get prices for multiple instruments. | `--prices GAZP SBER YDEX` |
+
+#### 📊 Reports and History
+
+| Command                | Description                  | Example                |
+|------------------------|------------------------------|------------------------|
+| `--deals`, `-d`        | Show all deals for a period. | `--deals week`         |
+| `--overview`, `-o`     | Full portfolio snapshot.     | `--overview`           |
+| `--overview-digest`    | Short summary.               | `--overview-digest`    |
+| `--overview-positions` | Open positions only.         | `--overview-positions` |
+| `--overview-orders`    | Open limit and stop orders.  | `--overview-orders`    |
+| `--limits`, `-w`       | Withdrawal limits table.     | `--limits`             |
+| `--user-info`, `-u`    | User and account info.       | `--user-info`          |
+| `--account`, `-a`      | All available accounts.      | `--account`            |
+
+#### 📈 Historical Data
+
+| Command                             | Description                                 | Example                                                |
+|-------------------------------------|---------------------------------------------|--------------------------------------------------------|
+| `--history`, `--get-history`, `-gh` | Download candles.                           | `--ticker GAZP --history today`                        |
+| `--load-history`, `-lh`             | Load from file and print as table.          | `--load-history mydata.csv`                            |
+| `--render-chart`                    | Render chart: `interact` or `non-interact`. | `--render-chart i`                                     |
+| `--history-auto-updater`, `-hu`     | Run cron-based history downloader.          | `--history-auto-updater GAZP SBER YDEX--date-start -3` |
+
+#### 📤 Trading Operations
+
+| Command                             | Description                       | Example                       |
+|-------------------------------------|-----------------------------------|-------------------------------|
+| `--trade`                           | Open market position.             | `--trade Buy 1 200.0 180.0`   |
+| `--buy`, `--sell`                   | Instant market Buy/Sell.          | `--buy 2 220.0 190.0`         |
+| `--order`                           | Universal limit/stop order.       | `--order Buy Limit 1 190.0`   |
+| `--buy-limit`, `--sell-limit`       | Place limit order.                | `--buy-limit 2 180.0`         |
+| `--buy-stop`, `--sell-stop`         | Place stop order.                 | `--sell-stop 1 150.0`         |
+| `--close-order`, `--cancel-order`   | Cancel a single order by ID.      | `--close-order abc123`        |
+| `--close-orders`, `--cancel-orders` | Cancel multiple orders.           | `--close-orders id1 id2`      |
+| `--close-trade`, `--cancel-trade`   | Close a single position.          | `--ticker YNDX --close-trade` |
+| `--close-trades`, `--cancel-trades` | Close list of positions.          | `--close-trades GAZP SBER`    |
+| `--close-all`, `--cancel-all`       | Close all non-currency positions. | `--close-all`                 |
+
+
 ## Usage examples
 
 Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a Python script.
@@ -347,268 +452,6 @@ tksbrokerapi [optional keys and parameters] [one action]
 ❗ To execute most commands, you must each time specify your token through the `--token` key and the account ID through the `--account-id` key, or set them once with the `TKS_API_TOKEN` and `TKS_ACCOUNT_ID` environment variables (see section ["Auth"](#Auth)).
 
 *Note: in the examples below, the access token and account ID were pre-set via the `TKS_API_TOKEN` and `TKS_ACCOUNT_ID` environment variables, so the `--token` and `--account-id` keys do not appear in the logs.*
-
-#### Reference
-
-The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be shown in the console.
-
-<details>
-  <summary>Command for displaying internal help on working with the keys</summary>
-
-```commandline
-tksbrokerapi --help
-```
-
-Output:
-
-```text
-usage: 
-/as module/ python TKSBrokerAPI.py [some options] [one command]
-/as CLI tool/ tksbrokerapi [some options] [one command]
-
-TKSBrokerAPI is a trading platform for automation on Python to simplify the
-implementation of trading scenarios and work with Tinkoff Invest API server
-via the REST protocol. See examples:
-https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-
-options:
-  -h, --help            show this help message and exit
-  --no-cache            Option: not use local cache `dump.json`, but update
-                        raw instruments data when starting the platform.
-                        `False` by default.
-  --token TOKEN         Option: Tinkoff service's api key. If not set then
-                        used environment variable `TKS_API_TOKEN`. See how to
-                        use: https://tinkoff.github.io/investAPI/token/
-  --account-id ACCOUNT_ID
-                        Option: string with an user numeric account ID in
-                        Tinkoff Broker. It can be found in any broker's
-                        reports (see the contract number). Also, this variable
-                        can be set from environment variable `TKS_ACCOUNT_ID`.
-  --ticker TICKER, -t TICKER
-                        Option: instrument's ticker, e.g. `IBM`, `YNDX`,
-                        `GOOGL` etc. Use alias for `USD000UTSTOM` simple as
-                        `USD`, `EUR_RUB__TOM` as `EUR`.
-  --figi FIGI, -f FIGI  Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for
-                        `YNDX`).
-  --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
-                        default.
-  --no-cancelled, --no-canceled
-                        Option: remove information about cancelled operations
-                        from the deals report by the `--deals` key. `False` by
-                        default.
-  --output OUTPUT       Option: replace default paths to output files for some
-                        commands. If `None` then used default files.
-  --html, --HTML        Option: if key present then TKSBrokerAPI generate also
-                        HTML reports from Markdown. False by default.
-  --interval INTERVAL   Option: available values are `1min`, `5min`, `15min`,
-                        `hour` and `day`. Used only with `--history` key. This
-                        is time period of one candle. Default: `hour` for
-                        every history candles.
-  --only-missing        Option: if history file define by `--output` key then
-                        add only last missing candles, do not request all
-                        history length. `False` by default.
-  --csv-sep CSV_SEP     Option: separator if csv-file is used, `,` by default.
-  --debug-level DEBUG_LEVEL, --log-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
-                        Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
-                        ERROR, 50 = CRITICAL. INFO (20) by default.
-  --more, --more-debug  Option: `--debug-level` key only switch log level
-                        verbosity, but in addition `--more` key enable all
-                        debug information, such as net request and response
-                        headers in all methods.
-  --tag TAG             Option: identification TKSBrokerAPI tag in log
-                        messages to simplify debugging when platform instances
-                        runs in parallel mode. Default: `` (empty string).
-  --version, --ver      Action: shows current semantic version, looks like
-                        `major.minor.buildnumber`. If TKSBrokerAPI not installed
-                        via pip, then used local build number `.dev0`.
-  --list, -l            Action: get and print all available instruments and
-                        some information from broker server. Also, you can
-                        define `--output` key to save list of instruments to
-                        file, default: `instruments.md`.
-  --list-xlsx, -x       Action: get all available instruments from server for
-                        current account and save raw data into xlsx-file to
-                        further used by data scientists or stock analytics,
-                        default: `dump.xlsx`.
-  --bonds-xlsx [BONDS_XLSX ...], -b [BONDS_XLSX ...]
-                        Action: get all available bonds if only key present or
-                        list of bonds with FIGIs or tickers and transform it
-                        to the wider Pandas DataFrame with more information
-                        about bonds: main info, current prices, bonds payment
-                        calendar, coupon yields, current yields and some
-                        statistics etc. And then export data to XLSX-file,
-                        default: `ext-bonds.xlsx` or you can change it with
-                        `--output` key. WARNING! This is too long operation if
-                        a lot of bonds requested from broker server.
-  --search SEARCH, -s SEARCH
-                        Action: search for an instruments by part of the name,
-                        ticker or FIGI. Also, you can define `--output` key to
-                        save results to file, default: `search-results.md`.
-  --info, -i            Action: get information from broker server about
-                        instrument by it's ticker or FIGI. `--ticker` key or
-                        `--figi` key must be defined!
-  --calendar [CALENDAR ...], -c [CALENDAR ...]
-                        Action: show bonds payment calendar as a table.
-                        Calendar build for one or more tickers or FIGIs, or
-                        for all bonds if only key present. If the `--output`
-                        key present then calendar saves to file, default:
-                        `calendar.md`. Also, created XLSX-file with bond
-                        payments calendar for further used by data scientists
-                        or stock analytics, `calendar.xlsx` by default.
-                        WARNING! This is too long operation if a lot of bonds
-                        requested from broker server.
-  --price               Action: show actual price list for current instrument.
-                        Also, you can use `--depth` key. `--ticker` key or
-                        `--figi` key must be defined!
-  --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
-                        Action: get and print current prices for list of given
-                        instruments (by it's tickers or by FIGIs). WARNING!
-                        This is too long operation if you request a lot of
-                        instruments! Also, you can define `--output` key to
-                        save list of prices to file, default: `prices.md`.
-  --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define `--output` key to
-                        save this information to file, default: `overview.md`.
-  --overview-digest     Action: shows a short digest of the portfolio status.
-                        Also, you can define `--output` key to save this
-                        information to file, default: `overview-digest.md`.
-  --overview-positions  Action: shows only open positions. Also, you can
-                        define `--output` key to save this information to
-                        file, default: `overview-positions.md`.
-  --overview-orders     Action: shows only sections of open limits and stop
-                        orders. Also, you can define `--output` key to save
-                        orders to file, default: `overview-orders.md`.
-  --overview-analytics  Action: shows only the analytics section and the
-                        distribution of the portfolio by various categories.
-                        Also, you can define `--output` key to save this
-                        information to file, default: `overview-analytics.md`.
-  --deals [DEALS ...], -d [DEALS ...]
-                        Action: show all deals between two given dates. Start
-                        day may be an integer number: -1, -2, -3 days ago.
-                        Also, you can use keywords: `today`, `yesterday` (-1),
-                        `week` (-7), `month` (-30) and `year` (-365). Dates
-                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. With
-                        `--no-cancelled` key information about cancelled
-                        operations will be removed from the deals report.
-                        Also, you can define `--output` key to save all deals
-                        to file, default: `deals.md`.
-  --history [HISTORY ...]
-                        Action: get last history candles of the current
-                        instrument defined by `--ticker` or `--figi` (FIGI id)
-                        keys. History returned between two given dates:
-                        `start` and `end`. Minimum requested date in the past
-                        is `1970-01-01`. This action may be used together with
-                        the `--render-chart` key. Also, you can define
-                        `--output` key to save history candlesticks to file.
-  --load-history LOAD_HISTORY
-                        Action: try to load history candles from given csv-
-                        file as a Pandas Dataframe and print it in to the
-                        console. This action may be used together with the
-                        `--render-chart` key.
-  --render-chart RENDER_CHART
-                        Action: render candlesticks chart. This key may only
-                        used with `--history` or `--load-history` together.
-                        Action has 1 parameter with two possible string
-                        values: `interact` (`i`) or `non-interact` (`ni`).
-  --trade [TRADE ...]   Action: universal action to open market position for
-                        defined ticker or FIGI. You must specify 1-5
-                        parameters: [direction `Buy` or `Sell`] [lots, >= 1]
-                        [take profit, >= 0] [stop loss, >= 0] [expiration date
-                        for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See
-                        examples in readme.
-  --buy [BUY ...]       Action: immediately open BUY market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --sell [SELL ...]     Action: immediately open SELL market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --order [ORDER ...]   Action: universal action to open limit or stop-order
-                        in any directions. You must specify 4-7 parameters:
-                        [direction `Buy` or `Sell`] [order type `Limit` or
-                        `Stop`] [lots] [target price] [maybe for stop-order:
-                        [limit price, >= 0] [stop type, Limit|SL|TP]
-                        [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See
-                        examples in readme.
-  --buy-limit BUY_LIMIT BUY_LIMIT
-                        Action: open pending BUY limit-order (below current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open BUY limit-order. If you try to
-                        create `Buy` limit-order above current price then
-                        broker immediately open `Buy` market order, such as if
-                        you do simple `--buy` operation!
-  --sell-limit SELL_LIMIT SELL_LIMIT
-                        Action: open pending SELL limit-order (above current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open SELL limit-order. If you try to
-                        create `Sell` limit-order below current price then
-                        broker immediately open `Sell` market order, such as
-                        if you do simple `--sell` operation!
-  --buy-stop [BUY_STOP ...]
-                        Action: open BUY stop-order. You must specify at least
-                        2 parameters: [lots] [target price] to open BUY stop-
-                        order. In additional you can specify 3 parameters for
-                        stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
-  --sell-stop [SELL_STOP ...]
-                        Action: open SELL stop-order. You must specify at
-                        least 2 parameters: [lots] [target price] to open SELL
-                        stop-order. In additional you can specify 3 parameters
-                        for stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
-  --close-order CLOSE_ORDER, --cancel-order CLOSE_ORDER
-                        Action: close only one order by it's `orderId` or
-                        `stopOrderId`. You can find out the meaning of these
-                        IDs using the key `--overview`.
-  --close-orders CLOSE_ORDERS [CLOSE_ORDERS ...], --cancel-orders CLOSE_ORDERS [CLOSE_ORDERS ...]
-                        Action: close one or list of orders by it's `orderId`
-                        or `stopOrderId`. You can find out the meaning of
-                        these IDs using the key `--overview`.
-  --close-trade, --cancel-trade
-                        Action: close only one position for instrument defined
-                        by `--ticker` (high priority) or `--figi` keys,
-                        including for currencies tickers.
-  --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
-                        Action: close positions for list of tickers or FIGIs,
-                        including for currencies tickers or FIGIs.
-  --close-all [CLOSE_ALL ...], --cancel-all [CLOSE_ALL ...]
-                        Action: close all available (not blocked) opened
-                        trades and orders, excluding for currencies. Also you
-                        can select one or more keywords case insensitive to
-                        specify trades type: `orders`, `shares`, `bonds`,
-                        `etfs` and `futures`, but not `currencies`. Currency
-                        positions you must closes manually using `--buy`,
-                        `--sell`, `--close-trade` or `--close-trades`
-                        operations. If the `--close-all` key present with the
-                        `--ticker` or `--figi` keys, then positions and all
-                        open limit and stop orders for the specified
-                        instrument are closed.
-  --limits, --withdrawal-limits, -w
-                        Action: show table of funds available for withdrawal
-                        for current `accountId`. You can change `accountId`
-                        with the key `--account-id`. Also, you can define
-                        `--output` key to save this information to file,
-                        default: `limits.md`.
-  --user-info, -u       Action: show all available user's data (`accountId`s,
-                        common user information, margin status and tariff
-                        connections limit). Also, you can define `--output`
-                        key to save this information to file, default: `user-info.md`.
-  --account, --accounts, -a
-                        Action: show simple table with all available user
-                        accounts. Also, you can define `--output` key to save
-                        this information to file, default: `accounts.md`.
-```
-
-</details>
 
 #### Local cache
 
