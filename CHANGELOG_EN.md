@@ -13,7 +13,7 @@
 * 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [release-1.6 (2025-06-01)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — in progress...
+### [release-1.6 (2025-05-20)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/release-1.6) — released
 
 ##### Digest
 
