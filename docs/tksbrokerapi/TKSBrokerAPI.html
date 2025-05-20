@@ -369,6 +369,9 @@
 
             </li>
             <li>
+                    <a class="function" href="#HistoryAutoUpdater">HistoryAutoUpdater</a>
+            </li>
+            <li>
                     <a class="class" href="#Args">Args</a>
                             <ul class="memberlist">
                         <li>
@@ -3085,6 +3088,49 @@ otherwise save to file <code><a href="#TinkoffBrokerServer.calendarFile">calenda
 
 
                             </div>
+                </section>
+                <section id="HistoryAutoUpdater">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">HistoryAutoUpdater</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">tickersList</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>,</span><span class="param">	<span class="n">dateStart</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;-3&#39;</span>,</span><span class="param">	<span class="n">outputDir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">crontabExpr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;*/5 10-23 * * 1-5&#39;</span>,</span><span class="param">	<span class="n">waitAfterIteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span>,</span><span class="param">	<span class="n">waitNext</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#HistoryAutoUpdater"></a>
+    
+            <div class="docstring"><p>Periodically updates history for a list of tickers using cron expression and multithreading.
+This method blocks execution in an infinite loop. Can be used for --auto-update mode.</p>
+
+<p>Required fields for history update must be passed via **kwargs and will be forwarded to self.History().</p>
+
+<p>Example:
+    HistoryAutoUpdater(
+        tickersList=["GAZP", "SBER"],
+        crontabExpr="*/2 10-18,19-23 * * 0-6",
+        timeToSleep=300,
+        interval="hour",
+        onlyMissing=True,
+        show=True,
+        csvSep=","
+    )</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>tickersList</strong>:  List of ticker symbols to update.</li>
+<li><strong>dateStart</strong>:  This is <code>start</code> parameter from <code><a href="#TinkoffBrokerServer.History">TinkoffBrokerServer.History()</a></code> method. Default is <code>-3</code>.
+See also <code>TradeRoutines.GetDatesAsString()</code> method.</li>
+<li><strong>outputDir</strong>:  Output directory where history files are stored. Default is <code>None</code> mean current workdir.</li>
+<li><strong>crontabExpr</strong>:  Cron-style schedule string (evaluated by pycron). Default is <code>*/5 10-23 * * 1-5</code>.
+See example at <a href="https://crontab.guru/#*/5_10-23_*_*_1-5">https://crontab.guru/#<em>/5_10-23_</em>_*_1-5</a></li>
+<li><strong>waitAfterIteration</strong>:  Delay in seconds after each iteration completed, default is <code>60</code> seconds.</li>
+<li><strong>waitNext</strong>:  Technical pause (in seconds) between two crontab checks, default is <code>1</code> second.</li>
+<li><strong>kwargs</strong>:  All additional keyword arguments are passed to the <code>History()</code> method of the <code><a href="#TinkoffBrokerServer">TinkoffBrokerServer()</a></code> class, include token and accountId.</li>
+</ul>
+</div>
+
+
                 </section>
                 <section id="Args">
                     <div class="attr class">
