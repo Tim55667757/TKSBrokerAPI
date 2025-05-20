@@ -1,6 +1,6 @@
 # TKSBrokerAPI — список релизных изменений
 
-*[Нечёткие технологии](https://fuzzy-technologies.github.io/)*
+*[Нечёткие технологии](https://fuzzy-technologies.github.io/)*<br>
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
 **T**echnologies · **K**nowledge · **S**cience
 
@@ -13,7 +13,7 @@
 * 🎁 Поддержать проект донатом на ЮМани-кошелёк: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.6.* (2025-06-01)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
+### [release-1.6 (2025-06-01)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/6) — в разработке...
 
 ##### Дайджест
 
