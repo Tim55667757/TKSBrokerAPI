@@ -498,7 +498,7 @@ class TestTKSBrokerAPIMethods:
                 "task": {
                     "ticker": "BAD2",
                     "kwargs": {
-                        "token": "err2"
+                        "token": "err2", "interval": "5min"
                     }
                 }
             },
@@ -507,8 +507,12 @@ class TestTKSBrokerAPIMethods:
         for item in testData:
             with patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", side_effect=Exception("mocked error")), \
                     patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None):
-                with pytest.raises(Exception, match="mocked error"):
+
+                try:
                     TKSBrokerAPI._HistoryAutoUpdaterWrapper(item["task"])
+
+                except Exception:
+                    assert False, f"_HistoryAutoUpdaterWrapper should NOT raise for {item['task']['ticker']}"
 
         # Check HistoryAutoUpdater if cron broken
         with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=False), \
