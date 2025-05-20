@@ -33,7 +33,8 @@ Release development in progress...
 * [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Target Probability Estimation, the Big Core feature is implemented.
 * [#152](https://github.com/Tim55667757/TKSBrokerAPI/issues/152) Centralized throttling with cooperative waiting added to `SendAPIRequest()`.
 * [#154](https://github.com/Tim55667757/TKSBrokerAPI/issues/154) Integrated chaos metrics (Hurst, SampEn, DFA) and phase filtering into `EstimateTargetReachability()`. Added trust coefficients, probability adjustment logic, full test coverage and performance optimization.
-* [#78](https://github.com/Tim55667757/TKSBrokerAPI/issues/78) Added thread-safe parallel candle history downloading with support for partial updates (--only-missing).
+* [#78](https://github.com/Tim55667757/TKSBrokerAPI/issues/78) Added thread-safe parallel candle history downloading with support for partial updates (`--only-missing`).
+* [#57](https://github.com/Tim55667757/TKSBrokerAPI/issues/57) Added `--history-auto-updater` mode: download ticker history in parallel using cron schedule, saving per ticker to CSV.
 
 ##### Improvements
 
