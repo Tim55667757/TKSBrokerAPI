@@ -1830,11 +1830,24 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Download historical data in OHLCV-candles format
 
-Since TKSBrokerAPI v1.3.70 you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only Pandas DataFrame. `--csv-sep` key define separator in csv-files.
+With TKSBrokerAPI you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only Pandas DataFrame. `--csv-sep` key define separator in csv-files.
 
 History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. **Warning!** Broker server use ISO UTC time by default.
 
-Since TKSBrokerAPI v1.4.90 you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
+Also, you can use TKSBrokerAPI as a fully automated, cron-driven history updater for multiple tickers with multithreading support using `--history-auto-updater` key. Each ticker's history is downloaded in parallel using a thread pool, and the process is triggered periodically according to a configurable crontab expression. Example:
+
+```shell
+tksbrokerapi -v 20 --history-auto-updater SBER YDEX GAZP --date-start today --interval hour --wait-after-iteration 60 --wait-next 1 --only-missing --crontab "*/1 10-23 * * 1-5" --output history
+```
+Each ticker history in this example will be saved to:
+
+```
+./history/SBER_hour.csv
+./history/YDEX_hour.csv
+./history/GAZP_hour.csv
+```
+
+Also with TKSBrokerAPI you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
 
 The generated graphs of various types will look like below (see also real examples under the spoilers). By default, they are saved to the `index.html` file. The charts additionally display some statistical values and indicators, however, they are presented only for a quick review of the price behavior in a given range. To conduct full analytical research and technical analysis, it is recommended to use other professional tools.
 
