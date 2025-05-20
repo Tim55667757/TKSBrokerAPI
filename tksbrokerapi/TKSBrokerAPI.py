@@ -94,7 +94,8 @@ import traceback as tb
 import threading
 from time import sleep, monotonic
 from argparse import ArgumentParser
-from collections import defaultdict, Counter
+from pathlib import Path
+from collections import defaultdict
 from importlib.metadata import version
 from multiprocessing import cpu_count
 
@@ -104,6 +105,7 @@ import requests
 from dateutil.tz import tzlocal
 from mako.template import Template  # Mako Templates for Python (https://www.makotemplates.org/). Mako is a template library provides simple syntax and maximum performance.
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import pycron
 
 # Add the current dir for the local run:
 packageDir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -298,7 +300,7 @@ class TinkoffBrokerServer:
                     uLogger.debug("Main account ID [{}] set up from environment variable `TKS_ACCOUNT_ID`".format(self.accountId))
 
             except KeyError:
-                uLogger.warning("⚠️ `--account-id` key or environment variable `TKS_ACCOUNT_ID` is not defined. Some operations may be unavailable (overview, trading, etc).")
+                uLogger.debug("⚠️ `--account-id` key or environment variable `TKS_ACCOUNT_ID` is not defined. Some operations may be unavailable (overview, trading, etc).")
 
         else:
             self.accountId = accountId  # highly priority than environment variable 'TKS_ACCOUNT_ID'
@@ -5281,6 +5283,113 @@ class TinkoffBrokerServer:
         return view
 
 
+def _HistoryAutoUpdaterWrapper(task: dict) -> None:
+    """
+    Internal wrapper used in `HistoryAutoUpdater()` for parallel history loading of a single ticker.
+
+    :param task: Dictionary with keys:
+                 - 'ticker': ticker symbol.
+                 - 'kwargs': arguments passed to `TinkoffBrokerServer` class and `History()` method.
+    """
+    try:
+        ticker = task["ticker"]
+        kwargs = task["kwargs"]
+        token = kwargs.pop("token", "")
+        accountId = kwargs.pop("accountId", None)
+        useCache = kwargs.pop("useCache", True)
+        outputDir = kwargs.pop("outputDir", None) or "./history"
+        filename = f"{ticker}_{kwargs['interval']}.csv"
+
+        # Init class for updating history with Tinkoff Broker:
+        historyUpdater = TinkoffBrokerServer(token, accountId, useCache)
+
+        historyUpdater.ticker = ticker
+        historyUpdater.historyFile = str(Path(outputDir) / filename)
+        historyUpdater.History(**kwargs)
+
+    except Exception as e:
+        uLogger.debug(tb.format_exc())
+        uLogger.error(f"❌ Error in history updater thread for [{task.get('ticker')}]: {e}")
+
+
+def HistoryAutoUpdater(
+        tickersList: Union[list, str],
+        dateStart: str = "-3",
+        outputDir: str = None,
+        crontabExpr: str = "*/5 10-23 * * 1-5",
+        waitAfterIteration: int = 60,
+        waitNext: int = 1,
+        **kwargs
+) -> None:
+    """
+    Periodically updates history for a list of tickers using cron expression and multithreading.
+    This method blocks execution in an infinite loop. Can be used for --auto-update mode.
+
+    Required fields for history update must be passed via **kwargs and will be forwarded to self.History().
+
+    Example:
+        HistoryAutoUpdater(
+            tickersList=["GAZP", "SBER"],
+            crontabExpr="*/2 10-18,19-23 * * 0-6",
+            timeToSleep=300,
+            interval="hour",
+            onlyMissing=True,
+            show=True,
+            csvSep=","
+        )
+
+    :param tickersList: List of ticker symbols to update.
+    :param dateStart: This is `start` parameter from `TinkoffBrokerServer.History()` method. Default is `-3`.
+                      See also `TradeRoutines.GetDatesAsString()` method.
+    :param outputDir: Output directory where history files are stored. Default is `None` mean current workdir.
+    :param crontabExpr: Cron-style schedule string (evaluated by pycron). Default is `*/5 10-23 * * 1-5`.
+                        See example at https://crontab.guru/#*/5_10-23_*_*_1-5
+    :param waitAfterIteration: Delay in seconds after each iteration completed, default is `60` seconds.
+    :param waitNext: Technical pause (in seconds) between two crontab checks, default is `1` second.
+    :param kwargs: All additional keyword arguments are passed to the `History()` method of the `TinkoffBrokerServer()` class, include token and accountId.
+    """
+    if isinstance(tickersList, str):
+        tickersList = [tickersList]
+
+    try:
+        kwargs["start"] = dateStart if dateStart else "-3"  # Start date for the `History()` method
+        kwargs["show"] = False  # Silent mode for the `History()` method
+
+        # Create a dir for history files or using the current directory:
+        outputDir = Path(outputDir) if outputDir else Path.cwd()
+        outputDir.mkdir(parents=True, exist_ok=True)
+        kwargs["outputDir"] = str(outputDir)  # A dir for history files
+
+        uLogger.info(f"📊 Auto-update history loop started... Tickers: [{len(tickersList)}], cron: [{crontabExpr}], dir: [{str(outputDir.resolve())}]")
+
+        iteration = 0
+        while True:
+            if pycron.is_now(crontabExpr):
+                iteration += 1
+
+                uLogger.debug(f"🕓 Cron matched. Iteration [{iteration}]: starting history update for all tickers...")
+
+                paramsCollection = [{"ticker": ticker, "kwargs": kwargs.copy()} for ticker in tickersList]
+                with ThreadPoolExecutor(max_workers=min(CPU_USAGES, len(tickersList))) as executor:
+                    executor.map(_HistoryAutoUpdaterWrapper, paramsCollection)
+
+                uLogger.info(f"✅ History update iteration [{iteration}] completed. Technical sleep for {waitAfterIteration} seconds...")
+
+                sleep(waitAfterIteration)  # Wait for the next working cycle
+
+                uLogger.info(f"⏳ Wait for the next iteration...")
+
+            else:
+                sleep(waitNext)  # Wait for the next crontab check
+
+    except KeyboardInterrupt:
+        uLogger.warning("⚠️ HistoryAutoUpdater stopped by user")
+
+    except BaseException as be:
+        uLogger.debug(tb.format_exc())
+        uLogger.error("❌ HistoryAutoUpdater error: {}".format(be))
+
+
 class Args:
     """
     If the `Main ()` function is imported as module, then this class used to convert arguments from **kwargs as object.
@@ -5311,12 +5420,16 @@ def ParseArgs():
     parser.add_argument("--depth", type=int, default=1, help="Option: Depth of Market (DOM) can be >=1, 1 by default.")
     parser.add_argument("--no-cancelled", "--no-canceled", action="store_true", default=False, help="Option: remove information about cancelled operations from the deals report by the `--deals` key. `False` by default.")
 
-    parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files for some commands. If `None` then used default files.")
+    parser.add_argument("--output", type=str, default=None, help="Option: replace default paths to output files or dirs for some commands. If `None` then used default files or dirs.")
     parser.add_argument("--html", "--HTML", action="store_true", default=False, help="Option: if key present then TKSBrokerAPI generate also HTML reports from Markdown. False by default.")
 
     parser.add_argument("--interval", type=str, default="hour", help="Option: available values are `1min`, `5min`, `15min`, `hour` and `day`. Used only with `--history` key. This is time period of one candle. Default: `hour` for every history candles.")
     parser.add_argument("--only-missing", action="store_true", default=False, help="Option: if history file define by `--output` key then add only last missing candles, do not request all history length. `False` by default.")
     parser.add_argument("--csv-sep", type=str, default=",", help="Option: separator if csv-file is used, `,` by default.")
+    parser.add_argument("--crontab", type=str, default="*/5 10-23 * * 1-5", help="Option: crontab expression in pycron format. Default: every 5 min during 10:00–23:55 on weekdays.")
+    parser.add_argument("--date-start", "-ds", type=str, default="-3", help="Option: start date to load with `--history-auto-updater`, e.g. `2025-01-02` or `-1` (yesterday). Default: `-3`.")
+    parser.add_argument("--wait-after-iteration", "-wa",  type=int, default=60, help="Option: delay in seconds after each iteration completed, default: 60.")
+    parser.add_argument("--wait-next", "-wn", type=int, default=1, help="Option: pause in seconds between cron checks, default: 1.")
 
     parser.add_argument("--debug-level", "--log-level", "--verbosity", "-v", type=int, default=20, help="Option: showing STDOUT messages of minimal debug level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 = ERROR, 50 = CRITICAL. INFO (20) by default.")
     parser.add_argument("--more", "--more-debug", action="store_true", default=False, help="Option: `--debug-level` key only switch log level verbosity, but in addition `--more` key enable all debug information, such as net request and response headers in all methods.")
@@ -5343,9 +5456,10 @@ def ParseArgs():
     parser.add_argument("--overview-calendar", action="store_true", help="Action: shows only the bonds calendar section (if these present in portfolio). Also, you can define `--output` key to save this information to file, default: `overview-calendar.md`.")
 
     parser.add_argument("--deals", "-d", type=str, nargs="*", help="Action: show all deals between two given dates. Start day may be an integer number: -1, -2, -3 days ago. Also, you can use keywords: `today`, `yesterday` (-1), `week` (-7), `month` (-30) and `year` (-365). Dates format must be: `%%Y-%%m-%%d`, e.g. 2020-02-03. With `--no-cancelled` key information about cancelled operations will be removed from the deals report. Also, you can define `--output` key to save all deals to file, default: `deals.md`.")
-    parser.add_argument("--history", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. This action may be used together with the `--render-chart` key. Also, you can define `--output` key to save history candlesticks to file.")
-    parser.add_argument("--load-history", type=str, help="Action: try to load history candles from given csv-file as a Pandas Dataframe and print it in to the console. This action may be used together with the `--render-chart` key.")
+    parser.add_argument("--history",  "--get-history",  "-gh", type=str, nargs="*", help="Action: get last history candles of the current instrument defined by `--ticker` or `--figi` (FIGI id) keys. History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. This action may be used together with the `--render-chart` key. Also, you can define `--output` key to save history candlesticks to file.")
+    parser.add_argument("--load-history", "-lh", type=str, help="Action: try to load history candles from given csv-file as a Pandas Dataframe and print it in to the console. This action may be used together with the `--render-chart` key.")
     parser.add_argument("--render-chart", type=str, help="Action: render candlesticks chart. This key may only used with `--history` or `--load-history` together. Action has 1 parameter with two possible string values: `interact` (`i`) or `non-interact` (`ni`).")
+    parser.add_argument("--history-auto-updater", "-hu", type=str, nargs="*", metavar="TICKER", help="Action: run auto-updater loop for downloading history of multiple instruments in parallel using cron. Example: `--history-auto-updater GAZP SBER YDEX --date-start -1`. Used together with options: `--interval`, `--only-missing`, `--csv-sep`, `--show`, `--token`, `--account-id`. Also accepts cron-specific params: `--crontab`, `--wait-after-iteration`, `--wait-next`, `--date-start`.")
 
     parser.add_argument("--trade", nargs="*", help="Action: universal action to open market position for defined ticker or FIGI. You must specify 1-5 parameters: [direction `Buy` or `Sell`] [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`]. See examples in readme.")
     parser.add_argument("--buy", nargs="*", help="Action: immediately open BUY market position at the current price for defined ticker or FIGI. You must specify 0-4 parameters: [lots, >= 1] [take profit, >= 0] [stop loss, >= 0] [expiration date for TP/SL orders, Undefined|`%%Y-%%m-%%d %%H:%%M:%%S`].")
@@ -5460,7 +5574,23 @@ def Main(**kwargs):
 
             # --- do one command:
 
-            if args.list:
+            if args.history_auto_updater is not None:
+                HistoryAutoUpdater(
+                    tickersList=args.history_auto_updater,
+                    dateStart=args.date_start,
+                    outputDir=args.output,
+                    crontabExpr=args.crontab,
+                    waitAfterIteration=args.wait_after_iteration,
+                    waitNext=args.wait_next,
+                    token=args.token,
+                    accountId=args.account_id,
+                    useCache=not args.no_cache,
+                    interval=args.interval,
+                    onlyMissing=args.only_missing,
+                    csvSep=args.csv_sep,
+                )  # Run auto updater in infinite mode
+
+            elif args.list:
                 if args.output is not None:
                     trader.instrumentsFile = args.output
 
