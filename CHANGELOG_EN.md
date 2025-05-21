@@ -9,15 +9,19 @@
 * 🇷🇺 [See release notes in russian here (релиз-ноты на русском)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
   * 💡 [All planned releases and features](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
   * 📂 [All open tasks in the backlog](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc)
-* 📚 [Documentation for the TKSBrokerAPI module and examples of working with CLI](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
-* 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
+* 📚 [Documentation and examples](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
+* 🎁 Donation: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
 ### [release-1.6 (2025-05-20)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/release-1.6) — released
 
 ##### Digest
 
-Release development in progress...
+A new fast algorithm has been added to estimate the probability of reaching a target price based on volatility and returns. The model accounts for drift, applies Bayesian aggregation, and is adjusted by phase and chaos metrics, allowing signal filtering based on confidence.
+
+Fast anomaly filtering using the Hampel method has been implemented with an optimized function and practical examples. A fuzzy scale for interpreting probabilities `{Min, Low, Med, High, Max}` has also been introduced, simplifying signal selection.
+
+The infrastructure has been significantly improved: parallel candle history loading with partial updates, automatic cron-based updates via `--history-auto-updater`, centralized rate limiting in `SendAPIRequest()`, and Docker image CI/CD builds. These changes boosted performance and platform stability when working with the broker.
 
 ##### New features
 
