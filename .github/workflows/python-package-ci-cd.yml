@@ -110,9 +110,6 @@ jobs:
     name: ⚙️ Building Package
     needs: testing
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9"]
     outputs:
       version: ${{ steps.setver.outputs.version }}
     steps:
@@ -122,7 +119,7 @@ jobs:
       - name: Setup Python 3.9
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
 
       - name: Check Python Version
         run: |
