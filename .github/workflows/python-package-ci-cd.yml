@@ -250,10 +250,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set VERSION from building job
-        run: |
-          echo "VERSION=${{ needs.building.outputs.version }}" >> $GITHUB_ENV
-
       - name: Log in to DockerHub
         uses: docker/login-action@v3
         with:
@@ -262,15 +258,15 @@ jobs:
 
       - name: Build & Push Docker Image
         run: |
-          echo 🐳 Building Docker image with TKSBrokerAPI==${{ env.VERSION }}
+          echo 🐳 Building Docker image with TKSBrokerAPI==${{ needs.building.outputs.version }}
           docker build \
-            --build-arg TKS_BUILD_VERSION=${{ env.VERSION }} \
+            --build-arg TKS_BUILD_VERSION=${{ needs.building.outputs.version }} \
             -f Dockerfile \
             -t tim55667757/tksbrokerapi:latest \
-            -t tim55667757/tksbrokerapi:${{ env.VERSION }} \
+            -t tim55667757/tksbrokerapi:${{ needs.building.outputs.version }} \
             .
           docker push tim55667757/tksbrokerapi:latest
-          docker push tim55667757/tksbrokerapi:${{ env.VERSION }}
+          docker push tim55667757/tksbrokerapi:${{ needs.building.outputs.version }}
 
       - name: Docker Build Completed
         run: echo ✅ DOCKER IMAGE published successfully!
