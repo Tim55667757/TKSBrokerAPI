@@ -35,6 +35,7 @@
 * [#154](https://github.com/Tim55667757/TKSBrokerAPI/issues/154) Добавлены модели оценки хаоса (Hurst, SampEn, DFA) и фазовая фильтрация в метод `EstimateTargetReachability()`. Реализованы доверительные коэффициенты, агрегация вероятности, расширенные тесты и оптимизация производительности.
 * [#78](https://github.com/Tim55667757/TKSBrokerAPI/issues/78) Добавлена многопоточная загрузка истории свечей с поддержкой частичной докачки (`--only-missing`).
 * [#57](https://github.com/Tim55667757/TKSBrokerAPI/issues/57) Добавлен режим `--history-auto-updater`: параллельная закачка истории тикеров по крону с сохранением в отдельные CSV-файлы.
+* [#141](https://github.com/Tim55667757/TKSBrokerAPI/issues/141) Добавлена сборка и публикация Docker-образа TKSBrokerAPI через GitHub Actions с поддержкой версий `dev` и `release`.
 
 ##### Улучшения
 
