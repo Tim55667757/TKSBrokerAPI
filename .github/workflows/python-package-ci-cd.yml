@@ -161,6 +161,9 @@ jobs:
           echo 📦 Testing distribution...
           pip install ./dist/*.tar.gz
 
+      - name: Copy .version into dist for Docker job
+        run: cp .version dist/.version
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
