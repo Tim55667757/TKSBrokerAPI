@@ -19,7 +19,15 @@ RUN if [ -z "$TKS_BUILD_VERSION" ]; then \
       pip install --no-cache-dir --pre tksbrokerapi; \
     else \
       echo "📦 Installing TKSBrokerAPI==$TKS_BUILD_VERSION from PyPI..." && \
-      pip install --no-cache-dir tksbrokerapi==$TKS_BUILD_VERSION; \
+      attempt=0; \
+      until pip install --no-cache-dir tksbrokerapi==$TKS_BUILD_VERSION || [ $attempt -ge 5 ]; do \
+        attempt=$((attempt+1)); \
+        echo "⏳ Attempt $attempt/5: Waiting 5s for PyPI..." && sleep 5; \
+      done; \
+      if [ $attempt -ge 5 ]; then \
+        echo "❌ Failed to install TKSBrokerAPI==$TKS_BUILD_VERSION after 5 attempts"; \
+        exit 1; \
+      fi; \
     fi
 
 # Clean image
