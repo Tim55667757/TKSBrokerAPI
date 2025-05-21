@@ -43,8 +43,8 @@ else:
 print("TKSBrokerAPI build version = {}".format(moduleVer))
 
 # Save current build version to file for Docker step:
-with open(os.path.join(os.path.dirname(__file__), ".version"), "w") as f:
-    f.write(moduleVer.strip() + "\n")
+with open(".version", "w") as fH:
+    fH.write(moduleVer.strip() + "\n")
 
 # Read dependencies from `requirements.txt`:
 with open("requirements.txt", "r", encoding="utf-8") as f:
