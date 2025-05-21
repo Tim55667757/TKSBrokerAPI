@@ -271,11 +271,11 @@ jobs:
           docker build \
             --build-arg TKS_BUILD_VERSION=${{ env.VERSION }} \
             -f Dockerfile \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/tksbrokerapi:latest \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/tksbrokerapi:${{ env.VERSION }} \
+            -t tim55667757/tksbrokerapi:latest \
+            -t tim55667757/tksbrokerapi:${{ env.VERSION }} \
             .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tksbrokerapi:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/tksbrokerapi:${{ env.VERSION }}
+          docker push tim55667757/tksbrokerapi:latest
+          docker push tim55667757/tksbrokerapi:${{ env.VERSION }}
 
       - name: Docker Build Completed
         run: echo ✅ DOCKER IMAGE published successfully!
