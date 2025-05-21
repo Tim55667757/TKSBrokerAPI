@@ -9,7 +9,7 @@
 * 🇺🇸 [Релиз-ноты на английском (see release notes in english here)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_EN.md)
   * 💡 [Все запланированные релизы и вошедшие в них фичи](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
   * 📂 [Все открытые задачи в беклоге](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc)
-* 📚 [Документация на модуль TKSBrokerAPI и примеры работы в консоли](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_RU.md)
+* 📚 [Документация на модуль TKSBrokerAPI и примеры работы в консоли](https://tim55667757.github.io/TKSBrokerAPI)
 * 🎁 Поддержать проект донатом на ЮМани-кошелёк: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 

@@ -1,6 +1,6 @@
 # TKSBrokerAPI — платформа для автоматизации торговли на бирже 
 
-*[Нечёткие технологии](https://fuzzy-technologies.github.io/)*
+*[Нечёткие технологии](https://fuzzy-technologies.github.io/)*<br>
 <a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
 **Т**ехнологии · **З**нания · **Н**аука
 
