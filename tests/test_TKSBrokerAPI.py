@@ -5,6 +5,8 @@
 import pytest
 from pathlib import Path
 from tksbrokerapi import TKSBrokerAPI
+from unittest.mock import patch, MagicMock
+import requests
 
 
 class TestTKSBrokerAPIMethods:
@@ -12,8 +14,11 @@ class TestTKSBrokerAPIMethods:
     @pytest.fixture(scope="function", autouse=True)
     def init(self):
         TKSBrokerAPI.uLogger.level = 50  # Disable debug logging while test, logger CRITICAL = 50
-        TKSBrokerAPI.uLogger.handlers[0].level = 50  # Disable debug logging for STDOUT
-        TKSBrokerAPI.uLogger.handlers[1].level = 50  # Disable debug logging for log.txt
+
+        # Disable debug logging for STDOUT and log.txt:
+        if TKSBrokerAPI.uLogger.handlers:
+            for h in TKSBrokerAPI.uLogger.handlers:
+                h.setLevel(50)
 
         # set up default parameters:
         Path("./tests/InstrumentsDump.json").touch()  # "touching" file to avoid updating by "file outdated" trigger
@@ -43,75 +48,303 @@ class TestTKSBrokerAPIMethods:
 
     def test__ParseJSONPositive(self):
         testData = [
-            ("{}", {}), ('{"x":123}', {"x": 123}), ('{"x":""}', {"x": ""}),
+            ("{}", {}),
+            ('{"x":123}', {"x": 123}),
+            ('{"x":""}', {"x": ""}),
             ('{"abc": "123", "xyz": 123}', {"abc": "123", "xyz": 123}),
             ('{"abc": {"abc": "123", "xyz": 123}}', {"abc": {"abc": "123", "xyz": 123}}),
             ('{"abc": {"abc": "", "xyz": 0}}', {"abc": {"abc": "", "xyz": 0}}),
         ]
 
-        for test in testData:
-            result = self.server._ParseJSON(rawData=test[0])
+        for raw_input, expected_output in testData:
+            result = self.server._ParseJSON(rawData=raw_input)
 
-            assert result == test[1], 'Expected: `_ParseJSON(rawData="{}", debug=False) == {}`, actual: `{}`'.format(test[0], test[1], result)
+            assert result == expected_output, (
+                f"Expected: _ParseJSON(rawData={raw_input!r}) == {expected_output!r}, "
+                f"but got: {result!r}"
+            )
 
-    def test_SendAPIRequestCheckType(self):
-        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
+    def test__ParseJSONNegative(self):
+        testData = [
+            ("{[]}", {}),  # invalid structure
+            ([], {}),  # invalid type (list)
+            (123, {}),  # invalid type (int)
+            (None, {}),  # invalid type (None)
+            ("some string", {}),  # non-JSON string
+            ("{\"unclosed\": true", {}),  # invalid JSON (unclosed brace)
+            ("   ", {}),  # whitespace only
+            ("", {}),  # empty string
+        ]
 
-        result = self.server.SendAPIRequest(
-            url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
-            reqType="POST",
-            retry=0,
-            pause=0,
-        )
+        for raw_input, expected_output in testData:
+            result = self.server._ParseJSON(rawData=raw_input)
 
-        assert isinstance(result, dict), "Not dict type returned!"
+            assert result == expected_output, (
+                f"Expected: _ParseJSON(rawData={raw_input!r}) == {expected_output!r}, "
+                f"but got: {result!r}"
+            )
 
     def test_SendAPIRequestPositive(self):
         self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
 
-        # TODO: want more tests with real responses and real bearer token
-        testData = [
-            (r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies", {'code': 3, 'description': None, 'message': None}),
-        ]
+        # Create a fake successful response object:
+        fake_response = MagicMock()
+        fake_response.status_code = 200
+        fake_response.reason = "OK"
+        fake_response.text = '{"success": true}'
+        fake_response.headers = {}
 
-        for test in testData:
+        expected_result = {"success": True}
+
+        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
             result = self.server.SendAPIRequest(
                 url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
                 reqType="POST",
-                retry=0,
-                pause=0,
+                methodName="TestMethod"  # manual override entrypoint method
             )
 
-            assert result == test[1], 'Expected: `{}`, actual: `{}`'.format(test[1], result)
+            assert result == expected_result, f"Expected: {expected_result}, actual: {result}"
+            assert self.server.rateLimiter.counters["TestMethod"] >= 1, "RateLimiter did not count the overridden method name."
+
+    def test_SendAPIRequestNegative(self):
+        self.server.retry = 0
+        self.server.body = {"instrumentStatus": "INSTRUMENT_STATUS_UNSPECIFIED"}
+
+        # Scenario 1: 401 Unauthorized (client error, 4xx):
+        fake_response_401 = MagicMock()
+        fake_response_401.status_code = 401
+        fake_response_401.reason = "Unauthorized"
+        fake_response_401.text = '{"message": "Authentication token is missing or invalid"}'
+        fake_response_401.headers = {}
+
+        with patch("requests.get", return_value=fake_response_401), patch("requests.post", return_value=fake_response_401):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when 401 error!"
+            assert result == {"message": "Authentication token is missing or invalid"}, f"Unexpected result: {result}"
+
+        # Scenario 2: 500 Internal Server Error (server error, 5xx):
+        fake_response_500 = MagicMock()
+        fake_response_500.status_code = 500
+        fake_response_500.reason = "Internal Server Error"
+        fake_response_500.text = '{"message": "Internal server error"}'
+        fake_response_500.headers = {}
+
+        with patch("requests.get", return_value=fake_response_500), patch("requests.post", return_value=fake_response_500):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when 500 error!"
+            assert result == {"message": "Internal server error"}, f"Expected empty dict on 500 error, actual: {result}"
+
+        # Scenario 3: RequestException (connection problem, timeout, DNS error, etc.):
+        with patch("requests.get", side_effect=requests.exceptions.RequestException("Mocked connection error")), \
+                patch("requests.post", side_effect=requests.exceptions.RequestException("Mocked connection error")):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Not dict type returned when RequestException occurred!"
+            assert result == {}, f"Expected empty dict on RequestException, actual: {result}"
+
+    def test_SendAPIRequestNegativeWithEmptyToken(self):
+        self.server.headers["Authorization"] = "Bearer "
+        self.server.retry = 0
+
+        fake_response = MagicMock()
+        fake_response.status_code = 401
+        fake_response.reason = "Unauthorized"
+        fake_response.text = '{"message": "Authentication token is missing or invalid"}'
+        fake_response.headers = {}
+
+        with patch("requests.get", return_value=fake_response), patch("requests.post", return_value=fake_response):
+            result = self.server.SendAPIRequest(
+                url=self.server.server + r"/tinkoff.public.invest.api.contract.v1.InstrumentsService/Currencies",
+                reqType="POST",
+            )
+
+            assert isinstance(result, dict), "Result must be a dict even when empty token!"
+            assert result == {"message": "Authentication token is missing or invalid"}
+
+    def test_OverviewCheckType(self):
+        # Basic check that Overview returns the correct structure:
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 10000, "nano": 0},
+                "quantityLots": {"units": 10000, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 10000, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Overview must return a dict"
+            assert "raw" in result and "stat" in result and "analytics" in result, "Missing sections in Overview result"
+
+    def test_OverviewPositive(self):
+        # Test a positive, full Overview response
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 10000, "nano": 0},
+                "quantityLots": {"units": 10000, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 10000, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert result["stat"]["portfolioCostRUB"] >= 0, "Portfolio cost should be non-negative"
+            assert isinstance(result["analytics"], dict), "Analytics section must exist"
+
+    def test_OverviewNegative(self):
+        # Case 1: all four API responses are minimally valid
+        fakePortfolio = {
+            "positions": [{
+                "figi": "RUB000UTSTOM",
+                "ticker": "RUB",
+                "instrumentType": "currency",
+                "quantity": {"units": 0, "nano": 0},
+                "quantityLots": {"units": 0, "nano": 0},
+                "currentPrice": {"units": 1, "nano": 0, "currency": "rub"},
+                "averagePositionPriceFifo": {"units": 1, "nano": 0},
+                "expectedYield": {"units": 0, "nano": 0}
+            }],
+            "totalAmountCurrencies": {"units": 0, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0},
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakePortfolio, {"blocked": [], "securities": []}, {"orders": []}, {"stopOrders": []}
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Result must be dict even if empty"
+            assert isinstance(result["raw"], dict), "Raw section must exist"
+            assert isinstance(result["raw"]["Currencies"], list), "Currencies must be a list"
+            assert isinstance(result["raw"]["Shares"], list), "Shares must be a list"
+
+    def test_OverviewNegativeWithEmptyToken(self):
+        # Case 2: simulate empty auth token errors
+        fakeError = {
+            "message": "Authentication token is missing or invalid",
+            "positions": [],
+            "totalAmountCurrencies": {"units": 0, "nano": 0},
+            "totalAmountShares": {"units": 0, "nano": 0},
+            "totalAmountBonds": {"units": 0, "nano": 0},
+            "totalAmountEtf": {"units": 0, "nano": 0},
+            "totalAmountFutures": {"units": 0, "nano": 0}
+        }
+
+        with patch.object(self.server, "SendAPIRequest", side_effect=[
+            fakeError, fakeError, fakeError, fakeError
+        ]):
+            result = self.server.Overview()
+
+            assert isinstance(result, dict), "Result must still be dict with auth error"
+            assert "raw" in result, "Raw section must still exist"
+            assert isinstance(result["raw"], dict), "Raw must be dict"
+
+    def test_ListingCheckType(self):
+        with patch.object(self.server, "_IWrapper", return_value=("Shares", [])):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Not dict type returned!"
+
+    def test_ListingPositive(self):
+        with patch.object(self.server, "_IWrapper", side_effect=lambda params: (
+                "Shares", [{"ticker": "AAPL", "minPriceIncrement": {"units": 0, "nano": 10000000}}]
+        ) if params["iType"] == "Shares" else (
+                "Bonds", [{"ticker": "BND", "minPriceIncrement": {"units": 0, "nano": 1000000}}]
+        )):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Result should be a dict!"
+            assert "Shares" in result, "Shares not in result!"
+            assert "Bonds" in result, "Bonds not in result!"
+            assert "AAPL" in result["Shares"], "Ticker AAPL not found!"
+            assert "BND" in result["Bonds"], "Ticker BND not found!"
+            assert result["Shares"]["AAPL"]["step"] == 0.01, "Incorrect step calculated!"
+            assert result["Bonds"]["BND"]["step"] == 0.001, "Incorrect step calculated!"
+
+    def test_ListingNegative(self):
+        # Mock _IWrapper to return incorrect/empty structures
+        with patch.object(self.server, "_IWrapper", return_value=("Unknown", [])):
+            result = self.server.Listing()
+
+            assert isinstance(result, dict), "Result should be a dict even on error!"
+            assert "Unknown" in result, "Expected 'Unknown' key not found!"
+            assert result["Unknown"] == {}, "Expected empty dict for Unknown instruments!"
 
     def test_ShowInstrumentInfoCheckType(self):
         assert isinstance(self.server.ShowInstrumentInfo(iJSON={}, show=False), str), "Not str type returned!"
 
     def test_ShowInstrumentInfoPositive(self):
         testData = [
-            # share:
             {"figi": "TCS00A103X66", "ticker": "POSI", "name": "Positive Technologies"},
-            # bond:
             {"figi": "TCS00A101YV8", "ticker": "RU000A101YV8", "name": "Позитив Текнолоджиз выпуск 1"},
-            # etf:
             {"figi": "BBG222222222", "ticker": "TGLD", "name": "Тинькофф Золото"},
-            # futures:
             {"figi": "FUTPLZL03220", "ticker": "PZH2", "name": "PLZL-3.22 Полюс Золото"},
-            # currency:
             {"figi": "BBG0013HRTL0", "ticker": "CNYRUB_TOM", "name": "Юань"},
         ]
 
-        for test in testData:
-            self.server.ticker = test["ticker"]
-            self.server.figi = ""
-            searched = self.server.SearchByTicker(requestPrice=False, show=False)
-            searched["limitOrderAvailableFlag"] = False
-            searched["sellAvailableFlag"] = False
-            searched["shortEnabledFlag"] = False
-            searched["marketOrderAvailableFlag"] = False
-            searched["apiTradeAvailableFlag"] = False
-            result = self.server.ShowInstrumentInfo(iJSON=searched, show=False)
-            assert test["name"] in result, "Some data in report is incorrect!"
+        # Prepare fake successful response
+        fake_response = MagicMock()
+        fake_response.status_code = 200
+        fake_response.reason = "OK"
+        fake_response.text = "{}"
+        fake_response.headers = {}
+
+        with patch("tksbrokerapi.TKSBrokerAPI.requests.get", return_value=fake_response), \
+                patch("tksbrokerapi.TKSBrokerAPI.requests.post", return_value=fake_response):
+            for test in testData:
+                self.server.ticker = test["ticker"]
+                self.server.figi = ""
+
+                searched = self.server.SearchByTicker(requestPrice=False, show=False)
+                searched["limitOrderAvailableFlag"] = False
+                searched["sellAvailableFlag"] = False
+                searched["shortEnabledFlag"] = False
+                searched["marketOrderAvailableFlag"] = False
+                searched["apiTradeAvailableFlag"] = False
+
+                result = self.server.ShowInstrumentInfo(iJSON=searched, show=False)
+
+                assert test["name"] in result, "Some data in report is incorrect!"
 
     def test_SearchByTickerCheckType(self):
         self.server.ticker = "IBM"
@@ -170,3 +403,129 @@ class TestTKSBrokerAPIMethods:
 
         for i, line in enumerate(result):
             assert line + "\n" == iListInfo[i], 'Check `ShowInstrumentsInfo()` method! It returns different info than in `./tests/InstrumentsInfoDump.txt`\nLine: {}\nExpected: `{}`\nActual: `{}`'.format(i + 1, iListInfo[i], line + "\n")
+
+    def test_HistoryAutoUpdaterPositive(self):
+        testData = [
+            {
+                "task": {
+                    "ticker": "GAZP",
+                    "kwargs": {
+                        "token": "t1", "accountId": "acc1", "useCache": True,
+                        "interval": "hour", "onlyMissing": True, "show": False
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "SBER",
+                    "kwargs": {
+                        "token": "t2", "accountId": "acc2", "useCache": False,
+                        "interval": "day", "onlyMissing": False, "show": True
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "YNDX",
+                    "kwargs": {
+                        "token": "t3", "accountId": "acc3", "interval": "15min"
+                    }
+                }
+            },
+        ]
+
+        # Check _HistoryAutoUpdaterWrapper()
+        for item in testData:
+            with patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockHistory, \
+                 patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None):
+                TKSBrokerAPI._HistoryAutoUpdaterWrapper(item["task"])
+
+                assert mockHistory.call_count == 1, f"History() not used for {item['task']['ticker']}"
+
+        # Check HistoryAutoUpdater()
+        tickersList = [item["task"]["ticker"] for item in testData]
+        kwargs = testData[0]["task"]["kwargs"]  # All used the same kwargs for updater tests
+
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=True), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockHistory, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=tickersList,
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                **kwargs
+            )
+
+            assert mockHistory.call_count == len(tickersList), "History() must be call once for every ticker"
+
+        # Check string ticker instead of list
+        singleTicker = "GAZP"
+        kwargsSingle = {
+            "token": "t4", "accountId": "acc4", "useCache": True,
+            "interval": "hour", "onlyMissing": True, "show": False
+        }
+
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=True), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", return_value=None) as mockSingle, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=singleTicker,
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                **kwargsSingle
+            )
+
+            assert mockSingle.call_count == 1, "History() must be called once when single ticker passed as string"
+
+    def test_HistoryAutoUpdaterNegative(self):
+        # Errors in _HistoryAutoUpdaterWrapper
+        testData = [
+            {
+                "task": {
+                    "ticker": "BAD1",
+                    "kwargs": {
+                        "token": "err1", "accountId": "acc", "interval": "hour"
+                    }
+                }
+            },
+            {
+                "task": {
+                    "ticker": "BAD2",
+                    "kwargs": {
+                        "token": "err2", "interval": "5min"
+                    }
+                }
+            },
+        ]
+
+        for item in testData:
+            with patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History", side_effect=Exception("mocked error")), \
+                    patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None):
+
+                try:
+                    TKSBrokerAPI._HistoryAutoUpdaterWrapper(item["task"])
+
+                except Exception:
+                    assert False, f"_HistoryAutoUpdaterWrapper should NOT raise for {item['task']['ticker']}"
+
+        # Check HistoryAutoUpdater if cron broken
+        with patch("tksbrokerapi.TKSBrokerAPI.pycron.is_now", return_value=False), \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.History") as mockHistory, \
+             patch("tksbrokerapi.TKSBrokerAPI.TinkoffBrokerServer.__init__", return_value=None), \
+             patch("tksbrokerapi.TKSBrokerAPI.sleep", side_effect=KeyboardInterrupt):
+
+            TKSBrokerAPI.HistoryAutoUpdater(
+                tickersList=["GAZP", "SBER"],
+                crontabExpr="* * * * *",
+                waitAfterIteration=0,
+                waitNext=0,
+                token="x", accountId="y", interval="hour"
+            )
+
+            assert mockHistory.call_count == 0, "History() do not run if cron not triggered"

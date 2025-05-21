@@ -2,16 +2,22 @@
 # Author: Timur Gilmullin
 
 """
-Module contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
+**T**echnologies · **K**nowledge · **S**cience
+
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
+
+Module **TKSEnums** contains a lot of constants from enums sections of Tinkoff Open API documentation used by TKSBrokerAPI module.
 
 - **TKSBrokerAPI module documentation:** https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
 - **TKSBrokerAPI CLI examples:** https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
 - **About Tinkoff Invest API:** https://tinkoff.github.io/investAPI/
 - **Tinkoff Invest API documentation:** https://tinkoff.github.io/investAPI/swagger-ui/
-- **Open account for trading:** http://tinkoff.ru/sl/AaX1Et1omnH
+- **Open account for trading:** https://tinkoff.ru/sl/AaX1Et1omnH
 """
 
-# Copyright (c) 2022 Gilmillin Timur Mansurovich
+# Copyright (c) 2025 Gilmillin Timur Mansurovich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +30,56 @@ Module contains a lot of constants from enums sections of Tinkoff Open API docum
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+TKS_METHOD_LIMITS = {
+    # Default
+    "default": 50,  # Default fallback for unknown or uncategorized endpoints
+
+    # Orders
+    "PostOrder": 50,  # Place order (POST /orders)
+    "CancelOrder": 50,  # Cancel order (POST /orders/cancel)
+    "GetOrders": 50,  # Get active orders (GET /orders)
+
+    # Stop-orders
+    "PostStopOrder": 25,  # Place stop-order (POST /stop-orders)
+    "CancelStopOrder": 25,  # Cancel stop-order (POST /stop-orders/cancel)
+    "GetStopOrders": 25,  # Get stop-orders (GET /stop-orders)
+
+    # Portfolio & positions
+    "GetPortfolio": 100,  # Get portfolio (GET /operations/portfolio)
+    "GetPositions": 100,  # Get positions (GET /operations/positions)
+    "GetWithdrawLimits": 100,  # Get withdrawal limits (GET /operations/withdraw-limits)
+
+    # Market data
+    "GetCandles": 150,  # Get candles (GET /market/candles)
+    "GetOrderBook": 150,  # Get orderbook (GET /market/orderbook)
+    "GetLastPrices": 150,  # Get last prices (GET /market/last-prices)
+    "GetTradingStatus": 150,  # Get trading status (GET /market/trading-status)
+    "GetClosePrices": 150,  # Get close prices (GET /market/close-prices)
+
+    # History zip-archive
+    "getHistory": 30,  # Get history (GET history-data) https://tinkoff.github.io/investAPI/get_history/
+
+    # Instruments
+    "SearchByFigi": 100,  # Search by FIGI (GET /market/search/by-figi)
+    "SearchByTicker": 100,  # Search by ticker (GET /market/search/by-ticker)
+    "GetInstrumentBy": 100,  # Generic search endpoint (GET /market/search)
+
+    # Operations
+    "GetOperations": 100,  # Get operations (GET /operations)
+
+    # Users
+    "GetAccounts": 50,  # Get accounts (GET /user/accounts)
+    "GetInfo": 50,  # Get user info (GET /user/info)
+    "GetMarginAttributes": 50,  # Margin info (GET /user/margin-attributes)
+    "GetUserTariff": 50,  # Get tariff info (GET /user/tariff)
+
+    # Reports
+    "GetBrokerReport": 100,  # Get broker report (POST /operations/broker-report)
+    "GetDividendsForeignIssuer": 100  # Dividends from foreign issuers (POST /operations/dividends/foreign)
+}
+"""Unary method limits (per minute) from Tinkoff API: https://tinkoff.github.io/investAPI/limits/"""
 
 
 TKS_DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
@@ -42,19 +98,29 @@ TKS_INSTRUMENTS = ["Currencies", "Shares", "Bonds", "Etfs", "Futures"]
 """Type of instrument for trade methods must be only one of supported types, listed in this constant. Default: `["Currencies", "Shares", "Bonds", "Etfs", "Futures"]`"""
 
 TKS_TICKER_ALIASES = {
-    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
-    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31
-    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0
-    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4
-    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
+    # "RUB": "RUB000UTSTOM",  # FIGI: RUB000UTSTOM - used just for information, instrument is not available to buy or sell throw API (not used since 7 March, 2023; see bug: #128)
+    # "GLD": "GLDRUB_TOM",  # FIGI: BBG000VJ5YR4 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "SPDR Gold Trust" company ticker. GOLD alias not used because it equal to the "Barrick Gold" company ticker.
+    # "SLV": "SLVRUB_TOM",  # FIGI: BBG000VHQTD1 - used just for information, instrument is not available to buy or sell throw API. GLD alias not used because it equal to the "iShares Silver Trust" company ticker.
     "HKD": "HKDRUB_TOM",  # FIGI: BBG0013HSW87
+    "CNY": "CNYRUB_TOM",  # FIGI: BBG0013HRTL0
     "TRY": "TRYRUB_TOM",  # FIGI: BBG0013J12N1
+    "TJS": "TJSRUB_TOM",  # FIGI: BBG0013J11P1
+    "KGS": "KGSRUB_TOM",  # FIGI: BBG0013J7Y00
+    "UZS": "UZSRUB_TOM",  # FIGI: BBG0013HQ310
+    # "AMD": "AMDRUB_TOM",  # FIGI: BBG0013HQ310 - not used because it equal to AMD company ticker
+    "BYN": "BYNRUB_TOM",  # FIGI: BBG00D87WQY7
+    "KZT": "KZTRUB_TOM",  # FIGI: BBG0013HG026
+    "USD": "USD000UTSTOM",  # FIGI: BBG0013HGFT4
+    "EUR": "EUR_RUB__TOM",  # FIGI: BBG0013HJJ31 - not available for trading since sanctions
+    "GBP": "GBPRUB_TOM",  # FIGI: BBG0013HQ5F0 - not available for trading since sanctions
+    "CHF": "CHFRUB_TOM",  # FIGI: BBG0013HQ5K4 - not available for trading since sanctions
+    "JPY": "JPYRUB_TOM",  # FIGI: BBG0013HQ524 - not available for trading since sanctions
 }
 """Some aliases instead official tickers for using in CLI. For example, you can use `"USD"` instead of `"USD000UTSTOM"`."""
 
-# some tickers or FIGIs raised exception earlier when it sends to server, that is why we exclude there:
+# Some tickers or FIGIs raised exception or not available for trading, that is why we exclude there:
 TKS_TICKERS_OR_FIGI_EXCLUDED = [
-    "ISSUANCEBRUS",
+    "ISSUANCEBRUS", "EUR_RUB__TOM", "GBPRUB_TOM", "CHFRUB_TOM", "JPYRUB_TOM",
 ]
 
 TKS_CANDLE_INTERVALS = {  # List values: 1st - Tinkoff API parameter, 2nd - minutes count, 3rd - max candles in block
@@ -105,6 +171,11 @@ TKS_QUALIFIED_TYPES = {
     "russian_shares": "Russian shares not included in quotation lists",
     "leverage": "Margin trading, unsecured leveraged trades",
     "repo": "REPO agreements",
+    "convertible_bonds": "Convertible bonds",
+    "foreign_bonds_russian_law": "Foreign bonds by Russian law",
+    "russian_bonds_foreign_law": "Russian bonds by foreign law",
+    "non_quoted_instruments": "Non quoted instruments",
+    "option": "Option",
 }
 """Values of `qualified_for_work_with`, field: https://tinkoff.github.io/investAPI/faq_users/#qualified_for_work_with"""
 
@@ -175,6 +246,23 @@ TKS_OPERATION_TYPES = {
     "OPERATION_TYPE_TAX_REPO_REFUND_PROGRESSIVE": "Tax refund on REPO transactions at the rate of 15%",
     "OPERATION_TYPE_DIV_EXT": "Payout dividends to the card",
     "OPERATION_TYPE_TAX_CORRECTION_COUPON": "Coupon tax correction",
+    "OPERATION_TYPE_CASH_FEE": "Currency Balance Fee",
+    "OPERATION_TYPE_OUT_FEE": "Fee for withdrawing currency from a brokerage account",
+    "OPERATION_TYPE_OUT_STAMP_DUTY": "Stamp duty",
+    "OPERATION_TYPE_OUTPUT_SWIFT": "SWIFT output transfer",
+    "OPERATION_TYPE_INPUT_SWIFT": "SWIFT input transfer",
+    "OPERATION_TYPE_OUTPUT_ACQUIRING": "Transfer to card",
+    "OPERATION_TYPE_INPUT_ACQUIRING": "Transfer from card",
+    "OPERATION_TYPE_OUTPUT_PENALTY": "Withdrawal fee",
+    "OPERATION_TYPE_ADVICE_FEE": "Deducting Fee for Advice Service",
+    "OPERATION_TYPE_TRANS_IIS_BS": "Transfer of securities from IIS to brokerage account",
+    "OPERATION_TYPE_TRANS_BS_BS": "Transfer of securities from one brokerage account to another",
+    "OPERATION_TYPE_OUT_MULTI": "Withdrawal of funds from the account",
+    "OPERATION_TYPE_INP_MULTI": "Refill of funds from the user account",
+    "OPERATION_TYPE_OVER_PLACEMENT": "Overnight Exchange Placement",
+    "OPERATION_TYPE_OVER_COM": "Overnight commission",
+    "OPERATION_TYPE_OVER_INCOME": "Overnight income",
+    "OPERATION_TYPE_OPTION_EXPIRATION": "Option expiration",
 }
 """Operation type, enums: https://tinkoff.github.io/investAPI/operations/#operationtype"""
 
@@ -182,6 +270,7 @@ TKS_OPERATION_STATES = {
     "OPERATION_STATE_UNSPECIFIED": "! Unknown",
     "OPERATION_STATE_EXECUTED": "√ Executed",
     "OPERATION_STATE_CANCELED": "× Canceled",
+    "OPERATION_STATE_PROGRESS": "↻ Progress",
 }
 """Operation state, enums: https://tinkoff.github.io/investAPI/operations/#operationstate"""
 

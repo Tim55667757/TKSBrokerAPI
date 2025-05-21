@@ -1,0 +1,272 @@
+name: Python Package CI/CD
+
+on:
+  push:
+    branches:
+      - 'release-*'
+      - master
+      - develop
+  pull_request:
+    branches:
+      - 'release-*'
+      - master
+  workflow_dispatch:  # Manual runs allowed.
+
+jobs:
+
+  pre_build:
+    name: 🔧 Pre-Building Environment
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check Python Version
+        run: |
+          echo 🐍 Using Python version:
+          python --version
+
+      - name: Cache Python packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Upgrade pip and install dependencies
+        run: |
+          echo 🔄 Upgrading pip and reinstalling all dependencies...
+          python -m pip install --upgrade pip --force-reinstall
+          pip install -r requirements-dev.txt
+
+      - name: Log Installed Dependencies
+        run: |
+          echo 📄 Installed packages:
+          pip list
+
+      - name: Pre-Build Completed
+        run: echo ✅ PRE-BUILDING stage completed successfully!
+
+  testing:
+    name: 📝 Running Tests
+    needs: pre_build
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/tksbrokerapi:${{ github.workspace }}/tests
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check Python Version
+        run: |
+          echo 🐍 Using Python version:
+          python --version
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Test Dependencies
+        run: |
+          echo 🔄 Installing dev dependencies...
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
+
+      - name: Run Tests
+        run: |
+          echo 🔍 Starting pytest...
+          pytest tests -v --disable-pytest-warnings
+
+      - name: Testing Completed
+        run: echo ✅ TESTING stage completed successfully!
+
+  building:
+    name: ⚙️ Building Package
+    needs: testing
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.setver.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Check Python Version
+        run: |
+          echo 🐍 Using Python version:
+          python --version
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Build Dependencies
+        run: |
+          echo 🔄 Installing dev dependencies...
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
+
+      - name: Build Package
+        run: |
+          echo 📦 Building distribution...
+          python setup.py sdist bdist_wheel
+
+      - name: Build Universal Wheel
+        run: |
+          echo 🌍 Building universal wheel...
+          python setup.py bdist_wheel --universal
+
+      - name: Test Package Installation
+        run: |
+          echo 📦 Testing distribution...
+          pip install ./dist/*.tar.gz
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+      - name: Set version from .version
+        id: setver
+        run: |
+          VERSION=$(cat .version | tr -d '\n')
+          echo "VERSION=$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Building Completed
+        run: echo ✅ BUILDING stage completed successfully!
+
+  publish:
+    name: 🚀 Publishing to PyPI
+    needs: building
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check Python Version
+        run: |
+          echo 🐍 Using Python version:
+          python --version
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-dev.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Publish Dependencies
+        run: |
+          echo 🔄 Installing dev dependencies...
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Log Used Dependencies
+        run: |
+          echo 📄 Used packages:
+          pip list
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+      - name: Verify Distribution
+        run: |
+          echo 🗂️ Showing files in dist/
+          ls -l dist/
+          echo 🔍 Verifying package metadata...
+          twine check dist/*
+
+      - name: Publish Package to PyPI
+        run: |
+          echo 🚀 Publishing distribution to PyPI...
+          python -m twine upload --verbose dist/* --skip-existing
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Publishing Completed
+        run: echo ✅ PUBLISHING stage completed successfully!
+
+  docker:
+    name: 🐳 Build & Push Docker Image
+    needs: [publish, building]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Docker Image
+        run: |
+          echo 🐳 Building Docker image with TKSBrokerAPI==${{ needs.building.outputs.version }}
+          docker build \
+            --build-arg TKS_BUILD_VERSION=${{ needs.building.outputs.version }} \
+            -f deploy/Dockerfile \
+            -t tim55667757/tksbrokerapi:latest \
+            -t tim55667757/tksbrokerapi:${{ needs.building.outputs.version }} \
+            .
+          docker push tim55667757/tksbrokerapi:latest
+          docker push tim55667757/tksbrokerapi:${{ needs.building.outputs.version }}
+
+      - name: Docker Build Completed
+        run: echo ✅ DOCKER IMAGE published successfully!

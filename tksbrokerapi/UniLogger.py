@@ -3,6 +3,12 @@
 # Author: Timur Gilmullin
 
 """
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a>
+
+**T**echnologies · **K**nowledge · **S**cience
+
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
+
 This module init standard python logging system with some of pre-defined parameters,
 e.g. debug level for log-file, info level for console, log-rotate and so on.
 
@@ -31,6 +37,7 @@ import logging.handlers
 # initialize Main Parent Logger:
 UniLogger = logging.getLogger("TKSBrokerAPI-UniLogger")
 formatString = "%(filename)-20sL:%(lineno)-5d%(levelname)-8s[%(asctime)s] %(message)s"
+formatStringWithTag = "%(filename)-20sL:%(lineno)-5d%(levelname)-8s[%(asctime)s] {tag} %(message)s"
 formatter = logging.Formatter(formatString)
 sys.stderr = sys.stdout
 

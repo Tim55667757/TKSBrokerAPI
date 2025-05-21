@@ -1,17 +1,20 @@
-# The order of packages is significant, because pip processes them in the order of appearance.
-# Changing the order has an impact on the overall integration  process, which may cause troubles later.
+# The package order is critical since pip installs them sequentially.
+# Modifying the order may affect the integration process and lead to potential issues.
 
-# Build requirements:
-twine == 4.0.1
-pytest >= 7.1.2
+# Base requirements:
+numpy >= 1.23.5  # BSD-3-Clause License
+scipy >= 1.13.1  # BSD-3-Clause License
+numba >= 0.59.1  # BSD-2-Clause License
+llvmlite >= 0.42.0  # BSD-2-Clause License
+pandas >= 2.2.3  # MIT License
 
-# Documentation requirements:
-pdoc >= 12.3.0
+# Service utilities:
+requests >= 2.32.0  # Apache-2.0 License
+openpyxl >= 3.0.10  # MIT License
+Mako >= 1.2.4  # MIT License
+python-dateutil >= 2.8.1  # Apache-2.0 License
+pycron >= 3.0.0  # MIT License
 
-# Packet TKSBrokerAPI requirements:
-requests >= 2.25.1  # Apache-2.0 license
-pandas >= 1.2.2
-openpyxl >= 3.0.10
-Mako >= 1.2.4
-python-dateutil >= 2.8.1  # Apache-2.0 license
-PriceGenerator >= 1.2.74  # Apache-2.0 license
+# Project packages:
+PriceGenerator >= 1.4.93  # Apache-2.0 License
+FuzzyRoutines >= 1.0.3  # MIT License

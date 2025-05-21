@@ -1,0 +1,41 @@
+# This is config file for **Orders Grid Setter** scenario, worked on TKSBrokerAPI platform.
+
+logfileVerbosity: 10  # Log level for TKSBrokerAPI.log, DEBUG (10) recommended by default for script debugging.
+consoleVerbosity: 20  # Log level for the console, INFO (20) recommended by default.
+
+# Parameters for `TradeScenario()` class, which are parameters of the trading scenario.
+# When define trade parameters, it is important to know commissions of the broker's tariffs: https://www.tinkoff.ru/invest/account/tariffs/
+# See also, how to parametrize and open a pending limit or stop order using TKSBrokerAPI platform: https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#open-a-pending-limit-or-stop-order
+fields:
+  target: 1.5  # Start price target to open orders from current price in percent. It can be `> 0` (upper from current price), `< 0` (lower from current price) or `= 0` (target is current price).
+  gridStep: 0.1  # Grid step from target price in percent. It can be `> 0` (new orders will be upper from target price), `< 0` (new orders will be lower from target price). Step cannot be equal to 0.
+  count: 5  # Count of orders in grid. It can be `> 0`.
+  direction: "Sell" # Direction of orders: `Buy` or `Sell`.
+  type: "Stop"  # Order type: `Limit` (valid until the end of the trading session) or `Stop` (valid until canceled or until the specified date).
+  volume: 1  # Volume of instrument in lots, integer `>= 1`.
+  execType: "TP"  # This is an optional parameter and only for stop orders. Type of order opened upon reaching the trigger price of the initial stop order, by default it is the string `Limit` or you can specify `SL`, `TP` to open a stop loss or take profit order.
+  expiration: "Undefined"  # Date of cancellation of orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the local date in the future in format: `%Y-%m-%d %H:%M:%S`.
+  timeout: 15  # Network operations timeout, by default, at least 15 seconds is recommended.
+  depth: 1  # How deep to request the Depth of Market to receive current prices, recommended 1 (`1 <= depth <= 50`).
+  testMode: True  # If test mode is `True` then orders will not be opened, only show grid's and orders parameters. If test mode is `False` then orders will be created.
+
+# List of instrument tickers to set up orders grid:
+tickers:
+
+# --- Russian shares:
+
+- YNDX  # rub: Yandex
+#- VKCO  # rub: VKontakte
+#- GAZP  # rub: Gazprom
+#- MTSS  # rub: MTS
+#- PIKK  # rub: PIK
+#- ROSN  # rub: Rosneft
+- SBER  # rub: Sberbank
+#- TCSG  # rub: TCS Group (Tinkoff bank)
+#- SGZH  # rub: Segezha Group
+
+# --- Russian Tinkoff ETFs:
+
+#- TRUR  # rub: Tinkoff Eternal portfolio RUB
+#- TMOS  # rub: Tinkoff iMOEX
+#- TBRU  # rub: Tinkoff Bonds RUB

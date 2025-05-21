@@ -1,0 +1,50 @@
+# This is config file for **Anomaly Volumes Detector** scenario, worked on TKSBrokerAPI platform.
+
+logfileVerbosity: 10  # Log level for TKSBrokerAPI.log, DEBUG (10) recommended by default for script debugging.
+consoleVerbosity: 20  # Log level for the console, INFO (20) recommended by default.
+
+# Trading periods schedule in crontab format, e.g `timeToWork: "*/2 10-21 * * 1-5"` mean:
+# At every 2nd minute past every hour from 10 through 21 on every day-of-week from Monday through Friday.
+# See other examples here: https://crontab.guru/#*/2_10-21_*_*_1-5
+# Tinkoff Investment Trading Schedule: https://www.tinkoff.ru/invest/account/help/trade-on-bs/buy-n-sell/#q5
+timeToWorkWeekdays: "*/2 10-21 * * 1-5"  # From 10:00AM to 22:00PM (including) at weekdays, every 2 minutes.
+
+# If `infiniteWorkMode = False`, then script runs once for all listed tickers.
+# Working hours are not checked, only a warning is shown if it's not working time.
+# If `infiniteWorkMode = True`, then script runs in infinite mode (until cancelled).
+# In this case operations are performed only at the allowed time, defined by the `timeToWorkWeekdays` parameter.
+infiniteWorkMode: False
+
+waitAfterCrash: 180  # How many seconds to wait after crashes (no network or errors on the broker's server).
+waitNext: 1  # Technical pause in seconds between crontab condition checks while waiting for the next working period.
+waitAfterIteration: 55  # Technical pause in seconds after each iteration. Also, it is time-to-live for signals.
+
+# Parameters for `TradeScenario()` class, which are parameters of the trading scenario.
+# When define trade parameters, it is important to know commissions of the broker's tariffs: https://www.tinkoff.ru/invest/account/tariffs/
+fields:
+  timeout: 15  # Network operations timeout, by default, at least 15 seconds is recommended.
+  depth: 20  # How deep to request the Depth of Market to analyze current trading volumes, recommended: `1 <= depth <= 50`.
+  msgLanguage: "en"  # Bot messages language: "en" / "ru" supported.
+  windowHampel: 0  # Length of the sliding window in Hampel filter (0 mean max wide window is used), recommended: `0 <= windowHampel <= depth`.
+  anomaliesMaxCount: 2  # Maximum anomalies that bot sending in one message, recommended: `1 <= anomaliesMaxCount <= 3`.
+  volumeIgnored: 0  # Volume less than this number will be ignored (0 mean that all values will use).
+
+# List of instrument tickers to analyze and trade:
+tickers:
+
+# --- Russian shares:
+
+- YNDX  # rub: Yandex
+- VKCO  # rub: VKontakte
+- GAZP  # rub: Gazprom
+- MTSS  # rub: MTS
+- PIKK  # rub: PIK
+- ROSN  # rub: Rosneft
+- SBER  # rub: Sberbank
+- TCSG  # rub: TCS Group (Tinkoff bank)
+
+# --- Russian Tinkoff ETFs:
+
+- TRUR  # rub: Tinkoff Eternal portfolio RUB
+- TMOS  # rub: Tinkoff iMOEX
+- TBRU  # rub: Tinkoff Bonds RUB

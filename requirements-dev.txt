@@ -1,0 +1,15 @@
+# The package order is critical since pip installs them sequentially.
+# Modifying the order may affect the integration process and lead to potential issues.
+
+# Include base project dependencies:
+-r requirements.txt
+
+# Build requirements:
+wheel >= 0.36.0  # MIT License
+twine >= 5.0  # MIT License
+
+# Test requirements:
+pytest >= 7.1.2  # MIT License
+
+# Documentation requirements:
+pdoc >= 14.5.1  # MIT License

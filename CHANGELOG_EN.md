@@ -1,15 +1,97 @@
 # TKSBrokerAPI — Release notes
 
-[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+*By [Fuzzy Technologies](https://fuzzy-technologies.github.io/)*<br>
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
+**T**echnologies · **K**nowledge · **S**cience
 
-* 🇷🇺 [See release notes in russian here (релиз-ноты на русском)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_RU.md)
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
+
+* 🇷🇺 [See release notes in russian here (релиз-ноты на русском)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG.md)
   * 💡 [All planned releases and features](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
   * 📂 [All open tasks in the backlog](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc)
-* 📚 [Documentation for the TKSBrokerAPI module and examples of working with CLI](https://tim55667757.github.io/TKSBrokerAPI)
-* 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+* 📚 [Documentation and examples](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
+* 🎁 Donation: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 
-### [1.5.* (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/milestone/5) — in progress...
+### [release-1.6 (2025-05-20)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/release-1.6) — released
+
+##### Digest
+
+A new fast algorithm has been added to estimate the probability of reaching a target price based on volatility and returns. The model accounts for drift, applies Bayesian aggregation, and is adjusted by phase and chaos metrics, allowing signal filtering based on confidence.
+
+Fast anomaly filtering using the Hampel method has been implemented with an optimized function and practical examples. A fuzzy scale for interpreting probabilities `{Min, Low, Med, High, Max}` has also been introduced, simplifying signal selection.
+
+The infrastructure has been significantly improved: parallel candle history loading with partial updates, automatic cron-based updates via `--history-auto-updater`, centralized rate limiting in `SendAPIRequest()`, and Docker image CI/CD builds. These changes boosted performance and platform stability when working with the broker.
+
+##### New features
+
+* [#119](https://github.com/Tim55667757/TKSBrokerAPI/issues/119) The new example was implemented: [Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector) is a simple Telegram bot for detecting anomaly volumes in Buyers and Sellers orders.
+* [#111](https://github.com/Tim55667757/TKSBrokerAPI/issues/111) TradeRoutines: `CalculateLotsForDeal()` method was implemented. This method can be used when you need to calculate lots to open position.
+* [#112](https://github.com/Tim55667757/TKSBrokerAPI/issues/112) TradeRoutines: `HampelFilter()` method was implemented. It allows you to detect anomaly (outlier, non-standard value, norm deviation) among the values of any number series using the Hampel filtering function. Hampel Filter detects outliers based on a sliding window and counting difference between median values and input values of series.
+* [#113](https://github.com/Tim55667757/TKSBrokerAPI/issues/113) TradeRoutines: `HampelAnomalyDetection()` method using Hampel Filter was implemented. This function returns the minimum index of elements in anomaly list or index of the first maximum element in input series if this index is less than anomaly element index.
+* [#114](https://github.com/Tim55667757/TKSBrokerAPI/issues/114) Examples of using Hampel Filtering were implemented: 1) Jupyter Notebook with theory and practice ([english](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb) and [russian](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample.ipynb) versions); 2) Python script [example](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/TestAnomalyFilter.py); 3) article: "How to quickly find anomalies in number series using the Hampel method" ([english](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html) and [russian](https://forworktests.blogspot.com/2022/12/blog-post.html) versions).
+* [#117](https://github.com/Tim55667757/TKSBrokerAPI/issues/117) Bool filter with Rules for Opening/Closing positions by fuzzy Risk/Reach levels was added as bool matrices `OPENING_RULES` and `CLOSING_RULES`. `CanOpen()` and `CanClose` methods can check opening and closing positions rules in these matrices depend on fuzzy Risk/Reach levels.
+* [#118](https://github.com/Tim55667757/TKSBrokerAPI/issues/118) Methods for calculation Fuzzy Risk and Fuzzy Reach levels were implemented: `RiskLong()`, `RiskShort()`, `ReachLong()` and `ReachShort()`.
+* [#14](https://github.com/Tim55667757/TKSBrokerAPI/issues/14) "Orders Grid Setter" was implemented. This script can be set up a grid of orders (limit or stop, buy or sell) with defined steps and lots for a lot of instruments by its tickers in parallel mode conveyor.
+* [#140](https://github.com/Tim55667757/TKSBrokerAPI/issues/140) CI/CD on GitHub Actions is implemented.
+* [#145](https://github.com/Tim55667757/TKSBrokerAPI/issues/145) Target Probability Estimation, the Big Core feature is implemented.
+* [#152](https://github.com/Tim55667757/TKSBrokerAPI/issues/152) Centralized throttling with cooperative waiting added to `SendAPIRequest()`.
+* [#154](https://github.com/Tim55667757/TKSBrokerAPI/issues/154) Integrated chaos metrics (Hurst, SampEn, DFA) and phase filtering into `EstimateTargetReachability()`. Added trust coefficients, probability adjustment logic, full test coverage and performance optimization.
+* [#78](https://github.com/Tim55667757/TKSBrokerAPI/issues/78) Added thread-safe parallel candle history downloading with support for partial updates (`--only-missing`).
+* [#57](https://github.com/Tim55667757/TKSBrokerAPI/issues/57) Added `--history-auto-updater` mode: download ticker history in parallel using cron schedule, saving per ticker to CSV.
+* [#141](https://github.com/Tim55667757/TKSBrokerAPI/issues/141) Added GitHub Actions integration to build and publish versioned Docker images of TKSBrokerAPI (`dev` and `release`).
+
+##### Improvements
+
+* [#92](https://github.com/Tim55667757/TKSBrokerAPI/issues/92) Mutex lock was implemented for the `SendAPIRequest()` method to avoid multiprocessing issues with unavailable resource.
+* [#89](https://github.com/Tim55667757/TKSBrokerAPI/issues/89) If you run TKSBrokerAPI platform instances in parallel mode, you can use additional tag in log messages to simplify instance identifying and debugging. It enables with the `--tag` key.
+* [#99](https://github.com/Tim55667757/TKSBrokerAPI/issues/99) TKSBrokerAPI logo was added to the templates of HTML reports.
+* [#98](https://github.com/Tim55667757/TKSBrokerAPI/issues/98) Field with not covered funds were added to a margin status report (`--user-info` key).
+* [#96](https://github.com/Tim55667757/TKSBrokerAPI/issues/96) `UpdateClassFields()` method was implemented and some positive and negative tests were added. This method gets config as dictionary (preloaded from YAML file) and apply `key: value` as names of class fields and values of class fields.
+* [#100](https://github.com/Tim55667757/TKSBrokerAPI/issues/100) Now, orders are close before closing positions in `CloseAllByTicker()` and `CloseAllByTicker()` methods. It will minimize blocked lots.
+* [#104](https://github.com/Tim55667757/TKSBrokerAPI/issues/104) Avoid FIGI-warnings in `Overview()` if `self.figi` is empty.
+* [#106](https://github.com/Tim55667757/TKSBrokerAPI/issues/106) `SeparateByEqualParts()` method was implemented. This method gets an input list and try to separate it by equal parts of elements.
+* [#27](https://github.com/Tim55667757/TKSBrokerAPI/issues/27) Try...except block and some negative tests were added for `NanoToFloat()` method.
+* [#28](https://github.com/Tim55667757/TKSBrokerAPI/issues/28) Try...except block and some negative tests were added for `FloatToNano()` method.
+* [#30](https://github.com/Tim55667757/TKSBrokerAPI/issues/30) Try...except block and some negative tests were added for `GetDatesAsString()` method.
+* [#33](https://github.com/Tim55667757/TKSBrokerAPI/issues/33) Try...except block and some negative tests were added for `_ParseJSON()` method.
+* [#107](https://github.com/Tim55667757/TKSBrokerAPI/issues/107) `onlyFiles` parameter was added to some methods with `show` parameter: `OverviewUserInfo()`, `OverviewAccounts()`, `OverviewLimits()`, `Deals()`, `Overview()`, `ShowListOfPrices()`, `GetListOfPrices()`, `SearchInstruments()`, `ShowInstrumentsInfo()` and `ShowInstrumentInfo()`. It allows you to generate only report files, without displaying information in the console.
+* [#116](https://github.com/Tim55667757/TKSBrokerAPI/issues/116) API-doc with a dark theme now.
+* [#126](https://github.com/Tim55667757/TKSBrokerAPI/issues/126) Operation type counts were updated in a Deals report.
+* [#138](https://github.com/Tim55667757/TKSBrokerAPI/issues/138) Monkey Patch for TKSBrokerAPI and its PriceGenerator library.
+* [#146](https://github.com/Tim55667757/TKSBrokerAPI/issues/146) Improved `HampelFilter()` performance: replaced nested MAD lambda with vectorized median calculation. Now passes 1M-element test in under 1s (was >90s on an older version).
+* [#148](https://github.com/Tim55667757/TKSBrokerAPI/issues/148) Implemented an improved version of `FastBBands()` than the similar function in pandas_ta lib.
+* [#149](https://github.com/Tim55667757/TKSBrokerAPI/issues/149) Implemented an improved version of `FastPSAR()` than the similar function in pandas_ta lib.
+* [#144](https://github.com/Tim55667757/TKSBrokerAPI/issues/144) Implemented `CalculateAdaptiveCacheReserve()` method for Dynamic Liquidity Reserve Management.
+* [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Improved `SendAPIRequest()`: added safe retries, error parsing, full unit tests; increased API client stability.
+* [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Optimized the `Overview()` method for portfolio and added unit tests.
+* [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Added: `FormatTimedelta()` utility for formatting timedelta with optional precision, fallback to raw string on invalid input.
+* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88) Simplify view of the "Opened stop-orders" table with `--overview` key.
+* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91) Implement possibility to set tickers in lower-case.
+
+##### Bug fixes
+
+* [#93](https://github.com/Tim55667757/TKSBrokerAPI/issues/93) Bug fixed: `KeyError: 'stopOrders' and KeyError: 'orders'` in `RequestPendingOrders()` and `RequestStopOrders()` methods.
+* [#94](https://github.com/Tim55667757/TKSBrokerAPI/issues/94) Bug fixed in `Overview()` method: `KeyError: 'currentNkd'` if an instrument is not a bond.
+* [#95](https://github.com/Tim55667757/TKSBrokerAPI/issues/95) Bug fixed: broken Overview table in `Lots` column.
+* [#101](https://github.com/Tim55667757/TKSBrokerAPI/issues/101) Bug fixed with incorrect calculation of available currency and analytics in `Overview()` tables.
+* [#102](https://github.com/Tim55667757/TKSBrokerAPI/issues/102) Bug fixed in `Deals()` method: `KeyError: 'OPERATION_STATE_PROGRESS'`. New state `OPERATION_STATE_PROGRESS` was added to the `TKS_OPERATION_STATES` constant.
+* [#103](https://github.com/Tim55667757/TKSBrokerAPI/issues/103) Format fixed.
+* [#120](https://github.com/Tim55667757/TKSBrokerAPI/issues/120) Bug fixed in `History()` method: `KeyError: 'candles'`. Additional check was added.
+* [#121](https://github.com/Tim55667757/TKSBrokerAPI/issues/121) Bug fixed in `TKS_QUALIFIED_TYPES` constant. Some values of `qualified_for_work_with` field was added in REST API, but not documented: `foreign_bonds_russian_law`, `convertible_bonds`, `russian_bonds_foreign_law`, `non_quoted_instruments` and `option`. Additional values were added to constant in this bug fix.
+* [#122](https://github.com/Tim55667757/TKSBrokerAPI/issues/122) For the import error like `No module named 'Templates'` into README_EN.md [was added the instruction](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Import-errors) how to fix it.
+* [#123](https://github.com/Tim55667757/TKSBrokerAPI/issues/123) Bug `ValueError` was fixed in `History()` and `LoadHistory()` methods. Additional checks were added.
+* [#124](https://github.com/Tim55667757/TKSBrokerAPI/issues/124) Bug fixed: `Incorrect values in view["stat"]["funds"] record`.
+* [#125](https://github.com/Tim55667757/TKSBrokerAPI/issues/125) Bug fixed: `KeyError: 'OPERATION_TYPE_OUT_STAMP_DUTY'`, into `TKS_OPERATION_TYPES` were added some new values.
+* [#127](https://github.com/Tim55667757/TKSBrokerAPI/issues/127) Bug fixed: `KeyError: 'name'`, in `Overview()` method.
+* [#128](https://github.com/Tim55667757/TKSBrokerAPI/issues/128) Bug fixed: `RUB000UTSTOM` FIGI not in `dump.json`. Since 7 March 2023 RUB000UTSTOM FIGI have excluded from the currency list.
+* [#142](https://github.com/Tim55667757/TKSBrokerAPI/issues/142) Bug fixed: ImportError after pip install TKSBrokerAPI.
+* [#129](https://github.com/Tim55667757/TKSBrokerAPI/issues/129) Added `DetermineDecimalPrecision()` utility and integrated it into `History()` for automatic rounding of float values before saving to CSV and avoid rounding bug.
+* [#131](https://github.com/Tim55667757/TKSBrokerAPI/issues/131) Fixed error in `Overview()` caused by presence of restricted or unsupported currencies in portfolio.
+* [#133](https://github.com/Tim55667757/TKSBrokerAPI/issues/133) Fixed TypeError when export to XLSX.
+* [#137](https://github.com/Tim55667757/TKSBrokerAPI/issues/137) Fixed KeyError: 'rub' if cash in RUB == 0 in portfolio.
+
+### [1.5.120 (2022-11-21)](https://github.com/Tim55667757/TKSBrokerAPI/releases/tag/1.5.120) — released
 
 ##### Digest
 
@@ -196,4 +278,4 @@ First prototype [TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI) - py
 
 Then, from about the middle to the end of 2021, Tinkoff developers actively changed their REST protocol. The `TKSBrokerAPI` module has become broken. But during the spring-summer of 2022, we managed to restore and even expand most of its functions, rewrite the code to work with the new Tinkoff Open API REST protocol, put the library into open source, and set up the release cycle.
 
-[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)

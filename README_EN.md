@@ -1,16 +1,24 @@
 # TKSBrokerAPI Trade Automation Platform
 
-**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is the trading platform for automation and simplifying the implementation of trading scenarios, as well as working with [Tinkoff Invest API](http://tinkoff.ru/sl/AaX1Et1omnH) server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
+*By [Fuzzy Technologies](https://fuzzy-technologies.github.io/)*<br>
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/TKSBrokerAPI-Logo.png?raw=true" alt="TKSBrokerAPI-Logo" width="780" /></a><br>
+**T**echnologies · **K**nowledge · **S**cience
 
-**WARNING! IMPORTANT! Use version [1.6.dev155](https://pypi.org/project/tksbrokerapi/1.6.dev155/) or latest from develop-branch.** Unfortunatelly, previous release versions are not worked correctly, because REST was changed.
+**[TKSBrokerAPI](https://github.com/Tim55667757/TKSBrokerAPI)** is the trading platform for automation and simplifying the implementation of trading scenarios, as well as working with [Tinkoff Invest API](https://tinkoff.ru/sl/AaX1Et1omnH) server via the REST protocol. The TKSBrokerAPI platform may be used in two ways: from the console, it has a rich keys and commands, or you can use it as Python module with `python import`. TKSBrokerAPI allows you to automate routine trading operations and implement your trading scenarios, or just receive the necessary information from the broker. It is easy enough to integrate into various CI/CD automation systems.
 
-[![Build Status](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI.svg?branch=master)](https://app.travis-ci.com/Tim55667757/TKSBrokerAPI)
+**CI/CD Status**
+
+| Branch  | Status                                                                                                                                                                                                                     |
+|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| master  | [![CI (main)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml/badge.svg?branch=main)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml)       |
+| develop | [![CI (develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml/badge.svg?branch=develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml) |
+
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
 [![license](https://img.shields.io/pypi/l/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/LICENSE)
 [![release-notes](https://badgen.net/badge/release/notes/orange)](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/CHANGELOG_EN.md)
 [![ru-doc](https://badgen.net/badge/russian/readme/pink)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md)
 [![api-doc](https://badgen.net/badge/api-doc/TKSBrokerAPI/blue)](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html)
-[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 ❗ If you are missing some feature of the platform or some specific example in the documentation to understand how to work with the TKSBrokerAPI module (in the CLI or as a Python API), then describe your case in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. As far as possible, we will try to implement the desired feature and add examples in the next release.
 
@@ -25,7 +33,7 @@
   * 🇺🇸 [Release notes](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/CHANGELOG_EN.md)
     * 💡 [All planned releases and features](https://github.com/Tim55667757/TKSBrokerAPI/milestones?direction=desc&sort=title&state=open)
     * 📂 [All open tasks in the backlog](https://github.com/Tim55667757/TKSBrokerAPI/issues?q=is%3Aissue+is%3Aopen+sort%3Acreated-asc)
-* 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+* 🎁 Support the project with a donation to our yoomoney-wallet: [410015019068268](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
 
 **Contents**
 
@@ -35,9 +43,9 @@
 3. [Auth](#Auth)
    - [Token](#Token)
    - [User account ID](#User-account-ID)
-4. [Usage examples](#Usage-examples)
+4. [Reference](#Reference)
+5. [Usage examples](#Usage-examples)
    - [Command line](#Command-line)
-     - [Reference](#Reference)
      - [Local cache](#Local-cache)
      - [Get a list of all instruments available for trading](#Get-a-list-of-all-instruments-available-for-trading)
      - [Find an instrument](#Find-an-instrument)
@@ -56,11 +64,13 @@
      - [Build a bond payment calendar](#Build-a-bond-payment-calendar)
    - [Module import](#Module-import)
      - [Abstract scenario implementation example](#Abstract-scenario-implementation-example)
+     - [Using in Jupyter Notebook](#Using-in-Jupyter-Notebook)
+     - [Anomaly Volumes Detector](#Anomaly-Volumes-Detector)
 
 
 ## Introduction
 
-If you are engaged in investment, automation and algorithmic trading at the same time, then you have probably heard about [Tinkoff Open API](https://tinkoff.github.io/investAPI/) (there is a good [Swagger-documentation](https://tinkoff.github.io/investAPI/swagger-ui/)). This is an API provided by the Tinkoff Investments broker to automate the operation of exchange trading robots. If you haven't heard it yet, you can create an account [following the link](http://tinkoff.ru/sl/AaX1Et1omnH) and test its capabilities.
+If you are engaged in investment, automation and algorithmic trading at the same time, then you have probably heard about [Tinkoff Open API](https://tinkoff.github.io/investAPI/) (there is a good [Swagger-documentation](https://tinkoff.github.io/investAPI/swagger-ui/)). This is an API provided by the Tinkoff Investments broker to automate the operation of exchange trading robots. If you haven't heard it yet, you can create an account [following the link](https://tinkoff.ru/sl/AaX1Et1omnH) and test its capabilities.
 
 When working with any API, there are always technical difficulties: a high entry threshold, the need to study of the big volume of documentation, writing and debugging code to make network requests using the API format. It will take a long time before you get to the point of implementing a trading algorithm.
 
@@ -205,6 +215,9 @@ At the time of the [latest release](https://pypi.org/project/tksbrokerapi/), the
 - Download historical data from the broker's server in the OHLCV price model (intervals available: `1min`, `5min`, `15min`, `hour` and `day` for any period of time, starting from `1970-01-01`);
    - common key `--history` and additional keys: `--interval`, `--only-missing` and `--csv-sep`;
    - API-method: [`History()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.History).
+- Cron-based multithreaded history auto-updater with per-ticker output (with similar options as in previous);
+   - common key `--history-auto-updater` and additional keys: `--crontab`, `--date-start`, `--wait-after-iteration` and `--wait-next`;
+   - API-method: [`HistoryAutoUpdater()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#HistoryAutoUpdater).
 - Cache by default all data on all traded instruments to the `dump.json` cache file and use it in the future, which reduces the number of calls to the broker's server;
   - key `--no-cache` cancels the use of the local cache, the data is requested from the server at each time;
   - API-method: [`DumpInstruments()`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.DumpInstruments).
@@ -276,6 +289,7 @@ After that, you can check the installation with the command:
 
 ```commandline
 pip show tksbrokerapi
+tksbrokerapi --version
 ```
 
 You can also use the TKSBrokerAPI module by downloading it directly from [repository](https://github.com/Tim55667757/TKSBrokerAPI/) via `git clone` and taking the codebase of any tested [release](https://github.com/Tim55667757/TKSBrokerAPI/releases).
@@ -283,7 +297,6 @@ You can also use the TKSBrokerAPI module by downloading it directly from [reposi
 In the first case, the tool will be available in the console through the `tksbrokerapi` command, and in the second case, you will have to run it as a Python script, through `python TKSBrokerAPI.py` from the source directory.
 
 ❗ **Important note:** TKSBrokerAPI module was tested for `python >= 3.9`. Earlier versions will have bugs. Further, all examples are written for the case when TKSBrokerAPI is installed via PyPI in `python == 3.9`.
-
 
 ## Auth
 
@@ -297,7 +310,7 @@ The TKSBrokerAPI module takes care of all the work with tokens. There are three 
 - either specify `token` when initializing the class in a Python script: [`TKSBrokerAPI.TinkoffBrokerServer(token="your_token_here", ...)`](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__);
 - or you can pre-set a special variable in the user environment: `TKS_API_TOKEN=your_token_here`.
 
-❗ **Working with the TINKOFF INVEST API without creating and using a token is not possible**. Before you start working with the TKSBrokerAPI module, please open the [brokerage account in Tinkoff Investments](http://tinkoff.ru/sl/AaX1Et1omnH), and then select the type of token you need and create it as indicated [in official documentation](https://tinkoff.github.io/investAPI/token/).
+❗ **Working with the TINKOFF INVEST API without creating and using a token is not possible**. Before you start working with the TKSBrokerAPI module, please open the [brokerage account in Tinkoff Investments](https://tinkoff.ru/sl/AaX1Et1omnH), and then select the type of token you need and create it as indicated [in official documentation](https://tinkoff.github.io/investAPI/token/).
 
 ❗ **Important note:** never share your tokens with anyone, don't use them in examples, and don't save them in public code. Anyone can use the token, but all transactions with the broker will be displayed on your behalf. If you want to use your tokens for automation in CI/CD systems, then be sure to use hidden environment variables ([example](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) of setting "hidden variables" for Travis CI, and [example](https://docs.gitlab.com/ee/ci/variables/#protected-cicd-variables) of setting "protected variables" for GitLab CI).
 
@@ -316,13 +329,117 @@ There are three options for setting the user account ID:
 - or you can pre-set a special variable in the user environment: `TKS_ACCOUNT_ID=your_id_number`.
 
 
+## Reference
+
+The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be shown in the console.
+
+```commandline
+tksbrokerapi --help
+```
+
+### 🚀 How to launch
+
+You can use the platform in two ways:
+
+```bash
+# As Python module
+python TKSBrokerAPI.py [options] [command]
+
+# As CLI tool (if installed with entry point)
+tksbrokerapi [options] [command]
+```
+
+### 💡 Platform Overview
+
+**TKSBrokerAPI** is a trading platform designed to automate and simplify trading scenarios. It works with the **Tinkoff Invest API (REST)** and supports full-cycle trading, data fetching, order management, and signal execution.
+
+Explore [usage examples](#Usage-examples).
+
+### ⚙️ Options
+
+| Option                          | Description                                                                   | Example                         |
+|---------------------------------|-------------------------------------------------------------------------------|---------------------------------|
+| `--token TOKEN`                 | API token. If not provided, uses env `TKS_API_TOKEN`.                         | `--token abc123`                |
+| `--account-id ACCOUNT_ID`       | Account ID. Can be taken from broker reports and set to env `TKS_ACCOUNT_ID`. | `--account-id 123456789`        |
+| `--ticker TICKER`, `-t TICKER`  | Ticker name, e.g. `GAZP`, `SBER`, `USD`.                                      | `--ticker YNDX`                 |
+| `--figi FIGI`, `-f FIGI`        | Instrument FIGI code.                                                         | `--figi BBG000TJ6F42`           |
+| `--depth DEPTH`                 | Depth of Market (DOM), integer ≥1.                                            | `--depth 10`                    |
+| `--output OUTPUT`               | Filepath to save output data (CSV, MD, XLSX).                                 | `--output deals.md`             |
+| `--interval INTERVAL`           | Candlestick interval: `1min`, `5min`, `15min`, `hour`, `day`.                 | `--interval hour`               |
+| `--date-start DATE`, `-ds DATE` | Start date for historical data.                                               | `--date-start 2024-01-01`       |
+| `--only-missing`                | Append only new candles to history files.                                     | `--only-missing`                |
+| `--html`                        | Generate HTML reports from Markdown.                                          | `--html`                        |
+| `--debug-level N`, `-v N`       | Logging level: 10=DEBUG, 20=INFO, etc.                                        | `-v 20`                         |
+| `--more`                        | Enable extended logging including HTTP headers.                               | `--more`                        |
+| `--tag TAG`                     | Optional tag to distinguish parallel runs.                                    | `--tag "Backtest#1"`            |
+| `--crontab CRON`                | Cron expression in pycron format.                                             | `--crontab "*/5 10-23 * * 1-5"` |
+| `--wait-after-iteration SECS`   | Pause after each cron iteration.                                              | `--wait-after-iteration 60`     |
+| `--wait-next SECS`              | Pause before next cron check.                                                 | `--wait-next 2`                 |
+| `--no-cache`                    | Ignore local `dump.json` cache.                                               | `--no-cache`                    |
+| `--csv-sep SEP`                 | CSV separator, default `,`.                                                   | `--csv-sep ;`                   |
+| `--no-cancelled`                | Do not show cancelled deals.                                                  | `--no-cancelled`                |
+| `--version`, `--ver`            | Show version of TKSBrokerAPI.                                                 | `--version`                     |
+
+### 🛠 Commands
+
+#### 🔍 Market Data
+
+| Command               | Description                          | Example                   |
+|-----------------------|--------------------------------------|---------------------------|
+| `--list`, `-l`        | Show all available instruments.      | `--list`                  |
+| `--search NAME`, `-s` | Search instruments by name/ticker.   | `--search "Gazpr"`        |
+| `--info`, `-i`        | Get full info for ticker or FIGI.    | `--ticker YDEX --info`    |
+| `--calendar`, `-c`    | Show bonds payment calendar.         | `--calendar SBER`         |
+| `--price`             | Show price for a single instrument.  | `--ticker GAZP --price`   |
+| `--prices`, `-p`      | Get prices for multiple instruments. | `--prices GAZP SBER YDEX` |
+
+#### 📊 Reports and History
+
+| Command                | Description                  | Example                |
+|------------------------|------------------------------|------------------------|
+| `--deals`, `-d`        | Show all deals for a period. | `--deals week`         |
+| `--overview`, `-o`     | Full portfolio snapshot.     | `--overview`           |
+| `--overview-digest`    | Short summary.               | `--overview-digest`    |
+| `--overview-positions` | Open positions only.         | `--overview-positions` |
+| `--overview-orders`    | Open limit and stop orders.  | `--overview-orders`    |
+| `--limits`, `-w`       | Withdrawal limits table.     | `--limits`             |
+| `--user-info`, `-u`    | User and account info.       | `--user-info`          |
+| `--account`, `-a`      | All available accounts.      | `--account`            |
+
+#### 📈 Historical Data
+
+| Command                             | Description                                 | Example                                                |
+|-------------------------------------|---------------------------------------------|--------------------------------------------------------|
+| `--history`, `--get-history`, `-gh` | Download candles.                           | `--ticker GAZP --history today`                        |
+| `--load-history`, `-lh`             | Load from file and print as table.          | `--load-history mydata.csv`                            |
+| `--render-chart`                    | Render chart: `interact` or `non-interact`. | `--render-chart i`                                     |
+| `--history-auto-updater`, `-hu`     | Run cron-based history downloader.          | `--history-auto-updater GAZP SBER YDEX--date-start -3` |
+
+#### 📤 Trading Operations
+
+| Command                             | Description                       | Example                       |
+|-------------------------------------|-----------------------------------|-------------------------------|
+| `--trade`                           | Open market position.             | `--trade Buy 1 200.0 180.0`   |
+| `--buy`, `--sell`                   | Instant market Buy/Sell.          | `--buy 2 220.0 190.0`         |
+| `--order`                           | Universal limit/stop order.       | `--order Buy Limit 1 190.0`   |
+| `--buy-limit`, `--sell-limit`       | Place limit order.                | `--buy-limit 2 180.0`         |
+| `--buy-stop`, `--sell-stop`         | Place stop order.                 | `--sell-stop 1 150.0`         |
+| `--close-order`, `--cancel-order`   | Cancel a single order by ID.      | `--close-order abc123`        |
+| `--close-orders`, `--cancel-orders` | Cancel multiple orders.           | `--close-orders id1 id2`      |
+| `--close-trade`, `--cancel-trade`   | Close a single position.          | `--ticker YNDX --close-trade` |
+| `--close-trades`, `--cancel-trades` | Close list of positions.          | `--close-trades GAZP SBER`    |
+| `--close-all`, `--cancel-all`       | Close all non-currency positions. | `--close-all`                 |
+
+
 ## Usage examples
 
 Next, consider some scenarios for using the TKSBrokerAPI module: when it is launched in the console or as a Python script.
 
 ❗ By default, level `INFO` information is displayed in the console. In case of any errors, it is recommended to increase the logging level to `DEBUG`. To do this, specify any of the keys together with the command: `--debug-level=10`, `--log-level=10`, `--verbosity=10` or `-v 10`. After that, copy the logs with the problem and create a new bug in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please. It is useful to specify the version of the problem build, which can be found by the `--version` (or `--ver`) key.
 
-Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called). The `--more` (`--more-debug`) key additionally includes debugging information in all methods and displays it in the logs, for example, network requests, responses and their headers.
+Also, `DEBUG` level information is always output to the log-file `TKSBrokerAPI.log` (it is created in the working directory where `tksbrokerapi` or `python TKSBrokerAPI.py` script is called). Starting from TKSBrokerAPI v1.5.120 the `--more` (`--more-debug`) key additionally includes debugging information in all methods and displays it in the logs, for example, network requests, responses and their headers.
+
+If you run TKSBrokerAPI platform instances in parallel mode, you can use additional tag in log messages to simplify instance identifying and debugging. It enables with the `--tag` key (since TKSBrokerAPI v1.6.*).
 
 ### Command line
 
@@ -335,265 +452,6 @@ tksbrokerapi [optional keys and parameters] [one action]
 ❗ To execute most commands, you must each time specify your token through the `--token` key and the account ID through the `--account-id` key, or set them once with the `TKS_API_TOKEN` and `TKS_ACCOUNT_ID` environment variables (see section ["Auth"](#Auth)).
 
 *Note: in the examples below, the access token and account ID were pre-set via the `TKS_API_TOKEN` and `TKS_ACCOUNT_ID` environment variables, so the `--token` and `--account-id` keys do not appear in the logs.*
-
-#### Reference
-
-The `--help` (`-h`) key is used, no action need to specify. The list of keys relevant for this release and their description will be shown in the console.
-
-<details>
-  <summary>Command for displaying internal help on working with the keys</summary>
-
-```commandline
-tksbrokerapi --help
-```
-
-Output:
-
-```text
-usage: 
-/as module/ python TKSBrokerAPI.py [some options] [one command]
-/as CLI tool/ tksbrokerapi [some options] [one command]
-
-TKSBrokerAPI is a trading platform for automation on Python to simplify the
-implementation of trading scenarios and work with Tinkoff Invest API server
-via the REST protocol. See examples:
-https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-
-options:
-  -h, --help            show this help message and exit
-  --no-cache            Option: not use local cache `dump.json`, but update
-                        raw instruments data when starting the platform.
-                        `False` by default.
-  --token TOKEN         Option: Tinkoff service's api key. If not set then
-                        used environment variable `TKS_API_TOKEN`. See how to
-                        use: https://tinkoff.github.io/investAPI/token/
-  --account-id ACCOUNT_ID
-                        Option: string with an user numeric account ID in
-                        Tinkoff Broker. It can be found in any broker's
-                        reports (see the contract number). Also, this variable
-                        can be set from environment variable `TKS_ACCOUNT_ID`.
-  --ticker TICKER, -t TICKER
-                        Option: instrument's ticker, e.g. `IBM`, `YNDX`,
-                        `GOOGL` etc. Use alias for `USD000UTSTOM` simple as
-                        `USD`, `EUR_RUB__TOM` as `EUR`.
-  --figi FIGI, -f FIGI  Option: instrument's FIGI, e.g. `BBG006L8G4H1` (for
-                        `YNDX`).
-  --depth DEPTH         Option: Depth of Market (DOM) can be >=1, 1 by
-                        default.
-  --no-cancelled, --no-canceled
-                        Option: remove information about cancelled operations
-                        from the deals report by the `--deals` key. `False` by
-                        default.
-  --output OUTPUT       Option: replace default paths to output files for some
-                        commands. If `None` then used default files.
-  --html, --HTML        Option: if key present then TKSBrokerAPI generate also
-                        HTML reports from Markdown. False by default.
-  --interval INTERVAL   Option: available values are `1min`, `5min`, `15min`,
-                        `hour` and `day`. Used only with `--history` key. This
-                        is time period of one candle. Default: `hour` for
-                        every history candles.
-  --only-missing        Option: if history file define by `--output` key then
-                        add only last missing candles, do not request all
-                        history length. `False` by default.
-  --csv-sep CSV_SEP     Option: separator if csv-file is used, `,` by default.
-  --debug-level DEBUG_LEVEL, --log-level DEBUG_LEVEL, --verbosity DEBUG_LEVEL, -v DEBUG_LEVEL
-                        Option: showing STDOUT messages of minimal debug
-                        level, e.g. 10 = DEBUG, 20 = INFO, 30 = WARNING, 40 =
-                        ERROR, 50 = CRITICAL. INFO (20) by default.
-  --more, --more-debug  Option: `--debug-level` key only switch log level
-                        verbosity, but in addition `--more` key enable all
-                        debug information, such as net request and response
-                        headers in all methods.
-  --version, --ver      Action: shows current semantic version, looks like
-                        `major.minor.buildnumber`. If TKSBrokerAPI not installed
-                        via pip, then used local build number `.dev0`.
-  --list, -l            Action: get and print all available instruments and
-                        some information from broker server. Also, you can
-                        define `--output` key to save list of instruments to
-                        file, default: `instruments.md`.
-  --list-xlsx, -x       Action: get all available instruments from server for
-                        current account and save raw data into xlsx-file to
-                        further used by data scientists or stock analytics,
-                        default: `dump.xlsx`.
-  --bonds-xlsx [BONDS_XLSX ...], -b [BONDS_XLSX ...]
-                        Action: get all available bonds if only key present or
-                        list of bonds with FIGIs or tickers and transform it
-                        to the wider Pandas DataFrame with more information
-                        about bonds: main info, current prices, bonds payment
-                        calendar, coupon yields, current yields and some
-                        statistics etc. And then export data to XLSX-file,
-                        default: `ext-bonds.xlsx` or you can change it with
-                        `--output` key. WARNING! This is too long operation if
-                        a lot of bonds requested from broker server.
-  --search SEARCH, -s SEARCH
-                        Action: search for an instruments by part of the name,
-                        ticker or FIGI. Also, you can define `--output` key to
-                        save results to file, default: `search-results.md`.
-  --info, -i            Action: get information from broker server about
-                        instrument by it's ticker or FIGI. `--ticker` key or
-                        `--figi` key must be defined!
-  --calendar [CALENDAR ...], -c [CALENDAR ...]
-                        Action: show bonds payment calendar as a table.
-                        Calendar build for one or more tickers or FIGIs, or
-                        for all bonds if only key present. If the `--output`
-                        key present then calendar saves to file, default:
-                        `calendar.md`. Also, created XLSX-file with bond
-                        payments calendar for further used by data scientists
-                        or stock analytics, `calendar.xlsx` by default.
-                        WARNING! This is too long operation if a lot of bonds
-                        requested from broker server.
-  --price               Action: show actual price list for current instrument.
-                        Also, you can use `--depth` key. `--ticker` key or
-                        `--figi` key must be defined!
-  --prices PRICES [PRICES ...], -p PRICES [PRICES ...]
-                        Action: get and print current prices for list of given
-                        instruments (by it's tickers or by FIGIs). WARNING!
-                        This is too long operation if you request a lot of
-                        instruments! Also, you can define `--output` key to
-                        save list of prices to file, default: `prices.md`.
-  --overview, -o        Action: show all open positions, orders and some
-                        statistics. Also, you can define `--output` key to
-                        save this information to file, default: `overview.md`.
-  --overview-digest     Action: shows a short digest of the portfolio status.
-                        Also, you can define `--output` key to save this
-                        information to file, default: `overview-digest.md`.
-  --overview-positions  Action: shows only open positions. Also, you can
-                        define `--output` key to save this information to
-                        file, default: `overview-positions.md`.
-  --overview-orders     Action: shows only sections of open limits and stop
-                        orders. Also, you can define `--output` key to save
-                        orders to file, default: `overview-orders.md`.
-  --overview-analytics  Action: shows only the analytics section and the
-                        distribution of the portfolio by various categories.
-                        Also, you can define `--output` key to save this
-                        information to file, default: `overview-analytics.md`.
-  --deals [DEALS ...], -d [DEALS ...]
-                        Action: show all deals between two given dates. Start
-                        day may be an integer number: -1, -2, -3 days ago.
-                        Also, you can use keywords: `today`, `yesterday` (-1),
-                        `week` (-7), `month` (-30) and `year` (-365). Dates
-                        format must be: `%Y-%m-%d`, e.g. 2020-02-03. With
-                        `--no-cancelled` key information about cancelled
-                        operations will be removed from the deals report.
-                        Also, you can define `--output` key to save all deals
-                        to file, default: `deals.md`.
-  --history [HISTORY ...]
-                        Action: get last history candles of the current
-                        instrument defined by `--ticker` or `--figi` (FIGI id)
-                        keys. History returned between two given dates:
-                        `start` and `end`. Minimum requested date in the past
-                        is `1970-01-01`. This action may be used together with
-                        the `--render-chart` key. Also, you can define
-                        `--output` key to save history candlesticks to file.
-  --load-history LOAD_HISTORY
-                        Action: try to load history candles from given csv-
-                        file as a Pandas Dataframe and print it in to the
-                        console. This action may be used together with the
-                        `--render-chart` key.
-  --render-chart RENDER_CHART
-                        Action: render candlesticks chart. This key may only
-                        used with `--history` or `--load-history` together.
-                        Action has 1 parameter with two possible string
-                        values: `interact` (`i`) or `non-interact` (`ni`).
-  --trade [TRADE ...]   Action: universal action to open market position for
-                        defined ticker or FIGI. You must specify 1-5
-                        parameters: [direction `Buy` or `Sell`] [lots, >= 1]
-                        [take profit, >= 0] [stop loss, >= 0] [expiration date
-                        for TP/SL orders, Undefined|`%Y-%m-%d %H:%M:%S`]. See
-                        examples in readme.
-  --buy [BUY ...]       Action: immediately open BUY market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --sell [SELL ...]     Action: immediately open SELL market position at the
-                        current price for defined ticker or FIGI. You must
-                        specify 0-4 parameters: [lots, >= 1] [take profit, >=
-                        0] [stop loss, >= 0] [expiration date for TP/SL
-                        orders, Undefined|`%Y-%m-%d %H:%M:%S`].
-  --order [ORDER ...]   Action: universal action to open limit or stop-order
-                        in any directions. You must specify 4-7 parameters:
-                        [direction `Buy` or `Sell`] [order type `Limit` or
-                        `Stop`] [lots] [target price] [maybe for stop-order:
-                        [limit price, >= 0] [stop type, Limit|SL|TP]
-                        [expiration date, Undefined|`%Y-%m-%d %H:%M:%S`]]. See
-                        examples in readme.
-  --buy-limit BUY_LIMIT BUY_LIMIT
-                        Action: open pending BUY limit-order (below current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open BUY limit-order. If you try to
-                        create `Buy` limit-order above current price then
-                        broker immediately open `Buy` market order, such as if
-                        you do simple `--buy` operation!
-  --sell-limit SELL_LIMIT SELL_LIMIT
-                        Action: open pending SELL limit-order (above current
-                        price). You must specify only 2 parameters: [lots]
-                        [target price] to open SELL limit-order. If you try to
-                        create `Sell` limit-order below current price then
-                        broker immediately open `Sell` market order, such as
-                        if you do simple `--sell` operation!
-  --buy-stop [BUY_STOP ...]
-                        Action: open BUY stop-order. You must specify at least
-                        2 parameters: [lots] [target price] to open BUY stop-
-                        order. In additional you can specify 3 parameters for
-                        stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
-  --sell-stop [SELL_STOP ...]
-                        Action: open SELL stop-order. You must specify at
-                        least 2 parameters: [lots] [target price] to open SELL
-                        stop-order. In additional you can specify 3 parameters
-                        for stop-order: [limit price, >= 0] [stop type,
-                        Limit|SL|TP] [expiration date, Undefined|`%Y-%m-%d
-                        %H:%M:%S`]. When current price will go up or down to
-                        target price value then broker opens a limit order.
-                        Stop loss order always executed by market price.
-  --close-order CLOSE_ORDER, --cancel-order CLOSE_ORDER
-                        Action: close only one order by it's `orderId` or
-                        `stopOrderId`. You can find out the meaning of these
-                        IDs using the key `--overview`.
-  --close-orders CLOSE_ORDERS [CLOSE_ORDERS ...], --cancel-orders CLOSE_ORDERS [CLOSE_ORDERS ...]
-                        Action: close one or list of orders by it's `orderId`
-                        or `stopOrderId`. You can find out the meaning of
-                        these IDs using the key `--overview`.
-  --close-trade, --cancel-trade
-                        Action: close only one position for instrument defined
-                        by `--ticker` (high priority) or `--figi` keys,
-                        including for currencies tickers.
-  --close-trades CLOSE_TRADES [CLOSE_TRADES ...], --cancel-trades CLOSE_TRADES [CLOSE_TRADES ...]
-                        Action: close positions for list of tickers or FIGIs,
-                        including for currencies tickers or FIGIs.
-  --close-all [CLOSE_ALL ...], --cancel-all [CLOSE_ALL ...]
-                        Action: close all available (not blocked) opened
-                        trades and orders, excluding for currencies. Also you
-                        can select one or more keywords case insensitive to
-                        specify trades type: `orders`, `shares`, `bonds`,
-                        `etfs` and `futures`, but not `currencies`. Currency
-                        positions you must closes manually using `--buy`,
-                        `--sell`, `--close-trade` or `--close-trades`
-                        operations. If the `--close-all` key present with the
-                        `--ticker` or `--figi` keys, then positions and all
-                        open limit and stop orders for the specified
-                        instrument are closed.
-  --limits, --withdrawal-limits, -w
-                        Action: show table of funds available for withdrawal
-                        for current `accountId`. You can change `accountId`
-                        with the key `--account-id`. Also, you can define
-                        `--output` key to save this information to file,
-                        default: `limits.md`.
-  --user-info, -u       Action: show all available user's data (`accountId`s,
-                        common user information, margin status and tariff
-                        connections limit). Also, you can define `--output`
-                        key to save this information to file, default: `user-info.md`.
-  --account, --accounts, -a
-                        Action: show simple table with all available user
-                        accounts. Also, you can define `--output` key to save
-                        this information to file, default: `accounts.md`.
-```
-
-</details>
 
 #### Local cache
 
@@ -1657,14 +1515,14 @@ At the beginning, you should specify the `--ticker` or `--figi` key to specify t
   - number of instrument lots, integer >= 1, default 1;
   - take profit level, fractional number >= 0, default 0 (if 0, no take profit order will be placed);
   - stop loss level, fractional number >= 0, default 0 (if 0, stop loss order will not be placed);
-  - expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 You can also use more simple keys to perform buy and sell operations on the market `--buy` or `--sell`, for which you can set up to 4 optional parameters:
 
 - number of instrument lots, integer >= 1, default 1;
 - take profit level, fractional number >= 0, default 0 (if 0, no take profit order will be placed);
 - stop loss level, fractional number >= 0, default 0 (if 0, stop loss order will not be placed);
-- expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+- expiration date of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
  
 <details>
   <summary>Command for buying and placing take profit and stop loss orders</summary>
@@ -1718,7 +1576,7 @@ At the beginning, you should specify the `--ticker` or `--figi` key to specify t
   - price of the opened limit order, fractional number >= 0, default 0 (if 0, a market order will be immediately placed instead of a limit order, when the trigger price of the initial stop order is reached);
   - type of order opened upon reaching the trigger price of the initial stop order, by default it is the string `Limit` or you can specify `SL`, `TP` to open a stop loss or take profit order;
     - stop-loss order is always opened at the market price;
-  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 You can use more simple keys to place pending limit orders (valid until the end of the trading session) `--buy-limit` or `--sell-limit`, for which you need to specify only 2 required parameters:
 
@@ -1735,7 +1593,7 @@ You can use more simple keys to place pending stop orders (valid until canceled 
   - price of the opened limit order, fractional number >= 0, default 0 (if 0, a market order will be immediately placed instead of a limit order, when the trigger price of the initial stop order is reached);
   - type of order opened upon reaching the trigger price of the initial stop order, by default it is the string `Limit` or you can specify `SL`, `TP` to open a stop loss or take profit order;
     - stop-loss order is always opened at the market price;
-  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:% S`.
+  - date of cancellation of take profit and stop loss orders, by default the string `Undefined` (in this case orders will be valid until canceled) or you can set the date in the format `%Y-%m-%d %H:%M:%S`.
 
 <details>
   <summary>Command for placing a stop order of the take profit type for sale with the date of cancellation</summary>
@@ -1972,11 +1830,24 @@ TKSBrokerAPI.py     L:3042 DEBUG   [2022-07-27 23:25:40,687] TKSBrokerAPI module
 
 #### Download historical data in OHLCV-candles format
 
-Since TKSBrokerAPI v1.3.70 you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only Pandas DataFrame. `--csv-sep` key define separator in csv-files.
+With TKSBrokerAPI you can get the history price data in OHLCV-candlestics format. You have to specify current instrument by `--ticker` key or `--figi` key (FIGI id), candle's interval by `--interval` key and `--only-missing` key if you want downloads only last missing candles in file. If `--output` key present then TKSBrokerAPI save history to file, otherwise return only Pandas DataFrame. `--csv-sep` key define separator in csv-files.
 
 History returned between two given dates: `start` and `end`. Minimum requested date in the past is `1970-01-01`. **Warning!** Broker server use ISO UTC time by default.
 
-Since TKSBrokerAPI v1.4.90 you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
+Also, you can use TKSBrokerAPI as a fully automated, cron-driven history updater for multiple tickers with multithreading support using `--history-auto-updater` key. Each ticker's history is downloaded in parallel using a thread pool, and the process is triggered periodically according to a configurable crontab expression. Example:
+
+```shell
+tksbrokerapi -v 20 --history-auto-updater SBER YDEX GAZP --date-start today --interval hour --wait-after-iteration 60 --wait-next 1 --only-missing --crontab "*/1 10-23 * * 1-5" --output history
+```
+Each ticker history in this example will be saved to:
+
+```
+./history/SBER_hour.csv
+./history/YDEX_hour.csv
+./history/GAZP_hour.csv
+```
+
+Also with TKSBrokerAPI you can optionally build interactive or static candlestick price charts (using the [PriceGenerator](https://github.com/Tim55667757/PriceGenerator) library). In this case, the source of prices can be both data downloaded from the server, and previously saved files in csv-format. To build price charts, the common key `--render-chart` is used, which must be set together with one of the keys `--history` (loads data from server) or `--load-history` (loads data from a csv-file).
 
 The generated graphs of various types will look like below (see also real examples under the spoilers). By default, they are saved to the `index.html` file. The charts additionally display some statistical values and indicators, however, they are presented only for a quick review of the price behavior in a given range. To conduct full analytical research and technical analysis, it is recommended to use other professional tools.
 
@@ -2411,17 +2282,18 @@ TKSBrokerAPI.py     L:3798 INFO    [2022-10-25 01:04:57,536] # Full user informa
 | Parameters           | Values                                                       |
 |----------------------|--------------------------------------------------------------|
 | Account type:        | Tinkoff brokerage account                                    |
-| Account name:        | Testing - **********                                         |
+| Account name:        | Testing                                                      |
 | Account status:      | Opened and active account                                    |
 | Access level:        | Full access                                                  |
 | Date opened:         | 2018-05-23 00:00:00                                          |
 | Date closed:         | —                                                            |
 | Margin status:       | Enabled                                                      |
-| - Liquid portfolio:  | 74950.81 rub                                                 |
-| - Margin starting:   | 72450.45 rub                                                 |
-| - Margin minimum:    | 36220.73 rub                                                 |
-| - Sufficiency level: | 1.07 (107.00%)                                               |
-| - Missing funds:     | -2500.36 rub                                                 |
+| - Liquid portfolio:  | 148420.61 rub                                                |
+| - Margin starting:   | 105900.73 rub                                                |
+| - Margin minimum:    | 52950.37 rub                                                 |
+| - Margin difference: | -42510.88 rub                                                |
+| - Sufficiency level: | 1.81 (181.00%)                                               |
+| - Not covered funds: | -49650.45 rub                                                |
 
 ### ID: [**********]
 
@@ -2722,6 +2594,10 @@ An example of a generated XLSX file with a bond payment calendar can be viewed h
 
 ![](./docs/media/calendar.xlsx.png)
 
+If you run `--calendar` command with additional key `--html`, then calendar generates in HTML will be looks like this:
+
+![](./docs/media/calendar.html.png)
+
 <details>
   <summary>Command for building a payment calendar for several bonds</summary>
 
@@ -2811,7 +2687,7 @@ TKSBrokerAPI.py     L:4116 INFO    [2022-11-05 21:56:24,404] Bond payment calend
 
 Full documentation of all available properties and methods of the `TKSBrokerAPI.TinkoffBrokerServer()` class can be found [by the link](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html). You can also see the correspondence between keys and methods in the ["Key features"](#Key-features) section.
 
-Using the TKSBrokerAPI module, you can implement any trading scenario in Python. Many system used for making trading decisions about buying or selling (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker, as well as perform routine tasks on your behalf in [brokerage account](http://tinkoff.ru/sl/AaX1Et1omnH).
+Using the TKSBrokerAPI module, you can implement any trading scenario in Python. Many system used for making trading decisions about buying or selling (technical analysis, neural networks, parsing reports or tracking other traders’ transactions), but you still need to perform trading operations: place orders, open and close transactions. The `TKSBrokerAPI` module will act as an intermediary between the code with the trading logic and services infrastructure of the Tinkoff Investments broker, as well as perform routine tasks on your behalf in [brokerage account](https://tinkoff.ru/sl/AaX1Et1omnH).
 
 ❗ **Important note:** the TKSBrokerAPI module is not intended for high-frequency (HFT) trading, due to the system of dynamic limit generation for TINKOFF INVEST API users (for more details [see the link](https://tinkoff.github.io/investAPI/limits/)). On average, this is 50-300 requests per second, depending on their type, which is very low for the requirements for HFT speeds (there are [several recommendations](https://tinkoff.github.io/investAPI/speedup/) to speed up execution orders). However, you can use it to automate your intraday, short, medium and long term trading strategies.
 
@@ -2856,191 +2732,7 @@ In this documentation, we do not want to focus on specific trading scenarios, bu
    - if the current price is 2.5% already higher than the average position price, then place pending limit order with all volumes 0.1% higher than the current price so that the position is closed with a profit with a high probability during the current trade session;
 - request the current user's portfolio after all trades and show changes.
 
-To understand the example, just save and run the script under the spoiler below. Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)). Most of the code is commented in detail and links to the relevant API methods are given.
-
-<details>
-  <summary>Example of trading script in Python using TKSBrokerAPI platform</summary>
-
-Download script here: [./docs/examples/scenario1.py](./docs/examples/scenario1.py)
-
-```python
-# -*- coding: utf-8 -*-
-# Author: Timur Gilmullin
-
-
-# --- Import, constants and variables initialization section -----------------------------------------------------------
-
-from datetime import datetime, timedelta
-from dateutil.tz import tzlocal, tzutc
-from math import ceil
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-
-uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-uLogger.handlers[0].level = 20  # Log level for STDOUT, INFO (20) recommended by default
-
-start = datetime.now(tzutc())
-
-uLogger.debug("=--=" * 20)
-uLogger.debug("Trading scenario started at: [{}] UTC, it is [{}] local time".format(
-    start.strftime("%Y-%m-%d %H:%M:%S"),
-    start.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-))
-
-# Set here any constants you need for trading:
-TICKERS_LIST_FOR_TRADING = ["YNDX", "IBM", "GOOGL"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
-RESERVED_MONEY = 0.05  # We reserve some money when open positions, 5% by default
-LOTS = 1  # Minimum lots to buy or sell
-TP_STOP_DIFF = 0.03  # 3% TP by default for stop-orders
-TP_LIMIT_DIFF = 0.025  # 2.5% TP by default for pending limit-orders
-TOLERANCE = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
-DEPTH_OF_MARKET = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
-VOLUME_DIFF = 0.1  # Enough volumes difference to open position, 10% by default
-
-# Main trader object init, TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
-trader = TinkoffBrokerServer(
-    token="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
-    accountId="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
-)
-
-
-# --- Trading scenario section -----------------------------------------------------------------------------------------
-
-for ticker in TICKERS_LIST_FOR_TRADING:
-    uLogger.info("--- Ticker [{}], data analysis...".format(ticker))
-
-    # - Step 1: request the client's current portfolio and determining funds available for trading
-
-    # User's portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
-    portfolio = trader.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
-
-    uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
-        portfolio["stat"]["portfolioCostRUB"],
-        portfolio["stat"]["blockedRUB"],
-        "+" if portfolio["stat"]["totalChangesRUB"] > 0 else "", portfolio["stat"]["totalChangesRUB"],
-        "+" if portfolio["stat"]["totalChangesPercentRUB"] > 0 else "", portfolio["stat"]["totalChangesPercentRUB"],
-    ))
-
-    # How much money in different currencies do we have (total - blocked)?
-    funds = portfolio["stat"]["funds"]  # dict, e.g. {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56}, "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}
-
-    uLogger.info("Available funds free for trading: {}".format("; ".join(["{:.2f} {}".format(funds[currency]["free"], currency) for currency in funds.keys()])))
-
-    # - Step 2: request a Depth of Market for the selected instruments
-
-    trader.ticker = ticker
-    trader.figi = ""  # We don't know FIGI for every ticker, so empty string means to determine it automatically
-    trader.depth = DEPTH_OF_MARKET
-
-    # Getting broker's prices on that instrument:
-    ordersBook = trader.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
-
-    if not (ordersBook["buy"] and ordersBook["sell"]):
-        uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(trader.ticker))
-
-    else:
-
-        # - Step 3: if the instrument was not purchased earlier, then checking:
-        #   - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-        #     of all instruments in this currency, then check:
-        #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-        #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
-
-        # Checks if instrument (defined by it's `ticker`) is in portfolio:
-        isInPortfolio = trader.IsInPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
-
-        if not isInPortfolio:
-            uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(trader.ticker))
-
-            # Getting instrument's data and its currency:
-            rawIData = trader.SearchByTicker(requestPrice=False, show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
-            iCurr = rawIData["currency"]  # currency of current instrument
-
-            # Getting distribution by currencies, cost of previously purchased assets and free money in that currency:
-            distrByCurr = portfolio["analytics"]["distrByCurrencies"]  # asset distribution by currencies, cost in rub
-            assetsCostInRuble = distrByCurr[iCurr]["cost"]  # cost of all assets in that currency recalc in rub
-            currencyFreeCostInRuble = funds[iCurr]["freeCostRUB"]  # free money in that currency recalc in rub
-
-            # Checking reserve and volumes diff before buy:
-            if currencyFreeCostInRuble / assetsCostInRuble >= RESERVED_MONEY:
-                sumSellers = sum([x["quantity"] for x in ordersBook["buy"]])  # current sellers volumes in the DOM
-                sumBuyers = sum([x["quantity"] for x in ordersBook["sell"]])  # current buyers volumes in the DOM
-
-                if sumBuyers >= sumSellers * (1 + VOLUME_DIFF):
-                    # Getting current price, then calculating take profit price and validity for stop-order:
-                    currentPriceToBuy = ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
-                    target = currentPriceToBuy * (1 + TP_STOP_DIFF)  # take profit price target
-                    targetStop = ceil(target / rawIData["step"]) * rawIData["step"]  # real target for placing stop-order
-                    localAliveTo = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")  # current local time + 1 hour
-
-                    uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
-                        sumBuyers, 1 + VOLUME_DIFF, sumSellers, currentPriceToBuy, iCurr,
-                    ))
-
-                    # Opening BUY market position and creating take profit stop-order:
-                    trader.Buy(lots=LOTS, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
-
-                else:
-                    uLogger.info("BUY position not opened, because buyers volumes [{}] < {} * sellers volumes [{}]".format(sumBuyers, 1 + VOLUME_DIFF, sumSellers))
-
-            else:
-                uLogger.info("BUY position not opened, because the reserves in [{}] will be less than {:.2f}% of free funds".format(iCurr, RESERVED_MONEY * 100))
-
-        else:
-
-            # - Step 4: if the instrument is in the list of open positions, then checking:
-            #   - if the current price is 2.5% already higher than the average position price, then place pending
-            #     limit order with all volumes 0.1% higher than the current price so that the position is closed
-            #     with a profit with a high probability during the current trade session.
-
-            uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(trader.ticker))
-
-            # Getting instrument from list of instruments in user portfolio:
-            iData = trader.GetInstrumentFromPortfolio(portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
-
-            # Calculating available lots for sell, average price and current price of instrument:
-            lotsToSell = iData["volume"] - iData["blocked"]  # not blocked lots of current instrument, available for trading
-            averagePrice = iData["average"]  # average price by all lots
-            curPriceToSell = ordersBook["sell"][0]["price"]  # 1st price in the list of buyers orders is the actual price that you can sell
-
-            # Calculating price to close position without waiting for the take profit:
-            curProfit = (curPriceToSell - averagePrice) / averagePrice  # changes between current price and average price of instrument
-            target = curPriceToSell * (1 + TOLERANCE)  # enough price target to sell
-            targetLimit = ceil(target / iData["step"]) * iData["step"]  # real target + tolerance for placing pending limit order
-
-            # Also, checking for a sufficient price difference before sell:
-            if curProfit >= TP_LIMIT_DIFF:
-                uLogger.info("The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
-                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
-                ))
-
-                # Opening SELL pending limit order:
-                trader.SellLimit(lots=lotsToSell, targetPrice=targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
-
-            else:
-                uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% less than {:.2f}% target.".format(
-                    curPriceToSell, iData["currency"], averagePrice, iData["currency"], curProfit * 100, TP_LIMIT_DIFF * 100,
-                ))
-
-# - Step 5: request the current user's portfolio after all trades and show changes
-
-uLogger.info("--- All trade operations finished. Let's show what we got in the user's portfolio after all trades.")
-
-# Showing detailed user portfolio information:
-trader.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
-
-
-# --- Operations finalization section ----------------------------------------------------------------------------------
-
-finish = datetime.now(tzutc())
-uLogger.debug("Trading scenario work duration: [{}]".format(finish - start))
-uLogger.debug("Trading scenario finished: [{}] UTC, it is [{}] local time".format(
-    finish.strftime("%Y-%m-%d %H:%M:%S"),
-    finish.astimezone(tzlocal()).strftime("%Y-%m-%d %H:%M:%S"),
-))
-uLogger.debug("=--=" * 20)
-```
-
-</details>
+To understand the example, just save and run the script [./docs/examples/scenario1.py](./docs/examples/scenario1.py). Before doing this, don't forget to get a token and find out your accountId (see the section ["Auth"](#Auth)). Most of the code is commented in detail and links to the relevant API methods are given.
 
 <details>
   <summary>Scenario run results example</summary>
@@ -3071,353 +2763,42 @@ TKSBrokerAPI.py     L:1922 INFO    [2022-08-23 17:35:59,958] Statistics of clien
 
 </details>
 
-As you can see, in the example above, a linear script is actually written that sequentially executes the trading script. Parameterization occurs at the beginning of the script, then there are many trading steps and commands. That is, the classical imperative programming paradigm is used. One of the advantages of this approach is that the logic of the trading scenario is described step by step, and you can see what is being done and why. If the trade logic is simple, you can take a look all code on one screen. The same plus becomes a minus when the logic of the trading scenario is too complicated, with many variances. In this case, the script can turn into a hard-to-read code.
+As you can see, in the example a linear script is actually written that sequentially executes the trading script. Parameterization occurs at the beginning of the script, then there are many trading steps and commands. That is, the classical imperative programming paradigm is used. One of the advantages of this approach is that the logic of the trading scenario is described step by step, and you can see what is being done and why. If the trade logic is simple, you can take a look all code on one screen. The same plus becomes a minus when the logic of the trading scenario is too complicated, with many variances. In this case, the script can turn into a hard-to-read code.
 
 If you're more of an object-oriented programming fan, the same scenario can be implemented with classes. At the same time, the previous disadvantage will disappear: the logic of individual steps will be moved to class methods, which will simplify their debugging, and the final scenario of trading steps can be described with short constructions like `if ... else`.
 
 In this case, it is better to create a class `TradeScenario(TinkoffBrokerServer)` inherited from the main API class `TinkoffBrokerServer()`. As class fields, you can take the names of constants from the first example, write separate methods for each step and logical checks, and then combine the call of all conditions and trading operations in the `run()` method. In the main block `if __name__ == "__main__:"` when running the script, it will be enough to create an instance of the class and initialize it with constants from the first example, and then just call the `run()` method.
 
-Trading script from the first example, rewritten with classes, can be viewed under the spoiler below. Don't forget to set up your token and accountId when class initialization (see the section ["Auth"](#Auth)).
+Trading script from the first example, rewritten with classes, can be viewed here: [./docs/examples/scenario1a.py](./docs/examples/scenario1a.py). Don't forget to set up your token and accountId when class initialization (see the section ["Auth"](#Auth)).
 
-<details>
-  <summary>Trading script for the TKSBrokerAPI platform (version with a class for a trading scenario)</summary>
+The output of the script to the console will be completely the same as in the first example.
 
-Download script here: [./docs/examples/scenario1a.py](./docs/examples/scenario1a.py)
+#### Using in Jupyter Notebook
 
-```python
-# -*- coding: utf-8 -*-
-# Author: Timur Gilmullin
+All methods in TKSBrokerAPI ([api-doc](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html) on main functions, e.g., data loading) and in TradeRoutines ([api-doc](https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TradeRoutines.html) on support functions, e.g., data filtering) — available for using in Jupyter Notebook. Together with these methods, you can use methods from [PriceGenerator](https://github.com/Tim55667757/PriceGenerator/blob/master/README.md) — this module can generate time series with data similar to random stock prices with anomalies, as well as build price charts.
 
+How to use them in Jupyter Notebook, on the example of the problem of filtering abnormal price outliers, see here: [HampelFilteringExample_EN.ipynb](https://nbviewer.org/github/Tim55667757/TKSBrokerAPI/blob/develop/docs/examples/HampelFilteringExample_EN.ipynb).
 
-# --- Import, constants and variables initialization section -----------------------------------------------------------
+See also:
+- [How to quickly find anomalies in number series using the Hampel method](https://forworktests.blogspot.com/2023/01/how-to-quickly-find-anomalies-in-number.html).
+- (RU) [How to receive and expand stock data using TKSBrokerAPI — the platform for automation of trading scenarios](https://forworktests.blogspot.com/2022/11/tksbrokerapi.html)
+- [Python script example: how to use Hampel Filter to determine anomalies in time series](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/TestAnomalyFilter.py)
 
-from datetime import datetime, timedelta
-from dateutil.tz import tzlocal, tzutc
-from math import ceil
 
-from tksbrokerapi.TKSBrokerAPI import TinkoffBrokerServer, uLogger  # Main module for trading operations: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-from tksbrokerapi.TKSEnums import TKS_PRINT_DATE_TIME_FORMAT
+#### Anomaly Volumes Detector
 
+**[Anomaly Volumes Detector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector)** is a simple Telegram bot, based on the TKSBrokerAPI platform, for detecting anomaly volumes in Buyers and Sellers orders.
 
-class TradeScenario(TinkoffBrokerServer):
-    """This class describe methods with trading logic."""
+The bot monitors the volumes of Buyers and Sellers in the orders book (DOM), looks for anomalies in the number series of volumes and notifies in Telegram. The notification contains: the current price and prices with anomaly volumes.
 
-    def __init__(self, userToken: str, userAccount: str = None) -> None:
-        """
-        Trade scenario init and parametrize.
+<a href="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/README_EN.md#Module-import" target="_blank"><img src="https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/docs/media/AnomalyVolumesDetector-TG-example-EN.jpg?raw=true" alt="AnomalyVolumesDetector-example" width="307" /></a>
 
-        :param userToken: Bearer token for Tinkoff Invest API. Or use environment variable `TKS_API_TOKEN`.
-        :param userAccount: string with numeric user account ID in Tinkoff Broker. Or use environment variable `TKS_ACCOUNT_ID`.
+More details about the bot and instructions for launching you can be finding here: [./docs/examples/AnomalyVolumesDetector](https://github.com/Tim55667757/TKSBrokerAPI/tree/develop/docs/examples/AnomalyVolumesDetector#Anomaly-Volumes-Detector).
 
-        See TKSBrokerAPI api-doc: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.__init__
-        """
-        super().__init__(token=userToken, accountId=userAccount)  # call parent initialize section `__init__()`
-
-        # Additional trade variables for current scenario:
-        self.tickers = []  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
-        self.reserve = 0.05  # We reserve some money when open positions, 5% by default
-        self.lots = 1  # Minimum lots to buy or sell
-        self.tpStopDiff = 0.03  # 3% TP by default for stop-orders
-        self.tpLimitDiff = 0.025  # 2.5% TP by default for pending limit-orders
-        self.tolerance = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
-        self.depth = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
-        self.volDiff = 0.1  # Enough volumes difference to open position, 10% by default
-
-        # Self-calculated parameters during the trade process (not for manual setting):
-        self._portfolio = {}  # User portfolio is a dictionary with some sections: {"raw": {...}, "stat": {...}, "analytics": {...}}
-        self._funds = {}  # How much money in different currencies do we have (total - blocked)?
-        self._ordersBook = {"buy": [], "sell": [], "limitUp": 0, "limitDown": 0, "lastPrice": 0, "closePrice": 0}  # Current prices
-        self._rawIData = {}  # Raw instruments data
-        self._sumSellers = 0  # current sellers volumes in the DOM
-        self._sumBuyers = 0  # current buyers volumes in the DOM
-        self._iCurr = ""  # Currency of current instrument
-        self._distrByCurr = {}  # Asset distribution by currencies, cost in rub
-        self._assetsCostInRuble = 0  # Cost of all assets in that currency recalc in rub
-        self._currencyFreeCostInRuble = 0  # Free money in that currency recalc in rub
-        self._iData = {}  # Current instrument data from the user's portfolio if it presents there
-        self._lotsToSell = 0  # Not blocked lots of current instrument, available for trading
-        self._averagePrice = 0  # Average price by all lots
-        self._curPriceToSell = 0  # 1st price in the list of buyers orders is the actual price that you can sell
-        self._curProfit = 0  # Changes between current price and average price of instrument
-        self._targetLimit = 0  # Real target + tolerance for placing pending limit order
-        self._changes = False  # True if was changes in the user portfolio
-
-    def _GetPortfolio(self) -> None:
-        """
-        Gets user's portfolio as a dictionary with some sections: `self._portfolio = {"raw": {...}, "stat": {...}, "analytics": {...}}`
-        """
-        self._portfolio = self.Overview(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
-
-        uLogger.info("Total portfolio cost: {:.2f} rub; blocked: {:.2f} rub; changes: {}{:.2f} rub ({}{:.2f}%)".format(
-            self._portfolio["stat"]["portfolioCostRUB"],
-            self._portfolio["stat"]["blockedRUB"],
-            "+" if self._portfolio["stat"]["totalChangesRUB"] > 0 else "", self._portfolio["stat"]["totalChangesRUB"],
-            "+" if self._portfolio["stat"]["totalChangesPercentRUB"] > 0 else "", self._portfolio["stat"]["totalChangesPercentRUB"],
-        ))
-
-    def _CalculateFreeFunds(self) -> None:
-        """
-        How much money in different currencies do we have (total - blocked)?
-
-        Example: `self._funds = {"rub": {"total": 10000.99, "totalCostRUB": 10000.99, "free": 1234.56, "freeCostRUB": 1234.56},
-                                 "usd": {"total": 250.55, "totalCostRUB": 15375.80, "free": 125.05, "freeCostRUB": 7687.50}, ...}`
-        """
-        self._funds = self._portfolio["stat"]["funds"]
-
-        uLogger.info("Available funds free for trading: {}".format("; ".join(["{:.2f} {}".format(self._funds[currency]["free"], currency) for currency in self._funds.keys()])))
-
-    def _GetOrderBook(self, currentTicker: str) -> bool:
-        """
-        Gets broker's prices on current instrument.
-
-        :param currentTicker: Depth of Market requests for instrument with this ticker.
-        :return: `True` if it is possible to trade (order book not empty).
-        """
-        emptyBook = True
-        self.ticker = currentTicker
-        self.figi = ""  # We don't know FIGI for every ticker, so empty string means to determine it automatically
-
-        self._ordersBook = self.GetCurrentPrices(show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetCurrentPrices
-
-        if not (self._ordersBook["buy"] and self._ordersBook["sell"]):
-            uLogger.warning("Not possible to trade an instrument with the ticker [{}]! Try again later.".format(self.ticker))
-
-        else:
-            emptyBook = False
-
-        return emptyBook
-
-    def _CalculateDataForOpenRules(self):
-        """
-        Gets instrument's data and its currency. And then gets distribution by currencies, cost of previously
-        purchased assets and free money in that currency.
-        """
-        uLogger.info("Ticker [{}]: no current open positions with that instrument, checking opens rules...".format(self.ticker))
-
-        self._rawIData = self.SearchByTicker(requestPrice=False, show=False)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SearchByTicker
-        self._iCurr = self._rawIData["currency"]  # currency of current instrument
-        self._distrByCurr = self._portfolio["analytics"]["distrByCurrencies"]  # asset distribution by currencies, cost in rub
-        self._assetsCostInRuble = self._distrByCurr[self._iCurr]["cost"]  # cost of all assets in that currency recalc in rub
-        self._currencyFreeCostInRuble = self._funds[self._iCurr]["freeCostRUB"]  # free money in that currency recalc in rub
-
-    def _CalculateDOMSums(self):
-        """Calculates current sellers and buyers volumes in the DOM"""
-        self._sumSellers = sum([x["quantity"] for x in self._ordersBook["buy"]])  # current sellers volumes in the DOM
-        self._sumBuyers = sum([x["quantity"] for x in self._ordersBook["sell"]])  # current buyers volumes in the DOM
-
-    def _OpenBuyMarketPosition(self):
-        """
-        Gets current price, then calculates take profit price and validity for stop-order.
-        And then opening BUY market position and creating take profit stop-order.
-        """
-        currentPriceToBuy = self._ordersBook["buy"][0]["price"]  # 1st price in the list of sellers orders is the actual price that you can buy
-        target = currentPriceToBuy * (1 + self.tpStopDiff)  # take profit price target
-        targetStop = ceil(target / self._rawIData["step"]) * self._rawIData["step"]  # real target for placing stop-order
-        localAliveTo = (datetime.now() + timedelta(hours=1)).strftime(TKS_PRINT_DATE_TIME_FORMAT)  # current local time + 1 hour
-
-        uLogger.info("Opening BUY position... (Buyers volumes [{}] >= {} * sellers volumes [{}] and current price to buy: [{:.2f} {}])".format(
-            self._sumBuyers, 1 + self.volDiff, self._sumSellers, currentPriceToBuy, self._iCurr,
-        ))
-
-        buyResponse = self.Buy(lots=self.lots, tp=targetStop, sl=0, expDate=localAliveTo)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Buy
-
-        if "message" in buyResponse.keys() and buyResponse["message"]:
-            uLogger.warning("Server message: {}".format(buyResponse["message"]))
-
-        else:
-            self._changes = True
-
-    def _Step3(self):
-        """
-        Implementation of Step 3: if the instrument was not purchased earlier, then checking:
-        - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-          of all instruments in this currency, then check:
-          - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-            and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour.
-        """
-        # Also, checking reserve and volumes diff before buy:
-        if self._currencyFreeCostInRuble / self._assetsCostInRuble >= self.reserve:
-            self._CalculateDOMSums()
-
-            if self._sumBuyers >= self._sumSellers * (1 + self.volDiff):
-                self._OpenBuyMarketPosition()
-
-            else:
-                uLogger.info("BUY position not opened, because buyers volumes [{}] < {} * sellers volumes [{}]".format(self._sumBuyers, 1 + self.volDiff, self._sumSellers))
-
-        else:
-            uLogger.info("BUY position not opened, because the reserves in [{}] will be less than {:.2f}% of free funds".format(self._iCurr, self.reserve * 100))
-
-    def _CalculateDataForCloseRules(self):
-        """
-        Gets instrument from list of instruments in user portfolio. And then calculates available lots for sale, average price
-        and current price of instrument. And then calculating price to close position without waiting for the take profit.
-        """
-        uLogger.info("Ticker [{}]: there is an open position with that instrument, checking close rules...".format(self.ticker))
-
-        self._iData = self.GetInstrumentFromPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.GetInstrumentFromPortfolio
-
-        self._lotsToSell = self._iData["volume"] - self._iData["blocked"]  # not blocked lots of current instrument, available for trading
-        self._averagePrice = self._iData["average"]  # average price by all lots
-        self._curPriceToSell = self._ordersBook["sell"][0]["price"]  # 1st price in the list of buyers orders is the actual price that you can sell
-
-        self._curProfit = (self._curPriceToSell - self._averagePrice) / self._averagePrice  # changes between current price and average price of instrument
-        target = self._curPriceToSell * (1 + self.tolerance)  # enough price target to sell
-        self._targetLimit = ceil(target / self._iData["step"]) * self._iData["step"]  # real target + tolerance for placing pending limit order
-
-    def _OpenSellMarketPosition(self):
-        """Opening sell market order if enough profit."""
-        uLogger.info(
-            "The current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% more than {:.2f}%. Opening SELL pending limit order...".format(
-                self._curPriceToSell, self._iData["currency"], self._averagePrice, self._iData["currency"],
-                self._curProfit * 100, self.tpLimitDiff * 100,
-            ))
-
-        # Opening SELL pending limit order:
-        sellResponse = self.SellLimit(lots=self._lotsToSell, targetPrice=self._targetLimit)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.SellLimit
-
-        if "message" in sellResponse.keys() and sellResponse["message"]:
-            uLogger.warning("Server message: {}".format(sellResponse["message"]))
-
-        else:
-            self._changes = True
-
-    def _Step4(self):
-        """
-        Implementation of Step 4: if the instrument is in the list of open positions, then checking:
-        - if the current price is 2.5% already higher than the average position price, then place pending
-          limit order with all volumes 0.1% higher than the current price so that the position is closed
-          with a profit with a high probability during the current session.
-        """
-        # Also, checking for a sufficient price difference before sell:
-        if self._curProfit >= self.tpLimitDiff:
-            self._OpenSellMarketPosition()
-
-        else:
-            uLogger.info("SELL order not created, because the current price is [{:.2f} {}], average price is [{:.2f} {}], so profit {:.2f}% less than {:.2f}% target.".format(
-                self._curPriceToSell, self._iData["currency"], self._averagePrice, self._iData["currency"],
-                self._curProfit * 100, self.tpLimitDiff * 100,
-            ))
-
-    def Steps(self, **kwargs):
-        """Trading scenario steps section. Implementation of one trade iteration."""
-        self._changes = False  # Setting no changes in user portfolio before trade iteration
-
-        uLogger.info("--- Ticker [{}], data analysis...".format(kwargs["ticker"]))
-
-        # - Step 1: request the client's current portfolio and determining funds available for trading
-        self._GetPortfolio()
-        self._CalculateFreeFunds()
-
-        # - Step 2: request a Depth of Market for the selected instruments
-        emptyBook = self._GetOrderBook(currentTicker=kwargs["ticker"])
-
-        if not emptyBook:
-            # Checks if instrument (defined by its `ticker`) is in portfolio:
-            isInPortfolio = self.IsInPortfolio(self._portfolio)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.IsInPortfolio
-
-            if not isInPortfolio:
-
-                # - Step 3: if the instrument was not purchased earlier, then checking:
-                #   - if the reserve of funds (free cash) in the currency of the instrument more than 5% of the total value
-                #     of all instruments in this currency, then check:
-                #     - if the buyers volumes in the DOM are at least 10% higher than the sellers volumes, then buy 1 share on the market
-                #       and place the take profit as a stop order 3% higher than the current buy price with expire in 1 hour;
-
-                self._CalculateDataForOpenRules()
-                self._Step3()
-
-            else:
-
-                # - Step 4: if the instrument is in the list of open positions, then checking:
-                #   - if the current price is 2.5% already higher than the average position price, then place pending
-                #     limit order with all volumes 0.1% higher than the current price so that the position is closed
-                #     with a profit with a high probability during the current session.
-
-                self._CalculateDataForCloseRules()
-                self._Step4()
-
-    def Run(self):
-        """Trade iterations runner."""
-        for ticker in self.tickers:
-            self.Steps(**{"ticker": ticker})
-
-        # - Step 5: request the current user's portfolio after all trades and show changes
-
-        uLogger.info("--- All trade operations finished.{}".format(" Let's show what we got in the user's portfolio after all trades." if self._changes else ""))
-
-        # Showing detailed user portfolio information if it was changes:
-        if self._changes:
-            self.Overview(show=True)  # TKSBrokerAPI: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html#TinkoffBrokerServer.Overview
-
-
-def TimerDecorator(func):
-    """Some technical operations before main scenario started and then after main scenario finished."""
-
-    def Wrapper():
-        uLogger.level = 10  # DEBUG (10) log level recommended by default for file `TKSBrokerAPI.log`
-        uLogger.handlers[0].level = 20  # Log level for STDOUT, INFO (20) recommended by default
-
-        start = datetime.now(tzutc())
-
-        uLogger.debug("=--=" * 25)
-        uLogger.debug("Trading scenario started at: [{}] UTC, it is [{}] local time".format(start.strftime(TKS_PRINT_DATE_TIME_FORMAT), start.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT)))
-
-        func()
-
-        finish = datetime.now(tzutc())
-
-        uLogger.debug("Trading scenario work duration: [{}]".format(finish - start))
-        uLogger.debug("Trading scenario finished: [{}] UTC, it is [{}] local time".format(finish.strftime(TKS_PRINT_DATE_TIME_FORMAT), finish.astimezone(tzlocal()).strftime(TKS_PRINT_DATE_TIME_FORMAT)))
-        uLogger.debug("=--=" * 25)
-
-    return Wrapper
-
-
-@TimerDecorator
-def Trade():
-    """
-    Initialization of a class instance for a trading scenario and parameterization of the main trading parameters.
-
-    TKSBrokerAPI module documentation:
-    - in english: https://tim55667757.github.io/TKSBrokerAPI/docs/tksbrokerapi/TKSBrokerAPI.html
-
-    TKSBrokerAPI platform documentation:
-    - in english: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md
-    - in russian: https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README.md
-    """
-    # --- Main trader object init:
-    trader = TradeScenario(
-        userToken="",  # Attention! Set your token here or use environment variable `TKS_API_TOKEN`
-        userAccount="",  # Attention! Set your accountId here or use environment variable `TKS_ACCOUNT_ID`
-    )
-
-    # --- Set here any parameters you need for trading:
-    trader.tickers = ["YNDX", "IBM", "GAZP"]  # You can define the list of instruments in any way: by enumeration directly or as a result of a filtering function according to some analytic algorithm
-    trader.reserve = 0.05  # We reserve some money when open positions, 5% by default
-    trader.lots = 1  # Minimum lots to buy or sell
-    trader.tpStopDiff = 0.03  # 3% TP by default for stop-orders
-    trader.tpLimitDiff = 0.025  # 2.5% TP by default for pending limit-orders
-    trader.tolerance = 0.001  # Tolerance for price deviation around target orders prices, 0.1% by default
-    trader.depth = 20  # How deep to request a list of current prices for an instruments to analyze volumes, >= 1
-    trader.volDiff = 0.1  # Enough volumes difference to open position, 10% by default
-
-    trader.moreDebug = False  # Set to `True` if you need more debug information, such as headers, requests and responses
-
-    trader.Run()  # Starting trade iterations with all instruments
-
-
-if __name__ == "__main__":
-    Trade()  # Initialization, parametrization and run trading scenario
-```
-
-</details>
-
-Вывод скрипта в консоль будет полностью аналогичен, как в первом примере.
-
+---
 
 That's all, ask questions in the section 👉 [**Issues**](https://github.com/Tim55667757/TKSBrokerAPI/issues/new) 👈, please.
 
 🚀 Good luck for you in trade automation! And profit!
 
-[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/quickpay/shop-widget?writer=seller&targets=Donat%20(gift)%20for%20the%20authors%20of%20the%20TKSBrokerAPI%20project&default-sum=999&button-text=13&payment-type-choice=on&successURL=https%3A%2F%2Ftim55667757.github.io%2FTKSBrokerAPI%2F&quickpay=shop&account=410015019068268)
+[![gift](https://badgen.net/badge/gift/donate/green)](https://yoomoney.ru/fundraise/4WOyAgNgb7M.230111)
