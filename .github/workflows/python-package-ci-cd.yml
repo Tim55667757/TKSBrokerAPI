@@ -113,6 +113,8 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9"]
+    outputs:
+      version: ${{ steps.setver.outputs.version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -161,14 +163,18 @@ jobs:
           echo 📦 Testing distribution...
           pip install ./dist/*.tar.gz
 
-      - name: Copy .version into dist for Docker job
-        run: cp .version dist/.version
-
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: python-package
           path: dist/
+
+      - name: Set version from .version
+        id: setver
+        run: |
+          VERSION=$(cat .version | tr -d '\n')
+          echo "VERSION=$VERSION"
+          echo "::set-output name=version::$VERSION"
 
       - name: Building Completed
         run: echo ✅ BUILDING stage completed successfully!
@@ -247,17 +253,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package
-          path: dist/
-
-      - name: Read version from .version file
+      - name: Set VERSION from building job
         run: |
-          VERSION=$(cat dist/.version | tr -d '\n')
-          echo "📦 Loaded version from setup.py: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "VERSION=${{ needs.building.outputs.version }}" >> $GITHUB_ENV
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
