@@ -5529,7 +5529,10 @@ def Main(**kwargs):
 
     try:
         if args.version:
-            print("⚙️ TKSBrokerAPI Platform v{}".format(buildVersion))
+            print(
+                f"⚙️ TKSBrokerAPI Platform by Fuzzy Technologies, v{buildVersion}"
+                f"\n\nTechnologies · Knowledge · Science"
+            )
             uLogger.debug("User requested current TKSBrokerAPI Platform major.minor.build version: [{}]".format(buildVersion))
 
         else:
