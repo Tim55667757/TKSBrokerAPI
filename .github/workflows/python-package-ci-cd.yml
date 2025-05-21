@@ -174,7 +174,7 @@ jobs:
         run: |
           VERSION=$(cat .version | tr -d '\n')
           echo "VERSION=$VERSION"
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Building Completed
         run: echo ✅ BUILDING stage completed successfully!
