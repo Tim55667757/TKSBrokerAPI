@@ -11,6 +11,8 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /opt/app
 
+ARG TKS_BUILD_VERSION
+
 # Build docker image with the current version uploaded to PyPI, or use latest if local build
 RUN if [ -z "$TKS_BUILD_VERSION" ]; then \
       echo "📦 Installing latest TKSBrokerAPI from PyPI..." && \
@@ -21,8 +23,7 @@ RUN if [ -z "$TKS_BUILD_VERSION" ]; then \
     fi
 
 # Clean image
-RUN find /usr/local/lib/python3.11/site-packages -name "*.pyc" -delete
-RUN find /usr/local/lib/python3.11/site-packages -type d -name "__pycache__" -exec rm -r {} +
+RUN find /usr/local/lib/python3.11/site-packages \( -name "*.pyc" -o -type d -name "__pycache__" \) -exec rm -rf {} +
 
 # Safe user
 RUN useradd -m -d /home/appuser -s /bin/bash appuser
