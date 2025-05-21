@@ -252,10 +252,9 @@ jobs:
 
       - name: Read version from .version file
         run: |
-          VERSION=$(cat .version | tr -d '\n')
+          VERSION=$(cat dist/.version | tr -d '\n')
           echo "📦 Loaded version from setup.py: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
