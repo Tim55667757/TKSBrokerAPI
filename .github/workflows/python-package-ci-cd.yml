@@ -261,7 +261,7 @@ jobs:
           echo 🐳 Building Docker image with TKSBrokerAPI==${{ needs.building.outputs.version }}
           docker build \
             --build-arg TKS_BUILD_VERSION=${{ needs.building.outputs.version }} \
-            -f Dockerfile \
+            -f deploy/Dockerfile \
             -t tim55667757/tksbrokerapi:latest \
             -t tim55667757/tksbrokerapi:${{ needs.building.outputs.version }} \
             .
