@@ -66,8 +66,8 @@
 * [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Улучшена базовая функция `SendAPIRequest()`: безопасные повторы, разбор ошибок, полные тесты; повышена стабильность клиента.
 * [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Оптимизирован метод `Overview()` для портфеля и добавлены юнит-тесты.
 * [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Добавлена мини-функция `FormatTimedelta()` для форматирования timedelta с точностью до секунд, с возвратом строки по умолчанию при ошибках.
-* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88 Улучшен вид таблицы со стоп-ордерами в `--overview`.
-* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91 Тикеры теперь можно указывать в любом формате (регистронезависимые).
+* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88) Улучшен вид таблицы со стоп-ордерами в `--overview`.
+* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91) Тикеры теперь можно указывать в любом формате (регистронезависимые).
 
 ##### Баг-фиксы
 

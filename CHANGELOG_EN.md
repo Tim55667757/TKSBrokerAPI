@@ -66,8 +66,8 @@ The infrastructure has been significantly improved: parallel candle history load
 * [#150](https://github.com/Tim55667757/TKSBrokerAPI/issues/150) Improved `SendAPIRequest()`: added safe retries, error parsing, full unit tests; increased API client stability.
 * [#151](https://github.com/Tim55667757/TKSBrokerAPI/issues/151) Optimized the `Overview()` method for portfolio and added unit tests.
 * [#153](https://github.com/Tim55667757/TKSBrokerAPI/issues/153) Added: `FormatTimedelta()` utility for formatting timedelta with optional precision, fallback to raw string on invalid input.
-* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88 Simplify view of the "Opened stop-orders" table with `--overview` key.
-* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91 Implement possibility to set tickers in lower-case.
+* [#88](https://github.com/Tim55667757/TKSBrokerAPI/issues/88) Simplify view of the "Opened stop-orders" table with `--overview` key.
+* [#91](https://github.com/Tim55667757/TKSBrokerAPI/issues/91) Implement possibility to set tickers in lower-case.
 
 ##### Bug fixes
 
