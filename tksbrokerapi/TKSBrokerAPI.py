@@ -2055,7 +2055,7 @@ class TinkoffBrokerServer:
         # Re-sorting and separating given raw instruments and currencies by type: https://tinkoff.github.io/investAPI/operations/#operation
         # Type of instrument must be only one of supported types in TKS_INSTRUMENTS
         for item in portfolioResponse["positions"]:
-            if item["instrumentType"] == "currency":
+            if item["instrumentType"] in ("currency", ""):  # Bug #162 fix: 'instrumentType' == '' for USD
                 self._figi = item["figi"]
                 if not self._figi and item["ticker"]:
                     self._ticker = item["ticker"]
@@ -2168,7 +2168,7 @@ class TinkoffBrokerServer:
                     blocked = 0
 
                 volume = NanoToFloat(item["quantity"]["units"], item["quantity"]["nano"])  # available volume of instrument
-                lots = NanoToFloat(item["quantityLots"]["units"], item["quantityLots"]["nano"])  # available volume in lots of instrument
+                lots = NanoToFloat(item["quantityLots"]["units"], item["quantityLots"]["nano"]) if "quantityLots" in item else volume  # available volume in lots of instrument
                 direction = "Long" if lots >= 0 else "Short"  # direction of an instrument's position: short or long
                 curPrice = NanoToFloat(item["currentPrice"]["units"], item["currentPrice"]["nano"])  # current instrument's price
                 average = NanoToFloat(item["averagePositionPriceFifo"]["units"], item["averagePositionPriceFifo"]["nano"])  # current average position price
@@ -2177,7 +2177,7 @@ class TinkoffBrokerServer:
                 cost = curPrice * volume if "currentNkd" not in item.keys() else (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
                 countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
-                costRUB = cost if item["instrumentType"] == "currency" else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
+                costRUB = cost if item["instrumentType"] in ("currency", "") else cost * view["raw"]["currenciesCurrentPrices"][currency]["currentPrice"]  # cost in rubles
                 percentCostRUB = 100 * costRUB / view["stat"]["portfolioCostRUB"] if view["stat"]["portfolioCostRUB"] > 0 else 0.  # instrument's part in percent of full portfolio cost
 
                 statData = {
