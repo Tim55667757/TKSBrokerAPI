@@ -4966,7 +4966,7 @@ class TinkoffBrokerServer:
 
         infoText = "# 📅 Bond payments calendar\n\n"
 
-        calendar = self.CreateBondsCalendar(extBonds, xlsx=show or onlyFiles)  # generate Pandas DataFrame with full calendar data
+        calendar = self.CreateBondsCalendar(extBonds, xlsx=onlyFiles)  # generate Pandas DataFrame with full calendar data
 
         if not (calendar is None or calendar.empty):
             splitLine = "|       |                 |              |              |     |               |           |        |                   |\n"
@@ -5642,7 +5642,7 @@ def Main(**kwargs):
                 else:
                     bondsData = trader.ExtendBondsData(instruments=args.calendar, xlsx=False)  # request list of given bonds
 
-                trader.ShowBondsCalendar(extBonds=bondsData, show=True)  # shows bonds payment calendar only
+                trader.ShowBondsCalendar(extBonds=bondsData, show=True, onlyFiles=False)  # shows bonds payment calendar only
 
             elif args.price:
                 if not (args.ticker or args.figi):
