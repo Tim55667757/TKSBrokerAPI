@@ -2173,7 +2173,7 @@ class TinkoffBrokerServer:
                 curPrice = NanoToFloat(item["currentPrice"]["units"], item["currentPrice"]["nano"])  # current instrument's price
                 average = NanoToFloat(item["averagePositionPriceFifo"]["units"], item["averagePositionPriceFifo"]["nano"])  # current average position price
                 profit = NanoToFloat(item["expectedYield"]["units"], item["expectedYield"]["nano"])  # expected profit at current moment
-                currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "future") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
+                currency = instrument["currency"] if (item["instrumentType"] == "share" or item["instrumentType"] == "etf" or item["instrumentType"] == "futures") else instrument["nominal"]["currency"]  # currency name rub, usd, eur etc.
                 cost = curPrice * volume if "currentNkd" not in item.keys() else (curPrice + NanoToFloat(item["currentNkd"]["units"], item["currentNkd"]["nano"])) * volume  # current cost of all volume of instrument in basic asset
                 baseCurrencyName = item["currentPrice"]["currency"]  # name of base currency (rub)
                 countryName = "[{}] {}".format(instrument["countryOfRisk"], instrument["countryOfRiskName"]) if "countryOfRisk" in instrument.keys() and "countryOfRiskName" in instrument.keys() and instrument["countryOfRisk"] and instrument["countryOfRiskName"] else unknownCountryName
@@ -2263,7 +2263,7 @@ class TinkoffBrokerServer:
                 elif item["instrumentType"] == "etf":
                     view["stat"]["Etfs"].append(statData)
 
-                elif item["instrumentType"] == "Futures":
+                elif item["instrumentType"] == "futures":
                     view["stat"]["Futures"].append(statData)
 
                 else:
@@ -2519,7 +2519,7 @@ class TinkoffBrokerServer:
                         "{:.2f} {}".format(data["cost"], data["baseCurrencyName"]),
                         "{}{:.2f} {} ({}{:.2f}%)".format(
                             "+" if data["profit"] > 0 else "",
-                            data["profit"], data["baseCurrencyName"],
+                            data["profit"], data["currency"],
                             "+" if data["percentProfit"] > 0 else "",
                             data["percentProfit"],
                         ),
@@ -2569,6 +2569,7 @@ class TinkoffBrokerServer:
                     info.extend(_SplitStr(CostRUB=view["stat"]["futuresCostRUB"], typeStr="⏳ **Futures:**"))
 
                     for item in view["stat"]["Futures"]:
+                        item["percentProfit"] /= 10  # little hack for futures profit calculation
                         info.append(_InfoStr(item))
 
                 else:
