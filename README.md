@@ -8,12 +8,8 @@
 
 **Статус сборок и деплоя CI/CD**
 
-| Branch  | Status                                                                                                                                                                                                                     |
-|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| master  | [![CI (main)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml/badge.svg?branch=main)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml)       |
-| develop | [![CI (develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml/badge.svg?branch=develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml) |
-
 [![pypi](https://img.shields.io/pypi/v/TKSBrokerAPI.svg)](https://pypi.python.org/pypi/TKSBrokerAPI)
+[![CI (develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml/badge.svg?branch=develop)](https://github.com/Tim55667757/TKSBrokerAPI/actions/workflows/python-package-ci-cd.yml)
 [![license](https://img.shields.io/pypi/l/TKSBrokerAPI.svg)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/LICENSE)
 [![release-notes](https://badgen.net/badge/release/notes/orange)](https://github.com/Tim55667757/TKSBrokerAPI/blob/develop/CHANGELOG.md)
 [![en-doc](https://badgen.net/badge/english/readme/pink)](https://github.com/Tim55667757/TKSBrokerAPI/blob/master/README_EN.md)
