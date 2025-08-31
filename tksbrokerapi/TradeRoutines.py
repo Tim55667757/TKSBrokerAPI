@@ -54,7 +54,7 @@ NANO = 0.000000001
 """SI-constant: `NANO = 10^-9`"""
 
 FUZZY_SCALE = fR.UniversalFuzzyScale()
-"""Universal Fuzzy Scale is a special set of fuzzy levels: `{Min, Low, Med, High, Max}`."""
+"""Universal Fuzzy Scale is a special set of fuzzy levels: `{Min, Low, Med, High, Max}`. See also the article with simple explanation of the Fuzzy Scales (RU): https://teletype.in/@tgilmullin/fuzzy-scales"""
 
 FUZZY_LEVELS = list(FUZZY_SCALE.levelsNames.keys())
 """Level names on Universal Fuzzy Scale `FUZZY_SCALE`. Default: `["Min", "Low", "Med", "High", "Max"]`."""
@@ -691,6 +691,7 @@ def HampelFilter(series: Union[list, pd.Series], window: int = 5, sigma: float =
     3. Hancong Liu, Sirish Shah and Wei Jiang. On-line outlier detection and data cleaning. Computers and Chemical Engineering. Vol. 28, March 2004, pp. 1635–1647.
        - Link: https://sites.ualberta.ca/~slshah/files/on_line_outlier_det.pdf
     4. Hampel F. R. The influence curve and its role in robust estimation. Journal of the American Statistical Association, 69, 382–393, 1974.
+    5. Gilmullin T.M., the article with simple explanation of the Hampel Filter (RU): https://teletype.in/@tgilmullin/hampel-anomalies-filtering
 
     Examples:
 
@@ -1710,11 +1711,15 @@ def EstimateTargetReachability(
 
     References:
 
-    1. (RU article) https://teletype.in/@tgilmullin/target-probability
+    1. (RU article with simple explanation) https://teletype.in/@tgilmullin/target-probability
        Will the Price Hit the Target: Assessing Probability Instead of Guessing.
 
     2. (RU article on which the formulas are based)
        Statistical Estimation of the Probability of Reaching a Target Price Considering Volatility and Returns Across Different Timeframes.
+       https://moitvivt.ru/ru/journal/pdf?id=1905
+
+    3. (RU article with simple explanation) https://teletype.in/@tgilmullin/target-probability
+       Will the Price Hit the Target: Assessing Probability Instead of Guessing.
 
     :param seriesLowTF: A close-price series from the lower timeframe.
     :param seriesHighTF: A close-price series from the higher timeframe.
